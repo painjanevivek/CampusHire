@@ -67,6 +67,17 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .iconButton { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
 .toast { position: fixed; right: 1rem; bottom: 1rem; z-index: 80; display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
 .toast button { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font-size: 1.2rem; cursor: pointer; }
+.authPage { min-height: 100svh; display: grid; grid-template-columns: minmax(20rem, 36rem) minmax(18rem, 30rem); align-content: center; justify-content: center; gap: clamp(2rem, 8vw, 8rem); padding: 5rem clamp(1rem, 5vw, 5rem); background: radial-gradient(circle at 80% 20%, var(--sage), transparent 34%), var(--canvas); }
+.authPage > .brand { position: absolute; top: 1.5rem; left: clamp(1rem, 5vw, 5rem); }
+.authPanel { display: grid; gap: 1.5rem; }
+.authPanel h1 { max-width: 10ch; margin-bottom: 1rem; font-size: clamp(2.7rem, 6vw, 5rem); }
+.authForm { display: grid; gap: 1rem; }
+.authForm .button { margin-top: 0.25rem; }
+.authFooter { color: var(--ink-muted); }
+.authFooter a { color: var(--teal-deep); font-weight: 800; }
+.authPromise { align-self: center; border-left: 1px solid var(--line); padding: 2rem 0 2rem clamp(2rem, 5vw, 4rem); }
+.authPromise blockquote { margin: 0 0 1.5rem; max-width: 18ch; font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 750; line-height: 1.15; letter-spacing: -0.04em; }
+.authPromise > p:last-child { color: var(--ink-muted); }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -102,6 +113,8 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .pathPreview { margin-top: 1rem; }
   .featureGrid { grid-template-columns: 1fr; }
   .featureCard, .featureCard + .featureCard { padding: 1.5rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
+  .authPage { grid-template-columns: 1fr; padding-top: 7rem; }
+  .authPromise { border-top: 1px solid var(--line); border-left: 0; padding: 2rem 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
