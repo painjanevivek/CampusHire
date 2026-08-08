@@ -138,6 +138,15 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .adminTable { border-top: 1px solid var(--line); }
 .tableRow { min-width: 45rem; display: grid; grid-template-columns: 2fr 0.7fr 0.7fr 0.7fr; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); padding: 1rem 0; }
 .tableHead { color: var(--ink-muted); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; }
+.roleDetail { max-width: 72rem; min-height: 100svh; margin: auto; padding: clamp(3rem, 8vw, 8rem) clamp(1rem, 5vw, 4rem); }
+.roleDetail > header { display: grid; justify-items: start; gap: 0.8rem; margin-bottom: 3rem; }
+.roleDetail > header h1 { max-width: 12ch; margin: 0; font-size: clamp(3rem, 7vw, 6rem); }
+.roleDetail > header p { display: flex; align-items: center; gap: 0.4rem; color: var(--ink-muted); }
+.decisionGrid { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 1rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.decisionGrid section { padding: 2rem 2rem 2rem 0; }
+.decisionGrid section + section { border-left: 1px solid var(--line); padding-left: 2rem; }
+.decisionGrid h2 { display: flex; align-items: center; gap: 0.5rem; font-size: 2rem; }
+.decisionGrid li { margin-bottom: 0.5rem; }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -191,6 +200,8 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .suggestionPanel { position: static; }
   .roleList article { grid-template-columns: 1fr; }
   .adminTable { overflow-x: auto; }
+  .decisionGrid { grid-template-columns: 1fr; }
+  .decisionGrid section + section { border-top: 1px solid var(--line); border-left: 0; padding-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
