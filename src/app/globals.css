@@ -147,6 +147,17 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .decisionGrid section + section { border-left: 1px solid var(--line); padding-left: 2rem; }
 .decisionGrid h2 { display: flex; align-items: center; gap: 0.5rem; font-size: 2rem; }
 .decisionGrid li { margin-bottom: 0.5rem; }
+.roadmapPage { max-width: 78rem; min-height: 100svh; margin: auto; padding: clamp(3rem, 7vw, 7rem) clamp(1rem, 4vw, 3rem); }
+.roadmapPage > header { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 3rem; }
+.roadmapPage h1 { max-width: 10ch; font-size: clamp(3rem, 7vw, 6rem); }
+.roadmapGraph { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+.roadmapGraph article { position: relative; min-height: 19rem; display: grid; align-content: space-between; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 1.25rem; background: var(--surface); }
+.roadmapGraph article.next { border: 2px solid var(--tangerine); transform: translateY(-0.75rem); }
+.roadmapGraph article.later { color: var(--ink-muted); background: transparent; }
+.nodeIcon { width: 2.8rem; height: 2.8rem; display: grid; place-items: center; border-radius: 50%; background: var(--surface-muted); color: var(--teal-deep); }
+.roadmapGraph article.next .nodeIcon { background: var(--tangerine); color: white; }
+.roadmapGraph h2 { font-size: 1.2rem; }
+.roadmapGraph p { color: var(--ink-muted); }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -202,6 +213,10 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .adminTable { overflow-x: auto; }
   .decisionGrid { grid-template-columns: 1fr; }
   .decisionGrid section + section { border-top: 1px solid var(--line); border-left: 0; padding-left: 0; }
+  .roadmapPage > header { align-items: start; flex-direction: column; }
+  .roadmapGraph { grid-template-columns: 1fr; }
+  .roadmapGraph article { min-height: 0; grid-template-columns: auto 1fr; gap: 1rem; }
+  .roadmapGraph article.next { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
