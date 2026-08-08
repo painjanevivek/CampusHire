@@ -2,9 +2,14 @@
 
 CampusHire AI is a student-first campus recruitment and career-readiness platform. The frontend provides separate, accessible experiences for students and Training and Placement administrators.
 
-## Current status
+## Local development
 
-The project is in Phase 0: product scope, terminology, architecture, and delivery rules are locked before application scaffolding begins.
+1. Copy `.env.example` to `.env.local`.
+2. Install dependencies with `npm install`.
+3. Start the application with `npm run dev`.
+4. Open `http://localhost:3000`.
+
+Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` before committing.
 
 ## Product principles
 
@@ -29,4 +34,4 @@ The project is in Phase 0: product scope, terminology, architecture, and deliver
 - Frontend: <https://github.com/painjanevivek/CampusHire>
 - Backend: <https://github.com/painjanevivek/CampusHire-backend>
 
-Implementation commands and environment setup will be added in Phase 1.
+The backend API URL is configured through `NEXT_PUBLIC_API_URL`.
