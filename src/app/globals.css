@@ -78,6 +78,24 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .authPromise { align-self: center; border-left: 1px solid var(--line); padding: 2rem 0 2rem clamp(2rem, 5vw, 4rem); }
 .authPromise blockquote { margin: 0 0 1.5rem; max-width: 18ch; font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 750; line-height: 1.15; letter-spacing: -0.04em; }
 .authPromise > p:last-child { color: var(--ink-muted); }
+.onboardingPage { min-height: 100svh; background: var(--canvas); }
+.wizardHeader { height: 4.75rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 0 clamp(1rem, 4vw, 4rem); }
+.wizardLayout { min-height: calc(100svh - 4.75rem); display: grid; grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr); }
+.stepRail { display: flex; flex-direction: column; border-right: 1px solid var(--line); padding: 3rem clamp(1.25rem, 3vw, 3rem); background: color-mix(in oklch, var(--surface-muted) 48%, var(--canvas)); }
+.stepRail ol { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.stepRail li { min-height: 2.9rem; display: flex; align-items: center; gap: 0.8rem; border-radius: var(--radius-sm); padding: 0.65rem 0.8rem; color: var(--ink-muted); font-weight: 700; }
+.stepRail li.current { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-soft); }
+.stepRail li.complete { color: var(--teal-deep); }
+.textButton { margin-top: auto; min-height: 2.75rem; border: 0; background: transparent; color: var(--teal-deep); font: inherit; font-weight: 800; text-align: left; cursor: pointer; }
+.wizardPanel { width: min(100%, 52rem); display: grid; align-content: start; gap: 1.5rem; padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 6vw, 6rem); }
+.wizardPanel h1 { max-width: 11ch; font-size: clamp(2.7rem, 6vw, 5rem); }
+.wizardForm { display: grid; gap: 1rem; }
+.fieldRow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.wizardActions { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.25rem; }
+.wizardActions .button:last-child { margin-left: auto; }
+.reviewList { display: grid; gap: 0.75rem; }
+.reviewList > div { display: flex; gap: 1rem; border-top: 1px solid var(--line); padding: 1rem 0; }
+.reviewList small { display: block; color: var(--ink-muted); }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -115,6 +133,14 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .featureCard, .featureCard + .featureCard { padding: 1.5rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
   .authPage { grid-template-columns: 1fr; padding-top: 7rem; }
   .authPromise { border-top: 1px solid var(--line); border-left: 0; padding: 2rem 0 0; }
+  .wizardLayout { grid-template-columns: 1fr; }
+  .stepRail { border-right: 0; border-bottom: 1px solid var(--line); padding: 1rem; }
+  .stepRail ol { display: flex; overflow-x: auto; }
+  .stepRail li { flex: 0 0 auto; }
+  .stepRail li span { display: none; }
+  .textButton { margin-top: 0.5rem; }
+  .wizardPanel { padding-top: 2.5rem; }
+  .fieldRow { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -30,6 +30,14 @@ def main() -> None:
         assert page.get_by_label("Password").get_attribute("minlength") == "12"
         page.goto(f"{base_url}/admin/sign-in", wait_until="networkidle")
         assert page.get_by_text("Administrator access is invitation-only.").is_visible()
+        page.goto(f"{base_url}/onboarding", wait_until="networkidle")
+        page.screenshot(path=str(artifact_dir / "phase-3-onboarding.png"), full_page=True)
+        assert "Build a profile companies can understand" in (page.locator("h1").text_content() or "")
+        assert page.get_by_text("Profile setup · 1 of 6").is_visible()
+        assert page.locator("input[name='full_name']").is_visible()
+        page.set_viewport_size({"width": 375, "height": 812})
+        page.reload(wait_until="networkidle")
+        assert page.locator("body").evaluate("el => el.scrollWidth <= el.clientWidth")
         assert not errors, f"Browser console errors: {errors}"
         browser.close()
 
