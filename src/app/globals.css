@@ -96,6 +96,18 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .reviewList { display: grid; gap: 0.75rem; }
 .reviewList > div { display: flex; gap: 1rem; border-top: 1px solid var(--line); padding: 1rem 0; }
 .reviewList small { display: block; color: var(--ink-muted); }
+.workspacePage { min-height: 100svh; padding: clamp(2rem, 6vw, 6rem); }
+.workspaceHeader { max-width: 80rem; margin: 0 auto 3rem; display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+.workspaceHeader h1 { max-width: 12ch; font-size: clamp(2.8rem, 6vw, 5.4rem); }
+.workspaceGrid { max-width: 80rem; margin: auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.7fr); gap: 1rem; }
+.uploadPanel, .processPanel { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.5rem, 4vw, 3rem); background: var(--surface); }
+.uploadPanel { display: grid; align-content: start; gap: 1rem; }
+.uploadPanel > p { color: var(--ink-muted); }
+.filePicker { min-height: 8rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; border: 1px dashed var(--teal); border-radius: var(--radius-md); background: var(--surface-muted); color: var(--teal-deep); font-weight: 800; cursor: pointer; }
+.filePicker input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+.processPanel ol { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.processPanel li { display: grid; gap: 0.25rem; border-top: 1px solid var(--line); padding: 1rem 0; }
+.processPanel li span { color: var(--ink-muted); }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -141,6 +153,8 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .textButton { margin-top: 0.5rem; }
   .wizardPanel { padding-top: 2.5rem; }
   .fieldRow { grid-template-columns: 1fr; }
+  .workspaceHeader { align-items: start; flex-direction: column; }
+  .workspaceGrid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

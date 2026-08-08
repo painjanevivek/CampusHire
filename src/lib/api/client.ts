@@ -33,8 +33,11 @@ export async function csrfRequest<T>(path: string, init: RequestInit): Promise<T
     token = cookie("campushire_csrf");
   }
   if (!token) throw new Error("CampusHire could not start a secure form session.");
+  const headers = new Headers(init.headers);
+  if (!(init.body instanceof FormData)) headers.set("Content-Type", "application/json");
+  headers.set("X-CSRF-Token", decodeURIComponent(token));
   return apiRequest<T>(path, {
     ...init,
-    headers: { "Content-Type": "application/json", "X-CSRF-Token": decodeURIComponent(token), ...init.headers },
+    headers,
   });
 }

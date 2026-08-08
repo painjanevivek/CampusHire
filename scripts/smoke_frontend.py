@@ -38,6 +38,9 @@ def main() -> None:
         page.set_viewport_size({"width": 375, "height": 812})
         page.reload(wait_until="networkidle")
         assert page.locator("body").evaluate("el => el.scrollWidth <= el.clientWidth")
+        page.goto(f"{base_url}/resume", wait_until="networkidle")
+        assert "Turn one PDF into a reviewed profile" in (page.locator("h1").text_content() or "")
+        assert page.locator("input[type='file'][accept*='pdf']").count() == 1
         assert not errors, f"Browser console errors: {errors}"
         browser.close()
 
