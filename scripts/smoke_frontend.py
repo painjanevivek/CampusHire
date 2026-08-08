@@ -41,6 +41,22 @@ def main() -> None:
         page.goto(f"{base_url}/resume", wait_until="networkidle")
         assert "Turn one PDF into a reviewed profile" in (page.locator("h1").text_content() or "")
         assert page.locator("input[type='file'][accept*='pdf']").count() == 1
+        routes = {
+            "/resume/builder": "Improve the words. Keep the truth.",
+            "/opportunities": "Roles that explain why they fit.",
+            "/opportunities/demo": "Graduate Software Engineer",
+            "/admin/drives": "Placement drives",
+            "/admin/drives/demo": "Ranked with reasons, not mystery.",
+            "/admin/policies": "Policy answers with a source trail.",
+            "/roadmap": "One useful move at a time.",
+            "/dashboard": "Deploy one project next.",
+            "/admin/dashboard": "Three items need review.",
+            "/privacy": "Your placement data has a defined purpose.",
+        }
+        for route, heading_text in routes.items():
+            page.goto(f"{base_url}{route}", wait_until="networkidle")
+            assert heading_text in (page.locator("h1").text_content() or ""), route
+            assert page.locator("body").evaluate("el => el.scrollWidth <= el.clientWidth"), route
         assert not errors, f"Browser console errors: {errors}"
         browser.close()
 
