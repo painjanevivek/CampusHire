@@ -158,6 +158,16 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .roadmapGraph article.next .nodeIcon { background: var(--tangerine); color: white; }
 .roadmapGraph h2 { font-size: 1.2rem; }
 .roadmapGraph p { color: var(--ink-muted); }
+.dashboardPage { max-width: 82rem; min-height: 100svh; margin: auto; padding: clamp(3rem, 7vw, 7rem) clamp(1rem, 4vw, 3rem); }
+.dashboardPage > header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 3rem; }
+.dashboardPage h1 { max-width: 11ch; font-size: clamp(3rem, 7vw, 6rem); }
+.dashboardGrid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.dashboardGrid article { min-height: 16rem; display: grid; align-content: start; gap: 0.8rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.5rem; background: var(--surface); }
+.dashboardGrid article.primaryCard { grid-column: span 2; background: var(--evergreen); color: white; }
+.dashboardGrid article.primaryCard p { color: color-mix(in oklch, white 75%, var(--evergreen)); }
+.dashboardGrid article > svg { color: var(--teal); }
+.dashboardGrid h2 { margin: 0; font-size: 2rem; }
+.dashboardGrid p { color: var(--ink-muted); }
 .pathPreview { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); background: color-mix(in oklch, var(--surface) 92%, transparent); box-shadow: var(--shadow-soft); }
 .pathLabel { margin-bottom: 1.25rem; color: var(--ink-muted); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .pathPreview ol { margin: 0; padding: 0; list-style: none; }
@@ -217,6 +227,9 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .roadmapGraph { grid-template-columns: 1fr; }
   .roadmapGraph article { min-height: 0; grid-template-columns: auto 1fr; gap: 1rem; }
   .roadmapGraph article.next { transform: none; }
+  .dashboardPage > header { align-items: start; flex-direction: column; }
+  .dashboardGrid { grid-template-columns: 1fr; }
+  .dashboardGrid article.primaryCard { grid-column: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
