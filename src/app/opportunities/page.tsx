@@ -1,0 +1,6 @@
+import { Clock3, MapPin, Search } from "lucide-react";
+import { ButtonLink } from "@/components/ui/button";
+import { Badge } from "@/components/ui/feedback";
+
+const roles = [{company:"Northstar Labs",title:"Graduate Software Engineer",place:"Pune · Hybrid",match:"Strong match",deadline:"Closes 14 Aug"},{company:"DataWeave",title:"Junior Data Analyst",place:"Bengaluru · On-site",match:"Good match",deadline:"Closes 18 Aug"}];
+export default function OpportunitiesPage(){return <main id="main-content" className="listingPage"><header><p className="eyebrow">Open opportunities</p><h1>Roles that explain why they fit.</h1><p className="lede">Eligibility and match stay separate, so a score never hides a formal requirement.</p></header><label className="searchBox"><Search size={20}/><span className="srOnly">Search opportunities</span><input placeholder="Search role, company, or skill"/></label><section className="roleList">{roles.map((role)=><article key={role.title}><div><p className="pathLabel">{role.company}</p><h2>{role.title}</h2><p><MapPin size={16}/>{role.place}</p></div><div><Badge tone="success">Eligible</Badge><Badge>{role.match}</Badge></div><p><Clock3 size={16}/>{role.deadline}</p><ButtonLink href="/opportunities/demo">View role</ButtonLink></article>)}</section></main>}
