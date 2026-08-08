@@ -1,0 +1,4 @@
+import { FileSearch, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, Badge } from "@/components/ui/feedback";
+export default function PoliciesPage(){return <main id="main-content" className="listingPage"><header><p className="eyebrow">Approved evidence</p><h1>Policy answers with a source trail.</h1><p className="lede">LangGraph coordinates retrieval and explanation. Deterministic rules remain the authority.</p></header><Alert><ShieldCheck size={18}/>Only approved, effective policy versions can support a new decision.</Alert><section className="roleList"><article><div><p className="pathLabel">Placement policy · v3</p><h2>Campus eligibility policy 2027</h2><p><FileSearch size={16}/>18 indexed sections · effective 1 Aug 2026</p></div><Badge tone="success">Approved</Badge><span>0 failed chunks</span><Button variant="quiet">Inspect sources</Button></article></section></main>}
