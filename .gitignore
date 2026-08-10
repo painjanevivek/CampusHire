@@ -13,3 +13,8 @@ artifacts/
 *.tsbuildinfo
 .DS_Store
 Thumbs.db
+
+# Local contributor and design guidance
+AGENTS.md
+design.md
+designs.md
