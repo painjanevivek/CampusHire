@@ -14,6 +14,8 @@ export function OpportunityDetail() {
       <div className={styles.decisions}>
         <section className={styles.eligibility} aria-labelledby="eligibility-title">
           <div className={styles.label}><BadgeCheck size={17} aria-hidden="true" /> Formal rule result</div>
+          <h2 className={styles.explanationTitle}>Eligibility explained</h2>
+          <p>Formal requirements are checked by published placement rules.</p>
           <h2 id="eligibility-title">Formally eligible</h2>
           <ul><li><span>CGPA</span><strong>8.2 meets minimum 7.0</strong></li><li><span>Backlogs</span><strong>0 meets maximum 0</strong></li><li><span>Graduation</span><strong>2027 is allowed</strong></li></ul>
           <code>rule-set: northstar-v1</code>

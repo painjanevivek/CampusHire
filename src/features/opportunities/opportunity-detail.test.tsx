@@ -12,4 +12,11 @@ describe("OpportunityDetail", () => {
     expect(eligibility.compareDocumentPosition(match) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText(/not a hiring probability/)).toBeInTheDocument();
   });
+
+  it("labels the eligibility explanation independently from match guidance", () => {
+    render(<OpportunityDetail />);
+
+    expect(screen.getByRole("heading", { name: "Eligibility explained" })).toBeInTheDocument();
+    expect(screen.getByText("Formal requirements are checked by published placement rules.")).toBeInTheDocument();
+  });
 });

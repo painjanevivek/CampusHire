@@ -1,44 +1,49 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { OpportunitiesWorkspace } from "./opportunities-workspace";
 
+const { replaceMock } = vi.hoisted(() => ({ replaceMock: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: replaceMock }),
+  useSearchParams: () => new URLSearchParams("q=React&location=Pune"),
+}));
+
 describe("OpportunitiesWorkspace", () => {
-  it("filters roles and restores the complete list", () => {
+  beforeEach(() => replaceMock.mockReset());
+
+  it("loads keyword and location from the URL", () => {
     render(<OpportunitiesWorkspace />);
 
-    expect(screen.getByRole("article", { name: "AI/ML Intern at Nexora Labs" })).toBeInTheDocument();
-    expect(screen.getByRole("article", { name: "Frontend Developer at Contour Software" })).toBeInTheDocument();
-
-    fireEvent.change(screen.getByRole("searchbox", { name: "Search opportunities" }), {
-      target: { value: "React" },
-    });
-
-    expect(screen.queryByRole("article", { name: "AI/ML Intern at Nexora Labs" })).not.toBeInTheDocument();
-    expect(screen.getByRole("article", { name: "Frontend Developer at Contour Software" })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
-    expect(screen.getByRole("article", { name: "AI/ML Intern at Nexora Labs" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Job title, keywords, or company")).toHaveValue("React");
+    expect(screen.getByLabelText("City, state, or remote")).toHaveValue("Pune");
+    expect(screen.getByRole("button", { name: /Frontend Developer at Contour Software/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /AI\/ML Intern at Nexora Labs/ })).not.toBeInTheDocument();
   });
 
-  it("keeps eligibility before decision-support match guidance", () => {
+  it("selects a result without losing the list", () => {
     render(<OpportunitiesWorkspace />);
 
-    const eligibility = screen.getAllByText("Formally eligible")[0];
-    const match = screen.getAllByText("92% match")[0];
+    const result = screen.getByRole("button", { name: /Frontend Developer at Contour Software/ });
+    fireEvent.click(result);
 
-    expect(eligibility.compareDocumentPosition(match) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(result).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("region", { name: "Frontend Developer details" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Eligibility explained" })).toBeInTheDocument();
     expect(screen.getByText("Match is decision support, not hiring probability.")).toBeInTheDocument();
   });
 
-  it("offers a useful recovery when filters return no eligible roles", () => {
+  it("offers a useful recovery when filters return no roles", () => {
     render(<OpportunitiesWorkspace />);
 
-    fireEvent.change(screen.getByRole("searchbox", { name: "Search opportunities" }), {
+    fireEvent.change(screen.getByLabelText("Job title, keywords, or company"), {
       target: { value: "astronaut" },
     });
 
-    expect(screen.getByRole("status")).toHaveTextContent("No eligible roles match");
-    expect(screen.getByRole("button", { name: "Clear filters" })).toBeEnabled();
+    const emptyState = screen.getByRole("status");
+    expect(emptyState).toHaveTextContent("No roles match");
+    fireEvent.click(within(emptyState).getByRole("button", { name: "Clear filters" }));
+    expect(screen.getByRole("button", { name: /AI\/ML Intern at Nexora Labs/ })).toBeInTheDocument();
   });
 });
