@@ -15,7 +15,7 @@ export function StudentRoadmap() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
-        <div><p>AI Engineer / roadmap v1</p><h1>Build the next proof.<br /><em>Then the next.</em></h1><span>Your profile suggests what may be complete. You confirm every milestone.</span></div>
+        <div><p>Evidence sequence</p><h1>Career roadmap</h1><span>See what is confirmed, what to do next, and which proof can wait.</span></div>
         <div className={styles.score}><strong>02</strong><span>of 05<br />confirmed</span></div>
       </header>
       <section className={styles.timeline} aria-label="AI Engineer roadmap">

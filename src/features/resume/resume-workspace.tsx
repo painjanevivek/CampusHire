@@ -30,8 +30,8 @@ export function ResumeWorkspace() {
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p className={styles.eyebrow}>Resume evidence / PDF v3</p>
-          <h1>Make every claim <em>traceable.</em></h1>
+          <p className={styles.eyebrow}>Student documents</p>
+          <h1>Resume</h1>
           <p>Your original file stays unchanged. Extracted evidence only affects matching after your review.</p>
         </div>
         <Link href="/resume/builder" className={styles.builderLink}>Open builder <ArrowRight size={17} aria-hidden="true" /></Link>

@@ -28,7 +28,7 @@ describe("OpportunitiesWorkspace", () => {
     const result = screen.getByRole("button", { name: /Frontend Developer at Contour Software/ });
     fireEvent.click(result);
 
-    expect(result).toHaveAttribute("aria-selected", "true");
+    expect(result).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("region", { name: "Frontend Developer details" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Eligibility explained" })).toBeInTheDocument();
     expect(screen.getByText("Match is decision support, not hiring probability.")).toBeInTheDocument();

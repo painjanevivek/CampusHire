@@ -15,7 +15,7 @@ export function ResumeBuilder() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
-        <div><p>Resume builder / rubric v1</p><h1>Improve the words.<br /><em>Keep the truth.</em></h1></div>
+        <div><p>Evidence-backed editing</p><h1>Resume builder</h1><span>Strengthen the writing without turning suggestions into unsupported claims.</span></div>
         <button className={styles.download}><FileDown size={17} aria-hidden="true" /> Download PDF</button>
       </header>
       <div className={styles.grid}>

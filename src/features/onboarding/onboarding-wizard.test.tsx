@@ -17,6 +17,8 @@ describe("OnboardingWizard", () => {
   it("exposes the current profile step in shared navigation semantics", () => {
     render(<OnboardingWizard />);
 
+    expect(screen.getByRole("heading", { name: "Create your profile" })).toBeInTheDocument();
+
     const progress = screen.getByRole("navigation", { name: "Profile steps" });
     expect(progress).toHaveTextContent("Identity");
     expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();

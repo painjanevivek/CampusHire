@@ -53,7 +53,7 @@ export function OnboardingWizard() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
-        <div><p>Evidence profile / autosaved</p><h1>Build a profile teams can <em>trust.</em></h1><span>Required information gets you started. Reviewed evidence makes matching and roadmaps more useful.</span></div>
+        <div><p>Evidence profile / autosaved</p><h1>Create your profile</h1><span>Add the details CampusHire needs to check eligibility and explain role matches.</span></div>
         <div className={styles.stepCount}><strong>{String(step + 1).padStart(2, "0")}</strong><span>of 06<br />steps</span></div>
       </header>
 

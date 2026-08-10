@@ -133,7 +133,7 @@ export function OpportunitiesWorkspace() {
             {matches.map((opportunity) => {
               const isSelected = selected?.id === opportunity.id;
               return (
-                <button key={opportunity.id} type="button" className={`${styles.card} ${isSelected ? styles.selected : ""}`} aria-label={`${opportunity.title} at ${opportunity.company}`} aria-selected={isSelected} onClick={() => setSelectedId(opportunity.id)}>
+                <button key={opportunity.id} type="button" className={`${styles.card} ${isSelected ? styles.selected : ""}`} aria-label={`${opportunity.title} at ${opportunity.company}`} aria-pressed={isSelected} onClick={() => setSelectedId(opportunity.id)}>
                   <span className={styles.companyMark} aria-hidden="true">{opportunity.mark}</span>
                   <span className={styles.identity}>
                     <strong>{opportunity.title}</strong><span>{opportunity.company}</span>

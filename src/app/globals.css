@@ -11,7 +11,9 @@
   --brand-blue: #2557d6;
   --brand-blue-dark: #1845b8;
   --brand-blue-soft: #eef3ff;
+  --brand-soft: var(--brand-blue-soft);
   --verified: #137a4b;
+  --verified-soft: #edf8f2;
   --guidance: #9a5b00;
   --code-bg: #111111;
   --focus: #2563eb;
@@ -91,16 +93,19 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .iconButton { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
 .toast { position: fixed; right: 1rem; bottom: 1rem; z-index: 80; display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
 .toast button { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font-size: 1.2rem; cursor: pointer; }
-.authPage { min-height: 100svh; display: grid; grid-template-columns: minmax(20rem, 36rem) minmax(18rem, 30rem); align-content: center; justify-content: center; gap: clamp(2rem, 8vw, 8rem); padding: 5rem clamp(1rem, 5vw, 5rem); background: radial-gradient(circle at 80% 20%, var(--sage), transparent 34%), var(--canvas); }
-.authPage > .brand { position: absolute; top: 1.5rem; left: clamp(1rem, 5vw, 5rem); }
-.authPanel { display: grid; gap: 1.5rem; }
-.authPanel h1 { max-width: 10ch; margin-bottom: 1rem; font-size: clamp(2.7rem, 6vw, 5rem); }
+.authShell { min-height: 100svh; background: var(--canvas); }
+.authHeader { min-height: 4.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 clamp(1rem, 4vw, 3rem); background: var(--surface); border-bottom: 1px solid var(--line); }
+.authJobsLink { color: var(--brand-blue); font-weight: 800; text-decoration: none; }
+.authJobsLink:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
+.authPage { width: min(64rem, calc(100% - 2rem)); min-height: calc(100svh - 4.5rem); display: grid; grid-template-columns: minmax(20rem, 34rem) minmax(18rem, 1fr); align-content: center; gap: clamp(2rem, 6vw, 5rem); margin: 0 auto; padding: 3.5rem 0; }
+.authPanel { display: grid; gap: 1.5rem; padding: clamp(1.5rem, 4vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-radius: 0.75rem; }
+.authPanel h1 { max-width: 12ch; margin-bottom: 0.75rem; font-size: clamp(2.25rem, 5vw, 3.75rem); }
 .authForm { display: grid; gap: 1rem; }
 .authForm .button { margin-top: 0.25rem; }
 .authFooter { color: var(--ink-muted); }
-.authFooter a { color: var(--teal-deep); font-weight: 800; }
+.authFooter a { color: var(--brand-blue); font-weight: 800; }
 .authPromise { align-self: center; border-left: 1px solid var(--line); padding: 2rem 0 2rem clamp(2rem, 5vw, 4rem); }
-.authPromise blockquote { margin: 0 0 1.5rem; max-width: 18ch; font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 750; line-height: 1.15; letter-spacing: -0.04em; }
+.authPromise blockquote { margin: 0 0 1.5rem; max-width: 24ch; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 750; line-height: 1.2; letter-spacing: -0.035em; }
 .authPromise > p:last-child { color: var(--ink-muted); }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 .listingPage { max-width: 78rem; min-height: 100svh; margin: auto; padding: clamp(2rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem); }
@@ -162,7 +167,7 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .pathPreview { margin-top: 1rem; }
   .featureGrid { grid-template-columns: 1fr; }
   .featureCard, .featureCard + .featureCard { padding: 1.5rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
-  .authPage { grid-template-columns: 1fr; padding-top: 7rem; }
+  .authPage { grid-template-columns: 1fr; padding: 2rem 0 3rem; }
   .authPromise { border-top: 1px solid var(--line); border-left: 0; padding: 2rem 0 0; }
   .roleList article { grid-template-columns: 1fr; }
   .adminTable { overflow-x: auto; }

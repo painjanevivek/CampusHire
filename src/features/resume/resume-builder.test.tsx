@@ -7,6 +7,8 @@ describe("ResumeBuilder", () => {
   it("keeps suggestions student-controlled", () => {
     render(<ResumeBuilder />);
 
+    expect(screen.getByRole("heading", { name: "Resume builder" })).toBeInTheDocument();
+
     expect(screen.getByText("Worked on a placement project.")).toBeInTheDocument();
     expect(screen.getByText(/separates eligibility rules/)).toBeInTheDocument();
 

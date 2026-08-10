@@ -10,6 +10,11 @@ vi.mock("@/lib/api/client", () => ({ csrfRequest: csrfRequestMock }));
 describe("ResumeWorkspace", () => {
   beforeEach(() => csrfRequestMock.mockReset());
 
+  it("uses the shared student page language", () => {
+    render(<ResumeWorkspace />);
+    expect(screen.getByRole("heading", { name: "Resume" })).toBeInTheDocument();
+  });
+
   it("preserves the selected filename when upload fails", async () => {
     csrfRequestMock.mockRejectedValueOnce(new Error("offline"));
     render(<ResumeWorkspace />);
