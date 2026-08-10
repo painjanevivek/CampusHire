@@ -11,7 +11,7 @@ describe("StudentWorkspace", () => {
       </StudentWorkspace>,
     );
 
-    const navigation = screen.getByRole("navigation", { name: "Workspace" });
+    const navigation = screen.getByRole("navigation", { name: "Student navigation" });
     expect(navigation).toContainElement(
       screen.getByRole("link", { name: "Dashboard" }),
     );
@@ -37,8 +37,9 @@ describe("StudentWorkspace", () => {
       </StudentWorkspace>,
     );
 
-    expect(screen.getAllByRole("navigation", { name: "Workspace" })).toHaveLength(1);
-    expect(screen.getByRole("complementary", { name: "Student workspace" })).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation", { name: "Student navigation" })).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveAttribute("href", "/");
+    expect(screen.queryByRole("complementary", { name: "Student workspace" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("link").filter((link) => link.hasAttribute("aria-current"))).toEqual([
       screen.getByRole("link", { name: active }),
     ]);

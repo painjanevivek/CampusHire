@@ -1,13 +1,18 @@
 :root {
-  --canvas: #fafafa;
+  --canvas: #f7f8fa;
   --surface: #ffffff;
   --surface-muted: #f3f4f6;
-  --ink: #111827;
-  --ink-muted: #6b7280;
-  --line: #e5e7eb;
-  --primary: #000000;
-  --accent-emerald: #10b981;
-  --accent-blue: #2563eb;
+  --ink: #1f2937;
+  --ink-muted: #5f6673;
+  --line: #d7dae0;
+  --primary: #2557d6;
+  --accent-emerald: #137a4b;
+  --accent-blue: #2557d6;
+  --brand-blue: #2557d6;
+  --brand-blue-dark: #1845b8;
+  --brand-blue-soft: #eef3ff;
+  --verified: #137a4b;
+  --guidance: #9a5b00;
   --code-bg: #111111;
   --focus: #2563eb;
   --radius-sm: 4px;
@@ -43,7 +48,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .skipLink { position: fixed; z-index: 100; top: 0.5rem; left: 0.5rem; transform: translateY(-180%); border-radius: var(--radius-sm); padding: 0.75rem 1rem; background: var(--ink); color: var(--surface); }
 .skipLink:focus { transform: translateY(0); }
-h1, h2 { font-family: var(--font-display), Georgia, serif; font-weight: 400; }
+h1, h2 { font-family: var(--font-body), Inter, system-ui, sans-serif; font-weight: 750; }
 button, .button, nav, .brand { font-family: var(--font-interface), Inter, sans-serif; letter-spacing: -0.025em; }
 .badge, .pathLabel { font-family: var(--font-mono), monospace; }
 
