@@ -1,3 +1,4 @@
 import { ResumeWorkspace } from "@/features/resume/resume-workspace";
+import { StudentWorkspace } from "@/components/layout/student-workspace";
 
-export default function ResumePage() { return <ResumeWorkspace />; }
+export default function ResumePage() { return <StudentWorkspace active="My Resume"><ResumeWorkspace /></StudentWorkspace>; }

@@ -1,4 +1,6 @@
-import { CheckCircle2, CircleAlert, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Alert, Badge } from "@/components/ui/feedback";
-export default function RoleDetail(){return <main id="main-content" className="roleDetail"><header><p className="pathLabel">Northstar Labs · Graduate hiring</p><h1>Graduate Software Engineer</h1><p><MapPin size={18}/>Pune · Hybrid · ₹8–10 LPA</p><Button>Apply with resume v3</Button></header><div className="decisionGrid"><section><p className="eyebrow">Formal eligibility</p><h2><CheckCircle2/>Eligible</h2><ul><li>CGPA 8.2 meets minimum 7.0</li><li>0 active backlogs meets maximum 0</li><li>Graduation year 2027 is allowed</li></ul><small>Rule set northstar-v1</small></section><section><p className="eyebrow">Role match</p><h2>Strong · 84</h2><p>Python, APIs, and tested backend projects align well. Add deployment evidence to strengthen the match.</p><Badge>Scoring v1</Badge></section></div><Alert><CircleAlert size={18}/>Eligibility is a rule result. Match is decision support—not a hiring probability.</Alert></main>}
+import { StudentWorkspace } from "@/components/layout/student-workspace";
+import { OpportunityDetail } from "@/features/opportunities/opportunity-detail";
+
+export default function RoleDetailPage() {
+  return <StudentWorkspace active="Opportunities"><OpportunityDetail /></StudentWorkspace>;
+}

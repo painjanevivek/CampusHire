@@ -1,4 +1,51 @@
-import { ArrowRight, Bell, BriefcaseBusiness, FileText, Route } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button";
-import { Badge } from "@/components/ui/feedback";
-export default function Dashboard(){return <main id="main-content" className="dashboardPage"><header><div><p className="eyebrow">Good morning, Asha</p><h1>Deploy one project next.</h1><p className="lede">That single step improves your resume evidence, role match, and AI Engineer roadmap.</p></div><ButtonLink href="/roadmap">Open milestone<ArrowRight size={18}/></ButtonLink></header><section className="dashboardGrid"><article className="primaryCard"><Route/><p className="pathLabel">Primary next action</p><h2>Publish your matching API</h2><p>Add monitoring and a short technical write-up.</p><Badge tone="warning">Roadmap · next</Badge></article><article><FileText/><p className="pathLabel">Profile readiness</p><h2>83%</h2><p>Required profile complete · resume link recommended</p></article><article><BriefcaseBusiness/><p className="pathLabel">Opportunities</p><h2>2 strong matches</h2><p>Both formally eligible</p></article><article><Bell/><p className="pathLabel">Recent update</p><h2>Application received</h2><p>Northstar Labs · today</p></article></section></main>}
+import { StudentWorkspace } from "@/components/layout/student-workspace";
+import {
+  StudentDashboard,
+  type StudentDashboardData,
+} from "@/features/dashboard/student-dashboard";
+
+const sampleDashboard: StudentDashboardData = {
+  studentName: "Aarav",
+  readiness: 83,
+  state: "ready",
+  nextAction: {
+    title: "Add deployment evidence",
+    description:
+      "Publish one working project and attach its live link with a short technical note.",
+    reason:
+      "A verified deployment is the clearest evidence gap between your profile and AI platform roles.",
+    href: "/roadmap",
+  },
+  evidence: [
+    { label: "Formal eligibility", value: "Verified", status: "verified" },
+    { label: "Resume evidence", value: "Reviewed", status: "verified" },
+    { label: "Live deployment", value: "Missing", status: "pending" },
+    { label: "Project note", value: "In review", status: "review" },
+  ],
+  opportunities: [
+    {
+      company: "Northstar Labs",
+      role: "AI Platform Intern",
+      location: "Bengaluru · Hybrid",
+      eligibility: "Formally eligible",
+      match: 92,
+      href: "/opportunities/ai-platform-intern",
+    },
+    {
+      company: "Atlas Systems",
+      role: "Backend Engineering Intern",
+      location: "Pune · On-site",
+      eligibility: "Formally eligible",
+      match: 86,
+      href: "/opportunities/backend-engineering-intern",
+    },
+  ],
+};
+
+export default function Dashboard() {
+  return (
+    <StudentWorkspace active="Dashboard">
+      <StudentDashboard data={sampleDashboard} />
+    </StudentWorkspace>
+  );
+}

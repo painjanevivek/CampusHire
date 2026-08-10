@@ -1,0 +1,34 @@
+.page { max-width: 1280px; min-height: 100vh; margin: 0 auto; padding: clamp(24px, 4vw, 56px); }
+.header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-block-end: 24px; padding: 24px 8px; }
+.header p, .suggestion > p { color: var(--accent-blue); font-family: var(--font-mono), monospace; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; }
+.header h1 { margin: 0; font-size: clamp(3.3rem, 7vw, 7rem); line-height: .82; letter-spacing: -.045em; }
+.header h1 em { color: var(--accent-blue); font-weight: 400; }
+.download, .primary, .secondary { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 15px; border-radius: var(--radius-pill); font-family: var(--font-interface), sans-serif; font-weight: 600; cursor: pointer; }
+.download, .primary { color: white; background: var(--primary); border: 1px solid var(--primary); }
+.secondary { color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
+.grid { display: grid; grid-template-columns: minmax(520px, 1fr) minmax(300px, 380px); gap: 24px; align-items: start; }
+.paper { min-height: 900px; padding: clamp(40px, 6vw, 76px); background: white; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); }
+.paperHeader { display: flex; justify-content: space-between; gap: 24px; padding-block-end: 32px; border-block-end: 2px solid var(--ink); }
+.paperHeader h2 { margin: 0; font-family: var(--font-interface), sans-serif; font-size: 2.25rem; }
+.paperHeader p { color: var(--ink-muted); }
+.paperHeader > span, .skills { font-family: var(--font-mono), monospace; font-size: .68rem; }
+.paper section { margin-block-start: 42px; }
+.paper h3 { padding-block-end: 8px; border-block-end: 1px solid var(--ink); font-family: var(--font-mono), monospace; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+.review { position: sticky; inset-block-start: 24px; display: grid; gap: 16px; }
+.score, .guardrail, .suggestion { padding: 20px; background: var(--glass); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-soft); backdrop-filter: blur(16px); }
+.score { display: flex; align-items: center; gap: 12px; }
+.score svg { color: var(--accent-blue); }
+.score div { display: grid; gap: 3px; }
+.score span { color: var(--ink-muted); font-size: .7rem; }
+.score strong { font-family: var(--font-mono), monospace; }
+.guardrail { margin: 0; color: #047857; border-inline-start: 4px solid var(--accent-emerald); font-size: .76rem; }
+.suggestion { background: var(--surface); }
+.suggestion h2 { font-size: 2.2rem; line-height: .95; }
+.suggestion del { display: block; color: var(--ink-muted); font-size: .75rem; }
+.suggestion blockquote, .suggestion textarea { width: 100%; margin: 20px 0; padding: 16px; color: #d1d5db; background: var(--code-bg); border: 1px solid #1f2937; border-radius: 14px; font-family: var(--font-mono), monospace; font-size: .73rem; line-height: 1.6; }
+.suggestion textarea { min-height: 126px; resize: vertical; }
+.suggestion small { color: var(--ink-muted); }
+.actions { display: flex; justify-content: flex-end; gap: 8px; margin-block-start: 20px; }
+.accepted { margin: 16px 0 0; color: #047857; font-size: .75rem; }
+@media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } .review { position: static; } }
+@media (max-width: 700px) { .page { padding: 12px; } .header { align-items: flex-start; flex-direction: column; } .header h1 { font-size: clamp(3.4rem, 16vw, 5rem); } .grid { display: block; } .paper { min-height: 700px; padding: 28px 22px; } .paperHeader { flex-direction: column; } .review { margin-block-start: 16px; } }
