@@ -69,7 +69,7 @@ const stateMessages: Record<
     detail: "We will preserve your current eligibility until the review is complete.",
   },
   "ai-unavailable": {
-    title: "Match explanations are temporarily unavailable.",
+    title: "Check unavailable. Match explanations are temporarily unavailable.",
     detail: "Formal eligibility remains visible and is not affected.",
   },
   error: {
@@ -104,7 +104,7 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
         </section>
       ) : null}
 
-      <section className={styles.actionGrid} aria-labelledby="next-action-title">
+      <section className={styles.actionGrid} aria-label="Next readiness action">
         <article className={styles.primaryAction} data-dashboard-reveal>
           <div className={styles.actionNumber} aria-hidden="true">
             01

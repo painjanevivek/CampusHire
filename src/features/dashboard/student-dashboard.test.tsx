@@ -37,6 +37,7 @@ describe("StudentDashboard", () => {
   it("prioritizes one explained readiness action before eligible opportunities", () => {
     render(<StudentDashboard data={readyDashboard} />);
 
+    expect(screen.getByRole("region", { name: "Next readiness action" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Add deployment evidence" }),
     ).toBeInTheDocument();
@@ -56,6 +57,13 @@ describe("StudentDashboard", () => {
     expect(
       screen.getByText("Match is decision support, not hiring probability."),
     ).toBeInTheDocument();
+  });
+
+  it("does not turn unavailable match guidance into an eligibility decision", () => {
+    render(<StudentDashboard data={{ ...readyDashboard, state: "ai-unavailable" }} />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("Check unavailable");
+    expect(screen.getByRole("article", { name: "AI Platform Intern at Northstar Labs" })).toHaveTextContent("Formally eligible");
   });
 
   it.each([
