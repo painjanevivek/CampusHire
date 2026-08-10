@@ -6,8 +6,8 @@
 .stepCount { min-width: 142px; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 18px; color: var(--ink); background: var(--brand-soft); border: 1px solid color-mix(in srgb, var(--brand-blue) 30%, var(--line)); border-radius: 12px; }
 .stepCount strong { color: var(--brand-blue); font-size: 2rem; }
 .stepCount span { margin: 0 !important; color: var(--ink-muted) !important; font-size: .75rem; }
-.layout { display: grid; grid-template-columns: minmax(230px, 280px) minmax(0, 1fr); gap: 24px; margin-top: 28px; }
-.stepRail, .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.layout { min-width: 0; display: grid; grid-template-columns: minmax(230px, 280px) minmax(0, 1fr); gap: 24px; margin-top: 28px; }
+.stepRail, .panel { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .stepRail { align-self: start; padding: 20px; }
 .stepRail ol { display: grid; gap: 6px; margin: 18px 0; padding: 0; list-style: none; }
 .stepRail li { min-height: 46px; display: grid; grid-template-columns: 24px 18px 1fr; align-items: center; gap: 8px; padding: 8px 10px; color: var(--ink-muted); border-radius: 8px; font-size: .875rem; }
@@ -28,5 +28,5 @@
 .reviewList span { display: grid; gap: 4px; }
 .reviewList small { color: var(--ink-muted); }
 .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
-@media (max-width: 880px) { .layout { grid-template-columns: 1fr; } .stepRail ol { display: flex; overflow-x: auto; } .stepRail li { min-width: max-content; } .stepRail button { width: auto; padding: 0 16px; } }
+@media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } .stepRail ol { width: 100%; max-width: 100%; display: flex; overflow-x: auto; } .stepRail li { min-width: max-content; } .stepRail button { width: auto; padding: 0 16px; } }
 @media (max-width: 600px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } .hero { align-items: start; flex-direction: column; } .stepCount { width: 100%; justify-content: flex-start; } .panel { padding: 22px 18px; } .form { grid-template-columns: 1fr; } .fieldRow, .actions { grid-column: 1; } .fieldRow { grid-template-columns: 1fr; } }
