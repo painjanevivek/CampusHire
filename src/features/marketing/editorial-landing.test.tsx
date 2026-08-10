@@ -1,97 +1,53 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { EditorialLanding } from "./editorial-landing";
 
+const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
+
 describe("EditorialLanding", () => {
-  it("leads students from profile creation to opportunities", () => {
+  beforeEach(() => pushMock.mockReset());
+
+  it("makes opportunity search the first task", () => {
     render(<EditorialLanding />);
 
-    expect(
-      screen.getByRole("heading", {
-        name: "Build a placement story you can stand behind.",
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Create profile" })).toHaveLength(
-      2,
-    );
-    for (const link of screen.getAllByRole("link", { name: "Create profile" })) {
-      expect(link).toHaveAttribute("href", "/sign-up");
-    }
-    expect(
-      screen.getByRole("link", { name: "Browse opportunities" }),
-    ).toHaveAttribute("href", "/opportunities");
-  });
-
-  it("explains eligibility separately from role match", () => {
-    render(<EditorialLanding />);
-
-    expect(
-      screen.getAllByRole("heading", { name: "Formal eligibility" }).length,
-    ).toBeGreaterThan(0);
-    expect(
-      screen.getAllByRole("heading", { name: "Role match" }).length,
-    ).toBeGreaterThan(0);
-    expect(
-      screen.getAllByText("A match score never decides formal eligibility.")
-        .length,
-    ).toBeGreaterThan(0);
-  });
-
-  it("keeps explanations operable without hover", () => {
-    render(<EditorialLanding />);
-
-    const eligibility = screen.getByRole("button", {
-      name: "Formal eligibility",
+    expect(screen.getByRole("search")).toBeInTheDocument();
+    expect(screen.getByLabelText("Job title, keywords, or company")).toBeInTheDocument();
+    expect(screen.getByLabelText("City, state, or remote")).toBeInTheDocument();
+    const action = screen.getByRole("button", { name: "Find opportunities" });
+    expect(action).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Job title, keywords, or company"), {
+      target: { value: "software engineer" },
     });
-    expect(eligibility).toHaveAttribute("aria-expanded", "true");
-
-    const resume = screen.getByRole("button", {
-      name: "Reviewed resume improvements",
-    });
-    fireEvent.click(resume);
-
-    expect(resume).toHaveAttribute("aria-expanded", "true");
-    expect(eligibility).toHaveAttribute("aria-expanded", "false");
+    expect(action).toBeEnabled();
   });
 
-  it("keeps the principle carousel under explicit student control", () => {
+  it("sends a keyword and location search to opportunities", () => {
     render(<EditorialLanding />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Next principle" }));
+    fireEvent.change(screen.getByLabelText("Job title, keywords, or company"), {
+      target: { value: "frontend developer" },
+    });
+    fireEvent.change(screen.getByLabelText("City, state, or remote"), {
+      target: { value: "Pune" },
+    });
+    fireEvent.submit(screen.getByRole("search"));
 
-    expect(
-      screen.getByRole("heading", { name: "Rules stay accountable" }),
-    ).toBeInTheDocument();
+    expect(pushMock).toHaveBeenCalledWith(
+      "/opportunities?q=frontend+developer&location=Pune",
+    );
   });
 
-  it("preserves all content when reduced motion is requested", () => {
-    vi.stubGlobal(
-      "matchMedia",
-      vi.fn((query: string) => ({
-        matches: true,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
-    );
+  it("keeps one profile action and separates eligibility from match", () => {
+    render(<EditorialLanding />);
 
-    try {
-      render(<EditorialLanding />);
-      expect(
-        screen.getByRole("heading", {
-          name: "Build a placement story you can stand behind.",
-        }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: "Next principle" }),
-      ).toBeEnabled();
-    } finally {
-      vi.unstubAllGlobals();
-    }
+    expect(screen.getAllByRole("link", { name: "Create profile" })).toHaveLength(1);
+    expect(screen.getByRole("heading", { name: "Formal eligibility" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
+    expect(screen.getByText("A match score never decides formal eligibility.")).toBeInTheDocument();
   });
 });
