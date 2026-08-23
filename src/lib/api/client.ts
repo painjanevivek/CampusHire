@@ -6,6 +6,7 @@ export class ApiError extends Error {
     message: string,
     public readonly code: string = "http_error",
     public readonly correlationId?: string,
+    public readonly details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -13,7 +14,11 @@ export class ApiError extends Error {
 }
 
 type ErrorBody = {
-  detail?: string;
+  detail?: string | {
+    code?: string;
+    message?: string;
+    [key: string]: unknown;
+  };
   error?: {
     code?: string;
     message?: string;
@@ -24,6 +29,10 @@ type ErrorBody = {
 function cookie(name: string): string | undefined {
   if (typeof document === "undefined") return undefined;
   return document.cookie.split("; ").find((item) => item.startsWith(`${name}=`))?.split("=")[1];
+}
+
+export function apiPath(path: string): string {
+  return `${apiUrl}${path}`;
 }
 
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
@@ -37,11 +46,14 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({})) as ErrorBody;
+    const structuredDetail = typeof body.detail === "object" ? body.detail : undefined;
     throw new ApiError(
       response.status,
-      body.error?.message ?? body.detail ?? "CampusHire could not complete this request.",
-      body.error?.code ?? "http_error",
+      body.error?.message ?? structuredDetail?.message ??
+        (typeof body.detail === "string" ? body.detail : "CampusHire could not complete this request."),
+      body.error?.code ?? structuredDetail?.code ?? "http_error",
       body.error?.correlation_id ?? response.headers.get("X-Request-ID") ?? undefined,
+      structuredDetail,
     );
   }
   if (response.status === 204) return undefined as T;

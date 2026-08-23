@@ -49,6 +49,52 @@ export type EducationItem = {
 };
 
 /**
+ * EducationUpdate
+ */
+export type EducationUpdate = {
+    /**
+     * Education
+     */
+    education: Array<EducationItem>;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
+};
+
+/**
+ * ExtractionFieldDecision
+ */
+export type ExtractionFieldDecision = {
+    /**
+     * Action
+     */
+    action: 'accept' | 'edit' | 'reject';
+    /**
+     * Field Path
+     */
+    field_path: string;
+    /**
+     * Value
+     */
+    value?: string | Array<string> | null;
+};
+
+/**
+ * ExtractionReviewRequest
+ */
+export type ExtractionReviewRequest = {
+    /**
+     * Decisions
+     */
+    decisions: Array<ExtractionFieldDecision>;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -66,6 +112,66 @@ export type HealthResponse = {
      * Status
      */
     status: 'ok';
+};
+
+/**
+ * IdentityUpdate
+ */
+export type IdentityUpdate = {
+    /**
+     * Academic Year
+     */
+    academic_year?: string | null;
+    /**
+     * Department
+     */
+    department?: string | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Full Name
+     */
+    full_name?: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name?: string | null;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
+    /**
+     * Phone
+     */
+    phone?: string | null;
+    /**
+     * Prn
+     */
+    prn?: string | null;
+};
+
+/**
+ * LinksUpdate
+ */
+export type LinksUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Github Url
+     */
+    github_url?: string | null;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
+    /**
+     * Portfolio Url
+     */
+    portfolio_url?: string | null;
 };
 
 /**
@@ -106,6 +212,24 @@ export type MembershipResponse = {
 };
 
 /**
+ * PreferencesUpdate
+ */
+export type PreferencesUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
+    /**
+     * Target Roles
+     */
+    target_roles: Array<string>;
+};
+
+/**
  * ProfileResponse
  */
 export type ProfileResponse = {
@@ -138,6 +262,14 @@ export type ProfileResponse = {
      */
     full_name: string | null;
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string | null;
+    /**
      * Institution Name
      */
     institution_name: string | null;
@@ -162,6 +294,10 @@ export type ProfileResponse = {
      */
     readiness: number;
     /**
+     * Revision
+     */
+    revision: number;
+    /**
      * Skills
      */
     skills: Array<{
@@ -171,6 +307,10 @@ export type ProfileResponse = {
      * Target Roles
      */
     target_roles: Array<string>;
+    /**
+     * Updated At
+     */
+    updated_at: string;
 };
 
 /**
@@ -189,6 +329,10 @@ export type ProfileUpdate = {
      * Education
      */
     education?: Array<EducationItem> | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision?: number | null;
     /**
      * Full Name
      */
@@ -292,6 +436,157 @@ export type ResumeContent = {
 };
 
 /**
+ * ResumeJobResponse
+ */
+export type ResumeJobResponse = {
+    /**
+     * Attempts
+     */
+    attempts: number;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Retryable
+     */
+    retryable: boolean;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * ResumeSuggestionResponse
+ */
+export type ResumeSuggestionResponse = {
+    /**
+     * Decided Text
+     */
+    decided_text: string | null;
+    /**
+     * Field Path
+     */
+    field_path: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Original Text
+     */
+    original_text: string;
+    /**
+     * Proposed Text
+     */
+    proposed_text: string;
+    /**
+     * Rationale
+     */
+    rationale: string;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * ResumeUploadResponse
+ */
+export type ResumeUploadResponse = {
+    /**
+     * Duplicate
+     */
+    duplicate: boolean;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Job Id
+     */
+    job_id: string | null;
+    /**
+     * Scan Status
+     */
+    scan_status: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+};
+
+/**
+ * ResumeVersionResponse
+ */
+export type ResumeVersionResponse = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Extracted Data
+     */
+    extracted_data?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Id
+     */
+    id: string;
+    job?: ResumeJobResponse | null;
+    /**
+     * Original Name
+     */
+    original_name: string;
+    /**
+     * Page Count
+     */
+    page_count: number | null;
+    /**
+     * Review Completed At
+     */
+    review_completed_at: string | null;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Scan Status
+     */
+    scan_status: string;
+    /**
+     * Source
+     */
+    source: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Suggestions
+     */
+    suggestions?: Array<ResumeSuggestionResponse>;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+};
+
+/**
  * SignInRequest
  */
 export type SignInRequest = {
@@ -331,6 +626,38 @@ export type SkillItem = {
      * Proficiency
      */
     proficiency: 'learning' | 'comfortable' | 'strong';
+};
+
+/**
+ * SkillsUpdate
+ */
+export type SkillsUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
+    /**
+     * Skills
+     */
+    skills: Array<SkillItem>;
+};
+
+/**
+ * SuggestionDecisionRequest
+ */
+export type SuggestionDecisionRequest = {
+    /**
+     * Action
+     */
+    action: 'accept' | 'edit' | 'reject';
+    /**
+     * Edited Text
+     */
+    edited_text?: string | null;
 };
 
 /**
@@ -681,6 +1008,158 @@ export type PatchProfileApiV1ProfilePatchResponses = {
 
 export type PatchProfileApiV1ProfilePatchResponse = PatchProfileApiV1ProfilePatchResponses[keyof PatchProfileApiV1ProfilePatchResponses];
 
+export type ReplaceEducationApiV1ProfileEducationPutData = {
+    body: EducationUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/education';
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutError = ReplaceEducationApiV1ProfileEducationPutErrors[keyof ReplaceEducationApiV1ProfileEducationPutErrors];
+
+export type ReplaceEducationApiV1ProfileEducationPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutResponse = ReplaceEducationApiV1ProfileEducationPutResponses[keyof ReplaceEducationApiV1ProfileEducationPutResponses];
+
+export type PatchIdentityApiV1ProfileIdentityPatchData = {
+    body: IdentityUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/identity';
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchError = PatchIdentityApiV1ProfileIdentityPatchErrors[keyof PatchIdentityApiV1ProfileIdentityPatchErrors];
+
+export type PatchIdentityApiV1ProfileIdentityPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchResponse = PatchIdentityApiV1ProfileIdentityPatchResponses[keyof PatchIdentityApiV1ProfileIdentityPatchResponses];
+
+export type ReplaceLinksApiV1ProfileLinksPutData = {
+    body: LinksUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/links';
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutError = ReplaceLinksApiV1ProfileLinksPutErrors[keyof ReplaceLinksApiV1ProfileLinksPutErrors];
+
+export type ReplaceLinksApiV1ProfileLinksPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutResponse = ReplaceLinksApiV1ProfileLinksPutResponses[keyof ReplaceLinksApiV1ProfileLinksPutResponses];
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutData = {
+    body: PreferencesUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/preferences';
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutError = ReplacePreferencesApiV1ProfilePreferencesPutErrors[keyof ReplacePreferencesApiV1ProfilePreferencesPutErrors];
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutResponse = ReplacePreferencesApiV1ProfilePreferencesPutResponses[keyof ReplacePreferencesApiV1ProfilePreferencesPutResponses];
+
+export type ReplaceSkillsApiV1ProfileSkillsPutData = {
+    body: SkillsUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/skills';
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutError = ReplaceSkillsApiV1ProfileSkillsPutErrors[keyof ReplaceSkillsApiV1ProfileSkillsPutErrors];
+
+export type ReplaceSkillsApiV1ProfileSkillsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutResponse = ReplaceSkillsApiV1ProfileSkillsPutResponses[keyof ReplaceSkillsApiV1ProfileSkillsPutResponses];
+
+export type ListResumesApiV1ResumesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/resumes';
+};
+
+export type ListResumesApiV1ResumesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListResumesApiV1ResumesGetError = ListResumesApiV1ResumesGetErrors[keyof ListResumesApiV1ResumesGetErrors];
+
+export type ListResumesApiV1ResumesGetResponses = {
+    /**
+     * Response List Resumes Api V1 Resumes Get
+     *
+     * Successful Response
+     */
+    200: Array<ResumeVersionResponse>;
+};
+
+export type ListResumesApiV1ResumesGetResponse = ListResumesApiV1ResumesGetResponses[keyof ListResumesApiV1ResumesGetResponses];
+
 export type UploadResumeApiV1ResumesPostData = {
     body: BodyUploadResumeApiV1ResumesPost;
     path?: never;
@@ -699,39 +1178,67 @@ export type UploadResumeApiV1ResumesPostError = UploadResumeApiV1ResumesPostErro
 
 export type UploadResumeApiV1ResumesPostResponses = {
     /**
-     * Response Upload Resume Api V1 Resumes Post
-     *
      * Successful Response
      */
-    202: {
-        [key: string]: unknown;
-    };
+    202: ResumeUploadResponse;
 };
 
 export type UploadResumeApiV1ResumesPostResponse = UploadResumeApiV1ResumesPostResponses[keyof UploadResumeApiV1ResumesPostResponses];
 
-export type GenerateResumeApiV1ResumesGeneratePostData = {
+export type GenerateResumeVersionApiV1ResumesGeneratePostData = {
     body: ResumeContent;
     path?: never;
     query?: never;
     url: '/api/v1/resumes/generate';
 };
 
-export type GenerateResumeApiV1ResumesGeneratePostErrors = {
+export type GenerateResumeVersionApiV1ResumesGeneratePostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GenerateResumeApiV1ResumesGeneratePostError = GenerateResumeApiV1ResumesGeneratePostErrors[keyof GenerateResumeApiV1ResumesGeneratePostErrors];
+export type GenerateResumeVersionApiV1ResumesGeneratePostError = GenerateResumeVersionApiV1ResumesGeneratePostErrors[keyof GenerateResumeVersionApiV1ResumesGeneratePostErrors];
 
-export type GenerateResumeApiV1ResumesGeneratePostResponses = {
+export type GenerateResumeVersionApiV1ResumesGeneratePostResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    201: ResumeVersionResponse;
 };
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostResponse = GenerateResumeVersionApiV1ResumesGeneratePostResponses[keyof GenerateResumeVersionApiV1ResumesGeneratePostResponses];
+
+export type ReadResumeApiV1ResumesResumeIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}';
+};
+
+export type ReadResumeApiV1ResumesResumeIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadResumeApiV1ResumesResumeIdGetError = ReadResumeApiV1ResumesResumeIdGetErrors[keyof ReadResumeApiV1ResumesResumeIdGetErrors];
+
+export type ReadResumeApiV1ResumesResumeIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReadResumeApiV1ResumesResumeIdGetResponse = ReadResumeApiV1ResumesResumeIdGetResponses[keyof ReadResumeApiV1ResumesResumeIdGetResponses];
 
 export type DownloadResumeApiV1ResumesResumeIdDownloadGetData = {
     body?: never;
@@ -760,3 +1267,97 @@ export type DownloadResumeApiV1ResumesResumeIdDownloadGetResponses = {
      */
     200: unknown;
 };
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/retry';
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostError = RetryResumeJobApiV1ResumesResumeIdRetryPostErrors[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostErrors];
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponse = RetryResumeJobApiV1ResumesResumeIdRetryPostResponses[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostResponses];
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostData = {
+    body: ExtractionReviewRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/review';
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostError = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors];
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponse = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses];
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostData = {
+    body: SuggestionDecisionRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+        /**
+         * Suggestion Id
+         */
+        suggestion_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/suggestions/{suggestion_id}';
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostError = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors];
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];

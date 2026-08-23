@@ -34,6 +34,22 @@ describe("API client", () => {
     );
   });
 
+  it("preserves typed conflict details for recoverable editing flows", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      detail: {
+        code: "profile_revision_conflict",
+        message: "The profile changed in another session.",
+        current_revision: 4,
+      },
+    }), { status: 409, headers: { "Content-Type": "application/json" } })));
+
+    await expect(apiRequest("/profile")).rejects.toEqual(expect.objectContaining({
+      status: 409,
+      code: "profile_revision_conflict",
+      details: expect.objectContaining({ current_revision: 4 }),
+    }));
+  });
+
   it("refreshes a rejected CSRF token once and retries the mutation", async () => {
     document.cookie = "campushire_csrf=stale; Path=/";
     const fetchMock = vi.fn()

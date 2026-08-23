@@ -16,8 +16,16 @@
 .stepRail li[data-state="complete"] { color: var(--verified); }
 .stepRail button { min-height: 44px; width: 100%; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 10px; font-weight: 700; cursor: pointer; }
 .panel { padding: clamp(24px, 4vw, 44px); }
+.panelHeader { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
 .panelHeader h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); }
 .panelHeader > span { display: block; max-width: 600px; margin: 10px 0 28px; color: var(--ink-muted); }
+.panelHeader > div:first-child > span { display: block; max-width: 600px; margin: 10px 0 28px; color: var(--ink-muted); }
+.saveStatus { min-width: max-content; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: var(--ink-muted); background: var(--canvas); border: 1px solid var(--line); border-radius: 999px; font-size: .75rem; font-weight: 700; }
+.saveStatus[data-state="saved"] { color: var(--verified); background: var(--verified-soft); }
+.saveStatus[data-state="conflict"], .saveStatus[data-state="error"] { color: var(--status-warning); }
+.saveStatus[data-state="saving"] svg, .loadingState svg { animation: spin .9s linear infinite; }
+.inlineAction { margin-left: 10px; padding: 5px 8px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 7px; font: inherit; font-weight: 700; cursor: pointer; }
+.loadingState { min-height: 260px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--ink-muted); }
 .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .form :global(.field) { align-content: start; }
 .form :global(.field input), .form :global(.field select) { min-height: 50px; border-radius: 10px; }
@@ -30,3 +38,6 @@
 .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
 @media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } .stepRail ol { width: 100%; max-width: 100%; display: flex; overflow-x: auto; } .stepRail li { min-width: max-content; } .stepRail button { width: auto; padding: 0 16px; } }
 @media (max-width: 600px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } .hero { align-items: start; flex-direction: column; } .stepCount { width: 100%; justify-content: flex-start; } .panel { padding: 22px 18px; } .form { grid-template-columns: 1fr; } .fieldRow, .actions { grid-column: 1; } .fieldRow { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .panelHeader { flex-direction: column; } .saveStatus { order: -1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .saveStatus[data-state="saving"] svg, .loadingState svg { animation: none; } }

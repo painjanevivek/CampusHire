@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
@@ -9,6 +10,7 @@ import { ApiError, csrfRequest } from "@/lib/api/client";
 type User = { id: string; email: string; role: string };
 
 export function AuthForm({ mode }: { mode: "sign-up" | "sign-in" }) {
+  const router = useRouter();
   const creating = mode === "sign-up";
   const [status, setStatus] = useState<"idle" | "submitting" | "complete">("idle");
   const [error, setError] = useState("");
@@ -24,6 +26,7 @@ export function AuthForm({ mode }: { mode: "sign-up" | "sign-in" }) {
         body: JSON.stringify({ email: data.get("email"), password: data.get("password") }),
       });
       setStatus("complete");
+      router.push(creating ? "/onboarding" : "/dashboard");
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
       setStatus("idle");

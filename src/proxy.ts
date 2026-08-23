@@ -3,13 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const development = process.env.NODE_ENV === "development";
+  const configuredApi = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+  let apiOrigin = "http://localhost:8000";
+  try {
+    const parsed = new URL(configuredApi);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") apiOrigin = parsed.origin;
+  } catch {
+    // A malformed deployment value remains blocked by the restrictive fallback policy.
+  }
   const policy = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${development ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
-    "connect-src 'self' http://localhost:8000",
+    `connect-src 'self' ${apiOrigin}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

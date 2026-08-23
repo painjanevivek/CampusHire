@@ -93,6 +93,7 @@ h1 { margin-bottom: 1.5rem; max-width: 12ch; font-size: clamp(3rem, 7vw, 6.6rem)
 .badge--warning { background: color-mix(in oklch, var(--marigold) 28%, var(--surface)); color: var(--ink); }
 .alert { border-left: 4px solid var(--teal); padding: 0.9rem 1rem; background: color-mix(in oklch, var(--teal) 8%, var(--surface)); }
 .alert--error { border-color: var(--tangerine-deep); }
+.alert--warning { border-color: var(--status-warning); background: color-mix(in oklch, var(--status-warning) 8%, var(--surface)); }
 .alert--success { border-color: var(--evergreen); background: var(--sage); }
 .emptyState { max-width: 34rem; padding: 2rem; text-align: center; }
 dialog { width: min(32rem, calc(100% - 2rem)); border: 0; border-radius: var(--radius-lg); padding: 1.5rem; background: var(--surface); color: var(--ink); box-shadow: var(--shadow-soft); }

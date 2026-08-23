@@ -37,7 +37,7 @@ export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${display.variable} ${body.variable} ${interfaceFont.variable} ${monospace.variable}`}>
         <a className="skipLink" href="#main-content">Skip to main content</a>
         {children}

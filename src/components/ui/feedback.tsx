@@ -4,7 +4,7 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
   return <span className={`badge badge--${tone}`}>{children}</span>;
 }
 
-export function Alert({ children, tone = "info", ...props }: HTMLAttributes<HTMLDivElement> & { tone?: "info" | "error" | "success" }) {
+export function Alert({ children, tone = "info", ...props }: HTMLAttributes<HTMLDivElement> & { tone?: "info" | "error" | "success" | "warning" }) {
   return <div role={tone === "error" ? "alert" : "status"} className={`alert alert--${tone}`} {...props}>{children}</div>;
 }
 

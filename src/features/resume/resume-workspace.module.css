@@ -145,6 +145,8 @@
   cursor: not-allowed;
 }
 
+.spinner { animation: spin .9s linear infinite; }
+
 .processCard {
   align-self: start;
 }
@@ -190,6 +192,29 @@
   font-size: 0.875rem;
 }
 
+.versions { margin-top: 24px; padding: clamp(24px, 4vw, 36px); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.sectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.sectionHeader h2 { margin: 0; font-size: clamp(1.35rem, 3vw, 1.8rem); }
+.refresh { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 0 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; font-weight: 700; cursor: pointer; }
+.emptyState { min-height: 190px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--ink-muted); text-align: center; }
+.emptyState svg { color: var(--brand-blue); }
+.versionList { display: grid; }
+.versionCard { min-width: 0; display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.versionCard:last-child { border-bottom: 0; }
+.versionIcon { width: 42px; aspect-ratio: 1; display: grid; place-items: center; color: var(--brand-blue); background: var(--brand-soft); border-radius: 10px; }
+.versionIcon[data-state="completed"] { color: var(--verified); background: var(--verified-soft); }
+.versionIcon[data-state="failed"] { color: var(--status-danger); background: color-mix(in srgb, var(--status-danger) 9%, var(--surface)); }
+.versionMain { min-width: 0; }
+.versionMain > div { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.versionMain span, .versionMain p, .versionMain small { color: var(--ink-muted); }
+.versionMain span, .versionMain small { font-size: .78rem; }
+.versionMain p { margin: 5px 0 0; font-size: .875rem; }
+.versionMain small { display: block; margin-top: 6px; color: var(--status-danger); }
+.versionActions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.versionActions a, .versionActions button { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: .82rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 @media (max-width: 840px) {
   .hero { align-items: start; flex-direction: column; }
   .grid { grid-template-columns: 1fr; }
@@ -200,4 +225,10 @@
   .builderLink, .primaryAction { width: 100%; }
   .uploadCard, .processCard { padding: 22px 18px; }
   .filePicker { align-items: flex-start; flex-direction: column; }
+  .versions { padding: 22px 18px; }
+  .versionCard { grid-template-columns: 42px minmax(0, 1fr); }
+  .versionActions { grid-column: 1 / -1; justify-content: stretch; }
+  .versionActions a, .versionActions button { flex: 1; }
 }
+
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

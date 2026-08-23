@@ -47,6 +47,14 @@ Only identity, institutional identity, core education, and a target role are req
 
 The UI uses semantic OKLCH colour tokens, a deliberate type scale, a consistent spacing system, visible focus, reduced-motion support, and responsive progressive disclosure. Status never depends on colour alone.
 
+## ADR-011: Quarantined object storage and mandatory malware scanning
+
+Resume files move through opaque object keys and explicit `quarantined`, `clean`, `infected`, or `scan_failed` states. Development and tests use the filesystem object-store adapter and deterministic marker scanner; staging and production use the same interfaces with S3-compatible private storage and a network-isolated ClamAV service. Parsing and downloads are forbidden until a scan is clean. File metadata, checksums, ownership, retention class, and scan evidence remain authoritative in PostgreSQL.
+
+## ADR-012: PostgreSQL-authoritative jobs with supervised workers
+
+Resume processing jobs are durable PostgreSQL records claimed with row locks. Redis may wake workers or hold short leases, but losing Redis cannot lose a job. The API and worker use the same backend artifact with separate process commands. Workers heartbeat, retry with bounded backoff, and expose terminal safe error codes. Local Windows development uses the same polling worker without requiring a Unix-only process manager; production supervision is provided by the selected container or service platform.
+
 ## Deliberately rejected for the MVP
 
 - Microservices and Kubernetes.
