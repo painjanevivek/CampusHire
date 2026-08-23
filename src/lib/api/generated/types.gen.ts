@@ -858,6 +858,30 @@ export type NotificationResponse = {
 };
 
 /**
+ * OperationsSummaryResponse
+ */
+export type OperationsSummaryResponse = {
+    /**
+     * Active Leases
+     */
+    active_leases: number;
+    /**
+     * Exhausted Failures
+     */
+    exhausted_failures: number;
+    /**
+     * Oldest Queued Age Seconds
+     */
+    oldest_queued_age_seconds: number | null;
+    /**
+     * Status Counts
+     */
+    status_counts: {
+        [key: string]: number;
+    };
+};
+
+/**
  * Operator
  */
 export type Operator = 'eq' | 'in' | 'gte' | 'lte' | 'present';
@@ -1356,6 +1380,124 @@ export type ResumeContent = {
 };
 
 /**
+ * ResumeJobEventResponse
+ */
+export type ResumeJobEventResponse = {
+    /**
+     * Attempt
+     */
+    attempt: number;
+    /**
+     * Correlation Id
+     */
+    correlation_id: string | null;
+    /**
+     * Event Type
+     */
+    event_type: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Occurred At
+     */
+    occurred_at: string;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Worker Id
+     */
+    worker_id: string | null;
+};
+
+/**
+ * ResumeJobOperatorResponse
+ */
+export type ResumeJobOperatorResponse = {
+    /**
+     * Attempts
+     */
+    attempts: number;
+    /**
+     * Available At
+     */
+    available_at: string;
+    /**
+     * Cancellation Requested At
+     */
+    cancellation_requested_at: string | null;
+    /**
+     * Claimed By
+     */
+    claimed_by: string | null;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number | null;
+    /**
+     * Events
+     */
+    events?: Array<ResumeJobEventResponse>;
+    /**
+     * Finished At
+     */
+    finished_at: string | null;
+    /**
+     * Heartbeat At
+     */
+    heartbeat_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Lease Expires At
+     */
+    lease_expires_at: string | null;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Resume Version Id
+     */
+    resume_version_id: string;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Started At
+     */
+    started_at: string | null;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * ResumeJobPage
+ */
+export type ResumeJobPage = {
+    /**
+     * Items
+     */
+    items: Array<ResumeJobOperatorResponse>;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
  * ResumeJobResponse
  */
 export type ResumeJobResponse = {
@@ -1363,6 +1505,18 @@ export type ResumeJobResponse = {
      * Attempts
      */
     attempts: number;
+    /**
+     * Cancellable
+     */
+    cancellable: boolean;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number | null;
+    /**
+     * Finished At
+     */
+    finished_at: string | null;
     /**
      * Id
      */
@@ -1379,6 +1533,10 @@ export type ResumeJobResponse = {
      * Safe Error Code
      */
     safe_error_code: string | null;
+    /**
+     * Started At
+     */
+    started_at: string | null;
     /**
      * Status
      */
@@ -2305,6 +2463,125 @@ export type CreateNotificationApiV1AdminNotificationsPostResponses = {
 };
 
 export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Job Status
+         */
+        job_status?: string | null;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/admin/operations/resume-jobs';
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetError = ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors];
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobPage;
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponse = ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses];
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostData = {
+    body?: never;
+    path: {
+        /**
+         * Job Id
+         */
+        job_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/operations/resume-jobs/{job_id}/cancel';
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostError = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors];
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobOperatorResponse;
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponse = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses];
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostData = {
+    body?: never;
+    path: {
+        /**
+         * Job Id
+         */
+        job_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/operations/resume-jobs/{job_id}/retry';
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostError = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors];
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobOperatorResponse;
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponse = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses];
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/operations/summary';
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetError = ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors];
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: OperationsSummaryResponse;
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponse = ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses];
 
 export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetData = {
     body?: never;
