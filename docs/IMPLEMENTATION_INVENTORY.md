@@ -1,17 +1,17 @@
 # Frontend Implementation Inventory
 
-This inventory records the implementation state through Phase 4. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
+This inventory records the implementation state through Phase 5. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
 
 | Surface | Current disposition | Owner phase |
 | --- | --- | --- |
 | Landing, privacy, sign-in, sign-up, offline and global error states | Reusable production UI; authentication forms use the credentialed API client | 1 and 6 |
 | Student workspace and navigation | Shared shell with Readiness, Opportunities, Resume, Roadmap and Profile routes | 1 |
-| Dashboard | Tested readiness hierarchy; data is still a local sample | 5 |
+| Dashboard | API-backed single next action with versioned rationale, component readiness and eligible opportunities | Complete in 5 |
 | Onboarding/profile | Resumable API-backed wizard with section autosave, revision-safe conflict recovery and minimum/optional disclosure | Complete in 2 |
 | Resume workspace and builder | Quarantined upload status, durable-job polling/retry, field review, suggestion decisions, immutable versions and PDF download | Complete in 2 |
 | Opportunities and role detail | API-backed, URL-filtered discovery, deterministic eligibility, immutable application submission, and separately versioned semantic relevance | Complete in 3 and 4 |
-| Roadmap | Tested presentation over curated sample data; persistence and versioned templates remain | 5 |
-| Administration | API-backed company/drive/rule/candidate workflows plus reviewed extraction and grounded policy evidence; readiness communication remains | 3 through 5 |
+| Roadmap | Eight selectable curated templates with prerequisite-aware progress and evidence attachment | Complete in 5 |
+| Administration | API-backed operations, reviewed intelligence, application status notifications and constructive feedback publication | Complete through 5 |
 
 ## Contract boundary
 

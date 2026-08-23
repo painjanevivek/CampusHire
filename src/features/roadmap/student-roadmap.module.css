@@ -26,5 +26,18 @@
 .note { display: flex; gap: 12px; margin-top: 24px; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .note svg { color: var(--brand-blue); }
 .note p { margin: 4px 0 0; color: var(--ink-muted); font-size: .875rem; }
+.timeline button.action { border: 0; font: inherit; cursor: pointer; }
+.templateGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+.templateGrid article { display: grid; align-content: start; min-height: 230px; border: 1px solid var(--line); border-radius: 14px; padding: 24px; background: var(--surface); }
+.templateGrid p { margin: 0 0 8px; color: var(--brand-blue); font: 700 .72rem var(--font-mono), monospace; text-transform: uppercase; }
+.templateGrid h2 { margin: 0 0 8px; }.templateGrid span { color: var(--ink-muted); }
+.templateGrid button { min-height: 44px; margin-top: auto; border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: white; font-weight: 800; cursor: pointer; }.templateGrid button:disabled { opacity: .5; }
+.evidenceEditor { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; border: 1px solid var(--brand-blue); border-radius: 14px; padding: 20px; background: var(--brand-blue-soft); }
+.evidenceEditor > div:first-child, .evidenceEditor > div:last-child { grid-column: 1 / -1; }.evidenceEditor > div:last-child { display: flex; justify-content: end; gap: 8px; }
+.evidenceEditor p { margin: 0; color: var(--brand-blue); font-size: .72rem; font-weight: 800; text-transform: uppercase; }.evidenceEditor h2 { margin: 4px 0; }.evidenceEditor span { color: var(--ink-muted); }
+.evidenceEditor label { display: grid; gap: 6px; font-weight: 750; }.evidenceEditor input { min-height: 44px; border: 1px solid var(--line); border-radius: 9px; padding: 0 11px; background: white; font: inherit; }
+.evidenceEditor button { min-height: 42px; border: 1px solid var(--line); border-radius: 999px; padding: 0 15px; background: white; font-weight: 800; cursor: pointer; }.evidenceEditor button:last-child { border-color: var(--ink); background: var(--ink); color: white; }
+.state { min-height: 65svh; width: min(100% - 40px, 780px); margin: auto; display: grid; align-content: center; font-size: 1.4rem; font-weight: 800; }.page > [role="alert"], .page > [role="status"] { margin-top: 18px; }.page [role="alert"] button { border: 0; background: transparent; color: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; }
+@media (max-width: 700px) { .templateGrid { grid-template-columns: 1fr; }.evidenceEditor { grid-template-columns: 1fr; }.evidenceEditor > div:first-child, .evidenceEditor > div:last-child { grid-column: auto; } }
 @media (max-width: 820px) { .timeline article { grid-template-columns: 36px 44px 1fr; padding: 20px 16px 20px 0; } .meta, .action { grid-column: 3; width: fit-content; } }
 @media (max-width: 600px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } .hero { align-items: start; flex-direction: column; } .score { width: 100%; justify-content: flex-start; } .timeline article { grid-template-columns: 30px 1fr; } .sequence { grid-row: 1 / 5; } .icon, .copy, .meta, .action { grid-column: 2; } }

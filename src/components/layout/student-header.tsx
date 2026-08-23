@@ -3,15 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, UserRound, X } from "lucide-react";
+import { NotificationCenter } from "@/features/engagement/notification-center";
 
 import styles from "./student-header.module.css";
 
 export type WorkspaceSection =
-  | "Readiness"
-  | "Opportunities"
-  | "Resume"
-  | "Roadmap"
-  | "Profile";
+  "Readiness" | "Opportunities" | "Resume" | "Roadmap" | "Profile";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
   { href: "/dashboard", label: "Readiness" },
@@ -35,7 +32,9 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         <button
           className={styles.menuButton}
           type="button"
-          aria-label={menuOpen ? "Close student navigation" : "Open student navigation"}
+          aria-label={
+            menuOpen ? "Close student navigation" : "Open student navigation"
+          }
           aria-expanded={menuOpen}
           aria-controls="student-navigation"
           onClick={() => setMenuOpen((current) => !current)}
@@ -51,7 +50,11 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
           {navigation.map(({ href, label }) => {
             const selected = active === label;
             return (
-              <Link key={label} href={href} aria-current={selected ? "page" : undefined}>
+              <Link
+                key={label}
+                href={href}
+                aria-current={selected ? "page" : undefined}
+              >
                 {label}
               </Link>
             );
@@ -59,7 +62,12 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         </nav>
 
         <div className={styles.utilities}>
-          <Link className={styles.account} href="/onboarding" aria-label="Open student profile">
+          <NotificationCenter />
+          <Link
+            className={styles.account}
+            href="/onboarding"
+            aria-label="Open student profile"
+          >
             <UserRound size={18} aria-hidden="true" />
             <ChevronDown size={15} aria-hidden="true" />
           </Link>

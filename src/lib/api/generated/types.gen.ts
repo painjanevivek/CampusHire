@@ -233,6 +233,90 @@ export type CompanyUpdate = {
 };
 
 /**
+ * DashboardEvidence
+ */
+export type DashboardEvidence = {
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Status
+     */
+    status: 'verified' | 'pending' | 'review';
+    /**
+     * Value
+     */
+    value: string;
+};
+
+/**
+ * DashboardOpportunity
+ */
+export type DashboardOpportunity = {
+    /**
+     * Company
+     */
+    company: string;
+    /**
+     * Eligibility
+     */
+    eligibility: string;
+    /**
+     * Href
+     */
+    href: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Location
+     */
+    location: string;
+    /**
+     * Match
+     */
+    match: number | null;
+    /**
+     * Role
+     */
+    role: string;
+};
+
+/**
+ * DashboardResponse
+ */
+export type DashboardResponse = {
+    /**
+     * Evidence
+     */
+    evidence: Array<DashboardEvidence>;
+    next_action: NextAction;
+    /**
+     * Opportunities
+     */
+    opportunities: Array<DashboardOpportunity>;
+    /**
+     * Readiness
+     */
+    readiness: number;
+    roadmap: RoadmapResponse | null;
+    /**
+     * State
+     */
+    state: 'ready' | 'incomplete' | 'processing' | 'manual-review' | 'ai-unavailable';
+    /**
+     * Student Name
+     */
+    student_name: string;
+    /**
+     * Unread Notifications
+     */
+    unread_notifications: number;
+};
+
+/**
  * DriveCreate
  */
 export type DriveCreate = {
@@ -663,6 +747,114 @@ export type MembershipResponse = {
      * User Id
      */
     user_id: string;
+};
+
+/**
+ * NextAction
+ */
+export type NextAction = {
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Href
+     */
+    href: string;
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Policy Version
+     */
+    policy_version: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Source Facts
+     */
+    source_facts: Array<string>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * NotificationCreate
+ */
+export type NotificationCreate = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Deep Link
+     */
+    deep_link: string;
+    /**
+     * Event Key
+     */
+    event_key: string;
+    /**
+     * Recipient User Id
+     */
+    recipient_user_id: string;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * NotificationPage
+ */
+export type NotificationPage = {
+    /**
+     * Items
+     */
+    items: Array<NotificationResponse>;
+    /**
+     * Unread Count
+     */
+    unread_count: number;
+};
+
+/**
+ * NotificationResponse
+ */
+export type NotificationResponse = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Deep Link
+     */
+    deep_link: string;
+    /**
+     * Event Key
+     */
+    event_key: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Read At
+     */
+    read_at: string | null;
+    /**
+     * Title
+     */
+    title: string;
 };
 
 /**
@@ -1315,6 +1507,134 @@ export type ResumeVersionResponse = {
 };
 
 /**
+ * RoadmapNodeResponse
+ */
+export type RoadmapNodeResponse = {
+    /**
+     * Completion
+     */
+    completion: string;
+    /**
+     * Evidence
+     */
+    evidence: {
+        [key: string]: unknown;
+    };
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Prerequisites
+     */
+    prerequisites: Array<string>;
+    /**
+     * State
+     */
+    state: 'completed' | 'next' | 'locked';
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * RoadmapProgressUpdate
+ */
+export type RoadmapProgressUpdate = {
+    /**
+     * Completed
+     */
+    completed: boolean;
+    /**
+     * Evidence Label
+     */
+    evidence_label?: string | null;
+    /**
+     * Evidence Reference
+     */
+    evidence_reference?: string | null;
+};
+
+/**
+ * RoadmapResponse
+ */
+export type RoadmapResponse = {
+    /**
+     * Completed Count
+     */
+    completed_count: number;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Nodes
+     */
+    nodes: Array<RoadmapNodeResponse>;
+    /**
+     * Slug
+     */
+    slug: string;
+    /**
+     * Summary
+     */
+    summary: string;
+    /**
+     * Template Id
+     */
+    template_id: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
+ * RoadmapSelection
+ */
+export type RoadmapSelection = {
+    /**
+     * Template Id
+     */
+    template_id: string;
+};
+
+/**
+ * RoadmapTemplateResponse
+ */
+export type RoadmapTemplateResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Node Count
+     */
+    node_count: number;
+    /**
+     * Slug
+     */
+    slug: string;
+    /**
+     * Summary
+     */
+    summary: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
  * RoleCreate
  */
 export type RoleCreate = {
@@ -1960,6 +2280,31 @@ export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostRespons
 };
 
 export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponse = AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses[keyof AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses];
+
+export type CreateNotificationApiV1AdminNotificationsPostData = {
+    body: NotificationCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/notifications';
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostError = CreateNotificationApiV1AdminNotificationsPostErrors[keyof CreateNotificationApiV1AdminNotificationsPostErrors];
+
+export type CreateNotificationApiV1AdminNotificationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: NotificationResponse;
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
 
 export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetData = {
     body?: never;
@@ -2678,6 +3023,31 @@ export type SignupApiV1AuthSignupPostResponses = {
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
 
+export type ReadDashboardApiV1DashboardGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dashboard';
+};
+
+export type ReadDashboardApiV1DashboardGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadDashboardApiV1DashboardGetError = ReadDashboardApiV1DashboardGetErrors[keyof ReadDashboardApiV1DashboardGetErrors];
+
+export type ReadDashboardApiV1DashboardGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DashboardResponse;
+};
+
+export type ReadDashboardApiV1DashboardGetResponse = ReadDashboardApiV1DashboardGetResponses[keyof ReadDashboardApiV1DashboardGetResponses];
+
 export type LivenessApiV1HealthLiveGetData = {
     body?: never;
     path?: never;
@@ -2771,6 +3141,61 @@ export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostRespons
 };
 
 export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponse = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses];
+
+export type ReadNotificationsApiV1NotificationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/notifications';
+};
+
+export type ReadNotificationsApiV1NotificationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadNotificationsApiV1NotificationsGetError = ReadNotificationsApiV1NotificationsGetErrors[keyof ReadNotificationsApiV1NotificationsGetErrors];
+
+export type ReadNotificationsApiV1NotificationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: NotificationPage;
+};
+
+export type ReadNotificationsApiV1NotificationsGetResponse = ReadNotificationsApiV1NotificationsGetResponses[keyof ReadNotificationsApiV1NotificationsGetResponses];
+
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostData = {
+    body?: never;
+    path: {
+        /**
+         * Notification Id
+         */
+        notification_id: string;
+    };
+    query?: never;
+    url: '/api/v1/notifications/{notification_id}/read';
+};
+
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostError = ReadNotificationApiV1NotificationsNotificationIdReadPostErrors[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostErrors];
+
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: NotificationResponse;
+};
+
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
 
 export type ReadOpportunitiesApiV1OpportunitiesGetData = {
     body?: never;
@@ -3319,3 +3744,112 @@ export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPos
 };
 
 export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];
+
+export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/current';
+};
+
+export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetError = ReadCurrentRoadmapApiV1RoadmapsCurrentGetErrors[keyof ReadCurrentRoadmapApiV1RoadmapsCurrentGetErrors];
+
+export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses = {
+    /**
+     * Response Read Current Roadmap Api V1 Roadmaps Current Get
+     *
+     * Successful Response
+     */
+    200: RoadmapResponse | null;
+};
+
+export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponse = ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses[keyof ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses];
+
+export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostData = {
+    body: RoadmapProgressUpdate;
+    path: {
+        /**
+         * Node Key
+         */
+        node_key: string;
+    };
+    query?: never;
+    url: '/api/v1/roadmaps/nodes/{node_key}';
+};
+
+export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostError = RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostErrors[keyof RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostErrors];
+
+export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoadmapResponse;
+};
+
+export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponse = RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses[keyof RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses];
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostData = {
+    body: RoadmapSelection;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/select';
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostError = ChooseRoadmapApiV1RoadmapsSelectPostErrors[keyof ChooseRoadmapApiV1RoadmapsSelectPostErrors];
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoadmapResponse;
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostResponse = ChooseRoadmapApiV1RoadmapsSelectPostResponses[keyof ChooseRoadmapApiV1RoadmapsSelectPostResponses];
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/templates';
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetError = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors];
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses = {
+    /**
+     * Response Read Roadmap Templates Api V1 Roadmaps Templates Get
+     *
+     * Successful Response
+     */
+    200: Array<RoadmapTemplateResponse>;
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponse = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses];
