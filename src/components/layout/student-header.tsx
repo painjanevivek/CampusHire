@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, UserRound, X } from "lucide-react";
+import { ChevronDown, Menu, UserRound, X } from "lucide-react";
 
 import styles from "./student-header.module.css";
 
 export type WorkspaceSection =
-  | "Dashboard"
+  | "Readiness"
   | "Opportunities"
-  | "My Resume"
-  | "Career Roadmap"
+  | "Resume"
+  | "Roadmap"
   | "Profile";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard", label: "Readiness" },
   { href: "/opportunities", label: "Opportunities" },
-  { href: "/resume", label: "My Resume" },
-  { href: "/roadmap", label: "Career Roadmap" },
+  { href: "/resume", label: "Resume" },
+  { href: "/roadmap", label: "Roadmap" },
   { href: "/onboarding", label: "Profile" },
 ];
 
@@ -29,7 +29,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label="CampusHire home">
           <span aria-hidden="true">C</span>
-          <strong>CampusHire</strong>
+          <strong>CampusHire AI</strong>
         </Link>
 
         <button
@@ -59,21 +59,9 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         </nav>
 
         <div className={styles.utilities}>
-          <Link className={styles.profileProgress} href="/onboarding">
-            <span
-              role="progressbar"
-              aria-label="Profile completion"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={70}
-            >
-              <i />
-            </span>
-            <b>70%</b>
-            <span>Profile</span>
-          </Link>
           <Link className={styles.account} href="/onboarding" aria-label="Open student profile">
             <UserRound size={18} aria-hidden="true" />
+            <ChevronDown size={15} aria-hidden="true" />
           </Link>
         </div>
       </div>

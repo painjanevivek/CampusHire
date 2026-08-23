@@ -6,29 +6,27 @@ import { StudentWorkspace } from "./student-workspace";
 describe("StudentWorkspace", () => {
   it("exposes the current section and profile progress to assistive technology", () => {
     render(
-      <StudentWorkspace active="Dashboard">
+      <StudentWorkspace active="Readiness">
         <main>Dashboard content</main>
       </StudentWorkspace>,
     );
 
     const navigation = screen.getByRole("navigation", { name: "Student navigation" });
     expect(navigation).toContainElement(
-      screen.getByRole("link", { name: "Dashboard" }),
+      screen.getByRole("link", { name: "Readiness" }),
     );
-    expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Readiness" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(
-      screen.getByRole("progressbar", { name: "Profile completion" }),
-    ).toHaveAttribute("aria-valuenow", "70");
+    expect(screen.getByRole("link", { name: "Open student profile" })).toBeInTheDocument();
   });
 
   it.each([
-    "Dashboard",
+    "Readiness",
     "Opportunities",
-    "My Resume",
-    "Career Roadmap",
+    "Resume",
+    "Roadmap",
     "Profile",
   ] as const)("keeps one shared navigation when %s is active", (active) => {
     render(

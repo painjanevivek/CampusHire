@@ -1,10 +1,11 @@
 :root {
-  --canvas: #f7f8fa;
+  color-scheme: light;
+  --canvas: #f8f9fb;
   --surface: #ffffff;
-  --surface-muted: #f3f4f6;
-  --ink: #1f2937;
-  --ink-muted: #5f6673;
-  --line: #d7dae0;
+  --surface-muted: #f1f4f8;
+  --ink: #111827;
+  --ink-muted: #596273;
+  --line: #dfe3ea;
   --primary: #2557d6;
   --accent-emerald: #137a4b;
   --accent-blue: #2557d6;
@@ -17,6 +18,9 @@
   --guidance: #9a5b00;
   --code-bg: #111111;
   --focus: #2563eb;
+  --status-danger: #b42318;
+  --status-warning: #9a5b00;
+  --status-info: #2557d6;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -24,6 +28,10 @@
   --radius-container: 40px;
   --radius-pill: 999px;
   --shadow-soft: 0 8px 30px rgb(0 0 0 / 4%);
+  --layer-content: 10;
+  --layer-navigation: 50;
+  --layer-toast: 80;
+  --layer-skip-link: 100;
   --glass: rgb(255 255 255 / 76%);
   --grid-line: rgb(17 24 39 / 6%);
   --evergreen: #047857;
@@ -48,7 +56,7 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var
 a { color: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
-.skipLink { position: fixed; z-index: 100; top: 0.5rem; left: 0.5rem; transform: translateY(-180%); border-radius: var(--radius-sm); padding: 0.75rem 1rem; background: var(--ink); color: var(--surface); }
+.skipLink { position: fixed; z-index: var(--layer-skip-link); top: 0.5rem; left: 0.5rem; transform: translateY(-180%); border-radius: var(--radius-sm); padding: 0.75rem 1rem; background: var(--ink); color: var(--surface); }
 .skipLink:focus { transform: translateY(0); }
 h1, h2 { font-family: var(--font-body), Inter, system-ui, sans-serif; font-weight: 750; }
 button, .button, nav, .brand { font-family: var(--font-interface), Inter, sans-serif; letter-spacing: -0.025em; }
@@ -91,7 +99,7 @@ dialog { width: min(32rem, calc(100% - 2rem)); border: 0; border-radius: var(--r
 dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .dialogHeader { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .iconButton { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
-.toast { position: fixed; right: 1rem; bottom: 1rem; z-index: 80; display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
+.toast { position: fixed; right: 1rem; bottom: 1rem; z-index: var(--layer-toast); display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
 .toast button { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font-size: 1.2rem; cursor: pointer; }
 .authShell { min-height: 100svh; background: var(--canvas); }
 .authHeader { min-height: 4.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 clamp(1rem, 4vw, 3rem); background: var(--surface); border-bottom: 1px solid var(--line); }

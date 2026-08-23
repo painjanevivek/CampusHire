@@ -11,6 +11,10 @@ CampusHire AI is a student-first campus recruitment and career-readiness platfor
 
 Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` before committing.
 
+When ports 3000/8000 are already occupied, run `npm run dev -- --port 3002` and set `NEXT_PUBLIC_API_URL=http://127.0.0.1:8001/api/v1` in `.env.local`. Do not point this frontend at another project's API.
+
+`npm run api:generate` refreshes typed API declarations from the checked OpenAPI snapshot. `npm run api:check` verifies that the snapshot and generated declarations agree.
+
 ## Product principles
 
 - Eligibility and semantic match are separate results.

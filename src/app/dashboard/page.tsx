@@ -44,7 +44,7 @@ const sampleDashboard: StudentDashboardData = {
 
 export default function Dashboard() {
   return (
-    <StudentWorkspace active="Dashboard">
+    <StudentWorkspace active="Readiness">
       <StudentDashboard data={sampleDashboard} />
     </StudentWorkspace>
   );
