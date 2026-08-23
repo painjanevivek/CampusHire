@@ -66,6 +66,8 @@ export type PlacementApplication = {
   id: string;
   role_id: string;
   student_user_id: string;
+  student_name: string;
+  student_email: string;
   resume_version_id: string;
   status: string;
   role_snapshot: Record<string, unknown>;
@@ -77,6 +79,13 @@ export type PlacementApplication = {
   updated_at: string;
   history: ApplicationEvent[];
   overrides: ApplicationOverride[];
+};
+
+export type AdminApplicationPage = {
+  items: PlacementApplication[];
+  page: number;
+  page_size: number;
+  total: number;
 };
 
 export type Company = {

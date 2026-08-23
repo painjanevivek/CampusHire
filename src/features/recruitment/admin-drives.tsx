@@ -35,6 +35,7 @@ export function AdminDrives() {
   const [notice, setNotice] = useState("");
 
   const loadRoot = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true); setError("");
     try {
       const [companyItems, driveItems] = await Promise.all([
@@ -48,6 +49,7 @@ export function AdminDrives() {
   }, []);
 
   const loadRoles = useCallback(async (driveId: string) => {
+    await Promise.resolve();
     if (!driveId) { setRoles([]); return; }
     try {
       const items = await apiRequest<PlacementRole[]>(`/admin/recruitment/drives/${driveId}/roles`, { cache: "no-store" });
@@ -56,14 +58,24 @@ export function AdminDrives() {
   }, []);
 
   const loadRules = useCallback(async (roleId: string) => {
+    await Promise.resolve();
     if (!roleId) { setRuleSets([]); return; }
     try { setRuleSets(await apiRequest<RuleSet[]>(`/admin/recruitment/roles/${roleId}/rule-sets`, { cache: "no-store" })); }
     catch { setError("Eligibility versions for the selected role could not be loaded."); }
   }, []);
 
-  useEffect(() => { void loadRoot(); }, [loadRoot]);
-  useEffect(() => { void loadRoles(selectedDrive); }, [loadRoles, selectedDrive]);
-  useEffect(() => { void loadRules(selectedRole); }, [loadRules, selectedRole]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void loadRoot(), 0);
+    return () => window.clearTimeout(pending);
+  }, [loadRoot]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void loadRoles(selectedDrive), 0);
+    return () => window.clearTimeout(pending);
+  }, [loadRoles, selectedDrive]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void loadRules(selectedRole), 0);
+    return () => window.clearTimeout(pending);
+  }, [loadRules, selectedRole]);
 
   async function createDrive(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError(""); setNotice("");

@@ -31,6 +31,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true);
     setError("");
     try {
@@ -49,7 +50,10 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
     }
   }, [roleId]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(pending);
+  }, [load]);
 
   async function toggleSave() {
     if (!opportunity) return;

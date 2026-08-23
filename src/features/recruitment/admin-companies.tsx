@@ -17,13 +17,17 @@ export function AdminCompanies() {
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true);
     setError("");
     try { setCompanies(await apiRequest<Company[]>("/admin/recruitment/companies", { cache: "no-store" })); }
     catch { setError("Company records could not be loaded. No changes were made."); }
     finally { setLoading(false); }
   }, []);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(pending);
+  }, [load]);
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

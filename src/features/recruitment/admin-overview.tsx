@@ -6,7 +6,7 @@ import { Building2, CircleAlert, ClipboardCheck, FileClock, RefreshCcw } from "l
 
 import { Alert, Badge } from "@/components/ui/feedback";
 import { apiRequest } from "@/lib/api/client";
-import type { Company, Drive, PlacementApplication } from "./types";
+import type { AdminApplicationPage, Company, Drive, PlacementApplication } from "./types";
 import styles from "./admin-overview.module.css";
 
 export function AdminOverview() {
@@ -17,18 +17,22 @@ export function AdminOverview() {
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true); setError("");
     try {
       const [companyData, driveData, applicationData] = await Promise.all([
         apiRequest<Company[]>("/admin/recruitment/companies", { cache: "no-store" }),
         apiRequest<Drive[]>("/admin/recruitment/drives", { cache: "no-store" }),
-        apiRequest<PlacementApplication[]>("/admin/recruitment/applications", { cache: "no-store" }),
+        apiRequest<AdminApplicationPage>("/admin/recruitment/applications?page=1&page_size=50", { cache: "no-store" }),
       ]);
-      setCompanies(companyData); setDrives(driveData); setApplications(applicationData);
+      setCompanies(companyData); setDrives(driveData); setApplications(applicationData.items);
     } catch { setError("The operations summary could not be refreshed. Open each workspace to retry its data independently."); }
     finally { setLoading(false); }
   }, []);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(pending);
+  }, [load]);
 
   const reviewCount = useMemo(() => applications.filter((item) => ["submitted", "under_review"].includes(item.status)).length, [applications]);
   const manualReviewCount = useMemo(() => applications.filter((item) => item.eligibility_snapshot.status === "needs_manual_review").length, [applications]);

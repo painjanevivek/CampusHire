@@ -15,7 +15,7 @@ import {
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
 import { Select } from "@/components/ui/form-controls";
 import { apiRequest, csrfRequest } from "@/lib/api/client";
-import type { PlacementApplication } from "./types";
+import type { AdminApplicationPage, PlacementApplication } from "./types";
 import styles from "./admin-applications.module.css";
 
 const statuses = ["all", "submitted", "under_review", "shortlisted", "interview", "offered", "rejected"];
@@ -38,14 +38,26 @@ export function AdminApplications() {
   const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true); setError("");
     try {
-      const data = await apiRequest<PlacementApplication[]>("/admin/recruitment/applications", { cache: "no-store" });
-      setApplications(data); setSelectedId((current) => data.some((item) => item.id === current) ? current : data[0]?.id || "");
+      const data = await apiRequest<AdminApplicationPage | PlacementApplication[]>(
+        "/admin/recruitment/applications?page=1&page_size=50",
+        { cache: "no-store" },
+      );
+      // Support the former list shape during a staggered frontend/backend deploy.
+      const items = Array.isArray(data) ? data : data.items;
+      setApplications(items);
+      setSelectedId((current) =>
+        items.some((item) => item.id === current) ? current : items[0]?.id || "",
+      );
     } catch { setError("Applications could not be loaded. No candidate decision was changed."); }
     finally { setLoading(false); }
   }, []);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(pending);
+  }, [load]);
 
   const visible = useMemo(() => filter === "all" ? applications : applications.filter((item) => item.status === filter), [applications, filter]);
   const selected = applications.find((item) => item.id === selectedId) ?? visible[0];
@@ -82,7 +94,7 @@ export function AdminApplications() {
 
         <section className={styles.inspector} aria-label="Candidate decision evidence">
           {!selected ? <EmptyState title="Select an application"><span>Its immutable decision inputs and status history will appear here.</span></EmptyState> : <>
-            <header><div><p>{companyName(selected)}</p><h2>{roleName(selected)}</h2><span>Applicant {selected.student_user_id.slice(0, 8)} · submitted {new Date(selected.created_at).toLocaleString()}</span></div><Badge tone={selected.status === "shortlisted" || selected.status === "offered" ? "success" : "neutral"}>{selected.status.replaceAll("_", " ")}</Badge></header>
+            <header><div><p>{companyName(selected)}</p><h2>{roleName(selected)}</h2><span>{selected.student_name ?? selected.student_user_id.slice(0, 8)} · {selected.student_email ?? "email unavailable"} · submitted {new Date(selected.created_at).toLocaleString()}</span></div><Badge tone={selected.status === "shortlisted" || selected.status === "offered" ? "success" : "neutral"}>{selected.status.replaceAll("_", " ")}</Badge></header>
             <div className={styles.snapshotGrid}><article><FileLock2 aria-hidden="true" /><div><strong>Resume snapshot</strong><p>Version {String(selected.resume_snapshot.version_number ?? "—")} · {String(selected.resume_snapshot.original_name ?? "reviewed PDF")}</p><code>{String(selected.resume_snapshot.checksum ?? "").slice(0, 14)}…</code></div></article><article><ShieldCheck aria-hidden="true" /><div><strong>Eligibility version</strong><p>Rule v{String(selected.rule_snapshot.version ?? "—")}</p><code>{String(selected.rule_snapshot.id ?? "").slice(0, 14)}…</code></div></article></div>
             <section className={styles.evidence}><div className={styles.sectionHeader}><h3>Rule-by-rule evidence</h3><Badge tone={selected.eligibility_snapshot.status === "eligible" ? "success" : "warning"}>{selected.eligibility_snapshot.status.replaceAll("_", " ")}</Badge></div><ul>{selected.eligibility_snapshot.results.map((result) => <li key={result.label}>{result.passed === true ? <CheckCircle2 className={styles.pass} aria-hidden="true" /> : <CircleAlert className={styles.review} aria-hidden="true" />}<div><strong>{result.label}</strong><p>{result.reason}</p></div></li>)}</ul></section>
             <section className={styles.actions}><div className={styles.sectionHeader}><h3>Decision actions</h3><span>Validated sequence</span></div><div>{selected.status === "submitted" ? <button disabled={busy} type="button" onClick={() => void changeStatus("under_review")}>Start review</button> : null}{selected.status === "under_review" ? <><button disabled={busy} type="button" onClick={() => void changeStatus("shortlisted")}>Shortlist</button><button disabled={busy} type="button" onClick={() => void changeStatus("rejected")}>Reject</button></> : null}{selected.status === "shortlisted" ? <button disabled={busy} type="button" onClick={() => void changeStatus("interview")}>Move to interview</button> : null}{selected.status === "interview" ? <><button disabled={busy} type="button" onClick={() => void changeStatus("offered")}>Record offer</button><button disabled={busy} type="button" onClick={() => void changeStatus("rejected")}>Reject</button></> : null}</div></section>

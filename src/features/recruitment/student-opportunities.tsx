@@ -44,6 +44,7 @@ export function StudentOpportunities() {
 
   const queryString = searchParams.toString();
   const load = useCallback(async () => {
+    await Promise.resolve();
     setLoading(true);
     setError("");
     try {
@@ -55,7 +56,10 @@ export function StudentOpportunities() {
     }
   }, [queryString]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    const pending = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(pending);
+  }, [load]);
 
   function updateFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
