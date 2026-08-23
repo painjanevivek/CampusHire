@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "api:generate": "openapi-ts",
     "api:check": "npm run api:generate && git diff --exit-code -- openapi/campushire.openapi.json src/lib/api/generated",
+    "release:smoke": "node scripts/release-smoke.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
