@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell, CheckCheck } from "lucide-react";
 
 import { apiRequest, csrfRequest } from "@/lib/api/client";
+import { safeInternalHref } from "@/lib/navigation";
 import type { Notification, NotificationPage } from "./types";
 import styles from "./notification-center.module.css";
 
@@ -47,6 +48,11 @@ export function NotificationCenter({
   }, []);
 
   async function follow(item: Notification) {
+    const destination = safeInternalHref(item.deep_link, "");
+    if (!destination) {
+      setError("This update does not contain a safe CampusHire destination.");
+      return;
+    }
     if (!item.read_at) {
       try {
         const updated = await csrfRequest<Notification>(
@@ -65,7 +71,7 @@ export function NotificationCenter({
       }
     }
     setOpen(false);
-    navigate(item.deep_link);
+    navigate(destination);
   }
 
   return (

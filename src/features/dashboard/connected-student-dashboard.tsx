@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert } from "@/components/ui/feedback";
 import type { DashboardApiResponse } from "@/features/engagement/types";
 import { apiRequest } from "@/lib/api/client";
+import { safeInternalHref } from "@/lib/navigation";
 import {
   StudentDashboard,
   type StudentDashboardData,
@@ -16,7 +17,10 @@ function toDashboardData(response: DashboardApiResponse): StudentDashboardData {
     studentName: response.student_name,
     readiness: response.readiness,
     state: response.state,
-    nextAction: response.next_action,
+    nextAction: {
+      ...response.next_action,
+      href: safeInternalHref(response.next_action.href),
+    },
     evidence: response.evidence,
     opportunities: response.opportunities.map((item) => ({
       company: item.company,
@@ -24,7 +28,7 @@ function toDashboardData(response: DashboardApiResponse): StudentDashboardData {
       location: item.location,
       eligibility: "Formally eligible",
       match: item.match,
-      href: item.href,
+      href: safeInternalHref(item.href, "/opportunities"),
     })),
   };
 }

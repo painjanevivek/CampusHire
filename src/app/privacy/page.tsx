@@ -1,1 +1,5 @@
-export default function PrivacyPage(){return <main id="main-content" className="statePage"><p className="eyebrow">Privacy and AI assistance</p><h1>Your placement data has a defined purpose.</h1><p>CampusHire uses profile, academic, resume, and application information to operate campus recruitment, explain eligibility, suggest suitable roles, and personalize approved roadmaps.</p><h2>What AI can and cannot do</h2><p>AI may extract, compare, retrieve, and suggest. It cannot silently change your resume, decide formal eligibility, or invent evidence. TNP administrators remain responsible for approved rules and final shortlist overrides.</p><h2>Your choices</h2><p>GitHub, portfolio, phone, and initial resume upload are optional unless a published role clearly states otherwise. Contact your institution’s TNP team to correct, export, deactivate, or request deletion of eligible data.</p></main>}
+import { PrivacyControls } from "@/features/privacy/privacy-controls";
+
+export default function PrivacyPage() {
+  return <PrivacyControls />;
+}

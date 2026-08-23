@@ -46,8 +46,8 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
           cache: "no-store",
         }),
         apiRequest<ResumeChoice[]>("/resumes", { cache: "no-store" }),
-        apiRequest<SemanticMatch>(`/opportunities/${roleId}/match`, {
-          cache: "no-store",
+        csrfRequest<SemanticMatch>(`/opportunities/${roleId}/match`, {
+          method: "POST",
         }),
       ]);
       const selectable = versions.filter(

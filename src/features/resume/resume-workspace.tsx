@@ -27,6 +27,7 @@ const statusCopy: Record<ResumeVersion["status"], string> = {
   review_required: "Your review is required",
   completed: "Reviewed and ready",
   failed: "Processing failed",
+  cancelled: "Processing cancelled",
 };
 
 const failureCopy: Record<string, string> = {
@@ -36,6 +37,9 @@ const failureCopy: Record<string, string> = {
   resume_encrypted: "Password-protected PDFs cannot be processed.",
   resume_page_limit: "The PDF exceeds the supported page limit.",
   resume_malformed: "The file does not contain a valid readable PDF structure.",
+  resume_worker_attempts_exhausted: "Processing stopped after the safe retry budget was exhausted.",
+  resume_processing_unexpected: "Processing stopped safely because an unexpected worker error occurred.",
+  resume_job_cancelled: "Processing was cancelled by an authorized placement operator.",
 };
 
 function mergeVersion(current: ResumeVersion[], version: ResumeVersion) {

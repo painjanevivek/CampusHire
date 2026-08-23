@@ -317,6 +317,38 @@ export type DashboardResponse = {
 };
 
 /**
+ * DataDeletionCreate
+ */
+export type DataDeletionCreate = {
+    /**
+     * Confirmation
+     */
+    confirmation: 'DELETE MY CAMPUSHIRE DATA';
+};
+
+/**
+ * DataDeletionResponse
+ */
+export type DataDeletionResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Requested At
+     */
+    requested_at: string;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
  * DriveCreate
  */
 export type DriveCreate = {
@@ -3558,7 +3590,7 @@ export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponses = {
 
 export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponse = ReadOpportunityApiV1OpportunitiesRoleIdGetResponses[keyof ReadOpportunityApiV1OpportunitiesRoleIdGetResponses];
 
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetData = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostData = {
     body?: never;
     path: {
         /**
@@ -3570,23 +3602,23 @@ export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetData = {
     url: '/api/v1/opportunities/{role_id}/match';
 };
 
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetErrors = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetError = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetErrors[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetErrors];
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostError = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors];
 
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetResponses = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses = {
     /**
      * Successful Response
      */
     200: SemanticMatchResponse;
 };
 
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetResponse = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetResponses[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchGetResponses];
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponse = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses];
 
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostData = {
     body?: never;
@@ -3617,6 +3649,31 @@ export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses = {
 };
 
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponse = SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses[keyof SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses];
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostData = {
+    body: DataDeletionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/deletion-requests';
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostError = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors];
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: DataDeletionResponse;
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponse = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses];
 
 export type ReadProfileApiV1ProfileGetData = {
     body?: never;

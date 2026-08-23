@@ -1,10 +1,14 @@
 export type ResumeJob = {
   id: string;
-  status: "queued" | "processing" | "completed" | "failed";
+  status: "queued" | "processing" | "cancellation_requested" | "completed" | "failed" | "cancelled";
   attempts: number;
   max_attempts: number;
   safe_error_code: string | null;
   retryable: boolean;
+  cancellable: boolean;
+  started_at: string | null;
+  finished_at: string | null;
+  duration_ms: number | null;
 };
 
 export type ResumeSuggestion = {
@@ -22,7 +26,7 @@ export type ResumeVersion = {
   version_number: number | null;
   source: "upload" | "generated";
   original_name: string;
-  status: "queued" | "processing" | "review_required" | "completed" | "failed";
+  status: "queued" | "processing" | "review_required" | "completed" | "failed" | "cancelled";
   scan_status: "quarantined" | "clean" | "infected" | "scan_failed";
   page_count: number | null;
   created_at: string;

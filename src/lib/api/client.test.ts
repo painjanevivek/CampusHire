@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { apiRequest, csrfRequest } from "./client";
+import { apiPath, apiRequest, csrfRequest } from "./client";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -8,6 +8,17 @@ afterEach(() => {
 });
 
 describe("API client", () => {
+  it("rejects absolute, protocol-relative, and traversal request paths", () => {
+    expect(() => apiPath("https://evil.example/collect")).toThrow(
+      "safe relative paths",
+    );
+    expect(() => apiPath("//evil.example/collect")).toThrow("safe relative paths");
+    expect(() => apiPath("/resumes/../auth/me")).toThrow("safe relative paths");
+    expect(apiPath("/opportunities?q=python")).toMatch(
+      /\/api\/v1\/opportunities\?q=python$/,
+    );
+  });
+
   it("normalizes structured backend failures with correlation context", async () => {
     vi.stubGlobal(
       "fetch",

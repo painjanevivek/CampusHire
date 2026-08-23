@@ -55,4 +55,18 @@ describe("NotificationCenter", () => {
     );
     expect(pushMock).toHaveBeenCalledWith("/opportunities/role-1");
   });
+
+  it("refuses a protocol-relative notification destination", async () => {
+    apiRequestMock.mockResolvedValue({
+      items: [{ ...notification, deep_link: "//evil.example/collect" }],
+      unread_count: 1,
+    });
+    render(<NotificationCenter navigate={pushMock} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Open updates, 1 unread" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Application shortlisted/ }));
+    expect(await screen.findByText(/does not contain a safe CampusHire destination/)).toBeInTheDocument();
+    expect(pushMock).not.toHaveBeenCalled();
+  });
 });

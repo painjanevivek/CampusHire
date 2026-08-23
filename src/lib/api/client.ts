@@ -1,4 +1,17 @@
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+function normalizeApiUrl(value: string): string {
+  const parsed = new URL(value);
+  if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password) {
+    throw new Error("NEXT_PUBLIC_API_URL must be an HTTP(S) URL without credentials.");
+  }
+  if (parsed.search || parsed.hash) {
+    throw new Error("NEXT_PUBLIC_API_URL cannot contain a query or fragment.");
+  }
+  return parsed.toString().replace(/\/$/, "");
+}
+
+const apiUrl = normalizeApiUrl(
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1",
+);
 
 export class ApiError extends Error {
   constructor(
@@ -32,13 +45,21 @@ function cookie(name: string): string | undefined {
 }
 
 export function apiPath(path: string): string {
+  if (
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    /[\\\r\n]/.test(path) ||
+    /(?:^|\/)(?:\.{1,2}|%2e(?:%2e)?)(?:\/|$|\?)/i.test(path)
+  ) {
+    throw new Error("API paths must be safe relative paths.");
+  }
   return `${apiUrl}${path}`;
 }
 
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
   if (!headers.has("Accept")) headers.set("Accept", "application/json");
-  const response = await fetch(`${apiUrl}${path}`, {
+  const response = await fetch(apiPath(path), {
     ...init,
     credentials: "include",
     headers,

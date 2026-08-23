@@ -21,5 +21,9 @@ describe("AdminWorkspace", () => {
     );
     expect(screen.queryByRole("navigation", { name: "Student navigation" }))
       .not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Operations" })).toHaveAttribute(
+      "href",
+      "/admin/operations",
+    );
   });
 });

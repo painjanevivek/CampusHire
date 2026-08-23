@@ -56,7 +56,7 @@ export function AdminCompanies() {
         <div className={styles.collectionHeader}><h2 id="company-list-title">Institution companies</h2><button type="button" onClick={() => void load()} aria-label="Refresh companies"><RefreshCcw aria-hidden="true" /></button></div>
         {loading ? <p className={styles.loading}>Loading company records…</p> : null}
         {!loading && !companies.length ? <EmptyState title="No companies yet"><span>Create a verified employer record before opening a drive.</span></EmptyState> : null}
-        <div className={styles.companyGrid}>{companies.map((company) => <article key={company.id} className={styles.companyCard}><div className={styles.companyMark}><Building2 aria-hidden="true" /></div><div><h3>{company.name}</h3><p>{company.description || "No description added."}</p><Badge>{company.status}</Badge></div>{company.website_url ? <a href={company.website_url} target="_blank" rel="noreferrer" aria-label={`Open ${company.name} website`}><ExternalLink aria-hidden="true" /></a> : null}</article>)}</div>
+        <div className={styles.companyGrid}>{companies.map((company) => <article key={company.id} className={styles.companyCard}><div className={styles.companyMark}><Building2 aria-hidden="true" /></div><div><h3>{company.name}</h3><p>{company.description || "No description added."}</p><Badge>{company.status}</Badge></div>{company.website_url ? <a href={company.website_url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${company.name} website`}><ExternalLink aria-hidden="true" /></a> : null}</article>)}</div>
       </section>
     </main>
   );
