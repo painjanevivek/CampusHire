@@ -35,6 +35,20 @@ export type OpportunityPage = {
   total: number;
 };
 
+export type SemanticMatch = {
+  status: "available" | "unavailable";
+  score: number | null;
+  components: Record<string, number>;
+  explanation: string[];
+  embedding_model: string;
+  embedding_version: string;
+  scoring_version: string;
+  source_resume_version_id: string | null;
+  source_profile_revision: number | null;
+  safe_error_code: string | null;
+  evaluated_at: string | null;
+};
+
 export type ResumeChoice = {
   id: string;
   version_number: number | null;
@@ -115,7 +129,10 @@ export type Drive = {
   role_count: number;
 };
 
-export type PlacementRole = Omit<Opportunity, "eligibility" | "saved" | "application_id" | "application_status">;
+export type PlacementRole = Omit<
+  Opportunity,
+  "eligibility" | "saved" | "application_id" | "application_status"
+>;
 
 export type RuleDefinition = {
   field: string;
@@ -132,6 +149,41 @@ export type RuleSet = {
   rules: RuleDefinition[];
   created_by_user_id: string;
   published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PolicyDocument = {
+  id: string;
+  title: string;
+  version: number;
+  source_reference: string;
+  sections: Array<{ section: string; page: number; text: string }>;
+  status: string;
+  review_reason: string | null;
+  approved_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PolicyAnswer = {
+  answer: string;
+  citations: string[];
+  policy_id: string | null;
+  policy_version: number | null;
+  grounded: boolean;
+};
+
+export type ExtractionProposal = {
+  id: string;
+  role_id: string;
+  proposed_requirements: string[];
+  proposed_skills: string[];
+  provider_name: string;
+  model_version: string;
+  prompt_version: string;
+  status: string;
+  review_reason: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -38,6 +38,7 @@
 .decisionHeader p { margin: 0; color: var(--ink-muted); font-size: .78rem; }.decisionHeader strong { text-transform: capitalize; }
 .separate { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 18px 0; }
 .separate svg { flex: none; color: var(--brand-blue); }.separate p { margin: 3px 0 0; color: var(--ink-muted); font-size: .8rem; }
+.separate b { color: var(--brand-blue); }.separate ul { margin: 9px 0 0; padding-left: 18px; color: var(--ink-muted); font-size: .76rem; }.separate li + li { margin-top: 5px; }
 .resumeSelect { display: grid; gap: 8px; font-weight: 800; }.resumeSelect svg { width: 18px; }
 .resumeSelect select { min-height: 48px; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; background: white; font: inherit; }
 .resumeHelp, .policy { margin: -8px 0 0; color: var(--ink-muted); font-size: .8rem; }.resumeHelp a { color: var(--brand-blue); font-weight: 800; }

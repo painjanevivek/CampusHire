@@ -1,6 +1,6 @@
 # Frontend Implementation Inventory
 
-This inventory records the implementation state through Phase 2. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
+This inventory records the implementation state through Phase 4. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
 
 | Surface | Current disposition | Owner phase |
 | --- | --- | --- |
@@ -9,9 +9,9 @@ This inventory records the implementation state through Phase 2. It distinguishe
 | Dashboard | Tested readiness hierarchy; data is still a local sample | 5 |
 | Onboarding/profile | Resumable API-backed wizard with section autosave, revision-safe conflict recovery and minimum/optional disclosure | Complete in 2 |
 | Resume workspace and builder | Quarantined upload status, durable-job polling/retry, field review, suggestion decisions, immutable versions and PDF download | Complete in 2 |
-| Opportunities and role detail | Familiar, tested search presentation; current role records are fixtures | 3 and 4 |
+| Opportunities and role detail | API-backed, URL-filtered discovery, deterministic eligibility, immutable application submission, and separately versioned semantic relevance | Complete in 3 and 4 |
 | Roadmap | Tested presentation over curated sample data; persistence and versioned templates remain | 5 |
-| Administration | Separate shell and stable MVP route map; operational data views remain fixtures or explicit empty states | 3 through 5 |
+| Administration | API-backed company/drive/rule/candidate workflows plus reviewed extraction and grounded policy evidence; readiness communication remains | 3 through 5 |
 
 ## Contract boundary
 
