@@ -30,4 +30,13 @@ describe("AuthForm", () => {
 
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/onboarding"));
   });
+
+  it("honors the separate administrator destination", async () => {
+    csrfRequestMock.mockResolvedValue({ id: "admin-1", email: "admin@example.edu", role: "tnp_admin" });
+    render(<AuthForm mode="sign-in" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("College email"), { target: { value: "admin@example.edu" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a long campus passphrase" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/dashboard"));
+  });
 });

@@ -1,10 +1,10 @@
 import { StudentWorkspace } from "@/components/layout/student-workspace";
-import { OpportunitiesWorkspace } from "@/features/opportunities/opportunities-workspace";
+import { StudentOpportunities } from "@/features/recruitment/student-opportunities";
 
 export default function OpportunitiesPage() {
   return (
     <StudentWorkspace active="Opportunities">
-      <OpportunitiesWorkspace />
+      <StudentOpportunities />
     </StudentWorkspace>
   );
 }

@@ -1,4 +1,5 @@
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/feedback";
-export default function DrivesPage(){return <main id="main-content" className="listingPage"><header className="rowHeader"><div><p className="eyebrow">TNP operations</p><h1>Placement drives</h1></div><Button><Plus size={18}/>Create drive</Button></header><section className="adminTable" aria-label="Placement drives"><div className="tableRow tableHead"><span>Company and drive</span><span>Status</span><span>Applications</span><span>Deadline</span></div><div className="tableRow"><strong>Northstar Labs · 2027 Graduate Hiring</strong><Badge tone="success">Open</Badge><span>128</span><span>14 Aug</span></div><div className="tableRow"><strong>DataWeave · Analyst Cohort</strong><Badge>Draft</Badge><span>0</span><span>18 Aug</span></div></section></main>}
+import { AdminDrives } from "@/features/recruitment/admin-drives";
+
+export default function DrivesPage() {
+  return <AdminDrives />;
+}

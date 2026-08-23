@@ -9,7 +9,13 @@ import { ApiError, csrfRequest } from "@/lib/api/client";
 
 type User = { id: string; email: string; role: string };
 
-export function AuthForm({ mode }: { mode: "sign-up" | "sign-in" }) {
+export function AuthForm({
+  mode,
+  redirectTo,
+}: {
+  mode: "sign-up" | "sign-in";
+  redirectTo?: string;
+}) {
   const router = useRouter();
   const creating = mode === "sign-up";
   const [status, setStatus] = useState<"idle" | "submitting" | "complete">("idle");
@@ -26,7 +32,7 @@ export function AuthForm({ mode }: { mode: "sign-up" | "sign-in" }) {
         body: JSON.stringify({ email: data.get("email"), password: data.get("password") }),
       });
       setStatus("complete");
-      router.push(creating ? "/onboarding" : "/dashboard");
+      router.push(redirectTo ?? (creating ? "/onboarding" : "/dashboard"));
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
       setStatus("idle");

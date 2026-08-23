@@ -1,0 +1,164 @@
+"use client";
+
+import { useCallback, useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Bookmark,
+  BookmarkCheck,
+  BriefcaseBusiness,
+  CalendarDays,
+  ChevronRight,
+  MapPin,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+
+import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
+import { apiRequest, csrfRequest } from "@/lib/api/client";
+import type { Opportunity, OpportunityPage } from "./types";
+import styles from "./student-opportunities.module.css";
+
+function eligibilityCopy(opportunity: Opportunity) {
+  if (opportunity.application_status) return `Applied · ${opportunity.application_status.replaceAll("_", " ")}`;
+  if (opportunity.eligibility.status === "eligible") return "Eligible";
+  if (opportunity.eligibility.status === "needs_manual_review") return "Evidence review";
+  if (opportunity.eligibility.status === "ineligible") return "Not eligible";
+  return "Rules unavailable";
+}
+
+function tone(opportunity: Opportunity): "success" | "warning" | "neutral" {
+  if (opportunity.application_status || opportunity.eligibility.status === "eligible") return "success";
+  if (opportunity.eligibility.status === "needs_manual_review") return "warning";
+  return "neutral";
+}
+
+export function StudentOpportunities() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [data, setData] = useState<OpportunityPage | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState<string | null>(null);
+
+  const queryString = searchParams.toString();
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setData(await apiRequest<OpportunityPage>(`/opportunities${queryString ? `?${queryString}` : ""}`, { cache: "no-store" }));
+    } catch {
+      setError("Opportunities could not be loaded. Your filters are preserved; retry when the connection returns.");
+    } finally {
+      setLoading(false);
+    }
+  }, [queryString]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  function updateFilters(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const params = new URLSearchParams();
+    for (const key of ["q", "location", "work_mode", "skill", "saved_only"]) {
+      const value = String(form.get(key) ?? "").trim();
+      if (value) params.set(key, value);
+    }
+    router.replace(`/opportunities${params.size ? `?${params}` : ""}`);
+  }
+
+  async function toggleSave(opportunity: Opportunity) {
+    setSaving(opportunity.id);
+    setError("");
+    try {
+      const result = await csrfRequest<{ saved: boolean }>(`/opportunities/${opportunity.id}/save`, { method: "POST" });
+      setData((current) => current ? {
+        ...current,
+        items: current.items.map((item) => item.id === opportunity.id ? { ...item, saved: result.saved } : item),
+      } : current);
+    } catch {
+      setError("The saved-role state could not be changed. Try again without leaving this page.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  const items = data?.items ?? [];
+  const selected = items[0];
+
+  return (
+    <main id="main-content" className={styles.page}>
+      <header className={styles.heading}>
+        <div>
+          <p className={styles.eyebrow}>Published for your institution</p>
+          <h1>Find your next opportunity</h1>
+          <p>Eligibility is calculated from reviewed rules. Semantic match stays separate and arrives only when its evidence is available.</p>
+        </div>
+        <Link href="/opportunities?saved_only=true"><Bookmark aria-hidden="true" /> Saved roles</Link>
+      </header>
+
+      <form className={styles.searchPanel} onSubmit={updateFilters} aria-label="Search opportunities">
+        <label className={styles.searchField}>
+          <Search aria-hidden="true" />
+          <span className="srOnly">Role, company, or keyword</span>
+          <input name="q" defaultValue={searchParams.get("q") ?? ""} placeholder="Role, company, or keyword" />
+        </label>
+        <label className={styles.searchField}>
+          <MapPin aria-hidden="true" />
+          <span className="srOnly">Location</span>
+          <input name="location" defaultValue={searchParams.get("location") ?? ""} placeholder="Location" />
+        </label>
+        <button className={styles.searchButton} type="submit">Search roles</button>
+        <div className={styles.filters}>
+          <label>Work mode<select name="work_mode" defaultValue={searchParams.get("work_mode") ?? ""}><option value="">All modes</option><option value="on-site">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></label>
+          <label>Skill<input name="skill" defaultValue={searchParams.get("skill") ?? ""} placeholder="e.g. Python" /></label>
+          <label className={styles.checkbox}><input name="saved_only" type="checkbox" value="true" defaultChecked={searchParams.get("saved_only") === "true"} /> Saved only</label>
+          <Link className={styles.clear} href="/opportunities"><RotateCcw aria-hidden="true" /> Clear</Link>
+        </div>
+      </form>
+
+      {error && <Alert tone="error">{error} <button type="button" onClick={() => void load()}>Retry</button></Alert>}
+
+      <div className={styles.content} aria-busy={loading}>
+        <section className={styles.results} aria-labelledby="opportunity-results">
+          <div className={styles.sectionHeader}><h2 id="opportunity-results">{loading ? "Loading roles…" : `${data?.total ?? 0} opportunities`}</h2><span>Deadline first</span></div>
+          {loading ? <div className={styles.loading} role="status"><span /><span /><span /></div> : null}
+          {!loading && !items.length ? <EmptyState title="No published roles match"><span>Adjust the filters or return later when your placement cell publishes another drive.</span></EmptyState> : null}
+          <div className={styles.list}>
+            {items.map((opportunity) => (
+              <article key={opportunity.id} className={styles.card}>
+                <div className={styles.mark} aria-hidden="true">{opportunity.company_name.slice(0, 1)}</div>
+                <div className={styles.cardBody}>
+                  <p>{opportunity.company_name}</p>
+                  <h3><Link href={`/opportunities/${opportunity.id}`}>{opportunity.title}</Link></h3>
+                  <div className={styles.meta}><span><MapPin aria-hidden="true" />{opportunity.location} · {opportunity.work_mode}</span><span><CalendarDays aria-hidden="true" />Apply by {new Date(opportunity.deadline_at).toLocaleDateString()}</span></div>
+                  <div className={styles.skills}>{opportunity.skills.slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div>
+                </div>
+                <div className={styles.cardActions}>
+                  <Badge tone={tone(opportunity)}>{eligibilityCopy(opportunity)}</Badge>
+                  <button type="button" disabled={saving === opportunity.id} onClick={() => void toggleSave(opportunity)} aria-label={opportunity.saved ? `Remove ${opportunity.title} from saved roles` : `Save ${opportunity.title}`}>
+                    {opportunity.saved ? <BookmarkCheck aria-hidden="true" /> : <Bookmark aria-hidden="true" />}
+                  </button>
+                  <Link href={`/opportunities/${opportunity.id}`} aria-label={`View ${opportunity.title}`}><ChevronRight aria-hidden="true" /></Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <aside className={styles.explainer} aria-label="Opportunity decision guide">
+          <div className={styles.guideIcon}><ShieldCheck aria-hidden="true" /></div>
+          <h2>{selected ? `Why ${selected.title} is shown` : "How decisions work"}</h2>
+          <p>{selected?.eligibility.status === "eligible" ? "Your current profile satisfies every published deterministic rule." : selected?.eligibility.status === "needs_manual_review" ? "The role remains available because missing evidence is routed to review, never treated as an automatic rejection." : "Only active, published roles from your institution appear here."}</p>
+          <dl>
+            <div><dt>Eligibility</dt><dd>Rules and verified profile facts</dd></div>
+            <div><dt>Semantic match</dt><dd>Separate · not calculated in this phase</dd></div>
+            <div><dt>Application</dt><dd>Locks resume and decision versions</dd></div>
+          </dl>
+          <Link href={selected ? `/opportunities/${selected.id}` : "/resume"}><BriefcaseBusiness aria-hidden="true" />{selected ? "Review role evidence" : "Prepare your resume"}</Link>
+        </aside>
+      </div>
+    </main>
+  );
+}

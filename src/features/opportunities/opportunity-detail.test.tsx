@@ -8,9 +8,18 @@ describe("OpportunityDetail", () => {
     render(<OpportunityDetail />);
 
     const eligibility = screen.getByRole("heading", { name: "Formally eligible" });
-    const match = screen.getByRole("heading", { name: "84% match" });
+    const match = screen.getByRole("heading", { name: "92% match" });
     expect(eligibility.compareDocumentPosition(match) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText(/not a hiring probability/)).toBeInTheDocument();
+  });
+
+  it("matches the current Nexora demo opportunity", () => {
+    render(<OpportunityDetail />);
+
+    expect(screen.getByRole("heading", { name: "AI/ML Intern." })).toBeInTheDocument();
+    expect(screen.getByText("Nexora Labs / internship program")).toBeInTheDocument();
+    expect(screen.getByText(/Apply by 25 August 2026/)).toBeInTheDocument();
+    expect(screen.getByText("rule-set: nexora-v1")).toBeInTheDocument();
   });
 
   it("labels the eligibility explanation independently from match guidance", () => {

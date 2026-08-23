@@ -1,5 +1,5 @@
-import { AdminSectionPlaceholder } from "@/features/admin/admin-section-placeholder";
+import { AdminApplications } from "@/features/recruitment/admin-applications";
 
 export default function ApplicationsPage() {
-  return <AdminSectionPlaceholder title="Applications" description="Review institution-scoped applications, eligibility evidence, and accountable decisions." />;
+  return <AdminApplications />;
 }

@@ -34,6 +34,16 @@ describe("OpportunitiesWorkspace", () => {
     expect(screen.getByText("Match is decision support, not hiring probability.")).toBeInTheDocument();
   });
 
+  it("shows current, staggered demo deadlines", () => {
+    render(<OpportunitiesWorkspace />);
+
+    expect(screen.getByText("Apply by 28 August 2026")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+    expect(screen.getByText("Apply by 25 August 2026")).toBeInTheDocument();
+    expect(screen.getByText("Apply by 1 September 2026")).toBeInTheDocument();
+  });
+
   it("offers a useful recovery when filters return no roles", () => {
     render(<OpportunitiesWorkspace />);
 

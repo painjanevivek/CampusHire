@@ -24,9 +24,9 @@ type Opportunity = {
 };
 
 const opportunities: Opportunity[] = [
-  { id: "nexora-ai", mark: "N", title: "AI/ML Intern", company: "Nexora Labs", location: "Bengaluru", workMode: "Hybrid", category: "AI/ML", skills: ["Python", "TensorFlow", "Scikit-learn"], deadline: "25 May 2027", salary: "₹35,000 / month", match: 92, summary: "Build and evaluate practical machine-learning services with a small platform team." },
-  { id: "contour-frontend", mark: "C", title: "Frontend Developer", company: "Contour Software", location: "Pune", workMode: "Hybrid", category: "Software", skills: ["React", "TypeScript", "Next.js"], deadline: "28 May 2027", salary: "₹8–10 LPA", match: 88, summary: "Create accessible, dependable product interfaces used by growing operations teams." },
-  { id: "insite-data", mark: "I", title: "Data Analyst", company: "Insite Analytics", location: "Hyderabad", workMode: "On-site", category: "Data", skills: ["SQL", "Python", "Power BI"], deadline: "30 May 2027", salary: "₹7–9 LPA", match: 85, summary: "Turn operational data into trusted reports and decision-ready business insights." },
+  { id: "nexora-ai", mark: "N", title: "AI/ML Intern", company: "Nexora Labs", location: "Bengaluru", workMode: "Hybrid", category: "AI/ML", skills: ["Python", "TensorFlow", "Scikit-learn"], deadline: "25 August 2026", salary: "₹35,000 / month", match: 92, summary: "Build and evaluate practical machine-learning services with a small platform team." },
+  { id: "contour-frontend", mark: "C", title: "Frontend Developer", company: "Contour Software", location: "Pune", workMode: "Hybrid", category: "Software", skills: ["React", "TypeScript", "Next.js"], deadline: "28 August 2026", salary: "₹8–10 LPA", match: 88, summary: "Create accessible, dependable product interfaces used by growing operations teams." },
+  { id: "insite-data", mark: "I", title: "Data Analyst", company: "Insite Analytics", location: "Hyderabad", workMode: "On-site", category: "Data", skills: ["SQL", "Python", "Power BI"], deadline: "1 September 2026", salary: "₹7–9 LPA", match: 85, summary: "Turn operational data into trusted reports and decision-ready business insights." },
 ];
 
 function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
