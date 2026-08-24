@@ -45,4 +45,16 @@ describe("ConnectedStudentDashboard", () => {
       cache: "no-store",
     });
   });
+
+  it("keeps a page heading while the dashboard API is unavailable", async () => {
+    apiRequestMock.mockRejectedValueOnce(new Error("offline"));
+    render(<ConnectedStudentDashboard />);
+
+    expect(
+      screen.getByRole("heading", { name: "Your readiness workspace", level: 1 }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(/could not be refreshed/i),
+    ).toBeInTheDocument();
+  });
 });

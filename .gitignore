@@ -5,6 +5,15 @@ coverage/
 playwright-report/
 test-results/
 artifacts/
+.data/
+__pycache__/
+*.py[cod]
+.agents/
+.codebase-memory/
+.next-phase*/
+docs/visuals/
+skills-lock.json
+CLAUDE.md
 .env
 .env.local
 .env.*.local

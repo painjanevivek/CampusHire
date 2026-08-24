@@ -53,6 +53,9 @@ describe("OnboardingWizard", () => {
 
     const progress = screen.getByRole("navigation", { name: "Profile steps" });
     expect(progress).toHaveTextContent("Identity");
+    expect(
+      screen.getByRole("list", { name: "Profile setup progress" }),
+    ).toHaveAttribute("tabindex", "0");
     expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
   });
 

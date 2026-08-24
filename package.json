@@ -12,6 +12,7 @@
     "api:check": "npm run api:generate && git diff --exit-code -- openapi/campushire.openapi.json src/lib/api/generated",
     "release:smoke": "node scripts/release-smoke.mjs",
     "test": "vitest run",
+    "test:accessibility": "python scripts/accessibility_matrix.py",
     "test:watch": "vitest"
   },
   "dependencies": {

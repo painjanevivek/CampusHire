@@ -1,5 +1,7 @@
 # Student and Administrator Pilot UAT
 
+Use `docs/PILOT_UAT_SESSION_PACK.md` for deterministic facilitation, `.github/ISSUE_TEMPLATE/accessibility-uat.yml` for findings, and `docs/PILOT_UAT_ACCEPTANCE.md` for the sanitized decision record. Run the production browser matrix before and after fixes with `npm run test:accessibility` against `http://127.0.0.1:3199`.
+
 ## Session record
 
 Record the institution, date, facilitator, participant role, device/browser, assistive technology, approved fixture set, frontend/backend commit SHAs, API contract hash, and policy version. Keep identities, credentials, resumes, and production data outside Git.

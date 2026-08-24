@@ -290,7 +290,7 @@ export function OnboardingWizard() {
       <div className={styles.layout} aria-busy={loading}>
         <nav className={styles.stepRail} aria-label="Profile steps">
           <p>Step {step + 1} of {steps.length}</p>
-          <ol>{steps.map((item, index) => (
+          <ol tabIndex={0} aria-label="Profile setup progress">{steps.map((item, index) => (
             <li key={item.title} data-state={index === step ? "current" : index < step ? "complete" : "pending"}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <item.icon size={17} aria-hidden="true" />

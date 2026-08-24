@@ -63,6 +63,7 @@ export function ConnectedStudentDashboard() {
   if (!data)
     return (
       <main id="main-content" className={styles.loadingState} aria-busy="true">
+        <h1>Your readiness workspace</h1>
         {error ? (
           <Alert tone="error">
             {error}{" "}

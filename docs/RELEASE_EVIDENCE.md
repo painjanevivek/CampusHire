@@ -2,7 +2,7 @@
 
 ## Automated gates
 
-Run `npm ci`, `npm run api:check`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm audit --audit-level=high`, and `npm run release:smoke` against the candidate URL. CI executes the source/build sequence from the lockfile. Tests cover student/admin shells, API-backed workflows, loading/empty/error states, safe links, nonce-based Content Security Policy, API destination validation, privacy confirmation, and axe-core checks for critical shells. The release smoke verifies public entry routes and browser policy headers on the deployed artifact.
+Run `npm ci`, `npm run api:check`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run test:accessibility`, `npm audit --audit-level=high`, and `npm run release:smoke` against the candidate URL. CI executes the source/build sequence from the lockfile and installs pinned Chromium automation dependencies. Tests cover student/admin shells, API-backed workflows, loading/empty/error states, safe links, nonce-based Content Security Policy, API destination validation, privacy confirmation, and both jsdom and rendered axe checks. The release smoke verifies public entry routes and browser policy headers on the deployed artifact. The local 2026-08-24 browser result is summarized in `docs/ACCESSIBILITY_AUTOMATION_2026-08-24.md`.
 
 ## Manual browser matrix
 

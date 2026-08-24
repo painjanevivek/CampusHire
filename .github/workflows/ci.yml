@@ -23,6 +23,29 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.browser.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Run the production browser accessibility matrix
+        shell: bash
+        run: |
+          npm run start -- -p 3199 > /tmp/campushire-frontend.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..45}; do
+            if curl --fail --silent http://127.0.0.1:3199/ > /dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 45 ]; then
+              cat /tmp/campushire-frontend.log
+              exit 1
+            fi
+            sleep 1
+          done
+          npm run test:accessibility
       - name: Build the production frontend image
         run: docker build --build-arg NEXT_PUBLIC_API_URL=https://staging.invalid/api/v1 --tag campushire-frontend:test .
       - run: npm audit --audit-level=high

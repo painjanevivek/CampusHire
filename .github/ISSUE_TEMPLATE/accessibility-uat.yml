@@ -1,0 +1,50 @@
+name: Accessibility or UAT observation
+description: Record a reproducible accessibility or representative-user finding.
+title: "[UAT]: "
+labels: ["accessibility", "uat"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: ["Blocker", "High", "Medium", "Low"]
+    validations:
+      required: true
+  - type: input
+    id: requirement
+    attributes:
+      label: Requirement or journey
+      placeholder: "Keyboard navigation / Student opportunity application"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      placeholder: "Use synthetic account labels only. Include route, viewport, browser, and assistive technology."
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Do not attach participant names, credentials, resumes, or production data.
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Accountable owner and target date
+      placeholder: "Role or team — YYYY-MM-DD"
+    validations:
+      required: true
+  - type: input
+    id: fix
+    attributes:
+      label: Fix commit or disposition
+      placeholder: "SHA, accepted-risk record, duplicate, or not reproducible"
+  - type: textarea
+    id: retest
+    attributes:
+      label: Retest result
+      placeholder: "Environment, date, reviewer role, and pass/fail evidence"

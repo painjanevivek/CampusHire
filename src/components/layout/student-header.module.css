@@ -119,8 +119,9 @@
 }
 
 @media (max-width: 480px) {
-  .inner { width: min(100% - 20px, 1280px); padding-inline: 14px; }
+  .inner { width: min(100% - 20px, 1280px); gap: 8px; padding-inline: 14px; }
   .brand strong { font-size: 0.92rem; }
+  .utilities { gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
