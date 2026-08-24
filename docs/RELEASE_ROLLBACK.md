@@ -20,4 +20,4 @@ If the backend contract is incompatible, stop the rollout instead of hiding erro
 
 ## Release gates
 
-Production promotion still requires the separate frontend Deep Security Scan, representative authenticated browser tests, human accessibility/UAT acceptance, approved privacy text, and institution-specific operational contacts. Development smoke evidence does not waive these gates.
+The frontend Deep Security Scan was explicitly deferred by the user on 2026-08-24; the current audit does not claim it passed. Production promotion still requires representative authenticated staging tests, human accessibility/UAT acceptance, approved privacy text, institution-specific operational contacts, and resolution or formal resumption of deferred security review. Development smoke evidence does not waive these gates.
