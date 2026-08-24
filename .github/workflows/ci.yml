@@ -23,4 +23,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - name: Build the production frontend image
+        run: docker build --build-arg NEXT_PUBLIC_API_URL=https://staging.invalid/api/v1 --tag campushire-frontend:test .
       - run: npm audit --audit-level=high

@@ -1,0 +1,17 @@
+.git
+.github
+.agents
+.codebase-memory
+.data
+.next
+.next-*
+node_modules
+artifacts
+docs/visuals
+*.log
+.env*
+AGENTS.md
+CLAUDE.md
+design.md
+designs.md
+skills-lock.json
