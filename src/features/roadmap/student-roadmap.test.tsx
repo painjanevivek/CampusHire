@@ -60,6 +60,16 @@ describe("StudentRoadmap", () => {
     );
   });
 
+  it("preserves the page heading while roadmap data is loading", () => {
+    apiRequestMock.mockImplementation(() => new Promise(() => undefined));
+
+    render(<StudentRoadmap />);
+
+    expect(screen.getByRole("heading", { name: "Career roadmap" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Loading approved career paths");
+    expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "true");
+  });
+
   it("reveals only prerequisite-ready milestones and records reviewed evidence", async () => {
     csrfRequestMock.mockResolvedValue({
       ...roadmap,

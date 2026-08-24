@@ -54,6 +54,16 @@ describe("ResumeBuilder", () => {
     apiRequestMock.mockResolvedValue(version);
   });
 
+  it("preserves the page heading while resume data is loading", () => {
+    apiRequestMock.mockImplementation(() => new Promise(() => undefined));
+
+    render(<ResumeBuilder />);
+
+    expect(screen.getByRole("heading", { name: "Resume review" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Loading review workspace");
+    expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "true");
+  });
+
   it("keeps every wording suggestion student-controlled", async () => {
     csrfRequestMock.mockResolvedValue({
       ...version,
@@ -61,8 +71,8 @@ describe("ResumeBuilder", () => {
     });
     render(<ResumeBuilder />);
 
-    expect(await screen.findByRole("heading", { name: "Resume review" })).toBeInTheDocument();
-    expect(screen.getByText("Worked on a placement project.")).toBeInTheDocument();
+    expect(await screen.findByText("Worked on a placement project.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Resume review" })).toBeInTheDocument();
     expect(screen.getByText("Contributed to a placement project.")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Edit suggestion" }));
@@ -91,7 +101,7 @@ describe("ResumeBuilder", () => {
     });
     render(<ResumeBuilder />);
 
-    await screen.findByRole("heading", { name: "Resume review" });
+    await screen.findByRole("combobox", { name: "Decision for full name" });
     fireEvent.change(screen.getByRole("combobox", { name: "Decision for full name" }), { target: { value: "accept" } });
     fireEvent.change(screen.getByRole("combobox", { name: "Decision for email" }), { target: { value: "reject" } });
     fireEvent.click(screen.getByRole("button", { name: "Save extraction decisions" }));

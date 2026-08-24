@@ -26,7 +26,7 @@ Record the institution, date, facilitator, participant role, device/browser, ass
 
 ## Accessibility and resilience
 
-Repeat critical actions by keyboard, at 200% zoom, in a 390 px viewport, with reduced motion, and with the selected screen reader. Verify visible focus, meaningful order/names, reflow, non-colour status cues, and announced errors. Exercise loading, empty, unauthorized, offline, provider-unavailable, failed, retry, stale-version, and closed-deadline states.
+Repeat critical actions by keyboard, at 200% zoom, in a 390 px viewport, with reduced motion, and with the selected screen reader. Include the real Safari/macOS Full Keyboard Access session and platform/browser coverage in `docs/BROWSER_SUPPORT_MATRIX.md`. Verify visible focus, meaningful order/names, reflow, non-colour status cues, and announced errors. Exercise loading, empty, unauthorized, offline, provider-unavailable, failed, retry, stale-version, and closed-deadline states.
 
 ## Triage and decision
 

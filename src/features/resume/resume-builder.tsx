@@ -180,7 +180,17 @@ export function ResumeBuilder() {
   }
 
   if (state === "loading") {
-    return <main id="main-content" className={styles.page}><div className={styles.loading} role="status"><LoaderCircle aria-hidden="true" /> Loading review workspace…</div></main>;
+    return (
+      <main id="main-content" className={styles.page} aria-busy="true">
+        <div className={styles.loading} role="status">
+          <LoaderCircle aria-hidden="true" />
+          <div>
+            <h1>Resume review</h1>
+            <p>Loading review workspace…</p>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   if (!version) {

@@ -103,7 +103,10 @@ export function StudentRoadmap() {
   if (loading)
     return (
       <main id="main-content" className={styles.state} aria-busy="true">
-        <p>Loading approved career paths…</p>
+        <div role="status">
+          <h1>Career roadmap</h1>
+          <p>Loading approved career paths…</p>
+        </div>
       </main>
     );
 
