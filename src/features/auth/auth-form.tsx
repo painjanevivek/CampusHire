@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/form-controls";
 import { ApiError, csrfRequest } from "@/lib/api/client";
 
 type User = { id: string; email: string; role: string };
+type SignInResponse = { user: User; next_step: "complete" | "mfa_setup" | "mfa_challenge" };
 
 export function AuthForm({
   mode,
@@ -27,11 +28,15 @@ export function AuthForm({
     setStatus("submitting");
     const data = new FormData(event.currentTarget);
     try {
-      await csrfRequest<User>(creating ? "/auth/signup" : "/auth/sign-in", {
+      const result = await csrfRequest<User | SignInResponse>(creating ? "/auth/signup" : "/auth/sign-in", {
         method: "POST",
         body: JSON.stringify({ email: data.get("email"), password: data.get("password") }),
       });
       setStatus("complete");
+      if (!creating && "next_step" in result) {
+        if (result.next_step === "mfa_setup") return router.push("/admin/mfa/setup");
+        if (result.next_step === "mfa_challenge") return router.push("/admin/mfa/challenge");
+      }
       router.push(redirectTo ?? (creating ? "/onboarding" : "/dashboard"));
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
@@ -61,6 +66,7 @@ export function AuthForm({
       <Button type="submit" disabled={status === "submitting"}>
         {status === "submitting" ? "Checking securely…" : creating ? "Create account" : "Sign in"}
       </Button>
+      {!creating ? <a className="textLink" href="/forgot-password">Forgot password?</a> : null}
     </form>
   );
 }

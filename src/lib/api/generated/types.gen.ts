@@ -153,6 +153,16 @@ export type ApplicationStatusUpdate = {
 };
 
 /**
+ * Body_preview_roster_import_api_v1_institutions__institution_id__roster_imports_preview_post
+ */
+export type BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost = {
+    /**
+     * File
+     */
+    file: Blob | File;
+};
+
+/**
  * Body_upload_resume_api_v1_resumes_post
  */
 export type BodyUploadResumeApiV1ResumesPost = {
@@ -723,6 +733,90 @@ export type IdentityUpdate = {
 };
 
 /**
+ * InstitutionProvisionRequest
+ */
+export type InstitutionProvisionRequest = {
+    /**
+     * Admin Email
+     */
+    admin_email: string;
+    /**
+     * Institution Code
+     */
+    institution_code: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+};
+
+/**
+ * InstitutionProvisionResponse
+ */
+export type InstitutionProvisionResponse = {
+    /**
+     * Admin Invitation Id
+     */
+    admin_invitation_id: string;
+    /**
+     * Admin Invitation Token
+     */
+    admin_invitation_token: string;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+};
+
+/**
+ * InvitationAcceptRequest
+ */
+export type InvitationAcceptRequest = {
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Privacy Version
+     */
+    privacy_version: string;
+    /**
+     * Terms Version
+     */
+    terms_version: string;
+};
+
+/**
+ * InvitationResponse
+ */
+export type InvitationResponse = {
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Role
+     */
+    role: string;
+};
+
+/**
  * LinksUpdate
  */
 export type LinksUpdate = {
@@ -760,6 +854,10 @@ export type MembershipCreate = {
  */
 export type MembershipResponse = {
     /**
+     * Email
+     */
+    email?: string | null;
+    /**
      * Id
      */
     id: string;
@@ -779,6 +877,54 @@ export type MembershipResponse = {
      * User Id
      */
     user_id: string;
+};
+
+/**
+ * MembershipStatusUpdate
+ */
+export type MembershipStatusUpdate = {
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * MfaCodeRequest
+ */
+export type MfaCodeRequest = {
+    /**
+     * Code
+     */
+    code: string;
+};
+
+/**
+ * MfaConfirmResponse
+ */
+export type MfaConfirmResponse = {
+    /**
+     * Recovery Codes
+     */
+    recovery_codes: Array<string>;
+};
+
+/**
+ * MfaSetupResponse
+ */
+export type MfaSetupResponse = {
+    /**
+     * Provisioning Uri
+     */
+    provisioning_uri: string;
+    /**
+     * Secret
+     */
+    secret: string;
 };
 
 /**
@@ -1051,6 +1197,26 @@ export type OverrideResponse = {
      * Target Status
      */
     target_status: string;
+};
+
+/**
+ * PasswordResetConfirm
+ */
+export type PasswordResetConfirm = {
+    /**
+     * Password
+     */
+    password: string;
+};
+
+/**
+ * PasswordResetRequest
+ */
+export type PasswordResetRequest = {
+    /**
+     * Email
+     */
+    email: string;
 };
 
 /**
@@ -1967,6 +2133,78 @@ export type RoleUpdate = {
 };
 
 /**
+ * RosterImportResponse
+ */
+export type RosterImportResponse = {
+    /**
+     * Committed At
+     */
+    committed_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
+    /**
+     * Rows
+     */
+    rows: Array<RosterRowResponse>;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Total Rows
+     */
+    total_rows: number;
+    /**
+     * Valid Rows
+     */
+    valid_rows: number;
+};
+
+/**
+ * RosterRowResponse
+ */
+export type RosterRowResponse = {
+    /**
+     * Activation Token
+     */
+    activation_token?: string | null;
+    /**
+     * Email
+     */
+    email: string | null;
+    /**
+     * Enrollment Id
+     */
+    enrollment_id: string | null;
+    /**
+     * Errors
+     */
+    errors: Array<string>;
+    /**
+     * Full Name
+     */
+    full_name: string | null;
+    /**
+     * Row Number
+     */
+    row_number: number;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
  * Rule
  */
 export type Rule = {
@@ -2106,6 +2344,36 @@ export type SemanticMatchResponse = {
 };
 
 /**
+ * SessionResponse
+ */
+export type SessionResponse = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Current
+     */
+    current: boolean;
+    /**
+     * Device Summary
+     */
+    device_summary: string | null;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Last Activity At
+     */
+    last_activity_at: string;
+};
+
+/**
  * SignInRequest
  */
 export type SignInRequest = {
@@ -2117,6 +2385,17 @@ export type SignInRequest = {
      * Password
      */
     password: string;
+};
+
+/**
+ * SignInResponse
+ */
+export type SignInResponse = {
+    /**
+     * Next Step
+     */
+    next_step?: string;
+    user: UserResponse;
 };
 
 /**
@@ -3207,6 +3486,66 @@ export type CsrfApiV1AuthCsrfGetResponses = {
 
 export type CsrfApiV1AuthCsrfGetResponse = CsrfApiV1AuthCsrfGetResponses[keyof CsrfApiV1AuthCsrfGetResponses];
 
+export type ValidateInvitationApiV1AuthInvitationsTokenGetData = {
+    body?: never;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/invitations/{token}';
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetError = ValidateInvitationApiV1AuthInvitationsTokenGetErrors[keyof ValidateInvitationApiV1AuthInvitationsTokenGetErrors];
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: InvitationResponse;
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetResponse = ValidateInvitationApiV1AuthInvitationsTokenGetResponses[keyof ValidateInvitationApiV1AuthInvitationsTokenGetResponses];
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostData = {
+    body: InvitationAcceptRequest;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/invitations/{token}/accept';
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostError = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors];
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UserResponse;
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponse = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses];
+
 export type MeApiV1AuthMeGetData = {
     body?: never;
     path?: never;
@@ -3232,6 +3571,197 @@ export type MeApiV1AuthMeGetResponses = {
 
 export type MeApiV1AuthMeGetResponse = MeApiV1AuthMeGetResponses[keyof MeApiV1AuthMeGetResponses];
 
+export type ChallengeMfaApiV1AuthMfaChallengePostData = {
+    body: MfaCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/challenge';
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostError = ChallengeMfaApiV1AuthMfaChallengePostErrors[keyof ChallengeMfaApiV1AuthMfaChallengePostErrors];
+
+export type ChallengeMfaApiV1AuthMfaChallengePostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostResponse = ChallengeMfaApiV1AuthMfaChallengePostResponses[keyof ChallengeMfaApiV1AuthMfaChallengePostResponses];
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostData = {
+    body: MfaCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/confirm';
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostError = ConfirmMfaApiV1AuthMfaConfirmPostErrors[keyof ConfirmMfaApiV1AuthMfaConfirmPostErrors];
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaConfirmResponse;
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostResponse = ConfirmMfaApiV1AuthMfaConfirmPostResponses[keyof ConfirmMfaApiV1AuthMfaConfirmPostResponses];
+
+export type SetupMfaApiV1AuthMfaSetupPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/setup';
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostError = SetupMfaApiV1AuthMfaSetupPostErrors[keyof SetupMfaApiV1AuthMfaSetupPostErrors];
+
+export type SetupMfaApiV1AuthMfaSetupPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaSetupResponse;
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostResponse = SetupMfaApiV1AuthMfaSetupPostResponses[keyof SetupMfaApiV1AuthMfaSetupPostResponses];
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostData = {
+    body: PasswordResetRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/password-reset/request';
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostError = RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors];
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses = {
+    /**
+     * Response Request Password Reset Api V1 Auth Password Reset Request Post
+     *
+     * Successful Response
+     */
+    202: {
+        [key: string]: string;
+    };
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponse = RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses];
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostData = {
+    body: PasswordResetConfirm;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/password-reset/{token}/confirm';
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostError = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors];
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponse = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses];
+
+export type ReadSessionsApiV1AuthSessionsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/sessions';
+};
+
+export type ReadSessionsApiV1AuthSessionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadSessionsApiV1AuthSessionsGetError = ReadSessionsApiV1AuthSessionsGetErrors[keyof ReadSessionsApiV1AuthSessionsGetErrors];
+
+export type ReadSessionsApiV1AuthSessionsGetResponses = {
+    /**
+     * Response Read Sessions Api V1 Auth Sessions Get
+     *
+     * Successful Response
+     */
+    200: Array<SessionResponse>;
+};
+
+export type ReadSessionsApiV1AuthSessionsGetResponse = ReadSessionsApiV1AuthSessionsGetResponses[keyof ReadSessionsApiV1AuthSessionsGetResponses];
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Session Id
+         */
+        session_id: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/sessions/{session_id}';
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteError = DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors];
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponse = DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses];
+
 export type SignInApiV1AuthSignInPostData = {
     body: SignInRequest;
     path?: never;
@@ -3252,7 +3782,7 @@ export type SignInApiV1AuthSignInPostResponses = {
     /**
      * Successful Response
      */
-    200: UserResponse;
+    200: SignInResponse;
 };
 
 export type SignInApiV1AuthSignInPostResponse = SignInApiV1AuthSignInPostResponses[keyof SignInApiV1AuthSignInPostResponses];
@@ -3389,6 +3919,44 @@ export type ReadinessApiV1HealthReadyGetResponses = {
 
 export type ReadinessApiV1HealthReadyGetResponse = ReadinessApiV1HealthReadyGetResponses[keyof ReadinessApiV1HealthReadyGetResponses];
 
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Invitation Id
+         */
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/resend';
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostError = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors];
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses = {
+    /**
+     * Response Resend Membership Invitation Api V1 Institutions  Institution Id  Invitations  Invitation Id  Resend Post
+     *
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponse = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses];
+
 export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetData = {
     body?: never;
     path: {
@@ -3451,6 +4019,168 @@ export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostRespons
 
 export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponse = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses];
 
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchData = {
+    body: MembershipStatusUpdate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Membership Id
+         */
+        membership_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/memberships/{membership_id}';
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchError = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors];
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: MembershipResponse;
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponse = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses];
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostData = {
+    body: BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/preview';
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostError = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors];
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: RosterImportResponse;
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponse = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses];
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/template';
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetError = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors];
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: string;
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponse = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses];
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Roster Import Id
+         */
+        roster_import_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}';
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetError = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors];
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: RosterImportResponse;
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponse = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses];
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Roster Import Id
+         */
+        roster_import_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}/commit';
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostError = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors];
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RosterImportResponse;
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponse = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses];
+
 export type ReadNotificationsApiV1NotificationsGetData = {
     body?: never;
     path?: never;
@@ -3505,6 +4235,37 @@ export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = 
 };
 
 export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
+
+export type CreateInstitutionApiV1OperatorInstitutionsPostData = {
+    body: InstitutionProvisionRequest;
+    headers?: {
+        /**
+         * X-Operator-Key
+         */
+        'x-operator-key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/operator/institutions';
+};
+
+export type CreateInstitutionApiV1OperatorInstitutionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateInstitutionApiV1OperatorInstitutionsPostError = CreateInstitutionApiV1OperatorInstitutionsPostErrors[keyof CreateInstitutionApiV1OperatorInstitutionsPostErrors];
+
+export type CreateInstitutionApiV1OperatorInstitutionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: InstitutionProvisionResponse;
+};
+
+export type CreateInstitutionApiV1OperatorInstitutionsPostResponse = CreateInstitutionApiV1OperatorInstitutionsPostResponses[keyof CreateInstitutionApiV1OperatorInstitutionsPostResponses];
 
 export type ReadOpportunitiesApiV1OpportunitiesGetData = {
     body?: never;

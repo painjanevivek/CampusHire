@@ -12,6 +12,6 @@ describe("AuthShell", () => {
     );
 
     expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: "Find opportunities" })).toHaveAttribute("href", "/opportunities");
+    expect(screen.getByRole("link", { name: "How it works" })).toHaveAttribute("href", "/#how-it-works");
   });
 });

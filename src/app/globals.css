@@ -111,6 +111,8 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .authPanel h1 { max-width: 12ch; margin-bottom: 0.75rem; font-size: clamp(2.25rem, 5vw, 3.75rem); }
 .authForm { display: grid; gap: 1rem; }
 .authForm .button { margin-top: 0.25rem; }
+.recoveryGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.recoveryGrid code { display: block; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.65rem; background: var(--surface-muted); text-align: center; }
 .authFooter { color: var(--ink-muted); }
 .authFooter a { color: var(--brand-blue); font-weight: 800; }
 .authPromise { align-self: center; border-left: 1px solid var(--line); padding: 2rem 0 2rem clamp(2rem, 5vw, 4rem); }

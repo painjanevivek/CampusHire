@@ -17,7 +17,7 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
           <span className="brandMark" aria-hidden="true">C</span>
           <span>CampusHire</span>
         </Link>
-        <Link className="authJobsLink" href="/opportunities">Find opportunities</Link>
+        <Link className="authJobsLink" href="/#how-it-works">How it works</Link>
       </header>
 
       <main id="main-content" className="authPage">
@@ -37,8 +37,8 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
             Your profile helps explain your fit. It never gives AI permission to invent your story.
           </blockquote>
           <p>
-            No OTP is used in this pilot. Your password is protected with Argon2id and your
-            session stays out of browser storage.
+            Passwords are protected with Argon2id. Administrator access also requires an
+            authenticator, and every session remains revocable without browser token storage.
           </p>
         </aside>
       </main>

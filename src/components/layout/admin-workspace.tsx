@@ -22,7 +22,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  if (pathname === "/admin/sign-in") return children;
+  if (pathname === "/admin/sign-in" || pathname.startsWith("/admin/mfa")) return children;
 
   return (
     <div className={styles.workspace}>
