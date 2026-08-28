@@ -4,18 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, UserRound, X } from "lucide-react";
 import { NotificationCenter } from "@/features/engagement/notification-center";
+import { ActivationProgress } from "@/features/engagement/activation-progress";
 
 import styles from "./student-header.module.css";
 
 export type WorkspaceSection =
-  "Readiness" | "Opportunities" | "Resume" | "Roadmap" | "Profile";
+  "Readiness" | "Opportunities" | "Applications" | "Resume" | "Roadmap" | "Profile";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
   { href: "/dashboard", label: "Readiness" },
   { href: "/opportunities", label: "Opportunities" },
+  { href: "/applications", label: "Applications" },
   { href: "/resume", label: "Resume" },
   { href: "/roadmap", label: "Roadmap" },
-  { href: "/onboarding", label: "Profile" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export function StudentHeader({ active }: { active?: WorkspaceSection }) {
@@ -62,10 +64,11 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         </nav>
 
         <div className={styles.utilities}>
+          <ActivationProgress />
           <NotificationCenter />
           <Link
             className={styles.account}
-            href="/onboarding"
+            href="/profile"
             aria-label="Open student profile"
           >
             <UserRound size={18} aria-hidden="true" />

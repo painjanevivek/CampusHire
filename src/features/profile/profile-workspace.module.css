@@ -1,0 +1,38 @@
+.page { width: min(100%, 1120px); margin: 0 auto; padding: 48px 20px 88px; display: grid; gap: 28px; }
+.hero { display: flex; justify-content: space-between; gap: 32px; padding-bottom: 30px; border-bottom: 1px solid var(--line); }
+.hero p, .grid p, .actionSection p, .sessions header p { margin: 0 0 8px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.hero h1 { margin: 0 0 12px; font-size: clamp(2.1rem, 5vw, 4rem); letter-spacing: -.055em; }
+.hero span, .grid span, .actionSection span, .sessions span, .governance p { color: var(--ink-muted); }
+.readiness { flex: 0 0 170px; display: grid; align-content: center; padding: 24px; border-left: 3px solid var(--verified); background: var(--surface); }
+.readiness strong { font-size: 2rem; }
+.readiness span { font-size: .78rem; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.grid article { min-height: 190px; padding: 26px; }
+.grid article + article { border-left: 1px solid var(--line); }
+.grid svg { color: var(--brand-blue); }
+.grid h2 { margin: 24px 0 8px; font-size: 1.12rem; }
+.actionSection { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 28px; border-radius: 16px; background: var(--brand-blue-soft); }
+.actionSection h2 { margin: 0 0 7px; font-size: 1.25rem; }
+.actionSection a, .governance a { display: inline-flex; align-items: center; gap: 7px; color: var(--brand-blue-dark); font-weight: 750; white-space: nowrap; }
+.sessions { padding: 28px; border: 1px solid var(--line); border-radius: 16px; }
+.sessions header { display: flex; align-items: center; justify-content: space-between; }
+.sessions header svg { color: var(--brand-blue); }
+.sessions h2 { margin: 0; }
+.sessions ul { margin: 22px 0 0; padding: 0; list-style: none; }
+.sessions li { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); }
+.sessions li div { display: grid; gap: 4px; }
+.sessions li span { font-size: .78rem; }
+.sessions button { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--ink); cursor: pointer; }
+.governance { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.governance article { display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; }
+.governance svg { color: var(--verified); }
+.governance h2 { margin: 0 0 5px; font-size: 1.05rem; }
+.governance p { margin: 0 0 12px; font-size: .88rem; }
+
+@media (max-width: 760px) {
+  .hero, .actionSection { display: grid; }
+  .readiness { border-left: 0; border-top: 3px solid var(--verified); }
+  .grid, .governance { grid-template-columns: 1fr; }
+  .grid article + article { border-left: 0; border-top: 1px solid var(--line); }
+  .sessions li { align-items: start; flex-direction: column; }
+}

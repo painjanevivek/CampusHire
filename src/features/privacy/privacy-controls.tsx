@@ -71,7 +71,7 @@ export function PrivacyControls() {
           <h2>Optional evidence stays optional.</h2>
           <span>GitHub, portfolio, phone, and an initial resume upload remain optional unless a published role states a reviewed requirement. Ask your placement cell about correction, export, policy retention, or appeals.</span>
         </div>
-        <Link href="/onboarding">Review profile evidence</Link>
+        <Link href="/profile">Review profile evidence</Link>
       </section>
 
       <section className={styles.danger} aria-labelledby="deletion-title">

@@ -55,7 +55,17 @@ export type DashboardApiResponse = {
     href: string;
     policy_version: string;
     source_facts: string[];
+    estimated_minutes: number;
+    unlocks: string;
   };
+  activation: Array<{
+    key: "account_activated" | "profile_minimum" | "target_role" | "resume_reviewed" | "opportunities_unlocked" | "first_application";
+    label: string;
+    status: "complete" | "current" | "upcoming";
+    href: string;
+    estimated_minutes: number;
+    unlocks: string;
+  }>;
   evidence: Array<{
     label: string;
     value: string;

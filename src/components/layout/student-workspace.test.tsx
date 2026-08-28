@@ -20,11 +20,14 @@ describe("StudentWorkspace", () => {
       "page",
     );
     expect(screen.getByRole("link", { name: "Open student profile" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open student profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("href", "/applications");
   });
 
   it.each([
     "Readiness",
     "Opportunities",
+    "Applications",
     "Resume",
     "Roadmap",
     "Profile",

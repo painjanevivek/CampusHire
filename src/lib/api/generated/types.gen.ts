@@ -5,6 +5,36 @@ export type ClientOptions = {
 };
 
 /**
+ * ActivationStage
+ */
+export type ActivationStage = {
+    /**
+     * Estimated Minutes
+     */
+    estimated_minutes: number;
+    /**
+     * Href
+     */
+    href: string;
+    /**
+     * Key
+     */
+    key: 'account_activated' | 'profile_minimum' | 'target_role' | 'resume_reviewed' | 'opportunities_unlocked' | 'first_application';
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Status
+     */
+    status: 'complete' | 'current' | 'upcoming';
+    /**
+     * Unlocks
+     */
+    unlocks: string;
+};
+
+/**
  * AdminApplicationPage
  */
 export type AdminApplicationPage = {
@@ -298,6 +328,10 @@ export type DashboardOpportunity = {
  * DashboardResponse
  */
 export type DashboardResponse = {
+    /**
+     * Activation
+     */
+    activation: Array<ActivationStage>;
     /**
      * Evidence
      */
@@ -936,6 +970,10 @@ export type NextAction = {
      */
     description: string;
     /**
+     * Estimated Minutes
+     */
+    estimated_minutes: number;
+    /**
      * Href
      */
     href: string;
@@ -959,6 +997,10 @@ export type NextAction = {
      * Title
      */
     title: string;
+    /**
+     * Unlocks
+     */
+    unlocks: string;
 };
 
 /**
