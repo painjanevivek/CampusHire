@@ -85,6 +85,7 @@ def configure_degraded_api(context: BrowserContext) -> list[str]:
         route.fulfill(
             status=503,
             content_type="application/json",
+            headers={"access-control-allow-origin": "*"},
             body=json.dumps(
                 {
                     "detail": {
@@ -109,7 +110,10 @@ def configure_local_https_bridge(context: BrowserContext, base_url: str) -> list
     def bridge(route: Any) -> None:
         requests.append(route.request.url)
         local_url = route.request.url.replace("https://", "http://", 1)
-        route.fulfill(response=route.fetch(url=local_url))
+        response = route.fetch(url=local_url)
+        headers = dict(response.headers)
+        headers["access-control-allow-origin"] = "*"
+        route.fulfill(response=response, headers=headers)
 
     context.route(f"https://{parsed.netloc}/**", bridge)
     return requests

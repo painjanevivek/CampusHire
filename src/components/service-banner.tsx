@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/api/client";
 
 type ServiceStatus = {
@@ -9,17 +6,11 @@ type ServiceStatus = {
   transactional_email: "configured" | "degraded";
 };
 
-export function ServiceBanner() {
-  const [service, setService] = useState<ServiceStatus | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    void apiRequest<ServiceStatus>("/service-status", { signal: controller.signal })
-      .then(setService)
-      .catch(() => undefined);
-    return () => controller.abort();
-  }, []);
-
+export async function ServiceBanner() {
+  const service = await apiRequest<ServiceStatus>("/service-status", {
+    next: { revalidate: 30 },
+    signal: AbortSignal.timeout(2_000),
+  }).catch(() => null);
   if (!service || service.status === "operational") return null;
   return (
     <aside className="serviceBanner" role="status" aria-live="polite">

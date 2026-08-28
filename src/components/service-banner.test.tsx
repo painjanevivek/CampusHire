@@ -7,15 +7,15 @@ describe("ServiceBanner", () => {
 
   it("progressively discloses a configured maintenance state", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "maintenance", maintenance_message: "Database maintenance from 02:00 to 02:15.", transactional_email: "configured" }), { status: 200, headers: { "Content-Type": "application/json" } })));
-    render(<ServiceBanner />);
-    expect(await screen.findByRole("status")).toHaveTextContent("Database maintenance");
+    render(await ServiceBanner());
+    expect(screen.getByRole("status")).toHaveTextContent("Database maintenance");
     expect(screen.getByRole("link", { name: "View service status" })).toHaveAttribute("href", "/status");
   });
 
   it("does not add noise during normal operations", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "operational", maintenance_message: null, transactional_email: "configured" }), { status: 200, headers: { "Content-Type": "application/json" } })));
-    render(<ServiceBanner />);
-    await vi.waitFor(() => expect(fetch).toHaveBeenCalled());
+    render(await ServiceBanner());
+    expect(fetch).toHaveBeenCalled();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });

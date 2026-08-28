@@ -55,6 +55,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-body), Inter, system-ui, sans-serif; line-height: 1.625; }
 a { color: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .skipLink { position: fixed; z-index: var(--layer-skip-link); top: 0.5rem; left: 0.5rem; transform: translateY(-180%); border-radius: var(--radius-sm); padding: 0.75rem 1rem; background: var(--ink); color: var(--surface); }
 .skipLink:focus { transform: translateY(0); }
@@ -190,6 +191,13 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+@media (forced-colors: active) {
+  :focus-visible { outline: 3px solid Highlight; }
+  .skeleton::after { display: none; }
+  .alert, .serviceBanner { border: 2px solid CanvasText; }
+  .button, button, input, select, textarea { forced-color-adjust: auto; }
 }
 
 .serviceBanner { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--status-warning); background: color-mix(in oklch, var(--status-warning) 18%, var(--surface)); color: var(--ink); font-size: .88rem; }

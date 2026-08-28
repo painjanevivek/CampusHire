@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   Instrument_Serif,
   Inter,
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-scroll-behavior="smooth">
       <body className={`${display.variable} ${body.variable} ${interfaceFont.variable} ${monospace.variable}`}>
         <a className="skipLink" href="#main-content">Skip to main content</a>
-        <ServiceBanner />
+        <Suspense fallback={null}><ServiceBanner /></Suspense>
         {children}
       </body>
     </html>
