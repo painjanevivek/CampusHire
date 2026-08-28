@@ -19,6 +19,7 @@ import { apiRequest, csrfRequest } from "@/lib/api/client";
 import type {
   Company,
   Drive,
+  Eligibility,
   ExtractionProposal,
   PlacementRole,
   RuleDefinition,
@@ -49,6 +50,7 @@ export function AdminDrives() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [eligibilityPreview, setEligibilityPreview] = useState<Eligibility | null>(null);
 
   const loadRoot = useCallback(async () => {
     await Promise.resolve();
@@ -325,6 +327,31 @@ export function AdminDrives() {
     }
   }
 
+  async function previewEligibility(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selectedRole) return;
+    const form = new FormData(event.currentTarget);
+    setBusy(true);
+    setError("");
+    try {
+      setEligibilityPreview(await csrfRequest<Eligibility>(
+        `/admin/recruitment/roles/${selectedRole}/eligibility-preview`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            degree: form.get("degree") || null,
+            cgpa: form.get("cgpa") ? Number(form.get("cgpa")) : null,
+            active_backlogs: form.get("active_backlogs") ? Number(form.get("active_backlogs")) : null,
+          }),
+        },
+      ));
+    } catch {
+      setError("The deterministic rule preview could not be evaluated. Review the draft rules and inputs.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const activeDrive = drives.find((item) => item.id === selectedDrive);
   const activeRole = roles.find((item) => item.id === selectedRole);
   const publishedRules = ruleSets.find((item) => item.status === "published");
@@ -547,6 +574,16 @@ export function AdminDrives() {
                 >
                   Close drive
                 </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void postAction(
+                    `/admin/recruitment/drives/${activeDrive.id}/duplicate`,
+                    "Drive duplicated as a draft with draft role and rule copies.",
+                  )}
+                >
+                  Duplicate draft
+                </button>
               </div>
 
               {panel === "role" ? (
@@ -709,6 +746,16 @@ export function AdminDrives() {
                           Publish role
                         </button>
                       </div>
+                      <details className={styles.rulePreview}>
+                        <summary>Preview eligibility with synthetic facts</summary>
+                        <form onSubmit={previewEligibility}>
+                          <Input id="preview-degree" name="degree" label="Degree" defaultValue="B.Tech" />
+                          <Input id="preview-cgpa" name="cgpa" label="CGPA" type="number" min="0" max="10" step="0.1" />
+                          <Input id="preview-backlogs" name="active_backlogs" label="Active backlogs" type="number" min="0" max="100" />
+                          <button type="submit" disabled={busy}>Run deterministic preview</button>
+                        </form>
+                        {eligibilityPreview ? <div role="status" className={styles.previewResult}><Badge tone={eligibilityPreview.status === "eligible" ? "success" : "warning"}>{eligibilityPreview.status.replaceAll("_", " ")}</Badge><span>Rule version {eligibilityPreview.rule_version ?? "unavailable"}</span>{eligibilityPreview.missing_evidence.length ? <p>Manual review required for: {eligibilityPreview.missing_evidence.join(", ")}.</p> : null}</div> : null}
+                      </details>
                       {extractions.map((proposal) => (
                         <article
                           key={proposal.id}

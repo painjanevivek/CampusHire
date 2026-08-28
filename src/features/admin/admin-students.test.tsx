@@ -1,0 +1,51 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AdminStudents } from "./admin-students";
+
+const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
+  apiRequestMock: vi.fn(),
+  csrfRequestMock: vi.fn(),
+}));
+vi.mock("@/lib/api/client", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/client")>()),
+  apiRequest: apiRequestMock,
+  csrfRequest: csrfRequestMock,
+  apiPath: (path: string) => `https://api.example.test${path}`,
+}));
+
+describe("AdminStudents", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    apiRequestMock.mockReset().mockImplementation((path: string) => {
+      if (path === "/auth/me") return Promise.resolve({ institution_id: "institution-1" });
+      if (path.endsWith("/memberships")) return Promise.resolve([{ id: "membership-1", user_id: "student-1", email: "asha@example.edu", role: "student", status: "active" }]);
+      if (path.endsWith("/roster-imports")) return Promise.resolve([{ id: "roster-1", filename: "students.csv", status: "committed", total_rows: 1, valid_rows: 1, invalid_rows: 0, invited_rows: 1, committed_at: "2026-08-28T10:00:00Z", created_at: "2026-08-28T10:00:00Z" }]);
+      return Promise.reject(new Error(`Unexpected path ${path}`));
+    });
+    csrfRequestMock.mockReset().mockResolvedValue({ id: "membership-1", user_id: "student-1", role: "student", status: "graduated" });
+  });
+
+  it("connects directory, roster history, safe export, and reasoned status changes", async () => {
+    render(<AdminStudents />);
+
+    expect(await screen.findByText("asha@example.edu")).toBeInTheDocument();
+    expect(screen.getByText("students.csv")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Export safe CSV" })).toHaveAttribute(
+      "href",
+      "https://api.example.test/institutions/institution-1/memberships/export.csv",
+    );
+
+    fireEvent.click(screen.getByText("Change status"));
+    const statusSelectors = screen.getAllByRole("combobox");
+    fireEvent.change(statusSelectors.at(-1)!, { target: { value: "graduated" } });
+    fireEvent.change(screen.getByPlaceholderText("Reason for audit"), { target: { value: "Program completed" } });
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/institutions/institution-1/memberships/membership-1",
+      expect.objectContaining({ method: "PATCH", body: expect.stringContaining("Program completed") }),
+    ));
+    expect(await screen.findByText("Membership status updated and recorded in Audit.")).toBeInTheDocument();
+  });
+});

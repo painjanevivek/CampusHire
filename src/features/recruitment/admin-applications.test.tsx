@@ -104,7 +104,7 @@ describe("AdminApplications", () => {
     fireEvent.change(screen.getByLabelText("Update title"), {
       target: { value: "Next interview step" },
     });
-    fireEvent.change(screen.getByLabelText("Constructive feedback"), {
+    fireEvent.change(screen.getByPlaceholderText("Explain the decision and one useful next action."), {
       target: {
         value:
           "Review the role requirements and prepare one project explanation.",
@@ -119,5 +119,31 @@ describe("AdminApplications", () => {
         }),
       ),
     );
+  });
+
+  it("previews bulk transitions before applying and reports notification outcomes", async () => {
+    csrfRequestMock
+      .mockResolvedValueOnce({
+        items: [{ application_id: "application-1", current_status: "under_review", target_status: "shortlisted", allowed: true, explanation: "Transition follows the documented application lifecycle." }],
+        allowed_count: 1,
+        blocked_count: 0,
+      })
+      .mockResolvedValueOnce({ updated_count: 1, notification_count: 1, application_ids: ["application-1"] });
+    render(<AdminApplications />);
+    expect(await screen.findByText("Active backlogs")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Bulk review with preview"));
+    const applications = screen.getByRole("listbox") as HTMLSelectElement;
+    applications.options[0].selected = true;
+    fireEvent.change(applications);
+    fireEvent.change(screen.getByLabelText("Target status"), { target: { value: "shortlisted" } });
+    fireEvent.change(screen.getByPlaceholderText("Explain the evidence-based decision and useful next step."), { target: { value: "Strong evidence was reviewed against the published policy." } });
+    fireEvent.click(screen.getByRole("button", { name: "Preview changes" }));
+    expect(await screen.findByText("1 allowed · 0 blocked")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Confirm and notify students" }));
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/admin/recruitment/applications/bulk/status",
+      expect.objectContaining({ body: expect.stringContaining("APPLY BULK STATUS") }),
+    ));
+    expect(await screen.findByText("1 applications updated; 1 students notified.")).toBeInTheDocument();
   });
 });

@@ -42,6 +42,14 @@ function companyName(application: PlacementApplication) {
   return String(application.role_snapshot.company_name ?? "Company");
 }
 
+type BulkPreview = {
+  items: Array<{ application_id: string; current_status: string; target_status: string; allowed: boolean; explanation: string }>;
+  allowed_count: number;
+  blocked_count: number;
+};
+
+type BulkDraft = { application_ids: string[]; status: string; reason: string };
+
 export function AdminApplications() {
   const [applications, setApplications] = useState<PlacementApplication[]>([]);
   const [selectedId, setSelectedId] = useState("");
@@ -50,6 +58,8 @@ export function AdminApplications() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [bulkPreview, setBulkPreview] = useState<BulkPreview | null>(null);
+  const [bulkDraft, setBulkDraft] = useState<BulkDraft | null>(null);
 
   const load = useCallback(async () => {
     await Promise.resolve();
@@ -187,6 +197,49 @@ export function AdminApplications() {
     }
   }
 
+  async function previewBulk(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const draft = {
+      application_ids: data.getAll("application_ids").map(String),
+      status: String(data.get("status")),
+      reason: String(data.get("reason")),
+    };
+    setBusy(true);
+    setError("");
+    try {
+      setBulkPreview(await csrfRequest<BulkPreview>("/admin/recruitment/applications/bulk/preview", {
+        method: "POST",
+        body: JSON.stringify(draft),
+      }));
+      setBulkDraft(draft);
+    } catch {
+      setError("The bulk preview could not be prepared. Select 1–100 applications and provide constructive feedback.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function applyBulk() {
+    if (!bulkDraft || !bulkPreview || bulkPreview.blocked_count) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await csrfRequest<{ updated_count: number; notification_count: number }>("/admin/recruitment/applications/bulk/status", {
+        method: "POST",
+        body: JSON.stringify({ ...bulkDraft, confirmation: "APPLY BULK STATUS" }),
+      });
+      setNotice(`${result.updated_count} applications updated; ${result.notification_count} students notified.`);
+      setBulkPreview(null);
+      setBulkDraft(null);
+      await load();
+    } catch {
+      setError("The bulk action was not applied. Reauthenticate, refresh the preview, and retry.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
@@ -222,6 +275,17 @@ export function AdminApplications() {
           </button>
         ))}
       </nav>
+
+      <details className={styles.bulkPanel}>
+        <summary>Bulk review with preview</summary>
+        <form onSubmit={previewBulk}>
+          <label>Applications<select name="application_ids" multiple required size={Math.min(6, Math.max(2, visible.length))}>{visible.map((application) => <option key={application.id} value={application.id}>{application.student_name} · {roleName(application)} · {application.status.replaceAll("_", " ")}</option>)}</select><small>Use Ctrl/Cmd to select several records.</small></label>
+          <label>Target status<select name="status" defaultValue="under_review"><option value="under_review">Under review</option><option value="shortlisted">Shortlisted</option><option value="interview">Interview</option><option value="offered">Offered</option><option value="rejected">Rejected</option></select></label>
+          <label>Constructive feedback<textarea name="reason" required minLength={10} maxLength={500} placeholder="Explain the evidence-based decision and useful next step." /></label>
+          <button type="submit" disabled={busy}>Preview changes</button>
+        </form>
+        {bulkPreview ? <section className={styles.bulkPreview} aria-label="Bulk action preview"><header><strong>{bulkPreview.allowed_count} allowed · {bulkPreview.blocked_count} blocked</strong><span>No changes have been applied.</span></header><ul>{bulkPreview.items.map((item) => <li key={item.application_id}><Badge tone={item.allowed ? "success" : "warning"}>{item.allowed ? "allowed" : "blocked"}</Badge><span>{item.current_status.replaceAll("_", " ")} → {item.target_status.replaceAll("_", " ")}</span><small>{item.explanation}</small></li>)}</ul><button type="button" disabled={busy || Boolean(bulkPreview.blocked_count)} onClick={() => void applyBulk()}>Confirm and notify students</button></section> : null}
+      </details>
 
       <div className={styles.workspace} aria-busy={loading}>
         <section className={styles.queue} aria-labelledby="application-queue">

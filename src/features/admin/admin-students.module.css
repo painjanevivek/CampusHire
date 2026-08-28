@@ -4,7 +4,9 @@
 .page h1 { max-width: none; margin-bottom: 6px; font-size: clamp(2.8rem, 5vw, 5rem); }
 .page header span, .page header p { color: var(--ink-muted); }
 .upload { min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 18px; background: var(--ink); color: white; font-weight: 800; cursor: pointer; }
-.roster, .directory { margin-top: 18px; border: 1px solid var(--line); border-radius: 18px; background: white; overflow: hidden; }
+.headerActions { display: flex; align-items: center; gap: 10px; }
+.headerActions > a { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; color: var(--ink); font-weight: 800; }
+.roster, .directory, .history { margin-top: 18px; border: 1px solid var(--line); border-radius: 18px; background: white; overflow: hidden; }
 .roster > header, .directory > header { padding: 18px; border-bottom: 1px solid var(--line); }
 .roster h2, .directory h2, .roster p { margin: 0; }
 .table { overflow-x: auto; }
@@ -14,4 +16,21 @@
 .table span { display: grid; gap: 3px; }
 .table small { color: var(--ink-muted); }
 .table code { overflow-wrap: anywhere; font-size: .72rem; }
-@media (max-width: 700px) { .page { width: min(100% - 24px, 1440px); padding-top: 28px; } .page > header { align-items: start; flex-direction: column; } }
+.controls { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(130px, 1fr)) auto auto; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--surface-muted); }
+.controls label { display: grid; gap: 4px; color: var(--ink-muted); font-size: .74rem; font-weight: 800; }
+.controls input, .controls select, .controls button, .table details input, .table details select, .table details button, .pagination button { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 11px; background: white; color: var(--ink); }
+.controls button, .table details button, .pagination button { align-self: end; font-weight: 800; }
+.table details { margin-top: 6px; }
+.table details summary { min-height: 32px; display: flex; align-items: center; cursor: pointer; color: var(--accent-blue); font-size: .78rem; font-weight: 800; }
+.table details form { min-width: 270px; display: grid; gap: 7px; padding: 8px 0; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 14px; border-top: 1px solid var(--line); }
+.pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.history > header { display: flex; align-items: center; justify-content: space-between; padding: 18px; border-bottom: 1px solid var(--line); }
+.history h2 { margin: 0; }
+.history ol { list-style: none; margin: 0; padding: 0; }
+.history li { display: grid; grid-template-columns: minmax(220px, 1.5fr) 1fr auto; gap: 16px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.history li:last-child { border-bottom: 0; }
+.history li div { display: grid; gap: 3px; }
+.history time { color: var(--ink-muted); font-size: .78rem; }
+@media (max-width: 900px) { .controls { grid-template-columns: repeat(2, minmax(140px, 1fr)); } .history li { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .page { width: min(100% - 24px, 1440px); padding-top: 28px; } .page > header { align-items: start; flex-direction: column; } .headerActions { align-items: start; flex-direction: column; } .controls { grid-template-columns: 1fr; } }

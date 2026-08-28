@@ -301,6 +301,76 @@ export type ApplicationWithdrawal = {
 };
 
 /**
+ * AuditEventPage
+ */
+export type AuditEventPage = {
+    /**
+     * Items
+     */
+    items: Array<AuditEventResponse>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
+ * AuditEventResponse
+ */
+export type AuditEventResponse = {
+    /**
+     * Actor User Id
+     */
+    actor_user_id: string | null;
+    /**
+     * Correlation Id
+     */
+    correlation_id: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Details
+     */
+    details: {
+        [key: string]: unknown;
+    };
+    /**
+     * Event Type
+     */
+    event_type: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Outcome
+     */
+    outcome: string;
+    /**
+     * Reason
+     */
+    reason: string | null;
+    /**
+     * Resource Id
+     */
+    resource_id: string | null;
+    /**
+     * Resource Type
+     */
+    resource_type: string | null;
+};
+
+/**
  * Body_preview_roster_import_api_v1_institutions__institution_id__roster_imports_preview_post
  */
 export type BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost = {
@@ -318,6 +388,108 @@ export type BodyUploadResumeApiV1ResumesPost = {
      * File
      */
     file: Blob | File;
+};
+
+/**
+ * BulkApplicationApplyRequest
+ */
+export type BulkApplicationApplyRequest = {
+    /**
+     * Application Ids
+     */
+    application_ids: Array<string>;
+    /**
+     * Confirmation
+     */
+    confirmation: 'APPLY BULK STATUS';
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Status
+     */
+    status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+};
+
+/**
+ * BulkApplicationApplyResponse
+ */
+export type BulkApplicationApplyResponse = {
+    /**
+     * Application Ids
+     */
+    application_ids: Array<string>;
+    /**
+     * Notification Count
+     */
+    notification_count: number;
+    /**
+     * Updated Count
+     */
+    updated_count: number;
+};
+
+/**
+ * BulkApplicationPreviewItem
+ */
+export type BulkApplicationPreviewItem = {
+    /**
+     * Allowed
+     */
+    allowed: boolean;
+    /**
+     * Application Id
+     */
+    application_id: string;
+    /**
+     * Current Status
+     */
+    current_status: string;
+    /**
+     * Explanation
+     */
+    explanation: string;
+    /**
+     * Target Status
+     */
+    target_status: string;
+};
+
+/**
+ * BulkApplicationPreviewResponse
+ */
+export type BulkApplicationPreviewResponse = {
+    /**
+     * Allowed Count
+     */
+    allowed_count: number;
+    /**
+     * Blocked Count
+     */
+    blocked_count: number;
+    /**
+     * Items
+     */
+    items: Array<BulkApplicationPreviewItem>;
+};
+
+/**
+ * BulkApplicationStatusRequest
+ */
+export type BulkApplicationStatusRequest = {
+    /**
+     * Application Ids
+     */
+    application_ids: Array<string>;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Status
+     */
+    status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
 };
 
 /**
@@ -686,6 +858,48 @@ export type EducationUpdate = {
      * Onboarding Step
      */
     onboarding_step?: number | null;
+};
+
+/**
+ * EligibilityPreviewRequest
+ */
+export type EligibilityPreviewRequest = {
+    /**
+     * Active Backlogs
+     */
+    active_backlogs?: number | null;
+    /**
+     * Branch
+     */
+    branch?: string | null;
+    /**
+     * Cgpa
+     */
+    cgpa?: number | null;
+    /**
+     * Degree
+     */
+    degree?: string | null;
+    /**
+     * Department
+     */
+    department?: string | null;
+    /**
+     * Github
+     */
+    github?: string | null;
+    /**
+     * Graduation Year
+     */
+    graduation_year?: number | null;
+    /**
+     * Portfolio
+     */
+    portfolio?: string | null;
+    /**
+     * Resume
+     */
+    resume?: boolean | null;
 };
 
 /**
@@ -2365,6 +2579,48 @@ export type RosterImportResponse = {
 };
 
 /**
+ * RosterImportSummary
+ */
+export type RosterImportSummary = {
+    /**
+     * Committed At
+     */
+    committed_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Filename
+     */
+    filename: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Total Rows
+     */
+    total_rows: number;
+    /**
+     * Valid Rows
+     */
+    valid_rows: number;
+};
+
+/**
  * RosterRowResponse
  */
 export type RosterRowResponse = {
@@ -2743,7 +2999,7 @@ export type UserResponse = {
 /**
  * UserRole
  */
-export type UserRole = 'student' | 'tnp_admin' | 'tnp_reviewer';
+export type UserRole = 'student' | 'tnp_owner' | 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
 
 /**
  * ValidationError
@@ -2771,6 +3027,128 @@ export type ValidationError = {
      * Error Type
      */
     type: string;
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Actor User Id
+         */
+        actor_user_id?: string | null;
+        /**
+         * Resource Type
+         */
+        resource_type?: string | null;
+        /**
+         * Action
+         */
+        action?: string | null;
+        /**
+         * Outcome
+         */
+        outcome?: string | null;
+        /**
+         * Correlation Id
+         */
+        correlation_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+        /**
+         * Sort
+         */
+        sort?: 'asc' | 'desc';
+    };
+    url: '/api/v1/admin/audit/events';
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetError = ReadAuditEventsApiV1AdminAuditEventsGetErrors[keyof ReadAuditEventsApiV1AdminAuditEventsGetErrors];
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AuditEventPage;
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetResponse = ReadAuditEventsApiV1AdminAuditEventsGetResponses[keyof ReadAuditEventsApiV1AdminAuditEventsGetResponses];
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Actor User Id
+         */
+        actor_user_id?: string | null;
+        /**
+         * Resource Type
+         */
+        resource_type?: string | null;
+        /**
+         * Action
+         */
+        action?: string | null;
+        /**
+         * Outcome
+         */
+        outcome?: string | null;
+        /**
+         * Correlation Id
+         */
+        correlation_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Sort
+         */
+        sort?: 'asc' | 'desc';
+    };
+    url: '/api/v1/admin/audit/export.csv';
+};
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetError = DownloadAuditExportApiV1AdminAuditExportCsvGetErrors[keyof DownloadAuditExportApiV1AdminAuditExportCsvGetErrors];
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostData = {
@@ -3188,6 +3566,56 @@ export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses = {
 
 export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponse = ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses[keyof ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses];
 
+export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostData = {
+    body: BulkApplicationStatusRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/bulk/preview';
+};
+
+export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostError = PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors[keyof PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors];
+
+export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationPreviewResponse;
+};
+
+export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponse = PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses[keyof PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses];
+
+export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostData = {
+    body: BulkApplicationApplyRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/bulk/status';
+};
+
+export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostError = ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors[keyof ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors];
+
+export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationApplyResponse;
+};
+
+export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponse = ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses[keyof ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses];
+
 export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostData = {
     body: ApplicationOverrideCreate;
     path: {
@@ -3446,6 +3874,36 @@ export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostR
 
 export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponse = ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponses[keyof ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponses];
 
+export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/drives/{drive_id}/duplicate';
+};
+
+export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostError = DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors[keyof DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors];
+
+export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponse = DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses[keyof DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses];
+
 export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetData = {
     body?: never;
     path: {
@@ -3537,6 +3995,36 @@ export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses = {
 };
 
 export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponse = EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses[keyof EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses];
+
+export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostData = {
+    body: EligibilityPreviewRequest;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/eligibility-preview';
+};
+
+export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostError = PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors[keyof PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors];
+
+export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EligibilityResponse;
+};
+
+export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
 
 export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostData = {
     body?: never;
@@ -4395,6 +4883,34 @@ export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostRespons
 
 export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponse = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses];
 
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/memberships/export.csv';
+};
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetError = ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors[keyof ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors];
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
 export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchData = {
     body: MembershipStatusUpdate;
     path: {
@@ -4428,6 +4944,38 @@ export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembe
 };
 
 export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponse = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses];
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports';
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetError = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors];
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses = {
+    /**
+     * Response Read Roster Imports Api V1 Institutions  Institution Id  Roster Imports Get
+     *
+     * Successful Response
+     */
+    200: Array<RosterImportSummary>;
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponse = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses];
 
 export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostData = {
     body: BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost;
