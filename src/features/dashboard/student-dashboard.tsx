@@ -36,6 +36,9 @@ export type StudentDashboardData = {
     description: string;
     reason: string;
     href: string;
+    estimated_minutes: number;
+    unlocks: string;
+    completion_criteria: string;
   };
   evidence: Array<{
     label: string;
@@ -125,6 +128,11 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             <Target size={21} aria-hidden="true" />
             <strong>Why this next?</strong>
             <p>{data.nextAction.reason}</p>
+            <dl>
+              <div><dt>Expected effort</dt><dd>{data.nextAction.estimated_minutes} minutes</dd></div>
+              <div><dt>Complete when</dt><dd>{data.nextAction.completion_criteria}</dd></div>
+              <div><dt>Expected effect</dt><dd>Unlocks {data.nextAction.unlocks.toLowerCase()}</dd></div>
+            </dl>
           </aside>
         </article>
 

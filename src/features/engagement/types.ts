@@ -7,6 +7,13 @@ export type RoadmapTemplate = {
   node_count: number;
 };
 
+export type RoadmapAvailability = {
+  status: "available" | "no_target_role" | "no_approved_template" | "institution_restriction";
+  reason: string;
+  guidance_provider_status: "available" | "unavailable";
+  templates: RoadmapTemplate[];
+};
+
 export type RoadmapNode = {
   key: string;
   title: string;
@@ -57,6 +64,7 @@ export type DashboardApiResponse = {
     source_facts: string[];
     estimated_minutes: number;
     unlocks: string;
+    completion_criteria: string;
   };
   activation: Array<{
     key: "account_activated" | "profile_minimum" | "target_role" | "resume_reviewed" | "opportunities_unlocked" | "first_application";

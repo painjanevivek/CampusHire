@@ -16,6 +16,10 @@
 .reason { display: grid; align-content: center; gap: 9px; padding: 30px; border-left: 1px solid var(--line); background: var(--brand-blue-soft); }
 .reason svg { color: var(--brand-blue); }
 .reason p { margin: 0; color: var(--ink-muted); font-size: .84rem; }
+.reason dl { margin: 12px 0 0; }
+.reason dl div { padding: 8px 0; border-top: 1px solid var(--line); }
+.reason dt { color: var(--ink-muted); font-size: .66rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.reason dd { margin: 2px 0 0; color: var(--ink); font-size: .76rem; }
 .readinessCard { padding: 26px; }
 .readinessHeader { display: flex; justify-content: space-between; }
 .readinessHeader svg { color: var(--brand-blue); }

@@ -33,6 +33,7 @@ const application = {
   rule_snapshot: { version: 3 },
   eligibility_snapshot: {},
   decision_snapshot: { eligibility_fingerprint: "1234567890abcdef" },
+  institution_timezone: "Asia/Kolkata",
   created_at: "2026-08-28T10:00:00Z",
   updated_at: "2026-08-28T10:00:00Z",
   withdrawn_at: null,

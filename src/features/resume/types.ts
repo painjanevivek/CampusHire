@@ -32,6 +32,7 @@ export type ResumeVersion = {
   created_at: string;
   review_completed_at: string | null;
   safe_error_code: string | null;
+  locked_by_application: boolean;
   extracted_data: {
     proposed?: Record<string, string | string[]>;
     decisions?: Record<string, { action: "accept" | "edit" | "reject"; value: unknown }>;

@@ -42,6 +42,7 @@ const application = {
     ],
     missing_evidence: ["Active backlogs"],
   },
+  institution_timezone: "Asia/Kolkata",
   created_at: "2026-08-24T00:00:00Z",
   updated_at: "2026-08-24T00:00:00Z",
   history: [

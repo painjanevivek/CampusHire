@@ -15,6 +15,9 @@ const readyDashboard: StudentDashboardData = {
     description: "Publish one working project and attach its live link.",
     reason: "A verified deployment is the clearest gap for your target role.",
     href: "/roadmap",
+    estimated_minutes: 15,
+    unlocks: "Verified project evidence",
+    completion_criteria: "A live deployment link is saved and verified.",
   },
   evidence: [
     { label: "Education", value: "Verified", status: "verified" },
@@ -42,6 +45,9 @@ describe("StudentDashboard", () => {
       screen.getByRole("heading", { name: "Add deployment evidence" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Why this next?")).toBeInTheDocument();
+    expect(screen.getByText("15 minutes")).toBeInTheDocument();
+    expect(screen.getByText("A live deployment link is saved and verified.")).toBeInTheDocument();
+    expect(screen.getByText("Unlocks verified project evidence")).toBeInTheDocument();
     const readiness = screen.getByRole("progressbar", { name: "Profile readiness score" });
     expect(readiness).toHaveAttribute(
       "aria-valuenow",

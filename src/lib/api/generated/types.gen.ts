@@ -209,6 +209,10 @@ export type ApplicationResponse = {
      */
     id: string;
     /**
+     * Institution Timezone
+     */
+    institution_timezone: string;
+    /**
      * Overrides
      */
     overrides?: Array<OverrideResponse>;
@@ -1079,6 +1083,10 @@ export type MfaSetupResponse = {
  * NextAction
  */
 export type NextAction = {
+    /**
+     * Completion Criteria
+     */
+    completion_criteria: string;
     /**
      * Description
      */
@@ -1985,6 +1993,10 @@ export type ResumeVersionResponse = {
     id: string;
     job?: ResumeJobResponse | null;
     /**
+     * Locked By Application
+     */
+    locked_by_application?: boolean;
+    /**
      * Original Name
      */
     original_name: string;
@@ -2020,6 +2032,28 @@ export type ResumeVersionResponse = {
      * Version Number
      */
     version_number: number | null;
+};
+
+/**
+ * RoadmapAvailabilityResponse
+ */
+export type RoadmapAvailabilityResponse = {
+    /**
+     * Guidance Provider Status
+     */
+    guidance_provider_status: 'available' | 'unavailable';
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Status
+     */
+    status: 'available' | 'no_target_role' | 'no_approved_template' | 'institution_restriction';
+    /**
+     * Templates
+     */
+    templates: Array<RoadmapTemplateResponse>;
 };
 
 /**
@@ -2635,6 +2669,24 @@ export type StatusEventResponse = {
 };
 
 /**
+ * SuggestionBatchItem
+ */
+export type SuggestionBatchItem = {
+    /**
+     * Action
+     */
+    action: 'accept' | 'edit' | 'reject';
+    /**
+     * Edited Text
+     */
+    edited_text?: string | null;
+    /**
+     * Suggestion Id
+     */
+    suggestion_id: string;
+};
+
+/**
  * SuggestionDecisionRequest
  */
 export type SuggestionDecisionRequest = {
@@ -2646,6 +2698,16 @@ export type SuggestionDecisionRequest = {
      * Edited Text
      */
     edited_text?: string | null;
+};
+
+/**
+ * SuggestionReviewBatch
+ */
+export type SuggestionReviewBatch = {
+    /**
+     * Decisions
+     */
+    decisions: Array<SuggestionBatchItem>;
 };
 
 /**
@@ -5014,6 +5076,36 @@ export type GenerateResumeVersionApiV1ResumesGeneratePostResponses = {
 
 export type GenerateResumeVersionApiV1ResumesGeneratePostResponse = GenerateResumeVersionApiV1ResumesGeneratePostResponses[keyof GenerateResumeVersionApiV1ResumesGeneratePostResponses];
 
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}';
+};
+
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteError = DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors];
+
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponse = DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses];
+
 export type ReadResumeApiV1ResumesResumeIdGetData = {
     body?: never;
     path: {
@@ -5132,6 +5224,36 @@ export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses = {
 
 export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponse = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses];
 
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostData = {
+    body: SuggestionReviewBatch;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/suggestion-review';
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostError = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors];
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponse = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses];
+
 export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostData = {
     body: SuggestionDecisionRequest;
     path: {
@@ -5165,6 +5287,31 @@ export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPos
 };
 
 export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];
+
+export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/availability';
+};
+
+export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetError = ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetErrors[keyof ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetErrors];
+
+export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoadmapAvailabilityResponse;
+};
+
+export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetResponse = ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetResponses[keyof ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetResponses];
 
 export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetData = {
     body?: never;

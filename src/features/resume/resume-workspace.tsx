@@ -9,10 +9,13 @@ import {
   Download,
   FileCheck2,
   FileText,
+  GitCompareArrows,
   LoaderCircle,
+  LockKeyhole,
   RefreshCw,
   ShieldAlert,
   ShieldCheck,
+  Trash2,
   Upload,
 } from "lucide-react";
 
@@ -56,6 +59,7 @@ export function ResumeWorkspace() {
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [state, setState] = useState<"loading" | "idle" | "uploading" | "complete" | "error">("loading");
   const [message, setMessage] = useState("");
+  const [compareIds, setCompareIds] = useState<[string, string]>(["", ""]);
 
   const loadVersions = useCallback(async () => {
     try {
@@ -131,7 +135,22 @@ export function ResumeWorkspace() {
     }
   }
 
+  async function deleteVersion(version: ResumeVersion) {
+    if (version.locked_by_application || !window.confirm(`Delete ${version.original_name}? This cannot be undone.`)) return;
+    try {
+      await csrfRequest<void>(`/resumes/${version.id}`, { method: "DELETE" });
+      setVersions((current) => current.filter((item) => item.id !== version.id));
+      setMessage("Resume version and its private file were deleted.");
+      setState("complete");
+    } catch {
+      setMessage("This version could not be deleted. Submitted applications keep their selected resume locked.");
+      setState("error");
+    }
+  }
+
   const nextReview = versions.find((item) => item.status === "review_required");
+  const compared = compareIds.map((id) => versions.find((item) => item.id === id));
+  const comparisonFields = Array.from(new Set(compared.flatMap((item) => Object.keys(item?.extracted_data.accepted ?? item?.extracted_data.proposed ?? {}))));
 
   return (
     <main id="main-content" className={styles.page}>
@@ -200,10 +219,17 @@ export function ResumeWorkspace() {
               {version.status === "review_required" && <Link href={`/resume/builder?version=${version.id}`}>Review changes <ArrowRight size={15} aria-hidden="true" /></Link>}
               {version.scan_status === "clean" && <a href={apiPath(`/resumes/${version.id}/download`)}><Download size={15} aria-hidden="true" /> Download</a>}
               {version.job?.retryable && version.job.status === "failed" && <button type="button" onClick={() => void retry(version)}><RefreshCw size={15} aria-hidden="true" /> Retry</button>}
+              {version.locked_by_application ? <span className={styles.locked}><LockKeyhole size={15} aria-hidden="true" /> Locked by application</span> : version.status !== "queued" && version.status !== "processing" ? <button type="button" onClick={() => void deleteVersion(version)}><Trash2 size={15} aria-hidden="true" /> Delete</button> : null}
             </div>
           </article>
         ))}</div>
       </section>
+
+      {versions.length > 1 ? <section className={styles.comparison} aria-labelledby="comparison-title">
+        <div className={styles.sectionHeader}><div><p className={styles.eyebrow}>Evidence comparison</p><h2 id="comparison-title">Compare resume versions</h2></div><GitCompareArrows aria-hidden="true" /></div>
+        <div className={styles.compareSelectors}><label>Earlier version<select value={compareIds[0]} onChange={(event) => setCompareIds(([, right]) => [event.target.value, right])}><option value="">Choose version…</option>{versions.map((item) => <option key={item.id} value={item.id}>Version {item.version_number ?? "legacy"} · {item.original_name}</option>)}</select></label><label>Later version<select value={compareIds[1]} onChange={(event) => setCompareIds(([left]) => [left, event.target.value])}><option value="">Choose version…</option>{versions.map((item) => <option key={item.id} value={item.id}>Version {item.version_number ?? "legacy"} · {item.original_name}</option>)}</select></label></div>
+        {compared.every(Boolean) ? <div className={styles.diffTable} role="table" aria-label="Resume evidence comparison"><div role="row"><strong role="columnheader">Field</strong><strong role="columnheader">Earlier</strong><strong role="columnheader">Later</strong></div>{comparisonFields.map((field) => { const values = compared.map((item) => item?.extracted_data.accepted?.[field] ?? item?.extracted_data.proposed?.[field]); return <div role="row" key={field} data-changed={JSON.stringify(values[0]) !== JSON.stringify(values[1])}><strong role="rowheader">{field.replaceAll("_", " ")}</strong><span role="cell">{Array.isArray(values[0]) ? values[0].join(", ") : String(values[0] ?? "Not present")}</span><span role="cell">{Array.isArray(values[1]) ? values[1].join(", ") : String(values[1] ?? "Not present")}</span></div>;})}</div> : <p className={styles.compareHelp}>Choose two versions to compare reviewed evidence field by field.</p>}
+      </section> : null}
     </main>
   );
 }

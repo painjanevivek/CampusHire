@@ -53,6 +53,7 @@ export function ResumeBuilder() {
   const [decisions, setDecisions] = useState<Record<string, FieldDecision>>({});
   const [editingSuggestion, setEditingSuggestion] = useState<string | null>(null);
   const [suggestionCopy, setSuggestionCopy] = useState<Record<string, string>>({});
+  const [suggestionDecisions, setSuggestionDecisions] = useState<Record<string, { action: "accept" | "edit" | "reject"; edited_text?: string }>>({});
   const [summary, setSummary] = useState("");
   const [generated, setGenerated] = useState<ResumeVersion | null>(null);
   const [state, setState] = useState<"loading" | "idle" | "saving" | "error">("loading");
@@ -62,6 +63,7 @@ export function ResumeBuilder() {
     setVersion(selected);
     setDecisions(initialDecisions(selected));
     setSuggestionCopy(Object.fromEntries(selected.suggestions.map((item) => [item.id, item.proposed_text])));
+    setSuggestionDecisions({});
   }, []);
 
   useEffect(() => {
@@ -119,23 +121,33 @@ export function ResumeBuilder() {
     }
   }
 
-  async function decideSuggestion(suggestion: ResumeSuggestion, action: "accept" | "edit" | "reject") {
+  function stageSuggestion(suggestion: ResumeSuggestion, action: "accept" | "edit" | "reject") {
+    setSuggestionDecisions((current) => ({
+      ...current,
+      [suggestion.id]: {
+        action,
+        ...(action === "edit" ? { edited_text: suggestionCopy[suggestion.id] } : {}),
+      },
+    }));
+    setEditingSuggestion(null);
+    setMessage("Suggestion decision staged. Save all decisions when you are ready, or undo it first.");
+  }
+
+  async function saveSuggestions() {
     if (!version) return;
+    const staged = Object.entries(suggestionDecisions);
+    if (!staged.length) return;
     setState("saving");
     try {
       const updated = await csrfRequest<ResumeVersion>(
-        `/resumes/${version.id}/suggestions/${suggestion.id}`,
+        `/resumes/${version.id}/suggestion-review`,
         {
           method: "POST",
-          body: JSON.stringify({
-            action,
-            ...(action === "edit" ? { edited_text: suggestionCopy[suggestion.id] } : {}),
-          }),
+          body: JSON.stringify({ decisions: staged.map(([suggestion_id, decision]) => ({ suggestion_id, ...decision })) }),
         },
       );
       selectVersion(updated);
-      setEditingSuggestion(null);
-      setMessage(action === "reject" ? "Suggestion rejected. Your original wording remains unchanged." : "Suggestion decision saved to this version.");
+      setMessage("Suggestion decisions saved together. Rejected wording remains unchanged.");
       setState("idle");
     } catch {
       setState("error");
@@ -252,11 +264,13 @@ export function ResumeBuilder() {
             {editingSuggestion === suggestion.id ? <textarea aria-label="Edit proposed resume language" value={suggestionCopy[suggestion.id] ?? suggestion.proposed_text} onChange={(event) => setSuggestionCopy((current) => ({ ...current, [suggestion.id]: event.target.value }))} /> : <blockquote>{suggestion.decided_text ?? suggestion.proposed_text}</blockquote>}
             <small>{suggestion.rationale}</small>
             {suggestion.status === "pending" ? <div className={styles.actions}>
-              <button type="button" className={styles.secondary} onClick={() => void decideSuggestion(suggestion, "reject")} aria-label="Reject suggestion"><X size={15} aria-hidden="true" /> Reject</button>
-              {editingSuggestion === suggestion.id ? <button type="button" className={styles.primary} onClick={() => void decideSuggestion(suggestion, "edit")} aria-label="Save edited suggestion"><Check size={15} aria-hidden="true" /> Save edit</button> : <button type="button" className={styles.secondary} onClick={() => setEditingSuggestion(suggestion.id)} aria-label="Edit suggestion"><Edit3 size={15} aria-hidden="true" /> Edit</button>}
-              <button type="button" className={styles.primary} onClick={() => void decideSuggestion(suggestion, "accept")} aria-label="Accept suggestion"><Check size={15} aria-hidden="true" /> Accept</button>
+              {suggestionDecisions[suggestion.id] ? <><span className={styles.accepted}>Staged: {suggestionDecisions[suggestion.id].action}</span><button type="button" className={styles.secondary} onClick={() => setSuggestionDecisions((current) => { const next = { ...current }; delete next[suggestion.id]; return next; })}>Undo</button></> : <>
+              <button type="button" className={styles.secondary} onClick={() => stageSuggestion(suggestion, "reject")} aria-label="Reject suggestion"><X size={15} aria-hidden="true" /> Reject</button>
+              {editingSuggestion === suggestion.id ? <button type="button" className={styles.primary} onClick={() => stageSuggestion(suggestion, "edit")} aria-label="Stage edited suggestion"><Check size={15} aria-hidden="true" /> Stage edit</button> : <button type="button" className={styles.secondary} onClick={() => setEditingSuggestion(suggestion.id)} aria-label="Edit suggestion"><Edit3 size={15} aria-hidden="true" /> Edit</button>}
+              <button type="button" className={styles.primary} onClick={() => stageSuggestion(suggestion, "accept")} aria-label="Accept suggestion"><Check size={15} aria-hidden="true" /> Accept</button></>}
             </div> : <p className={styles.accepted} role="status">Decision recorded: {suggestion.status}.</p>}
           </article>)}
+          {Object.keys(suggestionDecisions).length ? <button type="button" className={styles.primary} disabled={state === "saving"} onClick={() => void saveSuggestions()}>Save {Object.keys(suggestionDecisions).length} suggestion decision{Object.keys(suggestionDecisions).length === 1 ? "" : "s"}</button> : null}
         </aside>
       </div>
     </main>

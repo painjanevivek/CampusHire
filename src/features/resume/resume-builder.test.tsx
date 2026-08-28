@@ -79,10 +79,12 @@ describe("ResumeBuilder", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "Edit proposed resume language" }), {
       target: { value: "Contributed to a reviewed placement workflow." },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Save edited suggestion" }));
+    fireEvent.click(screen.getByRole("button", { name: "Stage edited suggestion" }));
+    expect(csrfRequestMock).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Save 1 suggestion decision" }));
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
-      "/resumes/resume-1/suggestions/suggestion-1",
+      "/resumes/resume-1/suggestion-review",
       expect.objectContaining({ method: "POST" }),
     ));
     expect(await screen.findByText("Decision recorded: edited.")).toBeInTheDocument();

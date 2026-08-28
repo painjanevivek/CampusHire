@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { Check, Circle, LockKeyhole, Route } from "lucide-react";
 
 import { Alert, EmptyState } from "@/components/ui/feedback";
 import type {
   Roadmap,
+  RoadmapAvailability,
   RoadmapNode,
   RoadmapTemplate,
 } from "@/features/engagement/types";
@@ -14,6 +16,7 @@ import styles from "./student-roadmap.module.css";
 
 export function StudentRoadmap() {
   const [templates, setTemplates] = useState<RoadmapTemplate[]>([]);
+  const [availability, setAvailability] = useState<RoadmapAvailability | null>(null);
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [evidenceNode, setEvidenceNode] = useState<RoadmapNode | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,12 +30,13 @@ export function StudentRoadmap() {
     setError("");
     try {
       const [options, current] = await Promise.all([
-        apiRequest<RoadmapTemplate[]>("/roadmaps/templates", {
+        apiRequest<RoadmapAvailability>("/roadmaps/availability", {
           cache: "no-store",
         }),
         apiRequest<Roadmap | null>("/roadmaps/current", { cache: "no-store" }),
       ]);
-      setTemplates(options);
+      setAvailability(options);
+      setTemplates(options.templates);
       setRoadmap(current);
     } catch {
       setError(
@@ -139,6 +143,8 @@ export function StudentRoadmap() {
             </button>
           </Alert>
         )}
+        {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Approved curated roadmaps and prerequisite progress continue normally.</Alert> : null}
+        {availability && availability.status !== "available" ? <EmptyState title={availability.status === "no_target_role" ? "Choose a target role first" : availability.status === "institution_restriction" ? "Roadmaps are restricted" : "No approved path for this role"}><span>{availability.reason}</span>{availability.status === "no_target_role" ? <Link href="/profile">Open profile settings</Link> : null}</EmptyState> : null}
         <section
           className={styles.templateGrid}
           aria-label="Approved career paths"
@@ -160,7 +166,7 @@ export function StudentRoadmap() {
             </article>
           ))}
         </section>
-        {!templates.length ? (
+        {!templates.length && availability?.status === "available" ? (
           <EmptyState title="No approved paths">
             <span>
               The placement cell has not published a roadmap version yet.
@@ -196,6 +202,7 @@ export function StudentRoadmap() {
         </Alert>
       )}
       {notice && <Alert tone="success">{notice}</Alert>}
+      {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Your curated roadmap progress and core readiness evidence remain available.</Alert> : null}
       <section
         className={styles.timeline}
         aria-label={`${roadmap.title} roadmap`}

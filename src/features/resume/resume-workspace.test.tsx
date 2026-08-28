@@ -25,6 +25,7 @@ const version = {
   extracted_data: {},
   job: { id: "job-1", status: "queued", attempts: 0, max_attempts: 3, safe_error_code: null, retryable: false },
   suggestions: [],
+  locked_by_application: false,
 };
 
 describe("ResumeWorkspace", () => {
@@ -66,5 +67,19 @@ describe("ResumeWorkspace", () => {
 
     expect(await screen.findByRole("status")).toHaveTextContent("stored in quarantine");
     expect(screen.getByText("Queued for safety checks")).toBeInTheDocument();
+  });
+
+  it("compares evidence and explains application-locked deletion", async () => {
+    apiRequestMock.mockResolvedValueOnce([
+      { ...version, status: "completed", scan_status: "clean", extracted_data: { accepted: { skills: ["Python"] } } },
+      { ...version, id: "resume-2", version_number: 2, original_name: "latest.pdf", status: "completed", scan_status: "clean", locked_by_application: true, extracted_data: { accepted: { skills: ["Python", "SQL"] } } },
+    ]);
+    render(<ResumeWorkspace />);
+
+    expect(await screen.findByText("Locked by application")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Earlier version"), { target: { value: "resume-1" } });
+    fireEvent.change(screen.getByLabelText("Later version"), { target: { value: "resume-2" } });
+    expect(screen.getByRole("table", { name: "Resume evidence comparison" })).toHaveTextContent("Python, SQL");
+    expect(screen.getAllByRole("button", { name: /Delete/i })).toHaveLength(1);
   });
 });

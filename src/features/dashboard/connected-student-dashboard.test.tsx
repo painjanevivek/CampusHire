@@ -24,6 +24,9 @@ describe("ConnectedStudentDashboard", () => {
         href: "/roadmap",
         policy_version: "readiness-v1",
         source_facts: ["roadmap:v1"],
+        estimated_minutes: 20,
+        unlocks: "The next roadmap milestone",
+        completion_criteria: "Attach one tested project.",
       },
       evidence: [
         { label: "Reviewed resume", value: "Available", status: "verified" },

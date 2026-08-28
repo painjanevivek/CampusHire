@@ -91,6 +91,7 @@ export type PlacementApplication = {
   rule_snapshot: Record<string, unknown>;
   eligibility_snapshot: Eligibility;
   decision_snapshot: Record<string, unknown>;
+  institution_timezone: string;
   created_at: string;
   updated_at: string;
   withdrawn_at: string | null;
