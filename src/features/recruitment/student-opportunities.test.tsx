@@ -50,7 +50,7 @@ describe("StudentOpportunities", () => {
   it("keeps deterministic eligibility separate from semantic match", async () => {
     render(<StudentOpportunities />);
     expect(await screen.findByRole("heading", { name: "Software Engineer" })).toBeInTheDocument();
-    expect(screen.getByText("Eligible")).toBeInTheDocument();
+    expect(screen.getAllByText("Eligible")).toHaveLength(2);
     expect(screen.getByText("Separate · not calculated in this phase")).toBeInTheDocument();
     expect(screen.queryByText(/% match/i)).not.toBeInTheDocument();
   });

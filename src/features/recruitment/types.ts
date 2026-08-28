@@ -33,6 +33,7 @@ export type OpportunityPage = {
   page: number;
   page_size: number;
   total: number;
+  empty_reason: "no_published_drive" | "filters_exclude_results" | "profile_incomplete" | null;
 };
 
 export type SemanticMatch = {
@@ -89,10 +90,25 @@ export type PlacementApplication = {
   facts_snapshot: Record<string, unknown>;
   rule_snapshot: Record<string, unknown>;
   eligibility_snapshot: Eligibility;
+  decision_snapshot: Record<string, unknown>;
   created_at: string;
   updated_at: string;
+  withdrawn_at: string | null;
+  withdrawal_reason: string | null;
+  can_withdraw: boolean;
   history: ApplicationEvent[];
   overrides: ApplicationOverride[];
+  appeals: Array<{
+    id: string;
+    kind: string;
+    status: string;
+    reason: string;
+    supporting_evidence: string[];
+    administrator_response: string | null;
+    created_at: string;
+    updated_at: string;
+    resolved_at: string | null;
+  }>;
 };
 
 export type AdminApplicationPage = {

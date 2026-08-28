@@ -21,7 +21,6 @@ import type { Opportunity, OpportunityPage } from "./types";
 import styles from "./student-opportunities.module.css";
 
 function eligibilityCopy(opportunity: Opportunity) {
-  if (opportunity.application_status) return `Applied · ${opportunity.application_status.replaceAll("_", " ")}`;
   if (opportunity.eligibility.status === "eligible") return "Eligible";
   if (opportunity.eligibility.status === "needs_manual_review") return "Evidence review";
   if (opportunity.eligibility.status === "ineligible") return "Not eligible";
@@ -29,7 +28,7 @@ function eligibilityCopy(opportunity: Opportunity) {
 }
 
 function tone(opportunity: Opportunity): "success" | "warning" | "neutral" {
-  if (opportunity.application_status || opportunity.eligibility.status === "eligible") return "success";
+  if (opportunity.eligibility.status === "eligible") return "success";
   if (opportunity.eligibility.status === "needs_manual_review") return "warning";
   return "neutral";
 }
@@ -65,7 +64,7 @@ export function StudentOpportunities() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const params = new URLSearchParams();
-    for (const key of ["q", "location", "work_mode", "skill", "saved_only"]) {
+    for (const key of ["q", "location", "work_mode", "skill", "eligibility", "application_state", "deadline_within_days", "saved_only"]) {
       const value = String(form.get(key) ?? "").trim();
       if (value) params.set(key, value);
     }
@@ -117,6 +116,9 @@ export function StudentOpportunities() {
         <div className={styles.filters}>
           <label>Work mode<select name="work_mode" defaultValue={searchParams.get("work_mode") ?? ""}><option value="">All modes</option><option value="on-site">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></label>
           <label>Skill<input name="skill" defaultValue={searchParams.get("skill") ?? ""} placeholder="e.g. Python" /></label>
+          <label>Eligibility<select name="eligibility" defaultValue={searchParams.get("eligibility") ?? ""}><option value="">All eligibility states</option><option value="eligible">Eligible</option><option value="ineligible">Not eligible</option><option value="needs_manual_review">Evidence review</option><option value="unavailable">Rules unavailable</option></select></label>
+          <label>Application<select name="application_state" defaultValue={searchParams.get("application_state") ?? ""}><option value="">Any application state</option><option value="submitted">Submitted</option><option value="under_review">Under review</option><option value="shortlisted">Shortlisted</option><option value="interview">Interview</option><option value="offered">Offered</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></label>
+          <label>Deadline<select name="deadline_within_days" defaultValue={searchParams.get("deadline_within_days") ?? ""}><option value="">Any open deadline</option><option value="7">Next 7 days</option><option value="30">Next 30 days</option><option value="90">Next 90 days</option></select></label>
           <label className={styles.checkbox}><input name="saved_only" type="checkbox" value="true" defaultChecked={searchParams.get("saved_only") === "true"} /> Saved only</label>
           <Link className={styles.clear} href="/opportunities"><RotateCcw aria-hidden="true" /> Clear</Link>
         </div>
@@ -128,7 +130,7 @@ export function StudentOpportunities() {
         <section className={styles.results} aria-labelledby="opportunity-results">
           <div className={styles.sectionHeader}><h2 id="opportunity-results">{loading ? "Loading roles…" : `${data?.total ?? 0} opportunities`}</h2><span>Deadline first</span></div>
           {loading ? <div className={styles.loading} role="status"><span /><span /><span /></div> : null}
-          {!loading && !items.length ? <EmptyState title="No published roles match"><span>Adjust the filters or return later when your placement cell publishes another drive.</span></EmptyState> : null}
+          {!loading && !items.length ? <EmptyState title={data?.empty_reason === "profile_incomplete" ? "Complete your required profile" : data?.empty_reason === "filters_exclude_results" ? "No roles match these filters" : "No open placement drive yet"}><span>{data?.empty_reason === "profile_incomplete" ? "Add required education and target-role facts so eligibility can be explained." : data?.empty_reason === "filters_exclude_results" ? "Clear or broaden filters; your saved roles and applications are unchanged." : "Your placement cell has not published an open role, or the current drive has closed."}</span></EmptyState> : null}
           <div className={styles.list}>
             {items.map((opportunity) => (
               <article key={opportunity.id} className={styles.card}>
@@ -140,7 +142,7 @@ export function StudentOpportunities() {
                   <div className={styles.skills}>{opportunity.skills.slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div>
                 </div>
                 <div className={styles.cardActions}>
-                  <Badge tone={tone(opportunity)}>{eligibilityCopy(opportunity)}</Badge>
+                  <div className={styles.states}><Badge tone={tone(opportunity)}>{eligibilityCopy(opportunity)}</Badge>{opportunity.application_status ? <Badge tone={opportunity.application_status === "withdrawn" ? "neutral" : "success"}>Application · {opportunity.application_status.replaceAll("_", " ")}</Badge> : null}</div>
                   <button type="button" disabled={saving === opportunity.id} onClick={() => void toggleSave(opportunity)} aria-label={opportunity.saved ? `Remove ${opportunity.title} from saved roles` : `Save ${opportunity.title}`}>
                     {opportunity.saved ? <BookmarkCheck aria-hidden="true" /> : <Bookmark aria-hidden="true" />}
                   </button>

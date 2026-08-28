@@ -57,6 +57,84 @@ export type AdminApplicationPage = {
 };
 
 /**
+ * ApplicationAppealCreate
+ */
+export type ApplicationAppealCreate = {
+    /**
+     * Confirmation
+     */
+    confirmation: 'SUBMIT APPEAL';
+    /**
+     * Kind
+     */
+    kind: 'appeal' | 'manual_review';
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Supporting Evidence
+     */
+    supporting_evidence?: Array<string>;
+};
+
+/**
+ * ApplicationAppealResolution
+ */
+export type ApplicationAppealResolution = {
+    /**
+     * Administrator Response
+     */
+    administrator_response: string;
+    /**
+     * Status
+     */
+    status: 'approved' | 'declined';
+};
+
+/**
+ * ApplicationAppealResponse
+ */
+export type ApplicationAppealResponse = {
+    /**
+     * Administrator Response
+     */
+    administrator_response: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Kind
+     */
+    kind: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Resolved At
+     */
+    resolved_at: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Supporting Evidence
+     */
+    supporting_evidence: Array<string>;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
  * ApplicationCreate
  */
 export type ApplicationCreate = {
@@ -93,9 +171,23 @@ export type ApplicationOverrideCreate = {
  */
 export type ApplicationResponse = {
     /**
+     * Appeals
+     */
+    appeals?: Array<ApplicationAppealResponse>;
+    /**
+     * Can Withdraw
+     */
+    can_withdraw: boolean;
+    /**
      * Created At
      */
     created_at: string;
+    /**
+     * Decision Snapshot
+     */
+    decision_snapshot: {
+        [key: string]: unknown;
+    };
     /**
      * Eligibility Snapshot
      */
@@ -166,6 +258,14 @@ export type ApplicationResponse = {
      * Updated At
      */
     updated_at: string;
+    /**
+     * Withdrawal Reason
+     */
+    withdrawal_reason: string | null;
+    /**
+     * Withdrawn At
+     */
+    withdrawn_at: string | null;
 };
 
 /**
@@ -180,6 +280,20 @@ export type ApplicationStatusUpdate = {
      * Status
      */
     status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+};
+
+/**
+ * ApplicationWithdrawal
+ */
+export type ApplicationWithdrawal = {
+    /**
+     * Confirmation
+     */
+    confirmation: 'WITHDRAW';
+    /**
+     * Reason
+     */
+    reason: string;
 };
 
 /**
@@ -1110,6 +1224,10 @@ export type Operator = 'eq' | 'in' | 'gte' | 'lte' | 'present';
  * OpportunityPage
  */
 export type OpportunityPage = {
+    /**
+     * Empty Reason
+     */
+    empty_reason?: 'no_published_drive' | 'filters_exclude_results' | 'profile_incomplete' | null;
     /**
      * Items
      */
@@ -2936,6 +3054,36 @@ export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses = {
 
 export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponse = ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses];
 
+export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostData = {
+    body: ApplicationAppealResolution;
+    path: {
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/application-appeals/{appeal_id}/resolution';
+};
+
+export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostError = ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors[keyof ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors];
+
+export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponse = ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses[keyof ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses];
+
 export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetData = {
     body?: never;
     path?: never;
@@ -3511,6 +3659,130 @@ export type SubmitApplicationApiV1ApplicationsPostResponses = {
 };
 
 export type SubmitApplicationApiV1ApplicationsPostResponse = SubmitApplicationApiV1ApplicationsPostResponses[keyof SubmitApplicationApiV1ApplicationsPostResponses];
+
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}';
+};
+
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetError = ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors];
+
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponse = ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses];
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostData = {
+    body: ApplicationAppealCreate;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/appeals';
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostError = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors];
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ApplicationAppealResponse;
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponse = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses];
+
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/deadline.ics';
+};
+
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetError = DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors[keyof DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors];
+
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostData = {
+    body: ApplicationWithdrawal;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/withdraw';
+};
+
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostError = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors];
+
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponse = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses];
 
 export type CsrfApiV1AuthCsrfGetData = {
     body?: never;
@@ -4329,6 +4601,18 @@ export type ReadOpportunitiesApiV1OpportunitiesGetData = {
          * Skill
          */
         skill?: string | null;
+        /**
+         * Eligibility
+         */
+        eligibility?: string | null;
+        /**
+         * Application State
+         */
+        application_state?: string | null;
+        /**
+         * Deadline Within Days
+         */
+        deadline_within_days?: number | null;
         /**
          * Saved Only
          */

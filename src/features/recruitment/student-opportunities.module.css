@@ -39,6 +39,7 @@
 .skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .skills span { border-radius: 999px; padding: 4px 9px; background: var(--surface-muted); color: var(--ink-muted); font-size: .72rem; }
 .cardActions { display: grid; grid-template-columns: auto 40px 40px; align-items: start; gap: 8px; }
+.states { display: grid; justify-items: end; gap: 6px; }
 .cardActions button, .cardActions > a { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 999px; background: white; color: var(--ink); cursor: pointer; }
 .cardActions button:disabled { opacity: .5; }
 .cardActions svg { width: 18px; }
