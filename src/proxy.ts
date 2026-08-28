@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const studentRoutes = [
+  "/dashboard",
+  "/onboarding",
+  "/profile",
+  "/applications",
+  "/opportunities",
+  "/resume",
+  "/roadmap",
+];
+
+function isProtected(pathname: string) {
+  return pathname.startsWith("/admin/") && pathname !== "/admin/sign-in"
+    ? "admin"
+    : studentRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))
+      ? "student"
+      : null;
+}
+
 export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const development = process.env.NODE_ENV === "development";
@@ -27,8 +45,19 @@ export function proxy(request: NextRequest) {
     ...(development ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
   const requestHeaders = new Headers(request.headers);
+  const protectedLane = isProtected(request.nextUrl.pathname);
+  const returnTo = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  requestHeaders.set("x-campushire-return-to", returnTo);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", policy);
+  if (protectedLane && !request.cookies.has("campushire_session")) {
+    const destination = protectedLane === "admin" ? "/admin/sign-in" : "/sign-in";
+    const signIn = new URL(destination, request.url);
+    signIn.searchParams.set("returnTo", returnTo);
+    const redirect = NextResponse.redirect(signIn);
+    redirect.headers.set("Content-Security-Policy", policy);
+    return redirect;
+  }
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", policy);
   return response;

@@ -13,6 +13,17 @@ const apiUrl = normalizeApiUrl(
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1",
 );
 
+export type ApiErrorKind =
+  | "unauthenticated"
+  | "forbidden"
+  | "validation"
+  | "conflict"
+  | "rate-limit"
+  | "dependency"
+  | "server"
+  | "offline"
+  | "timeout";
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -20,9 +31,24 @@ export class ApiError extends Error {
     public readonly code: string = "http_error",
     public readonly correlationId?: string,
     public readonly details?: Record<string, unknown>,
+    public readonly kind: ApiErrorKind = ApiError.kindForStatus(status),
   ) {
     super(message);
     this.name = "ApiError";
+  }
+
+  static kindForStatus(status: number): ApiErrorKind {
+    if (status === 401) return "unauthenticated";
+    if (status === 403) return "forbidden";
+    if (status === 409) return "conflict";
+    if (status === 422) return "validation";
+    if (status === 429) return "rate-limit";
+    if (status === 502 || status === 503 || status === 504) return "dependency";
+    return "server";
+  }
+
+  static fromStatus(status: number, message: string, code = "http_error") {
+    return new ApiError(status, message, code);
   }
 }
 
@@ -36,6 +62,7 @@ type ErrorBody = {
     code?: string;
     message?: string;
     correlation_id?: string;
+    details?: Record<string, unknown>;
   };
 };
 
@@ -59,11 +86,20 @@ export function apiPath(path: string): string {
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
   if (!headers.has("Accept")) headers.set("Accept", "application/json");
-  const response = await fetch(apiPath(path), {
-    ...init,
-    credentials: "include",
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(apiPath(path), {
+      ...init,
+      credentials: "include",
+      headers,
+      signal: init?.signal ?? AbortSignal.timeout(15_000),
+    });
+  } catch (cause) {
+    if (cause instanceof DOMException && cause.name === "AbortError") {
+      throw new ApiError(0, "The request timed out. Try again.", "request_timeout", undefined, undefined, "timeout");
+    }
+    throw new ApiError(0, "You appear to be offline. Reconnect and try again.", "offline", undefined, undefined, "offline");
+  }
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({})) as ErrorBody;
@@ -74,7 +110,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
         (typeof body.detail === "string" ? body.detail : "CampusHire could not complete this request."),
       body.error?.code ?? structuredDetail?.code ?? "http_error",
       body.error?.correlation_id ?? response.headers.get("X-Request-ID") ?? undefined,
-      structuredDetail,
+      body.error?.details ?? structuredDetail,
     );
   }
   if (response.status === 204) return undefined as T;
