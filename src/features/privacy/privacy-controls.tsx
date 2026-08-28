@@ -24,7 +24,10 @@ export function PrivacyControls() {
     try {
       const response = await csrfRequest<DataDeletionResponse>("/privacy/deletion-requests", {
         method: "POST",
-        body: JSON.stringify({ confirmation: value }),
+        body: JSON.stringify({
+          confirmation: value,
+          scope: "account_all_memberships",
+        }),
       });
       setState("complete");
       setMessage(`${response.message} Reference ${response.id.slice(0, 8)}.`);
@@ -80,7 +83,7 @@ export function PrivacyControls() {
           <p>Irreversible action</p>
           <h2 id="deletion-title">Delete eligible student data</h2>
           <span>
-            This removes your profile, sessions, resume records, readiness progress, saved roles, notifications, and derived match evidence. Private files are queued for retryable cleanup. Submitted application records can create an explicit institutional retention hold.
+            This account-wide action removes eligible data and memberships from every institution connected to this CampusHire account, including your profile, sessions, resumes, readiness progress, saved roles, notifications, and derived match evidence. Private files are queued for retryable cleanup. Submitted application records can create an explicit institutional retention hold.
           </span>
         </div>
         {message ? <Alert tone={state === "complete" ? "success" : "warning"}>{message}</Alert> : null}

@@ -22,4 +22,4 @@ The candidate matches `origin/main`. `AGENTS.md`, `design.md`, `.agents/`, `.dat
 
 ## Release boundary
 
-The user explicitly deferred separate frontend/backend Deep Security Scans on 2026-08-24. They are not counted as passed and no no-findings claim is made. The executable student/administrator UAT pack is delivered, but named stakeholder and screen-reader acceptance remain external. Production promotion also depends on the backend's credential-free parser isolation, managed-staging recovery/load evidence, and approved institutional privacy and incident ownership.
+The 2026-08-24 Deep Scan deferral was lifted. Separate frontend/backend Deep Security Scans completed and sealed on 2026-08-28, and all validated findings were remediated and regression-tested as recorded in `docs/PHASE10_SECURITY_CLOSURE_2026-08-28.md`. The executable student/administrator UAT pack is delivered, but named stakeholder and screen-reader acceptance remain external. Production promotion also depends on final immutable managed-staging recovery/load evidence and approved institutional privacy and incident ownership.

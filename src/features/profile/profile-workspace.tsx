@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookOpen, ExternalLink, GraduationCap, KeyRound, ShieldCheck, Trash2, UserRound } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
+import { clearCampusHireBrowserState } from "@/components/layout/sign-out-button";
 import { apiRequest, csrfRequest } from "@/lib/api/client";
 import styles from "./profile-workspace.module.css";
 import { CommunicationPreferences } from "./communication-preferences";
@@ -35,22 +37,29 @@ const formatDate = (value: string) => new Intl.DateTimeFormat(undefined, {
 }).format(new Date(value));
 
 export function ProfileWorkspace() {
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessionsState, setSessionsState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
 
   const load = useCallback(async () => {
-    try {
-      const [nextProfile, nextSessions] = await Promise.all([
-        apiRequest<Profile>("/profile", { cache: "no-store" }),
-        apiRequest<Session[]>("/auth/sessions", { cache: "no-store" }),
-      ]);
-      setProfile(nextProfile);
-      setSessions(nextSessions);
-      setMessage("");
-    } catch {
-      setMessage("Profile settings could not be refreshed. Your saved data is unchanged.");
+    setSessionsState("loading");
+    const [profileResult, sessionsResult] = await Promise.allSettled([
+      apiRequest<Profile>("/profile", { cache: "no-store" }),
+      apiRequest<Session[]>("/auth/sessions", { cache: "no-store" }),
+    ]);
+    if (profileResult.status === "fulfilled") setProfile(profileResult.value);
+    if (sessionsResult.status === "fulfilled") {
+      setSessions(sessionsResult.value);
+      setSessionsState("ready");
+    } else {
+      setSessionsState("error");
     }
+    const failures = [profileResult, sessionsResult].filter((result) => result.status === "rejected");
+    setMessage(failures.length
+      ? "Some profile settings could not be refreshed. Your saved data is unchanged."
+      : "");
   }, []);
 
   useEffect(() => {
@@ -66,6 +75,19 @@ export function ProfileWorkspace() {
     } catch {
       setMessage("That session could not be signed out. No other session was changed.");
     }
+  }
+
+  async function signOutEverywhere() {
+    if (!window.confirm("Sign out this browser and every other active CampusHire session?")) return;
+    try {
+      await csrfRequest<void>("/auth/sign-out-all", { method: "POST" });
+    } catch {
+      setMessage("Sessions could not be signed out. Your current session is still active.");
+      return;
+    }
+    clearCampusHireBrowserState();
+    router.replace("/sign-in");
+    router.refresh();
   }
 
   return (
@@ -89,12 +111,16 @@ export function ProfileWorkspace() {
 
       <section className={styles.sessions} aria-labelledby="sessions-title">
         <header><div><p>Security</p><h2 id="sessions-title">Active sessions</h2></div><KeyRound aria-hidden="true" /></header>
-        {!sessions.length ? <p>Session details are loading.</p> : <ul>{sessions.map((session) => (
+        {sessionsState === "loading" ? <p>Session details are loading.</p> : null}
+        {sessionsState === "error" ? <p>Session details are unavailable. You can still secure the account by signing out every device.</p> : null}
+        {sessionsState === "ready" && !sessions.length ? <p>No active session details were returned.</p> : null}
+        {sessions.length ? <ul>{sessions.map((session) => (
           <li key={session.id}>
             <div><strong>{session.device_summary ?? "CampusHire session"}{session.current ? " · This device" : ""}</strong><span>Last active {formatDate(session.last_activity_at)} · Expires {formatDate(session.expires_at)}</span></div>
             {!session.current ? <button type="button" onClick={() => void revoke(session)}>Sign out</button> : null}
           </li>
-        ))}</ul>}
+        ))}</ul> : null}
+        <button type="button" onClick={() => void signOutEverywhere()}>Sign out all devices</button>
       </section>
 
       <CommunicationPreferences />

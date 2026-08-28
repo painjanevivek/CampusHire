@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown, CircleHelp, Menu, UserRound, X } from "lucide-react";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
+import { SignOutButton } from "./sign-out-button";
 
 import styles from "./student-header.module.css";
 
@@ -75,6 +76,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
             <UserRound size={18} aria-hidden="true" />
             <ChevronDown size={15} aria-hidden="true" />
           </Link>
+          <SignOutButton destination="/sign-in" />
         </div>
       </div>
     </header>

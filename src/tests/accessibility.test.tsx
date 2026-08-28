@@ -7,7 +7,10 @@ import Loading from "@/app/loading";
 import { AdminWorkspace } from "@/components/layout/admin-workspace";
 import { StudentWorkspace } from "@/components/layout/student-workspace";
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/admin/operations" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/admin/operations",
+  useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
+}));
 vi.mock("@/features/engagement/notification-center", () => ({
   NotificationCenter: () => <button type="button" aria-label="Open updates">Updates</button>,
 }));

@@ -21,6 +21,7 @@ type AuditEvent = {
 };
 
 type AuditPage = { items: AuditEvent[]; page: number; page_size: number; total: number };
+type User = { id: string; institution_id: string };
 type Filters = {
   action: string;
   resource_type: string;
@@ -66,6 +67,7 @@ export function AdminAudit() {
     try {
       const query = queryFor(applied, pageNumber);
       setPage(await apiRequest<AuditPage>(`/admin/audit/events?${query}`, { cache: "no-store" }));
+      window.localStorage.removeItem("campushire.admin.audit-view");
       setState("ready");
       setMessage("");
     } catch {
@@ -91,18 +93,29 @@ export function AdminAudit() {
     setApplied(filters);
   }
 
-  function saveView() {
-    window.localStorage.setItem("campushire.admin.audit-view", JSON.stringify(filters));
-    setMessage("Audit view saved on this device.");
+  async function currentSavedViewKey() {
+    const me = await apiRequest<User>("/auth/me", { cache: "no-store" });
+    return `campushire.admin.audit-view.${me.id}.${me.institution_id}`;
   }
 
-  function restoreView() {
-    const stored = window.localStorage.getItem("campushire.admin.audit-view");
-    if (!stored) {
-      setMessage("No saved audit view exists on this device.");
-      return;
-    }
+  async function saveView() {
     try {
+      const key = await currentSavedViewKey();
+      window.sessionStorage.setItem(key, JSON.stringify(filters));
+      setMessage("Audit view saved for this signed-in session.");
+    } catch {
+      setMessage("The signed-in account could not be verified, so the view was not saved.");
+    }
+  }
+
+  async function restoreView() {
+    try {
+      const key = await currentSavedViewKey();
+      const stored = window.sessionStorage.getItem(key);
+      if (!stored) {
+        setMessage("No saved audit view exists in this session.");
+        return;
+      }
       const restored = { ...emptyFilters, ...(JSON.parse(stored) as Partial<Filters>) };
       setFilters(restored);
       setApplied(restored);
@@ -131,7 +144,7 @@ export function AdminAudit() {
           <label>From<input type="datetime-local" value={filters.start_at} onChange={(event) => setFilters({ ...filters, start_at: event.target.value })} /></label>
           <label>Until<input type="datetime-local" value={filters.end_at} onChange={(event) => setFilters({ ...filters, end_at: event.target.value })} /></label>
           <label>Order<select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.target.value as Filters["sort"] })}><option value="desc">Newest first</option><option value="asc">Oldest first</option></select></label>
-          <div className={styles.filterActions}><button type="submit">Apply filters</button><button type="button" onClick={saveView}><Save aria-hidden="true" /> Save view</button><button type="button" onClick={restoreView}>Restore view</button><button type="button" onClick={() => { setFilters(emptyFilters); setApplied(emptyFilters); setPageNumber(1); }}>Clear</button></div>
+          <div className={styles.filterActions}><button type="submit">Apply filters</button><button type="button" onClick={() => void saveView()}><Save aria-hidden="true" /> Save view</button><button type="button" onClick={() => void restoreView()}>Restore view</button><button type="button" onClick={() => { setFilters(emptyFilters); setApplied(emptyFilters); setPageNumber(1); }}>Clear</button></div>
         </form>
       </details>
 

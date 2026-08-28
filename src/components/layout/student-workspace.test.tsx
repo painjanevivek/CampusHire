@@ -1,7 +1,11 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { StudentWorkspace } from "./student-workspace";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
+}));
 
 describe("StudentWorkspace", () => {
   it("exposes the current section and profile progress to assistive technology", () => {

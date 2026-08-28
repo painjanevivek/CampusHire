@@ -34,7 +34,10 @@ describe("PrivacyControls", () => {
       "/privacy/deletion-requests",
       {
         method: "POST",
-        body: JSON.stringify({ confirmation: "DELETE MY CAMPUSHIRE DATA" }),
+        body: JSON.stringify({
+          confirmation: "DELETE MY CAMPUSHIRE DATA",
+          scope: "account_all_memberships",
+        }),
       },
     ));
     expect(await screen.findByRole("status")).toHaveTextContent("Reference 12345678");

@@ -704,6 +704,10 @@ export type DataDeletionCreate = {
      * Confirmation
      */
     confirmation: 'DELETE MY CAMPUSHIRE DATA';
+    /**
+     * Scope
+     */
+    scope: 'account_all_memberships';
 };
 
 /**
@@ -2766,10 +2770,6 @@ export type RosterImportSummary = {
  * RosterRowResponse
  */
 export type RosterRowResponse = {
-    /**
-     * Activation Token
-     */
-    activation_token?: string | null;
     /**
      * Email
      */

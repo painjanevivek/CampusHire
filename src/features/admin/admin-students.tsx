@@ -7,9 +7,9 @@ import { Alert, Badge, RequestState } from "@/components/ui/feedback";
 import { ApiError, apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
 import styles from "./admin-students.module.css";
 
-type User = { institution_id: string };
+type User = { id: string; institution_id: string };
 type Membership = { id: string; user_id: string; email?: string; role: string; status: string };
-type RosterRow = { row_number: number; email?: string; enrollment_id?: string; full_name?: string; status: string; errors: string[]; activation_token?: string };
+type RosterRow = { row_number: number; email?: string; enrollment_id?: string; full_name?: string; status: string; errors: string[] };
 type RosterImport = { id: string; status: string; total_rows: number; valid_rows: number; invalid_rows: number; invited_rows: number; rows: RosterRow[] };
 type RosterSummary = Omit<RosterImport, "rows"> & { filename: string; committed_at: string | null; created_at: string };
 
@@ -34,6 +34,7 @@ export function AdminStudents() {
         apiRequest<RosterSummary[]>(`/institutions/${me.institution_id}/roster-imports`, { cache: "no-store" }),
       ]);
       setInstitutionId(me.institution_id);
+      window.localStorage.removeItem("campushire.admin.students-view");
       setMemberships(records);
       setHistory(imports);
       setState("ready");
@@ -102,18 +103,29 @@ export function AdminStudents() {
     }
   }
 
-  function saveView() {
-    window.localStorage.setItem("campushire.admin.students-view", JSON.stringify({ query, statusFilter, sort }));
-    setMessage("Student directory view saved on this device.");
+  async function currentSavedViewKey() {
+    const me = await apiRequest<User>("/auth/me", { cache: "no-store" });
+    return `campushire.admin.students-view.${me.id}.${me.institution_id}`;
   }
 
-  function restoreView() {
-    const stored = window.localStorage.getItem("campushire.admin.students-view");
-    if (!stored) return setMessage("No saved student view exists on this device.");
+  async function saveView() {
     try {
+      const key = await currentSavedViewKey();
+      window.sessionStorage.setItem(key, JSON.stringify({ query, statusFilter, sort }));
+      setMessage("Student directory view saved for this signed-in session.");
+    } catch {
+      setMessage("The signed-in account could not be verified, so the view was not saved.");
+    }
+  }
+
+  async function restoreView() {
+    try {
+      const key = await currentSavedViewKey();
+      const stored = window.sessionStorage.getItem(key);
+      if (!stored) return setMessage("No saved student view exists in this session.");
       const restored = JSON.parse(stored) as { query?: string; statusFilter?: string; sort?: "email" | "status" };
       setQuery(restored.query ?? ""); setStatusFilter(restored.statusFilter ?? ""); setSort(restored.sort ?? "email"); setPage(1);
-      setMessage("Saved student directory view restored.");
+      setMessage("Saved student directory view restored for this account.");
     } catch { setMessage("The saved student view is invalid and was not applied."); }
   }
 
@@ -124,8 +136,8 @@ export function AdminStudents() {
     <main id="main-content" className={styles.page}>
       <header><div><p className="eyebrow">Verified enrollment</p><h1>Students</h1><span>Preview every roster row before creating single-use invitations.</span></div><div className={styles.headerActions}><a href={apiPath(`/institutions/${institutionId}/memberships/export.csv`)} download>Export safe CSV</a><label className={styles.upload}>Preview CSV<input className="srOnly" type="file" accept=".csv,text/csv" onChange={(event) => void preview(event)} /></label></div></header>
       {message ? <Alert tone={message.includes("created") ? "success" : "error"}>{message}</Alert> : null}
-      {roster ? <section className={styles.roster} aria-labelledby="roster-title"><header><div><h2 id="roster-title">Roster preview</h2><p>{roster.valid_rows} valid · {roster.invalid_rows} need correction · {roster.invited_rows} invited</p></div>{roster.status !== "committed" ? <Button onClick={() => void commit()} disabled={!roster.valid_rows}>Invite valid rows</Button> : <Badge tone="success">Committed</Badge>}</header><div className={styles.table} role="table" aria-label="Roster row results">{roster.rows.map((row) => <div role="row" key={row.row_number}><span role="cell">{row.row_number}</span><span role="cell"><strong>{row.full_name || "Unnamed row"}</strong><small>{row.email}</small></span><span role="cell">{row.enrollment_id}</span><span role="cell"><Badge tone={row.status === "invited" || row.status === "valid" ? "success" : "warning"}>{row.status}</Badge>{row.errors.length ? <small>{row.errors.join(", ")}</small> : null}</span>{row.activation_token ? <code role="cell" aria-label={`One-time token for ${row.email}`}>{row.activation_token}</code> : null}</div>)}</div></section> : null}
-      <section className={styles.directory} aria-labelledby="directory-title"><header><div><h2 id="directory-title">Membership directory</h2><p>{visibleMemberships.length} of {memberships.length} records</p></div><Badge>{memberships.length} records</Badge></header><div className={styles.controls}><label>Search<input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Email or user ID" /></label><label>Status<select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }}><option value="">All statuses</option><option value="active">Active</option><option value="invited">Invited</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option><option value="graduated">Graduated</option></select></label><label>Sort<select value={sort} onChange={(event) => setSort(event.target.value as "email" | "status")}><option value="email">Email</option><option value="status">Status</option></select></label><button type="button" onClick={saveView}>Save view</button><button type="button" onClick={restoreView}>Restore</button></div>{visibleMemberships.length ? <><div className={styles.table} role="table">{pagedMemberships.map((membership) => <div role="row" key={membership.id}><span role="cell"><strong>{membership.email ?? "Account pending"}</strong><small>{membership.user_id}</small></span><span role="cell">{membership.role.replaceAll("_", " ")}</span><span role="cell"><Badge tone={membership.status === "active" ? "success" : "warning"}>{membership.status}</Badge><details><summary>Change status</summary><form onSubmit={(event) => void changeMembership(event, membership.id)}><select name="status" defaultValue={membership.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option><option value="graduated">Graduated</option></select><input name="reason" required minLength={3} maxLength={500} placeholder="Reason for audit" /><button type="submit">Confirm</button></form></details></span></div>)}</div><nav className={styles.pagination} aria-label="Student directory pages"><button disabled={page === 1} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(visibleMemberships.length / pageSize))}</span><button disabled={page * pageSize >= visibleMemberships.length} onClick={() => setPage((value) => value + 1)}>Next</button></nav></> : <RequestState state="empty" title={memberships.length ? "No memberships match" : "No memberships yet"}>{memberships.length ? "Clear the filters to inspect other records." : "Upload a roster to create the first student invitations."}</RequestState>}</section>
+      {roster ? <section className={styles.roster} aria-labelledby="roster-title"><header><div><h2 id="roster-title">Roster preview</h2><p>{roster.valid_rows} valid · {roster.invalid_rows} need correction · {roster.invited_rows} invited</p></div>{roster.status !== "committed" ? <Button onClick={() => void commit()} disabled={!roster.valid_rows}>Invite valid rows</Button> : <Badge tone="success">Committed</Badge>}</header><div className={styles.table} role="table" aria-label="Roster row results">{roster.rows.map((row) => <div role="row" key={row.row_number}><span role="cell">{row.row_number}</span><span role="cell"><strong>{row.full_name || "Unnamed row"}</strong><small>{row.email}</small></span><span role="cell">{row.enrollment_id}</span><span role="cell"><Badge tone={row.status === "invited" || row.status === "valid" ? "success" : "warning"}>{row.status}</Badge>{row.errors.length ? <small>{row.errors.join(", ")}</small> : null}</span></div>)}</div></section> : null}
+      <section className={styles.directory} aria-labelledby="directory-title"><header><div><h2 id="directory-title">Membership directory</h2><p>{visibleMemberships.length} of {memberships.length} records</p></div><Badge>{memberships.length} records</Badge></header><div className={styles.controls}><label>Search<input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Email or user ID" /></label><label>Status<select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }}><option value="">All statuses</option><option value="active">Active</option><option value="invited">Invited</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option><option value="graduated">Graduated</option></select></label><label>Sort<select value={sort} onChange={(event) => setSort(event.target.value as "email" | "status")}><option value="email">Email</option><option value="status">Status</option></select></label><button type="button" onClick={() => void saveView()}>Save view</button><button type="button" onClick={() => void restoreView()}>Restore</button></div>{visibleMemberships.length ? <><div className={styles.table} role="table">{pagedMemberships.map((membership) => <div role="row" key={membership.id}><span role="cell"><strong>{membership.email ?? "Account pending"}</strong><small>{membership.user_id}</small></span><span role="cell">{membership.role.replaceAll("_", " ")}</span><span role="cell"><Badge tone={membership.status === "active" ? "success" : "warning"}>{membership.status}</Badge><details><summary>Change status</summary><form onSubmit={(event) => void changeMembership(event, membership.id)}><select name="status" defaultValue={membership.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option><option value="graduated">Graduated</option></select><input name="reason" required minLength={3} maxLength={500} placeholder="Reason for audit" /><button type="submit">Confirm</button></form></details></span></div>)}</div><nav className={styles.pagination} aria-label="Student directory pages"><button disabled={page === 1} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(visibleMemberships.length / pageSize))}</span><button disabled={page * pageSize >= visibleMemberships.length} onClick={() => setPage((value) => value + 1)}>Next</button></nav></> : <RequestState state="empty" title={memberships.length ? "No memberships match" : "No memberships yet"}>{memberships.length ? "Clear the filters to inspect other records." : "Upload a roster to create the first student invitations."}</RequestState>}</section>
       <section className={styles.history} aria-labelledby="history-title"><header><h2 id="history-title">Roster import history</h2><Badge>{history.length} imports</Badge></header>{history.length ? <ol>{history.map((item) => <li key={item.id}><div><strong>{item.filename}</strong><time dateTime={item.created_at}>{new Date(item.created_at).toLocaleString()}</time></div><span>{item.valid_rows} valid · {item.invalid_rows} invalid · {item.invited_rows} invited</span><Badge tone={item.status === "committed" ? "success" : "warning"}>{item.status}</Badge></li>)}</ol> : <RequestState state="empty" title="No roster imports yet">Preview a validated CSV to begin a traceable import.</RequestState>}</section>
     </main>
   );

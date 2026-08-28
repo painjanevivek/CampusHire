@@ -17,8 +17,9 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 describe("AdminStudents", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    window.sessionStorage.clear();
     apiRequestMock.mockReset().mockImplementation((path: string) => {
-      if (path === "/auth/me") return Promise.resolve({ institution_id: "institution-1" });
+      if (path === "/auth/me") return Promise.resolve({ id: "admin-1", institution_id: "institution-1" });
       if (path.endsWith("/memberships")) return Promise.resolve([{ id: "membership-1", user_id: "student-1", email: "asha@example.edu", role: "student", status: "active" }]);
       if (path.endsWith("/roster-imports")) return Promise.resolve([{ id: "roster-1", filename: "students.csv", status: "committed", total_rows: 1, valid_rows: 1, invalid_rows: 0, invited_rows: 1, committed_at: "2026-08-28T10:00:00Z", created_at: "2026-08-28T10:00:00Z" }]);
       return Promise.reject(new Error(`Unexpected path ${path}`));
@@ -47,5 +48,38 @@ describe("AdminStudents", () => {
       expect.objectContaining({ method: "PATCH", body: expect.stringContaining("Program completed") }),
     ));
     expect(await screen.findByText("Membership status updated and recorded in Audit.")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Search"), { target: { value: "asha" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save view" }));
+    await waitFor(() => expect(window.sessionStorage.getItem(
+      "campushire.admin.students-view.admin-1.institution-1",
+    )).toContain("asha"));
+    expect(window.localStorage.getItem("campushire.admin.students-view")).toBeNull();
+  });
+
+  it("rechecks the account namespace before restoring a view", async () => {
+    let currentUser = { id: "admin-1", institution_id: "institution-1" };
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/auth/me") return Promise.resolve(currentUser);
+      if (path.endsWith("/memberships")) return Promise.resolve([]);
+      if (path.endsWith("/roster-imports")) return Promise.resolve([]);
+      return Promise.reject(new Error(`Unexpected path ${path}`));
+    });
+    window.sessionStorage.setItem(
+      "campushire.admin.students-view.admin-1.institution-1",
+      JSON.stringify({ query: "account-a-student" }),
+    );
+    window.sessionStorage.setItem(
+      "campushire.admin.students-view.admin-2.institution-2",
+      JSON.stringify({ query: "account-b-student" }),
+    );
+    render(<AdminStudents />);
+    await screen.findByText("No memberships yet");
+
+    currentUser = { id: "admin-2", institution_id: "institution-2" };
+    fireEvent.click(screen.getByRole("button", { name: "Restore" }));
+
+    await waitFor(() => expect(screen.getByLabelText("Search")).toHaveValue("account-b-student"));
+    expect(screen.getByLabelText("Search")).not.toHaveValue("account-a-student");
   });
 });

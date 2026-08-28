@@ -3,7 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import { AdminWorkspace } from "./admin-workspace";
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/admin/drives" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/admin/drives",
+  useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
+}));
 
 describe("AdminWorkspace", () => {
   it("keeps placement operations separate from student navigation", () => {

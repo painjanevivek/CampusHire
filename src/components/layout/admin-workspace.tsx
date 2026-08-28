@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, CircleHelp, Menu, UserRound, X } from "lucide-react";
 
 import styles from "./admin-workspace.module.css";
+import { SignOutButton } from "./sign-out-button";
 
 const navigation = [
   { href: "/admin/drives", label: "Drives" },
@@ -62,6 +63,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             <button type="button" aria-label="Open administrator account">
               <UserRound aria-hidden="true" /><ChevronDown size={15} aria-hidden="true" />
             </button>
+            <SignOutButton destination="/admin/sign-in" />
           </div>
         </div>
       </header>

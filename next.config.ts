@@ -16,7 +16,15 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    const tokenPageHeaders = [
+      { key: "Referrer-Policy", value: "no-referrer" },
+      { key: "Cache-Control", value: "no-store" },
+    ];
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      { source: "/activate/:path*", headers: tokenPageHeaders },
+      { source: "/reset-password/:path*", headers: tokenPageHeaders },
+    ];
   },
 };
 
