@@ -391,6 +391,16 @@ export type BodyUploadResumeApiV1ResumesPost = {
 };
 
 /**
+ * BounceEventCreate
+ */
+export type BounceEventCreate = {
+    /**
+     * Provider Message Id
+     */
+    provider_message_id: string;
+};
+
+/**
  * BulkApplicationApplyRequest
  */
 export type BulkApplicationApplyRequest = {
@@ -490,6 +500,42 @@ export type BulkApplicationStatusRequest = {
      * Status
      */
     status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+};
+
+/**
+ * CommunicationPreferencesResponse
+ */
+export type CommunicationPreferencesResponse = {
+    /**
+     * Account Emails
+     */
+    account_emails?: true;
+    /**
+     * Application Updates
+     */
+    application_updates: boolean;
+    /**
+     * Deadline Reminders
+     */
+    deadline_reminders: boolean;
+    /**
+     * Security Emails
+     */
+    security_emails?: true;
+};
+
+/**
+ * CommunicationPreferencesUpdate
+ */
+export type CommunicationPreferencesUpdate = {
+    /**
+     * Application Updates
+     */
+    application_updates: boolean;
+    /**
+     * Deadline Reminders
+     */
+    deadline_reminders: boolean;
 };
 
 /**
@@ -931,6 +977,74 @@ export type EligibilityResponse = {
 };
 
 /**
+ * EmailDeliveryPage
+ */
+export type EmailDeliveryPage = {
+    /**
+     * Items
+     */
+    items: Array<EmailDeliveryResponse>;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
+ * EmailDeliveryResponse
+ */
+export type EmailDeliveryResponse = {
+    /**
+     * Attempts
+     */
+    attempts: number;
+    /**
+     * Bounced At
+     */
+    bounced_at: string | null;
+    /**
+     * Category
+     */
+    category: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Failed At
+     */
+    failed_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Next Attempt At
+     */
+    next_attempt_at: string;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Sent At
+     */
+    sent_at: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Template Key
+     */
+    template_key: string;
+};
+
+/**
  * ExtractionCreate
  */
 export type ExtractionCreate = {
@@ -1038,6 +1152,34 @@ export type ExtractionReviewRequest = {
      * Decisions
      */
     decisions: Array<ExtractionFieldDecision>;
+};
+
+/**
+ * FunnelMetric
+ */
+export type FunnelMetric = {
+    /**
+     * Count
+     */
+    count: number;
+    /**
+     * Event Name
+     */
+    event_name: string;
+};
+
+/**
+ * FunnelResponse
+ */
+export type FunnelResponse = {
+    /**
+     * Metrics
+     */
+    metrics: Array<FunnelMetric>;
+    /**
+     * Window Days
+     */
+    window_days: number;
 };
 
 /**
@@ -2794,6 +2936,24 @@ export type SemanticMatchResponse = {
 };
 
 /**
+ * ServiceStatusResponse
+ */
+export type ServiceStatusResponse = {
+    /**
+     * Maintenance Message
+     */
+    maintenance_message: string | null;
+    /**
+     * Status
+     */
+    status: 'operational' | 'maintenance';
+    /**
+     * Transactional Email
+     */
+    transactional_email: 'configured' | 'degraded';
+};
+
+/**
  * SessionResponse
  */
 export type SessionResponse = {
@@ -2967,6 +3127,42 @@ export type SuggestionReviewBatch = {
 };
 
 /**
+ * SupportRequestCreate
+ */
+export type SupportRequestCreate = {
+    /**
+     * Category
+     */
+    category: 'account' | 'profile' | 'eligibility' | 'application' | 'resume' | 'roadmap' | 'privacy' | 'accessibility' | 'other';
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Route Context
+     */
+    route_context: string;
+};
+
+/**
+ * SupportRequestResponse
+ */
+export type SupportRequestResponse = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Reference
+     */
+    reference: string;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
  * UserResponse
  */
 export type UserResponse = {
@@ -3028,6 +3224,36 @@ export type ValidationError = {
      */
     type: string;
 };
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window Days
+         */
+        window_days?: number;
+    };
+    url: '/api/v1/admin/analytics/funnel';
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetError = ReadFunnelApiV1AdminAnalyticsFunnelGetErrors[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetErrors];
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: FunnelResponse;
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponse = ReadFunnelApiV1AdminAnalyticsFunnelGetResponses[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetResponses];
 
 export type ReadAuditEventsApiV1AdminAuditEventsGetData = {
     body?: never;
@@ -3150,6 +3376,70 @@ export type DownloadAuditExportApiV1AdminAuditExportCsvGetResponses = {
      */
     200: unknown;
 };
+
+export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Delivery Status
+         */
+        delivery_status?: string | null;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/admin/communications/email-deliveries';
+};
+
+export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetError = ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetErrors[keyof ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetErrors];
+
+export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: EmailDeliveryPage;
+};
+
+export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetResponse = ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetResponses[keyof ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetResponses];
+
+export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostData = {
+    body?: never;
+    path: {
+        /**
+         * Delivery Id
+         */
+        delivery_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/communications/email-deliveries/{delivery_id}/retry';
+};
+
+export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostError = RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostErrors[keyof RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostErrors];
+
+export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EmailDeliveryResponse;
+};
+
+export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponse = RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses[keyof RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses];
 
 export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostData = {
     body: ExtractionReview;
@@ -4726,6 +5016,56 @@ export type SignupApiV1AuthSignupPostResponses = {
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
 
+export type ReadPreferencesApiV1CommunicationsPreferencesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/communications/preferences';
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetError = ReadPreferencesApiV1CommunicationsPreferencesGetErrors[keyof ReadPreferencesApiV1CommunicationsPreferencesGetErrors];
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CommunicationPreferencesResponse;
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetResponse = ReadPreferencesApiV1CommunicationsPreferencesGetResponses[keyof ReadPreferencesApiV1CommunicationsPreferencesGetResponses];
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutData = {
+    body: CommunicationPreferencesUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/communications/preferences';
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutError = WritePreferencesApiV1CommunicationsPreferencesPutErrors[keyof WritePreferencesApiV1CommunicationsPreferencesPutErrors];
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: CommunicationPreferencesResponse;
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutResponse = WritePreferencesApiV1CommunicationsPreferencesPutResponses[keyof WritePreferencesApiV1CommunicationsPreferencesPutResponses];
+
 export type ReadDashboardApiV1DashboardGetData = {
     body?: never;
     path?: never;
@@ -5159,6 +5499,37 @@ export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = 
 };
 
 export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostData = {
+    body: BounceEventCreate;
+    headers?: {
+        /**
+         * X-Email-Webhook-Key
+         */
+        'x-email-webhook-key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/operator/email/bounce';
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostError = ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors];
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EmailDeliveryResponse;
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponse = ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses];
 
 export type CreateInstitutionApiV1OperatorInstitutionsPostData = {
     body: InstitutionProvisionRequest;
@@ -5969,3 +6340,44 @@ export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses = {
 };
 
 export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponse = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses];
+
+export type ReadServiceStatusApiV1ServiceStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/service-status';
+};
+
+export type ReadServiceStatusApiV1ServiceStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ServiceStatusResponse;
+};
+
+export type ReadServiceStatusApiV1ServiceStatusGetResponse = ReadServiceStatusApiV1ServiceStatusGetResponses[keyof ReadServiceStatusApiV1ServiceStatusGetResponses];
+
+export type SubmitSupportRequestApiV1SupportRequestsPostData = {
+    body: SupportRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/support/requests';
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostError = SubmitSupportRequestApiV1SupportRequestsPostErrors[keyof SubmitSupportRequestApiV1SupportRequestsPostErrors];
+
+export type SubmitSupportRequestApiV1SupportRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SupportRequestResponse;
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostResponse = SubmitSupportRequestApiV1SupportRequestsPostResponses[keyof SubmitSupportRequestApiV1SupportRequestsPostResponses];

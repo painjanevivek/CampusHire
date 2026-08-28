@@ -7,6 +7,7 @@ import { BookOpen, ExternalLink, GraduationCap, KeyRound, ShieldCheck, Trash2, U
 import { Alert } from "@/components/ui/feedback";
 import { apiRequest, csrfRequest } from "@/lib/api/client";
 import styles from "./profile-workspace.module.css";
+import { CommunicationPreferences } from "./communication-preferences";
 
 type Profile = {
   full_name: string | null;
@@ -95,6 +96,8 @@ export function ProfileWorkspace() {
           </li>
         ))}</ul>}
       </section>
+
+      <CommunicationPreferences />
 
       <section className={styles.governance} aria-label="Privacy and account controls">
         <article><ShieldCheck aria-hidden="true" /><div><h2>Privacy and AI assistance</h2><p>See what is authoritative, what AI can suggest, and how retention works.</p><Link href="/privacy">Review privacy controls</Link></div></article>

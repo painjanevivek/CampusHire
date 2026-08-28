@@ -58,7 +58,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           </nav>
           <div className={styles.utilities} aria-label="Administrator utilities">
             <button type="button" aria-label="Open notifications"><Bell aria-hidden="true" /></button>
-            <Link href="/admin/policies" aria-label="Open policy help"><CircleHelp aria-hidden="true" /></Link>
+            <Link href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>
             <button type="button" aria-label="Open administrator account">
               <UserRound aria-hidden="true" /><ChevronDown size={15} aria-hidden="true" />
             </button>

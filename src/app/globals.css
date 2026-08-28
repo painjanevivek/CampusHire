@@ -191,3 +191,7 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+.serviceBanner { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--status-warning); background: color-mix(in oklch, var(--status-warning) 18%, var(--surface)); color: var(--ink); font-size: .88rem; }
+.serviceBanner a { color: inherit; font-weight: 800; }
+@media (max-width: 640px) { .serviceBanner { align-items: flex-start; flex-direction: column; gap: 2px; } }
