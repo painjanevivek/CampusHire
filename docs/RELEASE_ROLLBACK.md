@@ -20,4 +20,9 @@ If the backend contract is incompatible, stop the rollout instead of hiding erro
 
 ## Release gates
 
-The frontend Deep Security Scan was explicitly deferred by the user on 2026-08-24; the current audit does not claim it passed. Production promotion still requires representative authenticated staging tests, human accessibility/UAT acceptance, approved privacy text, institution-specific operational contacts, and resolution or formal resumption of deferred security review. Development smoke evidence does not waive these gates.
+Separate frontend and backend Deep Security Scans completed and sealed on 2026-08-28; their
+closure evidence is recorded in `docs/PHASE10_SECURITY_CLOSURE_2026-08-28.md`. Production
+promotion still requires representative authenticated staging tests, human accessibility/UAT
+acceptance, approved privacy text, institution-specific operational contacts, managed recovery and
+capacity evidence, immutable provenance/signatures, and final authorized `GO`. Development smoke
+evidence does not waive these gates.

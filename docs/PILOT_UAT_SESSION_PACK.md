@@ -21,6 +21,18 @@ Use a staging deployment and synthetic tenant only. Label accounts `student-read
 
 ## Accessibility facilitation
 
-Run the critical journey by keyboard at 200% zoom and 390 px width, then with reduced motion, forced/high-contrast colors, and the selected screen reader. Ask participants to describe focus location, status changes, errors, and decision explanations in their own words. Do not coach an expected answer.
+Run the critical journey by keyboard at 200% zoom and 390 px width, then with reduced motion,
+forced/high-contrast colors, a low-bandwidth/offline profile, and the selected screen reader.
+Complete a real Safari/macOS session with Full Keyboard Access enabled; headless WebKit is not a
+substitute. Ask participants to describe focus location, status changes, errors, and decision
+explanations in their own words. Do not coach an expected answer.
 
 Log every observation with the accessibility/UAT issue template. Blocker/high accessibility defects, cross-tenant exposure, data loss, or misleading authority language stop acceptance and require a fix plus independent retest.
+
+## Session completion and evidence
+
+Record roles and counts only, never participant names. For every session retain the controlled
+institution reference, facilitator role, date, browser/OS or assistive technology version,
+viewport, candidate frontend/backend digests, OpenAPI hash, policy version, outcome, and issue
+references. The sanitized acceptance record must include student, T&P administrator, keyboard,
+Safari/macOS, low-bandwidth, and screen-reader outcomes before final release authorization.
