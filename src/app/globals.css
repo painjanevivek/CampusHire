@@ -66,7 +66,7 @@ button, .button, nav, .brand { font-family: var(--font-interface), Inter, sans-s
 .hero { min-height: 78svh; padding: 1.25rem clamp(1rem, 4vw, 5rem) 4rem; background: radial-gradient(circle at 85% 15%, var(--sage), transparent 32%), var(--canvas); }
 .topbar { max-width: 88rem; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 800; text-decoration: none; letter-spacing: -0.03em; }
-.brandMark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 0.75rem 0.75rem 0.75rem 0.2rem; background: var(--evergreen); color: var(--surface); }
+.brandMark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 0.75rem 0.75rem 0.75rem 0.2rem; background: var(--brand-blue); color: var(--surface); }
 .navActions, .heroActions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .textLink { min-height: 2.75rem; display: inline-flex; align-items: center; padding: 0 0.5rem; color: var(--ink-muted); text-decoration: none; font-weight: 650; }
 .heroGrid { max-width: 88rem; margin: clamp(4rem, 9vw, 8rem) auto 0; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(19rem, 0.72fr); gap: clamp(2rem, 7vw, 7rem); align-items: center; }
