@@ -35,7 +35,7 @@ export function PrivacyControls() {
       setState("idle");
       if (error instanceof ApiError && error.status === 409) {
         setMessage(
-          "An application decision record is under institutional retention. Contact your placement cell to review the applicable policy and deletion scope.",
+          "Your college must keep an application decision record for now. Contact your placement cell to check the policy and what can be deleted.",
         );
       } else if (error instanceof ApiError && error.status === 401) {
         setMessage("Sign in with the student account whose data you want to delete.");
@@ -51,7 +51,7 @@ export function PrivacyControls() {
         <p>Privacy and AI assistance</p>
         <h1>Your placement data has a defined purpose.</h1>
         <span>
-          CampusHire separates authoritative records, derived guidance, and human decisions so each can be explained and governed.
+          CampusHire keeps official records, helpful suggestions, and human decisions separate so you can understand each one.
         </span>
       </header>
 
@@ -63,18 +63,18 @@ export function PrivacyControls() {
         </article>
         <article>
           <DatabaseZap aria-hidden="true" />
-          <h2>Purpose-limited evidence</h2>
-          <p>Profile, academic, resume, and application data support campus recruitment, eligibility explanations, role relevance, and approved roadmaps.</p>
+          <h2>Data used for clear reasons</h2>
+          <p>Your profile, academic, resume, and application data help with campus hiring, eligibility explanations, role matches, and approved roadmaps.</p>
         </article>
       </section>
 
       <section className={styles.choices}>
         <div>
           <p>Your choices</p>
-          <h2>Optional evidence stays optional.</h2>
-          <span>GitHub, portfolio, phone, and an initial resume upload remain optional unless a published role states a reviewed requirement. Ask your placement cell about correction, export, policy retention, or appeals.</span>
+          <h2>Optional details stay optional.</h2>
+          <span>GitHub, portfolio, phone, and your first resume upload stay optional unless a published role clearly requires one. Ask your placement cell about corrections, exports, how long data is kept, or appeals.</span>
         </div>
-        <Link href="/profile">Review profile evidence</Link>
+        <Link href="/profile">Review profile details</Link>
       </section>
 
       <section className={styles.danger} aria-labelledby="deletion-title">
@@ -83,7 +83,7 @@ export function PrivacyControls() {
           <p>Irreversible action</p>
           <h2 id="deletion-title">Delete eligible student data</h2>
           <span>
-            This account-wide action removes eligible data and memberships from every institution connected to this CampusHire account, including your profile, sessions, resumes, readiness progress, saved roles, notifications, and derived match evidence. Private files are queued for retryable cleanup. Submitted application records can create an explicit institutional retention hold.
+            This action removes data that can be deleted and memberships from every college linked to this CampusHire account. This includes your profile, sign-ins, resumes, readiness progress, saved roles, notifications, and match details. Private files are removed through a process that retries if needed. Your college may need to keep submitted application records for a set time.
           </span>
         </div>
         {message ? <Alert tone={state === "complete" ? "success" : "warning"}>{message}</Alert> : null}

@@ -38,7 +38,7 @@ export function CommunicationPreferences() {
     <header><p>Communication</p><h2 id="communication-title">Email preferences</h2><span>Optional messages can be disabled. Security and account delivery remains on.</span></header>
     <div className={styles.options}>
       <label><span><strong>Application updates</strong><small>Status changes are always visible in CampusHire.</small></span><input type="checkbox" checked={preferences?.application_updates ?? false} disabled={!preferences} onChange={(event) => void change("application_updates", event.target.checked)} /></label>
-      <label><span><strong>Deadline reminders</strong><small>Optional reminders may be suppressed when delivery capacity is constrained.</small></span><input type="checkbox" checked={preferences?.deadline_reminders ?? false} disabled={!preferences} onChange={(event) => void change("deadline_reminders", event.target.checked)} /></label>
+      <label><span><strong>Deadline reminders</strong><small>Optional reminders may pause when the email service is busy.</small></span><input type="checkbox" checked={preferences?.deadline_reminders ?? false} disabled={!preferences} onChange={(event) => void change("deadline_reminders", event.target.checked)} /></label>
       <div><span><strong>Security and account</strong><small>Invitation, recovery, and security notices protect access and cannot be disabled.</small></span><b>Always on</b></div>
     </div>
     {status ? <p className={styles.status} role="status">{status}</p> : null}

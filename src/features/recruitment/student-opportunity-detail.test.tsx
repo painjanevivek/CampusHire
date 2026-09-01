@@ -47,7 +47,7 @@ const semanticMatch = {
   components: { skill_coverage: 0.8 },
   explanation: [
     "80% of published role skills are represented.",
-    "This score never changes deterministic eligibility.",
+    "This score never changes your rule-based eligibility.",
   ],
   embedding_model: "gemini-embedding-001",
   embedding_version: "v1",
@@ -116,7 +116,7 @@ describe("StudentOpportunityDetail", () => {
     ).toBeGreaterThan(0);
     expect(screen.getByText("84% match")).toBeInTheDocument();
     expect(
-      screen.getByText("This score never changes deterministic eligibility."),
+      screen.getByText("This score never changes your rule-based eligibility."),
     ).toBeInTheDocument();
   });
 });

@@ -64,7 +64,7 @@ export function StudentRoadmap() {
         }),
       );
       setNotice(
-        "Roadmap selected. Its approved version and prerequisite sequence are now fixed for this progress record.",
+        "Roadmap selected. This approved version and step order are now saved to your progress.",
       );
     } catch {
       setError(
@@ -93,11 +93,11 @@ export function StudentRoadmap() {
       );
       setEvidenceNode(null);
       setNotice(
-        `${node.title} marked complete with reviewed evidence metadata.`,
+        `${node.title} marked complete with your saved details.`,
       );
     } catch {
       setError(
-        "Progress was not saved. Complete its prerequisites and use a safe internal evidence link.",
+        "Progress was not saved. Finish the required earlier steps and use a safe CampusHire link.",
       );
     } finally {
       setBusy(false);
@@ -119,17 +119,16 @@ export function StudentRoadmap() {
       <main id="main-content" className={styles.page}>
         <header className={styles.hero}>
           <div>
-            <p>Reviewed curricula</p>
+            <p>Reviewed learning paths</p>
             <h1>Choose one career roadmap</h1>
             <span>
-              Each path is versioned, acyclic, and limited to approved
-              milestones.
+              Each path has a clear order and uses only approved milestones.
             </span>
           </div>
           <div className={styles.score}>
             <strong>08</strong>
             <span>
-              curated
+              reviewed
               <br />
               paths
             </span>
@@ -143,7 +142,7 @@ export function StudentRoadmap() {
             </button>
           </Alert>
         )}
-        {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Approved curated roadmaps and prerequisite progress continue normally.</Alert> : null}
+        {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Approved roadmaps and your step progress still work normally.</Alert> : null}
         {availability && availability.status !== "available" ? <EmptyState title={availability.status === "no_target_role" ? "Choose a target role first" : availability.status === "institution_restriction" ? "Roadmaps are restricted" : "No approved path for this role"}><span>{availability.reason}</span>{availability.status === "no_target_role" ? <Link href="/profile">Open profile settings</Link> : null}</EmptyState> : null}
         <section
           className={styles.templateGrid}
@@ -180,7 +179,7 @@ export function StudentRoadmap() {
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p>Evidence sequence · version {roadmap.version}</p>
+          <p>Learning path · version {roadmap.version}</p>
           <h1>{roadmap.title}</h1>
           <span>{roadmap.summary}</span>
         </div>
@@ -202,7 +201,7 @@ export function StudentRoadmap() {
         </Alert>
       )}
       {notice && <Alert tone="success">{notice}</Alert>}
-      {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Your curated roadmap progress and core readiness evidence remain available.</Alert> : null}
+      {availability?.guidance_provider_status === "unavailable" ? <Alert tone="warning">AI guidance is unavailable. Your saved roadmap progress and readiness details are still available.</Alert> : null}
       <section
         className={styles.timeline}
         aria-label={`${roadmap.title} roadmap`}
@@ -231,17 +230,17 @@ export function StudentRoadmap() {
                   ? "Confirmed"
                   : node.state === "next"
                     ? "Available now"
-                    : "Prerequisites required"}
+                    : "Earlier steps required"}
               </p>
               <h2>{node.title}</h2>
               <span>{node.completion}</span>
             </div>
             <span className={styles.meta}>
               {node.state === "completed"
-                ? "EVIDENCE ATTACHED"
+                ? "DETAILS ADDED"
                 : node.state === "next"
                   ? "NEXT MILESTONE"
-                  : `${node.prerequisites.length} PREREQUISITES`}
+                  : `${node.prerequisites.length} EARLIER STEPS`}
             </span>
             {node.state === "next" && (
               <button
@@ -249,7 +248,7 @@ export function StudentRoadmap() {
                 className={styles.action}
                 onClick={() => setEvidenceNode(node)}
               >
-                Attach evidence
+                Add completion details
               </button>
             )}
           </article>
@@ -264,12 +263,12 @@ export function StudentRoadmap() {
           }}
         >
           <div>
-            <p>Evidence for</p>
+            <p>Completion details for</p>
             <h2>{evidenceNode.title}</h2>
             <span>{evidenceNode.completion}</span>
           </div>
           <label>
-            Evidence label
+            What did you complete?
             <input
               name="evidence_label"
               required
@@ -278,7 +277,7 @@ export function StudentRoadmap() {
             />
           </label>
           <label>
-            Internal evidence link
+            CampusHire link
             <input
               name="evidence_reference"
               placeholder="/resume"
@@ -298,10 +297,10 @@ export function StudentRoadmap() {
       <aside className={styles.note}>
         <Route size={20} aria-hidden="true" />
         <div>
-          <strong>Your roadmap is evidence-led.</strong>
+          <strong>Your roadmap is based on completed work.</strong>
           <p>
-            Completing a milestone records evidence metadata; it does not claim
-            proficiency or predict hiring.
+            Completing a milestone saves the details you provide. It does not
+            claim a skill level or predict hiring.
           </p>
         </div>
       </aside>

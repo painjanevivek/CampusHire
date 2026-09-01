@@ -68,7 +68,7 @@ export function AdminDrives() {
       setSelectedDrive((current) => current || driveItems[0]?.id || "");
     } catch {
       setError(
-        "Placement drives could not be loaded. No operational state was changed.",
+        "Placement drives could not be loaded. Nothing was changed.",
       );
     } finally {
       setLoading(false);
@@ -203,7 +203,7 @@ export function AdminDrives() {
       setSelectedRole(created.id);
       setPanel("none");
       setNotice(
-        "Draft role created. Publish a deterministic rule version next.",
+        "Draft role created. Publish a rule version next.",
       );
       void loadRoot();
     } catch {
@@ -265,7 +265,7 @@ export function AdminDrives() {
       setExtractions((current) => [created, ...current]);
       setPanel("none");
       setNotice(
-        "A bounded extraction proposal is ready. It cannot change the role until an administrator reviews it.",
+        "A draft of the role details is ready. It cannot change the role until an administrator reviews it.",
       );
     } catch {
       setError(
@@ -320,7 +320,7 @@ export function AdminDrives() {
       await loadRules(selectedRole);
     } catch {
       setError(
-        "The transition was rejected. Complete its prerequisites or refresh the current state.",
+        "This status change was not allowed. Finish the required earlier steps or refresh the page.",
       );
     } finally {
       setBusy(false);
@@ -346,7 +346,7 @@ export function AdminDrives() {
         },
       ));
     } catch {
-      setError("The deterministic rule preview could not be evaluated. Review the draft rules and inputs.");
+      setError("The rule check could not run. Review the draft rules and student details.");
     } finally {
       setBusy(false);
     }
@@ -752,7 +752,7 @@ export function AdminDrives() {
                           <Input id="preview-degree" name="degree" label="Degree" defaultValue="B.Tech" />
                           <Input id="preview-cgpa" name="cgpa" label="CGPA" type="number" min="0" max="10" step="0.1" />
                           <Input id="preview-backlogs" name="active_backlogs" label="Active backlogs" type="number" min="0" max="100" />
-                          <button type="submit" disabled={busy}>Run deterministic preview</button>
+                          <button type="submit" disabled={busy}>Test these rules</button>
                         </form>
                         {eligibilityPreview ? <div role="status" className={styles.previewResult}><Badge tone={eligibilityPreview.status === "eligible" ? "success" : "warning"}>{eligibilityPreview.status.replaceAll("_", " ")}</Badge><span>Rule version {eligibilityPreview.rule_version ?? "unavailable"}</span>{eligibilityPreview.missing_evidence.length ? <p>Manual review required for: {eligibilityPreview.missing_evidence.join(", ")}.</p> : null}</div> : null}
                       </details>
@@ -836,7 +836,7 @@ export function AdminDrives() {
                                 onClick={() =>
                                   void postAction(
                                     `/admin/recruitment/roles/${activeRole.id}/rule-sets/${set.id}/publish`,
-                                    `Eligibility version ${set.version} published. Previous versions remain immutable.`,
+                                    `Eligibility version ${set.version} published. Previous versions stay locked.`,
                                   )
                                 }
                               >
@@ -864,7 +864,7 @@ export function AdminDrives() {
                   ) : (
                     <EmptyState title="Select a role">
                       <span>
-                        Review or create its deterministic eligibility version.
+                        Review or create its eligibility rules.
                       </span>
                     </EmptyState>
                   )}
@@ -881,12 +881,12 @@ export function AdminDrives() {
             <p>Reviewed AI boundary</p>
             <h2>Stage the source brief for {activeRole.title}</h2>
             <span>
-              The bounded parser proposes structured requirements. Nothing
+              CampusHire suggests organized requirements from this text. Nothing
               changes until a human approves the proposal.
             </span>
           </div>
           <label className={styles.wide}>
-            <span>Authoritative role brief</span>
+            <span>Official role brief</span>
             <textarea
               name="source_text"
               rows={8}
@@ -1025,7 +1025,7 @@ export function AdminDrives() {
           </button>
           <Alert tone="warning">
             <CircleAlert aria-hidden="true" /> Preview carefully: once
-            published, this version becomes immutable and applications retain
+            published, this version is locked and applications keep
             it.
           </Alert>
           <div className={styles.actions}>

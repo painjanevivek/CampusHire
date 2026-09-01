@@ -37,8 +37,8 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
             Your profile helps explain your fit. It never gives AI permission to invent your story.
           </blockquote>
           <p>
-            Passwords are protected with Argon2id. Administrator access also requires an
-            authenticator, and every session remains revocable without browser token storage.
+            Passwords are strongly protected. Administrator access also requires an
+            authenticator, and every sign-in can be ended without storing access tokens in the browser.
           </p>
         </aside>
       </main>

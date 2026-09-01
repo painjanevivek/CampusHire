@@ -124,10 +124,10 @@ export function AdminOperations() {
     <main id="main-content" className={styles.page} aria-busy={loading}>
       <header className={styles.header}>
         <div>
-          <p>Operational control</p>
+          <p>Job controls</p>
           <h1>Background jobs</h1>
           <span>
-            Tenant-scoped resume processing with bounded leases, retry budgets, and an immutable event trail.
+            Private resume processing for your institution, with safe time limits, retries, and a locked action history.
           </span>
         </div>
         <button type="button" onClick={() => void load()} disabled={loading}>

@@ -45,13 +45,13 @@ export function AdminOverview() {
 
   return (
     <main id="main-content" className={styles.page} aria-busy={loading}>
-      <header><div><p>TNP control room</p><h1>{loading ? "Loading operations…" : reviewCount ? `${reviewCount} applications need review.` : "Placement operations are clear."}</h1><span>Live institutional records only. AI failures never block drives, eligibility, or applications.</span></div><button type="button" onClick={() => void load()}><RefreshCcw aria-hidden="true" />Refresh</button></header>
+      <header><div><p>T&amp;P control room</p><h1>{loading ? "Loading operations…" : reviewCount ? `${reviewCount} applications need review.` : "Placement operations are clear."}</h1><span>Only live college records are shown. AI issues never block drives, eligibility, or applications.</span></div><button type="button" onClick={() => void load()}><RefreshCcw aria-hidden="true" />Refresh</button></header>
       {error && <Alert tone="error">{error}</Alert>}
       <section className={styles.grid} aria-label="Placement operations summary">
-        <article className={styles.primary}><ClipboardCheck aria-hidden="true" /><p>Review queue</p><h2>{reviewCount}</h2><span>{manualReviewCount} with missing evidence</span><Link href="/admin/applications">Open candidate review</Link></article>
+        <article className={styles.primary}><ClipboardCheck aria-hidden="true" /><p>Review queue</p><h2>{reviewCount}</h2><span>{manualReviewCount} with missing information</span><Link href="/admin/applications">Open candidate review</Link></article>
         <article><FileClock aria-hidden="true" /><p>Published drives</p><h2>{publishedDrives}</h2><span>{drives.length - publishedDrives} draft, closed, or archived</span><Link href="/admin/drives">Manage drives</Link></article>
         <article><Building2 aria-hidden="true" /><p>Company records</p><h2>{companies.length}</h2><span>Institution-scoped employers</span><Link href="/admin/companies">Manage companies</Link></article>
-        <article><CircleAlert aria-hidden="true" /><p>30-day activation funnel</p><h2>{activationCount}</h2><span>Invitations accepted · privacy-minimized aggregate</span><Badge tone="success">No student identifiers</Badge></article>
+        <article><CircleAlert aria-hidden="true" /><p>Invitations accepted in 30 days</p><h2>{activationCount}</h2><span>Combined total with personal details removed</span><Badge tone="success">No student details</Badge></article>
       </section>
     </main>
   );

@@ -26,7 +26,7 @@ function toDashboardData(response: DashboardApiResponse): StudentDashboardData {
       company: item.company,
       role: item.role,
       location: item.location,
-      eligibility: "Formally eligible",
+      eligibility: "Eligible",
       match: item.match,
       href: safeInternalHref(item.href, "/opportunities"),
     })),
@@ -73,7 +73,7 @@ export function ConnectedStudentDashboard() {
           </Alert>
         ) : (
           <>
-            <p>Evaluating your reviewed evidence…</p>
+            <p>Checking your reviewed profile…</p>
             <span>Profile · resume · roadmap · eligible roles</span>
           </>
         )}

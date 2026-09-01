@@ -29,7 +29,7 @@ const readyDashboard: StudentDashboardData = {
       company: "Northstar Labs",
       role: "AI Platform Intern",
       location: "Bengaluru · Hybrid",
-      eligibility: "Formally eligible",
+      eligibility: "Eligible",
       match: 92,
       href: "/opportunities/ai-platform-intern",
     },
@@ -58,7 +58,7 @@ describe("StudentDashboard", () => {
     const opportunity = screen.getByRole("article", {
       name: "AI Platform Intern at Northstar Labs",
     });
-    expect(opportunity).toHaveTextContent("Formally eligible");
+    expect(opportunity).toHaveTextContent("Eligible");
     expect(opportunity).toHaveTextContent("92% match");
     expect(
       screen.getByText("Match is decision support, not hiring probability."),
@@ -69,13 +69,13 @@ describe("StudentDashboard", () => {
     render(<StudentDashboard data={{ ...readyDashboard, state: "ai-unavailable" }} />);
 
     expect(screen.getByRole("status")).toHaveTextContent("Check unavailable");
-    expect(screen.getByRole("article", { name: "AI Platform Intern at Northstar Labs" })).toHaveTextContent("Formally eligible");
+    expect(screen.getByRole("article", { name: "AI Platform Intern at Northstar Labs" })).toHaveTextContent("Eligible");
   });
 
   it.each([
     ["incomplete", "Finish your profile to unlock eligibility checks."],
-    ["processing", "We’re checking your evidence now."],
-    ["manual-review", "A reviewer is checking your evidence."],
+    ["processing", "We’re checking your profile details now."],
+    ["manual-review", "A reviewer is checking your information."],
     ["ai-unavailable", "Match explanations are temporarily unavailable."],
     ["error", "We couldn’t load your readiness."],
   ] as const)("explains the %s state", (state, message) => {
@@ -91,7 +91,7 @@ describe("StudentDashboard", () => {
 
     expect(screen.getByText("No eligible opportunities yet.")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Improve my evidence" }),
+      screen.getByRole("link", { name: "Improve my profile" }),
     ).toHaveAttribute("href", "/roadmap");
   });
 });

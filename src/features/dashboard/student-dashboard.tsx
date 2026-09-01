@@ -49,7 +49,7 @@ export type StudentDashboardData = {
     company: string;
     role: string;
     location: string;
-    eligibility: "Formally eligible";
+    eligibility: "Eligible";
     match: number | null;
     href: string;
   }>;
@@ -64,11 +64,11 @@ const stateMessages: Record<
     detail: "Education and target-role details are still required.",
   },
   processing: {
-    title: "We’re checking your evidence now.",
+    title: "We’re checking your profile details now.",
     detail: "You can keep browsing while the readiness view refreshes.",
   },
   "manual-review": {
-    title: "A reviewer is checking your evidence.",
+    title: "A reviewer is checking your information.",
     detail: "We will preserve your current eligibility until the review is complete.",
   },
   "ai-unavailable": {
@@ -224,7 +224,7 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
                       ? "Explanation pending"
                       : `${opportunity.match}% match`}
                   </strong>
-                  <span>Based on reviewed evidence</span>
+                  <span>Based on your reviewed details</span>
                 </div>
                 <Link
                   className={styles.viewRole}
@@ -242,9 +242,9 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             <FileSearch size={30} aria-hidden="true" />
             <div>
               <h3>No eligible opportunities yet.</h3>
-              <p>Add stronger evidence and we will re-run formal checks.</p>
+              <p>Add more profile details and we will check again.</p>
             </div>
-            <Link href="/roadmap">Improve my evidence</Link>
+            <Link href="/roadmap">Improve my profile</Link>
           </div>
         )}
 

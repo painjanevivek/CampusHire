@@ -154,7 +154,7 @@ export function AdminApplications() {
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
       setNotice(
-        "Override recorded with actor, reason, policy reference, and immutable status history.",
+        "Override saved with the administrator, reason, policy reference, and locked status history.",
       );
       event.currentTarget.reset();
     } catch {
@@ -247,7 +247,7 @@ export function AdminApplications() {
           <p>Accountable review</p>
           <h1>Applications</h1>
           <span>
-            Eligibility evidence, immutable snapshots, and human decisions
+            Eligibility checks, saved application details, and human decisions
             remain visibly separate.
           </span>
         </div>
@@ -281,7 +281,7 @@ export function AdminApplications() {
         <form onSubmit={previewBulk}>
           <label>Applications<select name="application_ids" multiple required size={Math.min(6, Math.max(2, visible.length))}>{visible.map((application) => <option key={application.id} value={application.id}>{application.student_name} · {roleName(application)} · {application.status.replaceAll("_", " ")}</option>)}</select><small>Use Ctrl/Cmd to select several records.</small></label>
           <label>Target status<select name="status" defaultValue="under_review"><option value="under_review">Under review</option><option value="shortlisted">Shortlisted</option><option value="interview">Interview</option><option value="offered">Offered</option><option value="rejected">Rejected</option></select></label>
-          <label>Constructive feedback<textarea name="reason" required minLength={10} maxLength={500} placeholder="Explain the evidence-based decision and useful next step." /></label>
+          <label>Helpful feedback<textarea name="reason" required minLength={10} maxLength={500} placeholder="Explain the decision and give the student a useful next step." /></label>
           <button type="submit" disabled={busy}>Preview changes</button>
         </form>
         {bulkPreview ? <section className={styles.bulkPreview} aria-label="Bulk action preview"><header><strong>{bulkPreview.allowed_count} allowed · {bulkPreview.blocked_count} blocked</strong><span>No changes have been applied.</span></header><ul>{bulkPreview.items.map((item) => <li key={item.application_id}><Badge tone={item.allowed ? "success" : "warning"}>{item.allowed ? "allowed" : "blocked"}</Badge><span>{item.current_status.replaceAll("_", " ")} → {item.target_status.replaceAll("_", " ")}</span><small>{item.explanation}</small></li>)}</ul><button type="button" disabled={busy || Boolean(bulkPreview.blocked_count)} onClick={() => void applyBulk()}>Confirm and notify students</button></section> : null}
@@ -341,12 +341,12 @@ export function AdminApplications() {
 
         <section
           className={styles.inspector}
-          aria-label="Candidate decision evidence"
+          aria-label="Candidate decision details"
         >
           {!selected ? (
             <EmptyState title="Select an application">
               <span>
-                Its immutable decision inputs and status history will appear
+                Its saved decision details and status history will appear
                 here.
               </span>
             </EmptyState>
@@ -409,7 +409,7 @@ export function AdminApplications() {
               </div>
               <section className={styles.evidence}>
                 <div className={styles.sectionHeader}>
-                  <h3>Rule-by-rule evidence</h3>
+                  <h3>Rule-by-rule results</h3>
                   <Badge
                     tone={
                       selected.eligibility_snapshot.status === "eligible"
@@ -542,7 +542,7 @@ export function AdminApplications() {
                 <form onSubmit={override}>
                   <Alert tone="warning">
                     Use only when policy allows an exception. The reason becomes
-                    an immutable audit record.
+                    a locked audit record.
                   </Alert>
                   <Select
                     id="override-status"

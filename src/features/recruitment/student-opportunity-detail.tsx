@@ -107,12 +107,12 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
         application_status: application.status,
       });
       setNotice(
-        "Application submitted. The selected resume and eligibility evidence are now preserved with this application.",
+        "Application submitted. Your selected resume and eligibility result are now saved with this application.",
       );
       setConfirming(false);
     } catch {
       setError(
-        "The application was not submitted. Check the deadline, eligibility evidence, and selected resume before retrying.",
+        "The application was not submitted. Check the deadline, eligibility result, and selected resume, then try again.",
       );
     } finally {
       setSubmitting(false);
@@ -122,7 +122,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
   if (loading)
     return (
       <main id="main-content" className={styles.state} aria-busy="true">
-        <p>Loading published role evidence…</p>
+        <p>Loading role details…</p>
       </main>
     );
   if (!opportunity)
@@ -233,8 +233,8 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
           <section className={styles.rules}>
             <div className={styles.sectionTitle}>
               <div>
-                <p>Deterministic decision</p>
-                <h2>Eligibility evidence</h2>
+                <p>Based on published rules</p>
+                <h2>Why you are eligible</h2>
               </div>
               <Badge tone={statusTone}>
                 {opportunity.eligibility.status.replaceAll("_", " ")}
@@ -294,7 +294,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
           <div className={styles.separate}>
             <Scale aria-hidden="true" />
             <div>
-              <strong>Semantic relevance</strong>
+              <strong>Skills match</strong>
               {match?.status === "available" ? (
                 <>
                   <p>
@@ -309,7 +309,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
               ) : (
                 <p>
                   {match?.explanation[0] ??
-                    "Relevance is unavailable. Formal eligibility is unchanged."}
+                    "Skills matching is unavailable. Your eligibility has not changed."}
                 </p>
               )}
             </div>
@@ -394,7 +394,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             </div>
           ) : null}
           <p className={styles.policy}>
-            Missing evidence routes to manual review. It does not create an
+            Missing information is sent for manual review. It does not cause an
             automatic rejection.
           </p>
         </aside>

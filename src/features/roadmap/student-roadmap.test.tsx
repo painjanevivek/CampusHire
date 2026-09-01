@@ -70,7 +70,7 @@ describe("StudentRoadmap", () => {
     expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "true");
   });
 
-  it("reveals only prerequisite-ready milestones and records reviewed evidence", async () => {
+  it("reveals only ready milestones and records reviewed details", async () => {
     csrfRequestMock.mockResolvedValue({
       ...roadmap,
       completed_count: 2,
@@ -82,12 +82,12 @@ describe("StudentRoadmap", () => {
     expect(
       await screen.findByRole("heading", { name: "AI Engineer" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Prerequisites required")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Attach evidence" }));
-    fireEvent.change(screen.getByLabelText("Evidence label"), {
+    expect(screen.getByText("Earlier steps required")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add completion details" }));
+    fireEvent.change(screen.getByLabelText("What did you complete?"), {
       target: { value: "Metrics notebook" },
     });
-    fireEvent.change(screen.getByLabelText("Internal evidence link"), {
+    fireEvent.change(screen.getByLabelText("CampusHire link"), {
       target: { value: "/resume" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Confirm milestone" }));

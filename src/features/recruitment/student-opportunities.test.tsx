@@ -47,7 +47,7 @@ describe("StudentOpportunities", () => {
     apiRequestMock.mockResolvedValue({ items: [opportunity], page: 1, page_size: 20, total: 1 });
   });
 
-  it("keeps deterministic eligibility separate from semantic match", async () => {
+  it("keeps rule-based eligibility separate from skills match", async () => {
     render(<StudentOpportunities />);
     expect(await screen.findByRole("heading", { name: "Software Engineer" })).toBeInTheDocument();
     expect(screen.getAllByText("Eligible")).toHaveLength(2);

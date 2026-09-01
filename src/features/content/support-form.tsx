@@ -23,13 +23,13 @@ export function SupportForm() {
       });
       setStatus(`Request recorded. Reference ${response.reference}.`);
     } catch {
-      setStatus("The request was not recorded. Remove personal identifiers and try again.");
+      setStatus("The request was not saved. Remove personal details and try again.");
     } finally { setSubmitting(false); }
   }
 
   return <form className={styles.form} action={(data) => void submit(data)}>
     <label>Topic<select name="category" defaultValue="account"><option value="account">Account</option><option value="profile">Profile</option><option value="eligibility">Eligibility</option><option value="application">Application</option><option value="resume">Resume</option><option value="roadmap">Roadmap</option><option value="privacy">Privacy</option><option value="accessibility">Accessibility</option><option value="other">Other</option></select></label>
-    <label>Page or route<input name="route_context" required pattern="/[a-z0-9/_-]{0,99}" defaultValue="/help" /><small>Example: /applications. Do not paste a URL containing identifiers.</small></label>
+    <label>Page address<input name="route_context" required pattern="/[a-z0-9/_-]{0,99}" defaultValue="/help" /><small>Example: /applications. Do not paste a link that contains personal details.</small></label>
     <label>What happened?<textarea name="message" required minLength={20} maxLength={1000} /><small>Do not include names, email addresses, phone or enrollment numbers, resume content, passwords, or tokens.</small></label>
     <button type="submit" disabled={submitting}>{submitting ? "Recording…" : "Record support request"}</button>
     {status ? <p className={styles.status} role="status">{status}</p> : null}

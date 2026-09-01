@@ -26,7 +26,7 @@ describe("AdminAudit", () => {
           resource_type: "application",
           resource_id: "application-1",
           outcome: "success",
-          reason: "Evidence reviewed",
+          reason: "Details reviewed",
           correlation_id: "correlation-1",
           details: { status: "shortlisted" },
           created_at: "2026-08-28T10:00:00Z",
@@ -42,7 +42,7 @@ describe("AdminAudit", () => {
     render(<AdminAudit />);
 
     expect(await screen.findByText("application.status changed")).toBeInTheDocument();
-    expect(screen.getByText("Evidence reviewed")).toBeInTheDocument();
+    expect(screen.getByText("Details reviewed")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Export filtered CSV" })).toHaveAttribute(
       "href",
       expect.stringContaining("/admin/audit/export.csv"),

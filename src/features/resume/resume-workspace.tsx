@@ -158,7 +158,7 @@ export function ResumeWorkspace() {
         <div>
           <p className={styles.eyebrow}>Student documents</p>
           <h1>Resume</h1>
-          <p>Every upload becomes a separate version. Extracted evidence remains proposed until you review it.</p>
+          <p>Every upload becomes a separate version. Details found in your resume are not used until you review them.</p>
         </div>
         <Link href={nextReview ? `/resume/builder?version=${nextReview.id}` : "/resume/builder"} className={styles.builderLink}>Open review workspace <ArrowRight size={17} aria-hidden="true" /></Link>
       </header>
@@ -189,11 +189,11 @@ export function ResumeWorkspace() {
         </form>
 
         <aside className={styles.processCard} aria-labelledby="resume-process-title">
-          <div className={styles.status}><span /> Evidence pipeline / review-gated</div>
+          <div className={styles.status}><span /> Resume review / your approval required</div>
           <ShieldCheck size={26} aria-hidden="true" />
           <h2 id="resume-process-title">Nothing changes silently</h2>
           <ol>
-            <li><span>01</span><div><strong>Quarantine and scan</strong><p>Opaque storage, MIME limits, and malware screening</p></div></li>
+            <li><span>01</span><div><strong>Store safely and scan</strong><p>Private storage, file limits, and malware checks</p></div></li>
             <li><span>02</span><div><strong>Structured extraction</strong><p>Proposed contact, education, skills, and projects</p></div></li>
             <li><span>03</span><div><strong>Your decision</strong><p>Accept, edit, or reject every proposed change</p></div></li>
           </ol>
@@ -202,7 +202,7 @@ export function ResumeWorkspace() {
 
       <section className={styles.versions} aria-labelledby="versions-title" aria-busy={state === "loading"}>
         <div className={styles.sectionHeader}>
-          <div><p className={styles.eyebrow}>Immutable history</p><h2 id="versions-title">Resume versions</h2></div>
+          <div><p className={styles.eyebrow}>Saved history</p><h2 id="versions-title">Resume versions</h2></div>
           <button type="button" className={styles.refresh} onClick={() => void loadVersions()}><RefreshCw size={15} aria-hidden="true" /> Refresh</button>
         </div>
         {state === "loading" && <div className={styles.emptyState} role="status"><LoaderCircle className={styles.spinner} aria-hidden="true" /> Loading saved versions…</div>}
@@ -213,7 +213,7 @@ export function ResumeWorkspace() {
             <div className={styles.versionMain}>
               <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Uploaded PDF"}</span></div>
               <p>{statusCopy[version.status]}</p>
-              {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No extracted data was accepted."}</small>}
+              {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No resume details were accepted."}</small>}
             </div>
             <div className={styles.versionActions}>
               {version.status === "review_required" && <Link href={`/resume/builder?version=${version.id}`}>Review changes <ArrowRight size={15} aria-hidden="true" /></Link>}
@@ -226,9 +226,9 @@ export function ResumeWorkspace() {
       </section>
 
       {versions.length > 1 ? <section className={styles.comparison} aria-labelledby="comparison-title">
-        <div className={styles.sectionHeader}><div><p className={styles.eyebrow}>Evidence comparison</p><h2 id="comparison-title">Compare resume versions</h2></div><GitCompareArrows aria-hidden="true" /></div>
+        <div className={styles.sectionHeader}><div><p className={styles.eyebrow}>Version comparison</p><h2 id="comparison-title">Compare resume versions</h2></div><GitCompareArrows aria-hidden="true" /></div>
         <div className={styles.compareSelectors}><label>Earlier version<select value={compareIds[0]} onChange={(event) => setCompareIds(([, right]) => [event.target.value, right])}><option value="">Choose version…</option>{versions.map((item) => <option key={item.id} value={item.id}>Version {item.version_number ?? "legacy"} · {item.original_name}</option>)}</select></label><label>Later version<select value={compareIds[1]} onChange={(event) => setCompareIds(([left]) => [left, event.target.value])}><option value="">Choose version…</option>{versions.map((item) => <option key={item.id} value={item.id}>Version {item.version_number ?? "legacy"} · {item.original_name}</option>)}</select></label></div>
-        {compared.every(Boolean) ? <div className={styles.diffTable} role="table" aria-label="Resume evidence comparison"><div role="row"><strong role="columnheader">Field</strong><strong role="columnheader">Earlier</strong><strong role="columnheader">Later</strong></div>{comparisonFields.map((field) => { const values = compared.map((item) => item?.extracted_data.accepted?.[field] ?? item?.extracted_data.proposed?.[field]); return <div role="row" key={field} data-changed={JSON.stringify(values[0]) !== JSON.stringify(values[1])}><strong role="rowheader">{field.replaceAll("_", " ")}</strong><span role="cell">{Array.isArray(values[0]) ? values[0].join(", ") : String(values[0] ?? "Not present")}</span><span role="cell">{Array.isArray(values[1]) ? values[1].join(", ") : String(values[1] ?? "Not present")}</span></div>;})}</div> : <p className={styles.compareHelp}>Choose two versions to compare reviewed evidence field by field.</p>}
+        {compared.every(Boolean) ? <div className={styles.diffTable} role="table" aria-label="Resume version comparison"><div role="row"><strong role="columnheader">Field</strong><strong role="columnheader">Earlier</strong><strong role="columnheader">Later</strong></div>{comparisonFields.map((field) => { const values = compared.map((item) => item?.extracted_data.accepted?.[field] ?? item?.extracted_data.proposed?.[field]); return <div role="row" key={field} data-changed={JSON.stringify(values[0]) !== JSON.stringify(values[1])}><strong role="rowheader">{field.replaceAll("_", " ")}</strong><span role="cell">{Array.isArray(values[0]) ? values[0].join(", ") : String(values[0] ?? "Not present")}</span><span role="cell">{Array.isArray(values[1]) ? values[1].join(", ") : String(values[1] ?? "Not present")}</span></div>;})}</div> : <p className={styles.compareHelp}>Choose two versions to compare their reviewed details.</p>}
       </section> : null}
     </main>
   );

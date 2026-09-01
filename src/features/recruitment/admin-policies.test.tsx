@@ -23,7 +23,7 @@ const policy = {
     {
       section: "Section 1",
       page: 1,
-      text: "Missing evidence requires review.",
+      text: "Missing information requires review.",
     },
   ],
   status: "draft",
@@ -43,12 +43,12 @@ describe("AdminPolicies", () => {
     );
   });
 
-  it("keeps staged policy evidence out of retrieval until an explicit review", async () => {
+  it("keeps draft policy text out of search until a reviewer approves it", async () => {
     csrfRequestMock.mockResolvedValue({ ...policy, status: "approved" });
     render(<AdminPolicies />);
     expect(await screen.findByText("Placement policy")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Find cited evidence" }),
+      screen.getByRole("button", { name: "Find answer and source" }),
     ).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Approve" }));
     await waitFor(() =>

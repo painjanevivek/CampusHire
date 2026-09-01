@@ -70,7 +70,7 @@ describe("AdminApplications", () => {
     });
   });
 
-  it("requires reasoned overrides and keeps eligibility evidence visible", async () => {
+  it("requires reasoned overrides and keeps eligibility checks visible", async () => {
     csrfRequestMock.mockResolvedValue({
       ...application,
       status: "shortlisted",
@@ -80,7 +80,7 @@ describe("AdminApplications", () => {
     expect(await screen.findByText("Active backlogs")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Authorized override"));
     fireEvent.change(screen.getByLabelText("Reason"), {
-      target: { value: "Policy permits reviewed equivalent evidence." },
+      target: { value: "Policy permits a reviewed equivalent record." },
     });
     fireEvent.change(screen.getByLabelText("Policy reference (optional)"), {
       target: { value: "Policy §4.2" },
@@ -136,7 +136,7 @@ describe("AdminApplications", () => {
     applications.options[0].selected = true;
     fireEvent.change(applications);
     fireEvent.change(screen.getByLabelText("Target status"), { target: { value: "shortlisted" } });
-    fireEvent.change(screen.getByPlaceholderText("Explain the evidence-based decision and useful next step."), { target: { value: "Strong evidence was reviewed against the published policy." } });
+    fireEvent.change(screen.getByPlaceholderText("Explain the decision and give the student a useful next step."), { target: { value: "The details were reviewed against the published policy." } });
     fireEvent.click(screen.getByRole("button", { name: "Preview changes" }));
     expect(await screen.findByText("1 allowed · 0 blocked")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Confirm and notify students" }));

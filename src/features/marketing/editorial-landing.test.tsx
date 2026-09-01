@@ -7,7 +7,7 @@ describe("EditorialLanding", () => {
   it("explains the invitation-led journey without exposing private role search", () => {
     render(<EditorialLanding />);
     expect(screen.queryByRole("search")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /accept your institution invitation/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /accept your invitation/i })).toBeInTheDocument();
     expect(screen.getByText(/private to verified members/i)).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Product preview" })).toBeInTheDocument();
   });
@@ -16,8 +16,8 @@ describe("EditorialLanding", () => {
     render(<EditorialLanding />);
 
     expect(screen.getAllByRole("link", { name: "Accept invitation" })).toHaveLength(1);
-    expect(screen.getByRole("heading", { name: "Formal eligibility" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
-    expect(screen.getByText("A match score never decides formal eligibility.")).toBeInTheDocument();
+    expect(screen.getByText("A match score never decides whether you can apply.")).toBeInTheDocument();
   });
 });

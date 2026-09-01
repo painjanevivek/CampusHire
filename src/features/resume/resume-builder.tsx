@@ -97,7 +97,7 @@ export function ResumeBuilder() {
   async function saveExtraction() {
     if (!version) return;
     if (unresolvedFields > 0) {
-      setMessage(`Review ${unresolvedFields} remaining extracted field${unresolvedFields === 1 ? "" : "s"}.`);
+      setMessage(`Review ${unresolvedFields} remaining resume detail${unresolvedFields === 1 ? "" : "s"}.`);
       return;
     }
     setState("saving");
@@ -151,7 +151,7 @@ export function ResumeBuilder() {
       setState("idle");
     } catch {
       setState("error");
-      setMessage("That wording could not be accepted because it may add an unsupported claim. Edit it to match your evidence or reject it.");
+      setMessage("That wording may add a claim your resume does not support. Edit it to match your resume or reject it.");
     }
   }
 
@@ -218,7 +218,7 @@ export function ResumeBuilder() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
-        <div><p>Evidence-backed review / version {version.version_number}</p><h1>Resume review</h1><span>Decide every extracted field and suggestion before generating a new PDF.</span></div>
+        <div><p>Review before use / version {version.version_number}</p><h1>Resume review</h1><span>Check every detail and suggestion before creating a new PDF.</span></div>
         {generated ? <a className={styles.download} href={apiPath(`/resumes/${generated.id}/download`)}><Download size={17} aria-hidden="true" /> Download version {generated.version_number}</a> : <button className={styles.download} type="button" onClick={() => void generateVersion()} disabled={version.status !== "completed" || state === "saving"}><FileDown size={17} aria-hidden="true" /> Generate versioned PDF</button>}
       </header>
 
@@ -238,7 +238,7 @@ export function ResumeBuilder() {
           <p className={styles.guardrail}>Suggestions and extraction proposals never become resume claims until you decide.</p>
 
           <section className={styles.extraction} aria-labelledby="extraction-title">
-            <p>Extracted fields</p>
+            <p>Details found in your resume</p>
             <h2 id="extraction-title">Review the source facts</h2>
             {proposedEntries.length === 0 ? <span>No structured fields were proposed from this PDF.</span> : proposedEntries.map(([field, proposed]) => {
               const decision = decisions[field];

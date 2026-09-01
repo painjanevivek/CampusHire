@@ -72,7 +72,7 @@ export function AdminAudit() {
       setMessage("");
     } catch {
       setState("error");
-      setMessage("Audit evidence could not be loaded. No records were changed.");
+      setMessage("Audit records could not be loaded. No records were changed.");
     }
   }, [applied, pageNumber]);
 
@@ -129,12 +129,12 @@ export function AdminAudit() {
   return (
     <main id="main-content" className={styles.page}>
       <header>
-        <div><p className="eyebrow">Accountable operations</p><h1>Audit</h1><span>Tenant-scoped, privacy-minimized evidence for sensitive actions and decisions.</span></div>
+        <div><p className="eyebrow">Clear action history</p><h1>Audit</h1><span>Private audit records for sensitive actions and decisions at this institution.</span></div>
         <a className={styles.export} href={exportHref} download><Download aria-hidden="true" /> Export filtered CSV</a>
       </header>
 
       <details className={styles.filters} open>
-        <summary><Filter aria-hidden="true" /> Filter audit evidence</summary>
+        <summary><Filter aria-hidden="true" /> Filter audit records</summary>
         <form onSubmit={apply}>
           <label>Action<input value={filters.action} onChange={(event) => setFilters({ ...filters, action: event.target.value })} placeholder="application.status_changed" /></label>
           <label>Resource<select value={filters.resource_type} onChange={(event) => setFilters({ ...filters, resource_type: event.target.value })}><option value="">All resources</option><option value="application">Application</option><option value="placement_drive">Drive</option><option value="institution_membership">Membership</option><option value="policy_document">Policy</option><option value="resume_processing_job">Resume job</option></select></label>
@@ -149,8 +149,8 @@ export function AdminAudit() {
       </details>
 
       {message ? <Alert tone={state === "error" ? "error" : "info"}>{message}</Alert> : null}
-      {state === "loading" ? <RequestState state="loading" title="Loading audit evidence">Applying tenant and privacy boundaries.</RequestState> : null}
-      {state === "error" ? <RequestState state="error" title="Audit evidence is unavailable" onRetry={() => void load()}>{message}</RequestState> : null}
+      {state === "loading" ? <RequestState state="loading" title="Loading audit records">Applying institution and privacy limits.</RequestState> : null}
+      {state === "error" ? <RequestState state="error" title="Audit records are unavailable" onRetry={() => void load()}>{message}</RequestState> : null}
       {state === "ready" && page && !page.items.length ? <RequestState state="empty" title="No audit events match">Clear or broaden the filters to inspect other accountable actions.</RequestState> : null}
       {state === "ready" && page?.items.length ? <section className={styles.results} aria-labelledby="results-title"><header><div><h2 id="results-title">Recorded events</h2><p>{page.total} matching records</p></div><ShieldCheck aria-hidden="true" /></header><ol>{page.items.map((event) => <li key={event.id}><div className={styles.eventHeading}><div><strong>{event.event_type.replaceAll("_", " ")}</strong><time dateTime={event.created_at}>{new Date(event.created_at).toLocaleString()}</time></div><Badge tone={event.outcome === "success" ? "success" : "warning"}>{event.outcome}</Badge></div><dl><div><dt>Resource</dt><dd>{event.resource_type ?? "General"} · {event.resource_id ?? "—"}</dd></div><div><dt>Actor</dt><dd>{event.actor_user_id ?? "System"}</dd></div><div><dt>Correlation</dt><dd>{event.correlation_id ?? "Not recorded"}</dd></div></dl>{event.reason ? <p>{event.reason}</p> : null}{Object.keys(event.details).length ? <details><summary>View safe metadata</summary><pre>{JSON.stringify(event.details, null, 2)}</pre></details> : null}</li>)}</ol><nav aria-label="Audit pagination"><button disabled={pageNumber === 1} onClick={() => setPageNumber((value) => value - 1)}>Previous</button><span>Page {pageNumber} of {Math.max(1, Math.ceil(page.total / page.page_size))}</span><button disabled={pageNumber * page.page_size >= page.total} onClick={() => setPageNumber((value) => value + 1)}>Next</button></nav></section> : null}
     </main>

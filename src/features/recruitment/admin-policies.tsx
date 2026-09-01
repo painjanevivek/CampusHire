@@ -109,7 +109,7 @@ export function AdminPolicies() {
         body: JSON.stringify({ action, reason }),
       });
       setNotice(
-        `Policy version ${policy.version} ${action === "approve" ? "approved for grounded retrieval" : `${action}d`}.`,
+        `Policy version ${policy.version} ${action === "approve" ? "approved for policy search" : `${action}d`}.`,
       );
       await load();
     } catch {
@@ -138,7 +138,7 @@ export function AdminPolicies() {
       );
     } catch {
       setError(
-        "Grounded policy evidence could not be retrieved. Review the approved source directly.",
+        "The policy answer could not be found. Open the approved source and check it directly.",
       );
     } finally {
       setBusy(false);
@@ -149,11 +149,11 @@ export function AdminPolicies() {
     <main id="main-content" className={styles.page} aria-busy={loading}>
       <header className={styles.header}>
         <div>
-          <p>Approved evidence</p>
-          <h1>Policy answers with a source trail.</h1>
+          <p>Approved policies</p>
+          <h1>Policy answers with clear sources.</h1>
           <span>
-            Only reviewed versions enter retrieval. Deterministic eligibility
-            remains the authority.
+            Only reviewed versions can appear in search. Published rules still
+            decide eligibility.
           </span>
         </div>
         <button type="button" onClick={() => setShowCreate(true)}>
@@ -192,7 +192,7 @@ export function AdminPolicies() {
           <Input
             id="policy-source"
             name="source_reference"
-            label="Authoritative source reference"
+            label="Official source reference"
             required
             minLength={3}
           />
@@ -202,7 +202,7 @@ export function AdminPolicies() {
               name="sections"
               rows={6}
               required
-              placeholder="Enter one bounded section per line"
+              placeholder="Enter one short section per line"
             />
             <small>
               Each line becomes a separately cited section. Never paste student
@@ -235,8 +235,7 @@ export function AdminPolicies() {
           {!loading && !policies.length ? (
             <EmptyState title="No policy versions">
               <span>
-                Stage a reviewed institutional source before using grounded
-                answers.
+                Add and review a college policy before using policy answers.
               </span>
             </EmptyState>
           ) : null}
@@ -299,7 +298,7 @@ export function AdminPolicies() {
         <aside className={styles.query}>
           <div>
             <FileSearch aria-hidden="true" />
-            <p>Grounded lookup</p>
+            <p>Policy search</p>
             <h2>Ask the approved record</h2>
           </div>
           <form onSubmit={ask}>
@@ -310,7 +309,7 @@ export function AdminPolicies() {
                 rows={4}
                 required
                 minLength={3}
-                placeholder="What evidence is required when attendance data is missing?"
+                placeholder="What information is needed when attendance data is missing?"
               />
             </label>
             <button
@@ -319,7 +318,7 @@ export function AdminPolicies() {
                 busy || !policies.some((item) => item.status === "approved")
               }
             >
-              {busy ? "Checking…" : "Find cited evidence"}
+              {busy ? "Checking…" : "Find answer and source"}
             </button>
           </form>
           {answer ? (
@@ -330,10 +329,10 @@ export function AdminPolicies() {
                 {answer.grounded ? (
                   <>
                     <CheckCircle2 aria-hidden="true" />
-                    Grounded answer
+                    Answer found in approved policy
                   </>
                 ) : (
-                  "Evidence not found"
+                  "Answer not found"
                 )}
               </h3>
               <p>{answer.answer}</p>

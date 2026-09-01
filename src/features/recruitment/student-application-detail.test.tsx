@@ -50,7 +50,7 @@ describe("StudentApplicationDetail", () => {
     csrfRequestMock.mockReset().mockResolvedValue({ ...application, status: "withdrawn", can_withdraw: false });
   });
 
-  it("shows immutable evidence, history, and a calendar download", async () => {
+  it("shows locked application details, history, and a calendar download", async () => {
     render(<StudentApplicationDetail applicationId="application-1" />);
     expect(await screen.findByRole("heading", { name: "Software Engineer" })).toBeInTheDocument();
     expect(screen.getByText("Version 2")).toBeInTheDocument();

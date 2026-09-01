@@ -22,7 +22,7 @@ import styles from "./student-opportunities.module.css";
 
 function eligibilityCopy(opportunity: Opportunity) {
   if (opportunity.eligibility.status === "eligible") return "Eligible";
-  if (opportunity.eligibility.status === "needs_manual_review") return "Evidence review";
+  if (opportunity.eligibility.status === "needs_manual_review") return "Needs review";
   if (opportunity.eligibility.status === "ineligible") return "Not eligible";
   return "Rules unavailable";
 }
@@ -96,7 +96,7 @@ export function StudentOpportunities() {
         <div>
           <p className={styles.eyebrow}>Published for your institution</p>
           <h1>Find your next opportunity</h1>
-          <p>Eligibility is calculated from reviewed rules. Semantic match stays separate and arrives only when its evidence is available.</p>
+          <p>Published rules decide eligibility. Your skills match is shown separately when it is ready.</p>
         </div>
         <Link href="/opportunities?saved_only=true"><Bookmark aria-hidden="true" /> Saved roles</Link>
       </header>
@@ -116,7 +116,7 @@ export function StudentOpportunities() {
         <div className={styles.filters}>
           <label>Work mode<select name="work_mode" defaultValue={searchParams.get("work_mode") ?? ""}><option value="">All modes</option><option value="on-site">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></label>
           <label>Skill<input name="skill" defaultValue={searchParams.get("skill") ?? ""} placeholder="e.g. Python" /></label>
-          <label>Eligibility<select name="eligibility" defaultValue={searchParams.get("eligibility") ?? ""}><option value="">All eligibility states</option><option value="eligible">Eligible</option><option value="ineligible">Not eligible</option><option value="needs_manual_review">Evidence review</option><option value="unavailable">Rules unavailable</option></select></label>
+          <label>Eligibility<select name="eligibility" defaultValue={searchParams.get("eligibility") ?? ""}><option value="">All eligibility states</option><option value="eligible">Eligible</option><option value="ineligible">Not eligible</option><option value="needs_manual_review">Needs review</option><option value="unavailable">Rules unavailable</option></select></label>
           <label>Application<select name="application_state" defaultValue={searchParams.get("application_state") ?? ""}><option value="">Any application state</option><option value="submitted">Submitted</option><option value="under_review">Under review</option><option value="shortlisted">Shortlisted</option><option value="interview">Interview</option><option value="offered">Offered</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></label>
           <label>Deadline<select name="deadline_within_days" defaultValue={searchParams.get("deadline_within_days") ?? ""}><option value="">Any open deadline</option><option value="7">Next 7 days</option><option value="30">Next 30 days</option><option value="90">Next 90 days</option></select></label>
           <label className={styles.checkbox}><input name="saved_only" type="checkbox" value="true" defaultChecked={searchParams.get("saved_only") === "true"} /> Saved only</label>
@@ -156,13 +156,13 @@ export function StudentOpportunities() {
         <aside className={styles.explainer} aria-label="Opportunity decision guide">
           <div className={styles.guideIcon}><ShieldCheck aria-hidden="true" /></div>
           <h2>{selected ? `Why ${selected.title} is shown` : "How decisions work"}</h2>
-          <p>{selected?.eligibility.status === "eligible" ? "Your current profile satisfies every published deterministic rule." : selected?.eligibility.status === "needs_manual_review" ? "The role remains available because missing evidence is routed to review, never treated as an automatic rejection." : "Only active, published roles from your institution appear here."}</p>
+          <p>{selected?.eligibility.status === "eligible" ? "Your current profile meets every published rule." : selected?.eligibility.status === "needs_manual_review" ? "You can still view this role while a person reviews the missing information. You are not rejected automatically." : "Only active roles published by your institution appear here."}</p>
           <dl>
             <div><dt>Eligibility</dt><dd>Rules and verified profile facts</dd></div>
             <div><dt>Semantic match</dt><dd>Separate · not calculated in this phase</dd></div>
             <div><dt>Application</dt><dd>Locks resume and decision versions</dd></div>
           </dl>
-          <Link href={selected ? `/opportunities/${selected.id}` : "/resume"}><BriefcaseBusiness aria-hidden="true" />{selected ? "Review role evidence" : "Prepare your resume"}</Link>
+          <Link href={selected ? `/opportunities/${selected.id}` : "/resume"}><BriefcaseBusiness aria-hidden="true" />{selected ? "Review role details" : "Prepare your resume"}</Link>
         </aside>
       </div>
     </main>
