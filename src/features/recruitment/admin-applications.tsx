@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useState,
   type FormEvent,
 } from "react";
@@ -49,9 +48,12 @@ type BulkPreview = {
 };
 
 type BulkDraft = { application_ids: string[]; status: string; reason: string };
+const pageSize = 25;
 
 export function AdminApplications() {
   const [applications, setApplications] = useState<PlacementApplication[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -66,14 +68,20 @@ export function AdminApplications() {
     setLoading(true);
     setError("");
     try {
-      const data = await apiRequest<
-        AdminApplicationPage | PlacementApplication[]
-      >("/admin/recruitment/applications?page=1&page_size=50", {
+      const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+      if (filter !== "all") params.set("application_status", filter);
+      const data = await apiRequest<AdminApplicationPage>(
+        `/admin/recruitment/applications?${params.toString()}`, {
         cache: "no-store",
       });
-      // Support the former list shape during a staggered frontend/backend deploy.
-      const items = Array.isArray(data) ? data : data.items;
+      const items = data.items;
       setApplications(items);
+      setTotal(data.total);
+      const lastPage = Math.max(1, Math.ceil(data.total / pageSize));
+      if (page > lastPage) {
+        setPage(lastPage);
+        return;
+      }
       setSelectedId((current) =>
         items.some((item) => item.id === current)
           ? current
@@ -86,19 +94,13 @@ export function AdminApplications() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [filter, page]);
   useEffect(() => {
     const pending = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(pending);
   }, [load]);
 
-  const visible = useMemo(
-    () =>
-      filter === "all"
-        ? applications
-        : applications.filter((item) => item.status === filter),
-    [applications, filter],
-  );
+  const visible = applications;
   const selected =
     applications.find((item) => item.id === selectedId) ?? visible[0];
 
@@ -122,6 +124,7 @@ export function AdminApplications() {
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
       setNotice(`Application moved to ${status.replaceAll("_", " ")}.`);
+      await load();
     } catch {
       setError(
         "The status transition was rejected. Follow the documented sequence or record an authorized override.",
@@ -146,7 +149,7 @@ export function AdminApplications() {
           body: JSON.stringify({
             status: data.get("status"),
             reason: data.get("reason"),
-            policy_reference: data.get("policy_reference") || null,
+            policy_reference: data.get("policy_reference"),
           }),
         },
       );
@@ -157,9 +160,10 @@ export function AdminApplications() {
         "Override saved with the administrator, reason, policy reference, and locked status history.",
       );
       event.currentTarget.reset();
+      await load();
     } catch {
       setError(
-        "The override was not recorded. Provide a reason of at least 10 characters and a supported target state.",
+        "The override was not recorded. Reauthenticate, then provide an accountable reason and policy reference.",
       );
     } finally {
       setBusy(false);
@@ -264,14 +268,10 @@ export function AdminApplications() {
             type="button"
             key={status}
             aria-current={filter === status ? "page" : undefined}
-            onClick={() => setFilter(status)}
+            onClick={() => { setFilter(status); setPage(1); }}
           >
             {status.replaceAll("_", " ")}
-            <span>
-              {status === "all"
-                ? applications.length
-                : applications.filter((item) => item.status === status).length}
-            </span>
+            {filter === status ? <span>{total}</span> : null}
           </button>
         ))}
       </nav>
@@ -291,7 +291,7 @@ export function AdminApplications() {
         <section className={styles.queue} aria-labelledby="application-queue">
           <div className={styles.sectionHeader}>
             <h2 id="application-queue">Candidate queue</h2>
-            <span>{visible.length} records</span>
+            <span>{total} records</span>
           </div>
           {loading ? <p>Loading application records…</p> : null}
           {!loading && !visible.length ? (
@@ -301,7 +301,7 @@ export function AdminApplications() {
               </span>
             </EmptyState>
           ) : null}
-          <div>
+          <div className={styles.queueList}>
             {visible.map((application) => (
               <button
                 type="button"
@@ -337,6 +337,13 @@ export function AdminApplications() {
               </button>
             ))}
           </div>
+          {total > pageSize ? (
+            <nav className={styles.pagination} aria-label="Application pages">
+              <button type="button" disabled={loading || page === 1} onClick={() => setPage((value) => value - 1)}>Previous</button>
+              <span>Page {page} of {Math.max(1, Math.ceil(total / pageSize))}</span>
+              <button type="button" disabled={loading || page * pageSize >= total} onClick={() => setPage((value) => value + 1)}>Next</button>
+            </nav>
+          ) : null}
         </section>
 
         <section
@@ -563,8 +570,8 @@ export function AdminApplications() {
                     />
                   </label>
                   <label>
-                    <span>Policy reference (optional)</span>
-                    <input name="policy_reference" maxLength={300} />
+                    <span>Policy reference</span>
+                    <input name="policy_reference" required minLength={3} maxLength={300} placeholder="Published policy section or evidence ID" />
                   </label>
                   <button type="submit" disabled={busy}>
                     Record override

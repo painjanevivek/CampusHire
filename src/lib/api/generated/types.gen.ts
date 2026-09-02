@@ -155,7 +155,7 @@ export type ApplicationOverrideCreate = {
     /**
      * Policy Reference
      */
-    policy_reference?: string | null;
+    policy_reference: string;
     /**
      * Reason
      */
@@ -1465,11 +1465,37 @@ export type LinksUpdate = {
  * MembershipCreate
  */
 export type MembershipCreate = {
+    /**
+     * Reason
+     */
+    reason: string;
     role?: UserRole;
     /**
      * User Id
      */
     user_id: string;
+};
+
+/**
+ * MembershipPage
+ */
+export type MembershipPage = {
+    /**
+     * Items
+     */
+    items: Array<MembershipResponse>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
 };
 
 /**
@@ -5498,7 +5524,32 @@ export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetData = {
          */
         institution_id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Membership Status
+         */
+        membership_status?: string | null;
+        /**
+         * Role
+         */
+        role?: UserRole | null;
+        /**
+         * Sort
+         */
+        sort?: 'email' | 'status' | 'created_at';
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
     url: '/api/v1/institutions/{institution_id}/memberships';
 };
 
@@ -5513,11 +5564,9 @@ export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetError = R
 
 export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses = {
     /**
-     * Response Read Memberships Api V1 Institutions  Institution Id  Memberships Get
-     *
      * Successful Response
      */
-    200: Array<MembershipResponse>;
+    200: MembershipPage;
 };
 
 export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponse = ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses[keyof ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses];
@@ -5560,7 +5609,12 @@ export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvG
          */
         institution_id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Role
+         */
+        role?: UserRole | null;
+    };
     url: '/api/v1/institutions/{institution_id}/memberships/export.csv';
 };
 

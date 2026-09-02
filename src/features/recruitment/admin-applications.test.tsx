@@ -82,7 +82,7 @@ describe("AdminApplications", () => {
     fireEvent.change(screen.getByLabelText("Reason"), {
       target: { value: "Policy permits a reviewed equivalent record." },
     });
-    fireEvent.change(screen.getByLabelText("Policy reference (optional)"), {
+    fireEvent.change(screen.getByLabelText("Policy reference"), {
       target: { value: "Policy §4.2" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Record override" }));
@@ -147,5 +147,28 @@ describe("AdminApplications", () => {
       expect.objectContaining({ body: expect.stringContaining("APPLY BULK STATUS") }),
     ));
     expect(await screen.findByText("1 applications updated; 1 students notified.")).toBeInTheDocument();
+  });
+
+  it("loads status filters and pagination from the authoritative server page", async () => {
+    apiRequestMock.mockResolvedValue({
+      items: [application],
+      page: 1,
+      page_size: 25,
+      total: 51,
+    });
+    render(<AdminApplications />);
+    expect(await screen.findByText("Page 1 of 3")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith(
+      "/admin/recruitment/applications?page=2&page_size=25",
+      { cache: "no-store" },
+    ));
+
+    fireEvent.click(screen.getByRole("button", { name: "shortlisted" }));
+    await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith(
+      "/admin/recruitment/applications?page=1&page_size=25&application_status=shortlisted",
+      { cache: "no-store" },
+    ));
   });
 });

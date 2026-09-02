@@ -20,7 +20,7 @@ describe("AdminStudents", () => {
     window.sessionStorage.clear();
     apiRequestMock.mockReset().mockImplementation((path: string) => {
       if (path === "/auth/me") return Promise.resolve({ id: "admin-1", institution_id: "institution-1" });
-      if (path.endsWith("/memberships")) return Promise.resolve([{ id: "membership-1", user_id: "student-1", email: "asha@example.edu", role: "student", status: "active" }]);
+      if (path.includes("/memberships?")) return Promise.resolve({ items: [{ id: "membership-1", user_id: "student-1", email: "asha@example.edu", role: "student", status: "active" }], page: 1, page_size: 20, total: 1 });
       if (path.endsWith("/roster-imports")) return Promise.resolve([{ id: "roster-1", filename: "students.csv", status: "committed", total_rows: 1, valid_rows: 1, invalid_rows: 0, invited_rows: 1, committed_at: "2026-08-28T10:00:00Z", created_at: "2026-08-28T10:00:00Z" }]);
       return Promise.reject(new Error(`Unexpected path ${path}`));
     });
@@ -38,13 +38,13 @@ describe("AdminStudents", () => {
     );
     expect(screen.getByRole("link", { name: "Export safe CSV" })).toHaveAttribute(
       "href",
-      "https://api.example.test/institutions/institution-1/memberships/export.csv",
+      "https://api.example.test/institutions/institution-1/memberships/export.csv?role=student",
     );
 
     fireEvent.click(screen.getByText("Change status"));
     const statusSelectors = screen.getAllByRole("combobox");
     fireEvent.change(statusSelectors.at(-1)!, { target: { value: "graduated" } });
-    fireEvent.change(screen.getByPlaceholderText("Reason for audit"), { target: { value: "Program completed" } });
+    fireEvent.change(screen.getByPlaceholderText("Accountable reason for audit"), { target: { value: "Program completed" } });
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
@@ -64,7 +64,8 @@ describe("AdminStudents", () => {
   it("loads invitation controls only when disclosed and records resend or revocation", async () => {
     apiRequestMock.mockImplementation((path: string) => {
       if (path === "/auth/me") return Promise.resolve({ id: "admin-1", institution_id: "institution-1" });
-      if (path.endsWith("/memberships") || path.endsWith("/roster-imports")) return Promise.resolve([]);
+      if (path.includes("/memberships?")) return Promise.resolve({ items: [], page: 1, page_size: 20, total: 0 });
+      if (path.endsWith("/roster-imports")) return Promise.resolve([]);
       if (path.endsWith("/invitations")) return Promise.resolve([{
         id: "invitation-1",
         email: "pending@example.edu",
@@ -86,7 +87,7 @@ describe("AdminStudents", () => {
     });
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<AdminStudents />);
-    await screen.findByText("No memberships yet");
+    await screen.findByText("No students match");
 
     expect(apiRequestMock).not.toHaveBeenCalledWith(
       "/institutions/institution-1/invitations",
@@ -115,7 +116,7 @@ describe("AdminStudents", () => {
     let currentUser = { id: "admin-1", institution_id: "institution-1" };
     apiRequestMock.mockImplementation((path: string) => {
       if (path === "/auth/me") return Promise.resolve(currentUser);
-      if (path.endsWith("/memberships")) return Promise.resolve([]);
+      if (path.includes("/memberships?")) return Promise.resolve({ items: [], page: 1, page_size: 20, total: 0 });
       if (path.endsWith("/roster-imports")) return Promise.resolve([]);
       return Promise.reject(new Error(`Unexpected path ${path}`));
     });
@@ -128,7 +129,7 @@ describe("AdminStudents", () => {
       JSON.stringify({ query: "account-b-student" }),
     );
     render(<AdminStudents />);
-    await screen.findByText("No memberships yet");
+    await screen.findByText("No students match");
 
     currentUser = { id: "admin-2", institution_id: "institution-2" };
     fireEvent.click(screen.getByRole("button", { name: "Restore" }));
