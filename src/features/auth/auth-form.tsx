@@ -85,7 +85,11 @@ export function AuthForm({
                 ? "Use demo student account"
                 : "Use demo T&P account"}
           </Button>
-          <p className="demoNotice">Testing only. Uses synthetic data and the standard security checks.</p>
+          <p className="demoNotice">
+            {demoRole === "tnp_admin"
+              ? "Testing only. Uses synthetic data and skips MFA only for this local demo."
+              : "Testing only. Uses synthetic student data."}
+          </p>
         </>
       ) : null}
       <a className="textLink" href="/forgot-password">Forgot password?</a>
