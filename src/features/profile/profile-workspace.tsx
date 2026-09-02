@@ -2,14 +2,23 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { BookOpen, ExternalLink, GraduationCap, KeyRound, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import {
+  BellRing,
+  BookOpen,
+  ExternalLink,
+  GraduationCap,
+  KeyRound,
+  ShieldCheck,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
-import { clearCampusHireBrowserState } from "@/components/layout/sign-out-button";
-import { apiRequest, csrfRequest } from "@/lib/api/client";
-import styles from "./profile-workspace.module.css";
+import { apiRequest } from "@/lib/api/client";
+import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
+import { SessionManagement } from "./session-management";
+import styles from "./profile-workspace.module.css";
 
 type Profile = {
   full_name: string | null;
@@ -22,112 +31,129 @@ type Profile = {
   readiness: number;
 };
 
-type Session = {
-  id: string;
-  created_at: string;
-  last_activity_at: string;
-  expires_at: string;
-  device_summary: string | null;
-  current: boolean;
-};
-
-const formatDate = (value: string) => new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-  timeStyle: "short",
-}).format(new Date(value));
-
 export function ProfileWorkspace() {
-  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [sessionsState, setSessionsState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
 
-  const load = useCallback(async () => {
-    setSessionsState("loading");
-    const [profileResult, sessionsResult] = await Promise.allSettled([
-      apiRequest<Profile>("/profile", { cache: "no-store" }),
-      apiRequest<Session[]>("/auth/sessions", { cache: "no-store" }),
-    ]);
-    if (profileResult.status === "fulfilled") setProfile(profileResult.value);
-    if (sessionsResult.status === "fulfilled") {
-      setSessions(sessionsResult.value);
-      setSessionsState("ready");
-    } else {
-      setSessionsState("error");
+  const loadProfile = useCallback(async () => {
+    try {
+      setProfile(await apiRequest<Profile>("/profile", { cache: "no-store" }));
+      setMessage("");
+    } catch {
+      setMessage("Your profile summary could not be refreshed. Your saved details are unchanged.");
     }
-    const failures = [profileResult, sessionsResult].filter((result) => result.status === "rejected");
-    setMessage(failures.length
-      ? "Some profile settings could not be refreshed. Your saved data is unchanged."
-      : "");
   }, []);
 
   useEffect(() => {
-    const pending = window.setTimeout(() => void load(), 0);
+    const pending = window.setTimeout(() => void loadProfile(), 0);
     return () => window.clearTimeout(pending);
-  }, [load]);
+  }, [loadProfile]);
 
-  async function revoke(session: Session) {
-    if (session.current || !window.confirm(`Sign out ${session.device_summary ?? "this session"}?`)) return;
-    try {
-      await csrfRequest<void>(`/auth/sessions/${session.id}`, { method: "DELETE" });
-      setSessions((current) => current.filter((item) => item.id !== session.id));
-    } catch {
-      setMessage("That session could not be signed out. No other session was changed.");
-    }
-  }
-
-  async function signOutEverywhere() {
-    if (!window.confirm("Sign out this browser and every other active CampusHire session?")) return;
-    try {
-      await csrfRequest<void>("/auth/sign-out-all", { method: "POST" });
-    } catch {
-      setMessage("Sessions could not be signed out. Your current session is still active.");
-      return;
-    }
-    clearCampusHireBrowserState();
-    router.replace("/sign-in");
-    router.refresh();
-  }
+  const readiness = profile?.readiness ?? 0;
+  const educationCount = profile?.education.length ?? 0;
+  const skillCount = profile?.skills.length ?? 0;
 
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
-        <div><p>Profile and account</p><h1>Your verified placement profile.</h1><span>Review the details used for eligibility, manage optional information, and secure every active sign-in.</span></div>
-        <div className={styles.readiness}><strong>{profile?.readiness ?? "—"}%</strong><span>profile ready</span></div>
+        <p>Profile and account</p>
+        <h1>Your placement identity, in one place.</h1>
+        <span>Keep the information used for opportunities current. Open account controls only when you need them.</span>
       </header>
-      {message ? <Alert tone="warning">{message} <button type="button" onClick={() => void load()}>Retry</button></Alert> : null}
 
-      <section className={styles.grid} aria-label="Profile data">
-        <article><UserRound aria-hidden="true" /><p>Personal data</p><h2>{profile?.full_name ?? "Complete your identity"}</h2><span>{profile?.department ?? "Department not added"}</span></article>
-        <article><GraduationCap aria-hidden="true" /><p>Education</p><h2>{profile?.education.length ?? 0} record{profile?.education.length === 1 ? "" : "s"}</h2><span>Required academic details are protected from older changes.</span></article>
-        <article><BookOpen aria-hidden="true" /><p>Skills and preferences</p><h2>{profile?.target_roles[0] ?? "Choose a target role"}</h2><span>{profile?.skills.length ?? 0} reviewed skill{profile?.skills.length === 1 ? "" : "s"}</span></article>
+      {message ? (
+        <Alert tone="warning">
+          {message} <button type="button" onClick={() => void loadProfile()}>Retry</button>
+        </Alert>
+      ) : null}
+
+      <section className={styles.overview} aria-labelledby="profile-overview-title">
+        <article className={styles.identityCard}>
+          <div className={styles.identityIcon}><UserRound aria-hidden="true" /></div>
+          <div className={styles.identityStatus}><ShieldCheck aria-hidden="true" /> Institution-linked profile</div>
+          <h2 id="profile-overview-title">{profile?.full_name ?? "Complete your profile"}</h2>
+          <p>{profile?.department ?? "Add your department and academic details to explain eligibility clearly."}</p>
+          <Link className={styles.primaryAction} href="/onboarding">
+            Review profile details <ExternalLink aria-hidden="true" />
+          </Link>
+        </article>
+
+        <article className={styles.progressCard}>
+          <div className={styles.progressHeading}>
+            <div><p>Profile completion</p><span>Required and optional details are kept distinct.</span></div>
+            <strong>{profile ? `${readiness}%` : "—"}</strong>
+          </div>
+          <div
+            className={styles.progressTrack}
+            role="progressbar"
+            aria-label="Profile completion"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={profile ? readiness : undefined}
+          >
+            <span style={{ width: `${readiness}%` }} />
+          </div>
+          <dl className={styles.profileFacts}>
+            <div><GraduationCap aria-hidden="true" /><dt>Education</dt><dd>{educationCount} record{educationCount === 1 ? "" : "s"}</dd></div>
+            <div><BookOpen aria-hidden="true" /><dt>Target role</dt><dd>{profile?.target_roles[0] ?? "Not selected"}</dd></div>
+            <div><ShieldCheck aria-hidden="true" /><dt>Reviewed skills</dt><dd>{skillCount}</dd></div>
+          </dl>
+          <p className={styles.progressNote}>Skills and portfolio links stay optional unless a published role explicitly requires them.</p>
+        </article>
       </section>
 
-      <section className={styles.actionSection} aria-labelledby="profile-edit-title">
-        <div><p>Profile details</p><h2 id="profile-edit-title">Personal data, education, skills, links, and role preferences</h2><span>The six-step editor saves valid changes and protects newer updates opened in another tab.</span></div>
-        <Link href="/onboarding">Edit profile details <ExternalLink size={16} aria-hidden="true" /></Link>
-      </section>
+      <section className={styles.settings} aria-labelledby="account-settings-title">
+        <header className={styles.settingsHeader}>
+          <div><p>Account settings</p><h2 id="account-settings-title">Manage only what you need</h2></div>
+          <span>Each section opens independently.</span>
+        </header>
 
-      <section className={styles.sessions} aria-labelledby="sessions-title">
-        <header><div><p>Security</p><h2 id="sessions-title">Active sessions</h2></div><KeyRound aria-hidden="true" /></header>
-        {sessionsState === "loading" ? <p>Session details are loading.</p> : null}
-        {sessionsState === "error" ? <p>Session details are unavailable. You can still secure the account by signing out every device.</p> : null}
-        {sessionsState === "ready" && !sessions.length ? <p>No active session details were returned.</p> : null}
-        {sessions.length ? <ul>{sessions.map((session) => (
-          <li key={session.id}>
-            <div><strong>{session.device_summary ?? "CampusHire session"}{session.current ? " · This device" : ""}</strong><span>Last active {formatDate(session.last_activity_at)} · Expires {formatDate(session.expires_at)}</span></div>
-            {!session.current ? <button type="button" onClick={() => void revoke(session)}>Sign out</button> : null}
-          </li>
-        ))}</ul> : null}
-        <button type="button" onClick={() => void signOutEverywhere()}>Sign out all devices</button>
-      </section>
+        <div className={styles.disclosureList}>
+          <AccountDisclosure
+            icon={KeyRound}
+            eyebrow="Security"
+            title="Active sessions"
+            description="Review signed-in devices and end access you no longer recognize."
+            status="On demand"
+          >
+            <SessionManagement destination="/sign-in" />
+          </AccountDisclosure>
 
-      <CommunicationPreferences />
+          <AccountDisclosure
+            icon={BellRing}
+            eyebrow="Communication"
+            title="Email notifications"
+            description="Choose optional application updates and deadline reminders."
+            status="Optional"
+          >
+            <CommunicationPreferences />
+          </AccountDisclosure>
 
-      <section className={styles.governance} aria-label="Privacy and account controls">
-        <article><ShieldCheck aria-hidden="true" /><div><h2>Privacy and AI assistance</h2><p>See which records are official, what AI can suggest, and how long data is kept.</p><Link href="/privacy">Review privacy controls</Link></div></article>
-        <article><Trash2 aria-hidden="true" /><div><h2>Account deletion</h2><p>Ask to delete student data that can be removed. You must confirm first.</p><Link href="/privacy#deletion-title">Open deletion controls</Link></div></article>
+          <AccountDisclosure
+            icon={ShieldCheck}
+            eyebrow="Privacy"
+            title="Privacy and AI assistance"
+            description="See which records are official, what AI may suggest, and how data is retained."
+          >
+            <div className={styles.governanceContent}>
+              <p>AI suggestions never replace your verified profile, eligibility result, or an accountable placement decision.</p>
+              <Link className={styles.secondaryAction} href="/privacy">Review privacy controls</Link>
+            </div>
+          </AccountDisclosure>
+
+          <AccountDisclosure
+            icon={Trash2}
+            eyebrow="High-risk action"
+            title="Account deletion"
+            description="Request deletion of student data that can be removed. Confirmation is always required."
+            tone="danger"
+          >
+            <div className={styles.governanceContent}>
+              <p>Some recruitment, audit, or institutional records may need to be retained with a documented reason.</p>
+              <Link className={styles.dangerAction} href="/privacy#deletion-title">Open deletion controls</Link>
+            </div>
+          </AccountDisclosure>
+        </div>
       </section>
     </main>
   );

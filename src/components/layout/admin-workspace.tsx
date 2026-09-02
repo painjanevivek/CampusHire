@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleHelp, Menu, X } from "lucide-react";
+import { CircleHelp, Menu, UserRound, X } from "lucide-react";
 
 import styles from "./admin-workspace.module.css";
 import { SignOutButton } from "./sign-out-button";
@@ -58,7 +58,14 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             })}
           </nav>
           <div className={styles.utilities} aria-label="Administrator utilities">
-            <Link href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>
+            <Link className={styles.helpControl} href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>
+            <Link
+              href="/admin/account"
+              aria-label="Open administrator profile and account"
+              aria-current={pathname.startsWith("/admin/account") ? "page" : undefined}
+            >
+              <UserRound aria-hidden="true" />
+            </Link>
             <SignOutButton destination="/admin/sign-in" />
           </div>
         </div>

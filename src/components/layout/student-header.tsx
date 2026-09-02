@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CircleHelp, Menu, UserRound, X } from "lucide-react";
+import { CircleHelp, Menu, X } from "lucide-react";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
 import { SignOutButton } from "./sign-out-button";
@@ -67,13 +67,8 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         <div className={styles.utilities}>
           <ActivationProgress />
           <NotificationCenter />
-          <Link href="/help" aria-label="Open help center"><CircleHelp size={18} aria-hidden="true" /></Link>
-          <Link
-            className={styles.account}
-            href="/profile"
-            aria-label="Open student profile"
-          >
-            <UserRound size={18} aria-hidden="true" />
+          <Link className={styles.utilityControl} href="/help" aria-label="Open help center">
+            <CircleHelp aria-hidden="true" />
           </Link>
           <SignOutButton destination="/sign-in" />
         </div>

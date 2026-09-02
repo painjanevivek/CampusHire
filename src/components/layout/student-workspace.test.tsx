@@ -23,8 +23,9 @@ describe("StudentWorkspace", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByRole("link", { name: "Open student profile" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open student profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getAllByRole("link", { name: "Profile" })).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.queryByRole("link", { name: "Open student profile" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("href", "/applications");
   });
 

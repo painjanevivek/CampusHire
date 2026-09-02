@@ -1,6 +1,8 @@
 .root { position: relative; }
-.root summary { min-width: 62px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; background: white; color: var(--ink); cursor: pointer; font-size: .78rem; font-weight: 750; list-style: none; }
+.root summary { min-width: 64px; height: var(--utility-control-size, 44px); display: flex; align-items: center; justify-content: center; gap: 6px; border: var(--utility-control-border, 1px solid var(--line)); border-radius: 999px; padding: 0 10px; background: var(--utility-control-background, var(--surface)); color: var(--ink); cursor: pointer; font-size: .78rem; font-weight: 750; list-style: none; transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease; }
 .root summary::-webkit-details-marker { display: none; }
+.root summary:hover { border-color: var(--brand-blue); background: var(--utility-control-hover-background, var(--brand-blue-soft)); color: var(--utility-control-hover-color, var(--brand-blue-dark)); }
+.root summary svg { width: var(--utility-icon-size, 18px); height: var(--utility-icon-size, 18px); }
 .root[open] summary { border-color: var(--brand-blue); color: var(--brand-blue-dark); }
 .root section { position: absolute; inset: calc(100% + 12px) 0 auto auto; width: min(360px, calc(100vw - 28px)); padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: 0 22px 60px rgb(15 23 42 / 16%); }
 .root header { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
@@ -20,6 +22,6 @@
 
 @media (max-width: 900px) {
   .root summary span { display: none; }
-  .root summary { min-width: 44px; }
+  .root summary { width: var(--utility-control-size, 44px); min-width: var(--utility-control-size, 44px); padding: 0; }
   .root section { inset-inline-end: -92px; }
 }

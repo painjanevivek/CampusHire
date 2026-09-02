@@ -78,23 +78,45 @@
 }
 
 .utilities {
+  --utility-control-size: 44px;
+  --utility-icon-size: 18px;
+  --utility-control-border: 1px solid var(--line);
+  --utility-control-background: var(--surface);
+  --utility-control-hover-background: var(--brand-blue-soft);
+  --utility-control-hover-color: var(--brand-blue-dark);
+
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.account,
+.utilityControl,
 .menuButton {
-  min-width: 44px;
-  height: 44px;
+  width: var(--utility-control-size, 44px);
+  min-width: var(--utility-control-size, 44px);
+  height: var(--utility-control-size, 44px);
   display: grid;
   place-items: center;
-  grid-auto-flow: column;
-  gap: 4px;
-  border: 1px solid var(--line);
+  border: var(--utility-control-border, 1px solid var(--line));
   border-radius: 999px;
-  background: white;
+  padding: 0;
+  background: var(--utility-control-background, var(--surface));
   color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.utilityControl:hover {
+  border-color: var(--brand-blue);
+  background: var(--utility-control-hover-background);
+  color: var(--utility-control-hover-color);
+}
+
+.utilityControl svg,
+.menuButton svg {
+  width: var(--utility-icon-size, 18px);
+  height: var(--utility-icon-size, 18px);
 }
 
 .menuButton { display: none; cursor: pointer; }
@@ -121,7 +143,6 @@
 @media (max-width: 480px) {
   .inner { width: min(100% - 20px, 1280px); gap: 8px; padding-inline: 14px; }
   .brand strong { font-size: 0.92rem; }
-  .utilities { gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

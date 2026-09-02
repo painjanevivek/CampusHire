@@ -30,7 +30,7 @@ describe("AdminWorkspace", () => {
     );
     expect(screen.queryByRole("button", { name: "Open notifications" }))
       .not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Open administrator account" }))
-      .not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open administrator profile and account" }))
+      .toHaveAttribute("href", "/admin/account");
   });
 });

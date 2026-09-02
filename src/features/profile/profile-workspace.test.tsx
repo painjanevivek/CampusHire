@@ -17,7 +17,9 @@ vi.mock("@/lib/api/client", () => ({
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock, refresh: refreshMock }),
 }));
-vi.mock("./communication-preferences", () => ({ CommunicationPreferences: () => null }));
+vi.mock("./communication-preferences", () => ({
+  CommunicationPreferences: () => <div>Email preference controls</div>,
+}));
 
 describe("ProfileWorkspace session controls", () => {
   beforeEach(() => {
@@ -51,10 +53,27 @@ describe("ProfileWorkspace session controls", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
   });
 
+  it("keeps account settings collapsed and loads session details only when requested", async () => {
+    render(<ProfileWorkspace />);
+
+    expect(await screen.findByText("Asha Rao")).toBeInTheDocument();
+    expect(screen.queryByText("Chrome on Windows")).not.toBeInTheDocument();
+    expect(apiRequestMock).not.toHaveBeenCalledWith("/auth/sessions", expect.anything());
+
+    fireEvent.click(screen.getByRole("button", { name: /Active sessions/ }));
+
+    expect(await screen.findByText(/Chrome on Windows/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Active sessions/ })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+  });
+
   it("revokes every session before clearing state and returning to sign in", async () => {
     window.sessionStorage.setItem("campushire.private", "sensitive");
     render(<ProfileWorkspace />);
 
+    fireEvent.click(await screen.findByRole("button", { name: /Active sessions/ }));
     fireEvent.click(await screen.findByRole("button", { name: "Sign out all devices" }));
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
@@ -66,7 +85,7 @@ describe("ProfileWorkspace session controls", () => {
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 
-  it("keeps the account-wide sign-out control available after a partial load failure", async () => {
+  it("keeps security controls available when the profile summary fails to load", async () => {
     apiRequestMock.mockImplementation((path: string) => {
       if (path === "/profile") return Promise.reject(new Error("profile unavailable"));
       return Promise.resolve([{
@@ -81,8 +100,9 @@ describe("ProfileWorkspace session controls", () => {
 
     render(<ProfileWorkspace />);
 
-    expect(await screen.findByText(/Some profile settings could not be refreshed/)).toBeInTheDocument();
-    expect(screen.getByText(/Chrome on Windows/)).toBeInTheDocument();
+    expect(await screen.findByText(/profile summary could not be refreshed/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Active sessions/ }));
+    expect(await screen.findByText(/Chrome on Windows/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign out all devices" })).toBeInTheDocument();
   });
 
@@ -105,8 +125,20 @@ describe("ProfileWorkspace session controls", () => {
 
     render(<ProfileWorkspace />);
 
+    fireEvent.click(await screen.findByRole("button", { name: /Active sessions/ }));
     expect(await screen.findByText("No active session details were returned.")).toBeInTheDocument();
     expect(screen.queryByText("Session details are loading.")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign out all devices" })).toBeInTheDocument();
+  });
+
+  it("reveals optional email controls only when the student opens them", async () => {
+    render(<ProfileWorkspace />);
+
+    expect(await screen.findByText("Asha Rao")).toBeInTheDocument();
+    expect(screen.queryByText("Email preference controls")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Email notifications/ }));
+
+    expect(screen.getByText("Email preference controls")).toBeInTheDocument();
   });
 });

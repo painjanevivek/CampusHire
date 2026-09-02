@@ -3,6 +3,36 @@
   display: inline-flex;
 }
 
+.root button {
+  width: var(--utility-control-size, 44px);
+  height: var(--utility-control-size, 44px);
+  display: grid;
+  place-items: center;
+  border: var(--utility-control-border, 1px solid var(--line));
+  border-radius: 999px;
+  padding: 0;
+  background: var(--utility-control-background, var(--surface));
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.root button:hover:not(:disabled) {
+  border-color: var(--brand-blue);
+  background: var(--utility-control-hover-background, var(--brand-blue-soft));
+  color: var(--utility-control-hover-color, var(--brand-blue-dark));
+}
+
+.root button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.root button svg {
+  width: var(--utility-icon-size, 18px);
+  height: var(--utility-icon-size, 18px);
+}
+
 .error {
   position: absolute;
   z-index: calc(var(--layer-navigation) + 1);

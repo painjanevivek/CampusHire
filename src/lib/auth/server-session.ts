@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-type SessionUser = {
+export type SessionUser = {
   id: string;
   email: string;
   role: string;

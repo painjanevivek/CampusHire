@@ -74,6 +74,13 @@
 .navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
 
 .utilities {
+  --utility-control-size: 44px;
+  --utility-icon-size: 18px;
+  --utility-control-border: 1px solid var(--line);
+  --utility-control-background: var(--surface);
+  --utility-control-hover-background: var(--brand-blue-soft);
+  --utility-control-hover-color: var(--brand-blue-dark);
+
   display: flex;
   align-items: center;
   gap: 8px;
@@ -82,8 +89,8 @@
 .utilities button,
 .utilities a,
 .menuButton {
-  min-width: 42px;
-  height: 42px;
+  min-width: var(--utility-control-size, 44px);
+  height: var(--utility-control-size, 44px);
   display: grid;
   grid-auto-flow: column;
   place-items: center;
@@ -93,6 +100,19 @@
   background: var(--surface);
   color: var(--ink);
   cursor: pointer;
+}
+
+.utilities button:hover:not(:disabled),
+.utilities a:hover {
+  border-color: var(--brand-blue);
+  background: var(--utility-control-hover-background);
+  color: var(--utility-control-hover-color);
+}
+
+.utilities a[aria-current="page"] {
+  border-color: var(--brand-blue);
+  background: var(--brand-blue-soft);
+  color: var(--brand-blue-dark);
 }
 
 .utilities svg,
@@ -121,7 +141,7 @@
   .inner { width: min(100% - 16px, 1440px); min-height: 62px; padding-inline: 12px; }
   .brand strong { font-size: 0.9rem; }
   .utilities button:first-child,
-  .utilities a { display: none; }
+  .helpControl { display: none; }
   .navigation { inset-block-start: 70px; }
 }
 
