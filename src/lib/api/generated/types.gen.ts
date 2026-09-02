@@ -1317,6 +1317,28 @@ export type InvitationAcceptRequest = {
 };
 
 /**
+ * InvitationActionResponse
+ */
+export type InvitationActionResponse = {
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Status
+     */
+    status: 'pending' | 'expired' | 'accepted' | 'revoked';
+};
+
+/**
  * InvitationResponse
  */
 export type InvitationResponse = {
@@ -1340,6 +1362,58 @@ export type InvitationResponse = {
      * Role
      */
     role: string;
+};
+
+/**
+ * InvitationRevocationRequest
+ */
+export type InvitationRevocationRequest = {
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * InvitationSummary
+ */
+export type InvitationSummary = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Enrollment Id
+     */
+    enrollment_id: string | null;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Full Name
+     */
+    full_name: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Resend Count
+     */
+    resend_count: number;
+    /**
+     * Role
+     */
+    role: string;
+    /**
+     * Status
+     */
+    status: 'pending' | 'expired' | 'accepted' | 'revoked';
 };
 
 /**
@@ -1437,6 +1511,20 @@ export type MfaConfirmResponse = {
      * Recovery Codes
      */
     recovery_codes: Array<string>;
+};
+
+/**
+ * MfaDisableRequest
+ */
+export type MfaDisableRequest = {
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Password
+     */
+    password: string;
 };
 
 /**
@@ -4844,6 +4932,31 @@ export type ConfirmMfaApiV1AuthMfaConfirmPostResponses = {
 
 export type ConfirmMfaApiV1AuthMfaConfirmPostResponse = ConfirmMfaApiV1AuthMfaConfirmPostResponses[keyof ConfirmMfaApiV1AuthMfaConfirmPostResponses];
 
+export type ResetMfaFactorApiV1AuthMfaDisablePostData = {
+    body: MfaDisableRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/disable';
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostError = ResetMfaFactorApiV1AuthMfaDisablePostErrors[keyof ResetMfaFactorApiV1AuthMfaDisablePostErrors];
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostResponse = ResetMfaFactorApiV1AuthMfaDisablePostResponses[keyof ResetMfaFactorApiV1AuthMfaDisablePostResponses];
+
 export type SetupMfaApiV1AuthMfaSetupPostData = {
     body?: never;
     path?: never;
@@ -5192,6 +5305,38 @@ export type ReadinessApiV1HealthReadyGetResponses = {
 
 export type ReadinessApiV1HealthReadyGetResponse = ReadinessApiV1HealthReadyGetResponses[keyof ReadinessApiV1HealthReadyGetResponses];
 
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations';
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetError = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors];
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses = {
+    /**
+     * Response Read Invitations Api V1 Institutions  Institution Id  Invitations Get
+     *
+     * Successful Response
+     */
+    200: Array<InvitationSummary>;
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponse = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses];
+
 export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostData = {
     body?: never;
     path: {
@@ -5219,16 +5364,46 @@ export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsI
 
 export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses = {
     /**
-     * Response Resend Membership Invitation Api V1 Institutions  Institution Id  Invitations  Invitation Id  Resend Post
-     *
      * Successful Response
      */
-    200: {
-        [key: string]: string;
-    };
+    200: InvitationActionResponse;
 };
 
 export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponse = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses];
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostData = {
+    body: InvitationRevocationRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Invitation Id
+         */
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/revoke';
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostError = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors];
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InvitationActionResponse;
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponse = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses];
 
 export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetData = {
     body?: never;

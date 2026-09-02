@@ -32,6 +32,10 @@ describe("AdminStudents", () => {
 
     expect(await screen.findByText("asha@example.edu")).toBeInTheDocument();
     expect(screen.getByText("students.csv")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Download template" })).toHaveAttribute(
+      "href",
+      "https://api.example.test/institutions/institution-1/roster-imports/template",
+    );
     expect(screen.getByRole("link", { name: "Export safe CSV" })).toHaveAttribute(
       "href",
       "https://api.example.test/institutions/institution-1/memberships/export.csv",
@@ -55,6 +59,56 @@ describe("AdminStudents", () => {
       "campushire.admin.students-view.admin-1.institution-1",
     )).toContain("asha"));
     expect(window.localStorage.getItem("campushire.admin.students-view")).toBeNull();
+  });
+
+  it("loads invitation controls only when disclosed and records resend or revocation", async () => {
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/auth/me") return Promise.resolve({ id: "admin-1", institution_id: "institution-1" });
+      if (path.endsWith("/memberships") || path.endsWith("/roster-imports")) return Promise.resolve([]);
+      if (path.endsWith("/invitations")) return Promise.resolve([{
+        id: "invitation-1",
+        email: "pending@example.edu",
+        enrollment_id: "ENR-001",
+        full_name: "Pending Student",
+        role: "student",
+        status: "pending",
+        expires_at: "2026-09-03T10:00:00Z",
+        resend_count: 0,
+        created_at: "2026-09-02T10:00:00Z",
+      }]);
+      return Promise.reject(new Error(`Unexpected path ${path}`));
+    });
+    csrfRequestMock.mockResolvedValue({
+      id: "invitation-1",
+      status: "revoked",
+      expires_at: "2026-09-03T10:00:00Z",
+      message: "The invitation was revoked and can no longer be used.",
+    });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<AdminStudents />);
+    await screen.findByText("No memberships yet");
+
+    expect(apiRequestMock).not.toHaveBeenCalledWith(
+      "/institutions/institution-1/invitations",
+      expect.anything(),
+    );
+    fireEvent.click(screen.getByText("Invitation queue"));
+    expect(await screen.findByText(/pending@example\.edu/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Revoke"));
+    fireEvent.change(screen.getByLabelText("Audit reason"), {
+      target: { value: "Duplicate student record" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Confirm revocation" }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/institutions/institution-1/invitations/invitation-1/revoke",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ reason: "Duplicate student record" }),
+      }),
+    ));
+    expect(await screen.findByText("revoked")).toBeInTheDocument();
   });
 
   it("rechecks the account namespace before restoring a view", async () => {

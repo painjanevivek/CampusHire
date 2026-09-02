@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { BellRing, Building2, KeyRound, ShieldCheck, UserRoundCog } from "lucide-react";
+import { BellRing, Building2, KeyRound, RotateCcwKey, ShieldCheck, UserRoundCog } from "lucide-react";
 
 import type { SessionUser } from "@/lib/auth/server-session";
 import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
+import { MfaResetControl } from "./mfa-reset-control";
 import { SessionManagement } from "./session-management";
 import styles from "./profile-workspace.module.css";
 
 const roleLabels: Record<string, string> = {
+  tnp_owner: "T&P owner",
   tnp_admin: "T&P administrator",
   tnp_reviewer: "T&P reviewer",
+  tnp_auditor: "T&P auditor",
 };
 
 export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
@@ -63,6 +66,17 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
             status="On demand"
           >
             <SessionManagement destination="/admin/sign-in" />
+          </AccountDisclosure>
+
+          <AccountDisclosure
+            icon={RotateCcwKey}
+            eyebrow="Security"
+            title="Reset authenticator"
+            description="Replace a lost or changing authenticator after verifying both account factors."
+            status="Reverification required"
+            tone="danger"
+          >
+            <MfaResetControl />
           </AccountDisclosure>
 
           <AccountDisclosure
