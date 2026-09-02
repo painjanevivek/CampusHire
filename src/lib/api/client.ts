@@ -52,6 +52,12 @@ export class ApiError extends Error {
   }
 }
 
+function isRequestTimeout(cause: unknown): boolean {
+  if (typeof cause !== "object" || cause === null || !("name" in cause)) return false;
+  const name = Reflect.get(cause, "name");
+  return name === "AbortError" || name === "TimeoutError";
+}
+
 type ErrorBody = {
   detail?: string | {
     code?: string;
@@ -95,7 +101,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
       signal: init?.signal ?? AbortSignal.timeout(15_000),
     });
   } catch (cause) {
-    if (cause instanceof DOMException && cause.name === "AbortError") {
+    if (isRequestTimeout(cause)) {
       throw new ApiError(0, "The request timed out. Try again.", "request_timeout", undefined, undefined, "timeout");
     }
     throw new ApiError(0, "You appear to be offline. Reconnect and try again.", "offline", undefined, undefined, "offline");
@@ -135,7 +141,11 @@ export async function csrfRequest<T>(path: string, init: RequestInit): Promise<T
   try {
     return await send(token);
   } catch (error) {
-    if (!(error instanceof ApiError) || error.status !== 403 || error.message !== "CSRF validation failed") {
+    if (
+      !(error instanceof ApiError)
+      || error.status !== 403
+      || (error.code !== "csrf_validation_failed" && error.message !== "CSRF validation failed")
+    ) {
       throw error;
     }
     await apiRequest<void>("/auth/csrf", { cache: "no-store" });

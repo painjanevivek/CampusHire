@@ -1,6 +1,8 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { safeReturnTo } from "./return-to";
+
 export type SessionUser = {
   id: string;
   email: string;
@@ -9,16 +11,19 @@ export type SessionUser = {
   membership_status?: string | null;
 };
 
-function safeReturnTo(value: string | null): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//") || /[\\\r\n]/.test(value)) {
-    return "/dashboard";
-  }
-  return value;
+const ADMIN_ROLES = new Set(["tnp_owner", "tnp_admin", "tnp_reviewer", "tnp_auditor"]);
+
+export function isAdministratorRole(role: string): boolean {
+  return ADMIN_ROLES.has(role);
 }
 
 export async function requireServerSession(lane: "student" | "admin"): Promise<SessionUser> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
-  const returnTo = safeReturnTo(requestHeaders.get("x-campushire-return-to"));
+  const returnTo = safeReturnTo(
+    requestHeaders.get("x-campushire-return-to"),
+    lane === "admin" ? "/admin/dashboard" : "/dashboard",
+    lane === "admin" ? "/admin/" : undefined,
+  );
   const apiBase = (
     process.env.INTERNAL_API_URL
     ?? process.env.NEXT_PUBLIC_API_URL
@@ -45,7 +50,7 @@ export async function requireServerSession(lane: "student" | "admin"): Promise<S
   }
   if (!response.ok) redirect(`/offline?returnTo=${encodeURIComponent(returnTo)}`);
   const user = await response.json() as SessionUser;
-  const isAdmin = user.role === "tnp_admin" || user.role === "tnp_reviewer";
+  const isAdmin = isAdministratorRole(user.role);
   if ((lane === "admin") !== isAdmin) redirect("/unauthorized");
   return user;
 }

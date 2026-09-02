@@ -80,7 +80,7 @@ describe("API client", () => {
     );
 
     vi.stubGlobal("fetch", vi.fn().mockRejectedValueOnce(
-      new DOMException("The operation was aborted", "AbortError"),
+      new DOMException("The operation timed out", "TimeoutError"),
     ));
     await expect(apiRequest("/profile")).rejects.toEqual(
       expect.objectContaining({ kind: "timeout" }),
@@ -91,7 +91,12 @@ describe("API client", () => {
     document.cookie = "campushire_csrf=stale; Path=/";
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ detail: "CSRF validation failed" }), {
+        new Response(JSON.stringify({
+          error: {
+            code: "csrf_validation_failed",
+            message: "CSRF validation failed",
+          },
+        }), {
           status: 403,
           headers: { "Content-Type": "application/json" },
         }),
