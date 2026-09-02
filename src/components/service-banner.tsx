@@ -11,11 +11,21 @@ export async function ServiceBanner() {
     next: { revalidate: 30 },
     signal: AbortSignal.timeout(2_000),
   }).catch(() => null);
-  if (!service || service.status === "operational") return null;
+  if (
+    !service ||
+    (service.status === "operational" && service.transactional_email === "configured")
+  ) {
+    return null;
+  }
+  const maintenance = service.status === "maintenance";
   return (
     <aside className="serviceBanner" role="status" aria-live="polite">
-      <strong>Planned maintenance</strong>
-      <span>{service.maintenance_message ?? "Some services are temporarily limited."}</span>
+      <strong>{maintenance ? "Planned maintenance" : "Email delivery delayed"}</strong>
+      <span>
+        {maintenance
+          ? (service.maintenance_message ?? "Some services are temporarily limited.")
+          : "Account and placement records remain available. Messages may arrive later than usual."}
+      </span>
       <a href="/status">View service status</a>
     </aside>
   );

@@ -1,6 +1,6 @@
 # Frontend Implementation Inventory
 
-This inventory records the implementation state through Phase 6. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
+This inventory records the implementation state through Phase 7. It distinguishes connected behaviour from presentation fixtures so later phases do not mistake a polished screen for a completed workflow.
 
 | Surface | Current disposition | Owner phase |
 | --- | --- | --- |
@@ -11,8 +11,10 @@ This inventory records the implementation state through Phase 6. It distinguishe
 | Resume workspace and builder | Quarantined upload status, durable-job polling/retry, field review, suggestion decisions, immutable versions and PDF download | Complete in 2 |
 | Opportunities and role detail | API-backed, URL-filtered discovery, deterministic eligibility, immutable application submission, and separately versioned semantic relevance | Complete in 3 and 4 |
 | Roadmap | Eight selectable curated templates with prerequisite-aware progress and evidence attachment | Complete in 5 |
-| Administration | API-backed operations, reviewed intelligence, application status notifications and constructive feedback publication | Complete through 5 |
+| Administration | API-backed operations, least-privilege student and application management, reviewed intelligence, application status notifications and constructive feedback publication | Complete through 6 |
 | Operations and privacy | Tenant-scoped job health/actions, progressive timelines, exact-confirmation deletion, hardened API destinations, CSP tests, and automated shell accessibility checks | Complete in 6; external pilot gates remain |
+| Communications, help and status | Backend-authoritative transactional delivery states, preference-aware reminders, contextual Help center, privacy-minimized support, legal content, and truthful maintenance/email degradation surfaces | Complete in 7; provider and human gates remain |
+| Product analytics | Backend-recorded, allowlisted funnel events with hashed deduplication; browser-only placeholder events removed | Complete in 7 |
 
 ## Contract boundary
 

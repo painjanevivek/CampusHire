@@ -68,8 +68,6 @@ describe("OnboardingWizard", () => {
   });
 
   it("hands a completed profile directly to opportunities", async () => {
-    const onComplete = vi.fn();
-    window.addEventListener("campushire:product-event", onComplete);
     render(<OnboardingWizard />);
 
     await screen.findByLabelText("Full name");
@@ -95,11 +93,6 @@ describe("OnboardingWizard", () => {
 
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/opportunities"));
     expect(csrfRequestMock).toHaveBeenCalledTimes(6);
-    expect(onComplete).toHaveBeenCalledTimes(1);
-
-    const event = onComplete.mock.calls[0][0] as CustomEvent;
-    expect(event.detail).toEqual({ name: "profile_complete" });
-    window.removeEventListener("campushire:product-event", onComplete);
   });
 
   it("keeps fields in place when a step cannot be saved", async () => {

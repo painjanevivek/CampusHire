@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input, Select } from "@/components/ui/form-controls";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
-import { trackProductEvent } from "@/lib/product-analytics";
 import {
   clearOnboardingDraft,
   readOnboardingDraft,
@@ -339,7 +338,6 @@ export function OnboardingWizard() {
     const saved = await persist(true);
     if (!saved) return;
     if (step === steps.length - 1) {
-      trackProductEvent("profile_complete");
       router.push("/opportunities");
       return;
     }

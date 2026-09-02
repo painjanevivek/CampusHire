@@ -14,8 +14,6 @@ import {
   Target,
 } from "lucide-react";
 
-import { trackProductEvent } from "@/lib/product-analytics";
-
 import { useDashboardMotion } from "./dashboard-motion";
 import styles from "./student-dashboard.module.css";
 
@@ -126,7 +124,6 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             <Link
               className={styles.actionLink}
               href={data.nextAction.href}
-              onClick={() => trackProductEvent("readiness_action_open")}
             >
               Complete this action <ArrowRight size={18} aria-hidden="true" />
             </Link>
@@ -226,7 +223,6 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
                   className={styles.viewRole}
                   href={opportunity.href}
                   aria-label={`View ${opportunity.role} at ${opportunity.company}`}
-                  onClick={() => trackProductEvent("opportunity_view")}
                 >
                   <ArrowRight size={19} aria-hidden="true" />
                 </Link>

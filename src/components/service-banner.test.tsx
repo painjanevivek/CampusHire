@@ -18,4 +18,11 @@ describe("ServiceBanner", () => {
     expect(fetch).toHaveBeenCalled();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
+
+  it("discloses delayed email without presenting core records as unavailable", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "operational", maintenance_message: null, transactional_email: "degraded" }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    render(await ServiceBanner());
+    expect(screen.getByRole("status")).toHaveTextContent("Email delivery delayed");
+    expect(screen.getByRole("status")).toHaveTextContent("placement records remain available");
+  });
 });
