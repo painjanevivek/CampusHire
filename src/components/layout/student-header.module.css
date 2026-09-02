@@ -142,7 +142,12 @@
 
 @media (max-width: 480px) {
   .inner { width: min(100% - 20px, 1280px); gap: 8px; padding-inline: 14px; }
-  .brand strong { font-size: 0.92rem; }
+  .brand strong { display: none; }
+  .utilities { gap: 6px; }
+}
+
+@media (max-width: 360px) {
+  .helpControl { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

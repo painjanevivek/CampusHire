@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CircleHelp, Menu, X } from "lucide-react";
 import { NotificationCenter } from "@/features/engagement/notification-center";
@@ -23,6 +23,15 @@ const navigation: Array<{ href: string; label: WorkspaceSection }> = [
 
 export function StudentHeader({ active }: { active?: WorkspaceSection }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setMenuOpen(false);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   return (
     <header className={styles.header}>
@@ -57,6 +66,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
                 key={label}
                 href={href}
                 aria-current={selected ? "page" : undefined}
+                onClick={() => setMenuOpen(false)}
               >
                 {label}
               </Link>
@@ -67,7 +77,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
         <div className={styles.utilities}>
           <ActivationProgress />
           <NotificationCenter />
-          <Link className={styles.utilityControl} href="/help" aria-label="Open help center">
+          <Link className={`${styles.utilityControl} ${styles.helpControl}`} href="/help" aria-label="Open help center">
             <CircleHelp aria-hidden="true" />
           </Link>
           <SignOutButton destination="/sign-in" />

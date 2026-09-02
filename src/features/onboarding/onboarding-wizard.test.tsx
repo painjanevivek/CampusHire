@@ -21,6 +21,8 @@ vi.mock("next/navigation", () => ({
 
 describe("OnboardingWizard", () => {
   const profile = {
+    id: "profile-a",
+    institution_id: "institution-a",
     full_name: null,
     institution_name: null,
     prn: null,
@@ -38,6 +40,7 @@ describe("OnboardingWizard", () => {
   };
 
   beforeEach(() => {
+    window.sessionStorage.clear();
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
     pushMock.mockReset();
@@ -121,6 +124,67 @@ describe("OnboardingWizard", () => {
 
     expect(await screen.findByText(/changed in another session/)).toBeInTheDocument();
     expect(name).toHaveValue("Asha Patil");
-    expect(screen.getByRole("button", { name: "Reload saved profile" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Keep my entries on the latest version" })).toBeInTheDocument();
+  });
+
+  it("recovers unsaved entries after a refresh in the same browser tab", async () => {
+    const first = render(<OnboardingWizard />);
+    const name = await screen.findByLabelText("Full name");
+    fireEvent.change(name, { target: { value: "Asha Patil" } });
+    await waitFor(() => expect(window.sessionStorage.length).toBe(1));
+    first.unmount();
+
+    render(<OnboardingWizard />);
+
+    expect(await screen.findByText(/Recovered unsaved entries/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Full name")).toHaveValue("Asha Patil");
+  });
+
+  it("rebases only changed fields onto the latest server revision", async () => {
+    const latest = {
+      ...profile,
+      full_name: "Server Name",
+      department: "Information Technology",
+      revision: 2,
+    };
+    apiRequestMock.mockResolvedValueOnce(profile).mockResolvedValueOnce(latest);
+    csrfRequestMock
+      .mockRejectedValueOnce(new ApiError(409, "Conflict", "profile_revision_conflict"))
+      .mockResolvedValueOnce({ ...latest, full_name: "Asha Patil", revision: 3 });
+    render(<OnboardingWizard />);
+
+    const name = await screen.findByLabelText("Full name");
+    fireEvent.change(name, { target: { value: "Asha Patil" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Save and continue/ }).closest("form")!);
+    fireEvent.click(await screen.findByRole("button", { name: "Keep my entries on the latest version" }));
+    await screen.findByText(/Only the fields you changed/);
+    fireEvent.submit(screen.getByRole("button", { name: /Save and continue/ }).closest("form")!);
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(2));
+    const request = JSON.parse(csrfRequestMock.mock.calls[1][1].body as string);
+    expect(request).toMatchObject({
+      expected_revision: 2,
+      full_name: "Asha Patil",
+      department: "Information Technology",
+    });
+  });
+
+  it("does not mark newer edits as saved when an older request completes", async () => {
+    let resolveSave: ((value: unknown) => void) | undefined;
+    csrfRequestMock.mockImplementationOnce(() => new Promise((resolve) => {
+      resolveSave = resolve;
+    }));
+    render(<OnboardingWizard />);
+
+    const name = await screen.findByLabelText("Full name");
+    fireEvent.change(name, { target: { value: "Asha" } });
+    fireEvent.submit(screen.getByRole("button", { name: /Save and continue/ }).closest("form")!);
+    fireEvent.change(name, { target: { value: "Asha Patil" } });
+    resolveSave?.({ ...profile, full_name: "Asha", revision: 2 });
+
+    expect(await screen.findByText(/Newer edits are still waiting/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Full name")).toHaveValue("Asha Patil");
+    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    await waitFor(() => expect(window.sessionStorage.length).toBe(1));
   });
 });

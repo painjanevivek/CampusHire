@@ -27,6 +27,11 @@ import { Alert } from "@/components/ui/feedback";
 import { Input, Select } from "@/components/ui/form-controls";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import { trackProductEvent } from "@/lib/product-analytics";
+import {
+  clearOnboardingDraft,
+  readOnboardingDraft,
+  writeOnboardingDraft,
+} from "./onboarding-draft";
 import styles from "./onboarding-wizard.module.css";
 
 const steps = [
@@ -50,6 +55,8 @@ const roles = [
 ];
 
 type Profile = {
+  id: string;
+  institution_id: string | null;
   full_name: string | null;
   institution_name: string | null;
   prn: string | null;
@@ -68,6 +75,7 @@ type Profile = {
 
 type Draft = Record<string, string>;
 type SaveState = "idle" | "saving" | "saved" | "error" | "conflict";
+type NoticeTone = "info" | "warning" | "error";
 
 const emptyDraft: Draft = {
   full_name: "",
@@ -191,22 +199,34 @@ export function OnboardingWizard() {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const latestDraftRef = useRef(draft);
   const [dirty, setDirty] = useState(false);
+  const [dirtyFields, setDirtyFields] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<NoticeTone>("info");
+
+  useEffect(() => {
+    latestDraftRef.current = draft;
+  }, [draft]);
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
     try {
       const loaded = await apiRequest<Profile>("/profile", { cache: "no-store" });
+      const recovered = readOnboardingDraft(window.sessionStorage, loaded);
       setProfile(loaded);
-      setDraft(hydrateDraft(loaded));
-      setStep(Math.min(Math.max(loaded.onboarding_step - 1, 0), steps.length - 1));
+      setDraft({ ...hydrateDraft(loaded), ...(recovered?.values ?? {}) });
+      setDirty(Boolean(recovered));
+      setDirtyFields(recovered?.dirtyFields ?? []);
+      setStep(recovered?.step ?? Math.min(Math.max(loaded.onboarding_step - 1, 0), steps.length - 1));
       setSaveState("idle");
-      setMessage("");
+      setMessage(recovered ? "Recovered unsaved entries from this browser tab. Review them and continue when ready." : "");
+      setMessageTone("info");
     } catch {
       setMessage("We could not load your saved profile. Retry when your connection is available.");
+      setMessageTone("error");
     } finally {
       setLoading(false);
     }
@@ -220,6 +240,7 @@ export function OnboardingWizard() {
   const persist = useCallback(async (advance: boolean) => {
     if (!profile || savingRef.current) return false;
     savingRef.current = true;
+    const persistedDraft = draft;
     setSaveState("saving");
     const request = requestForStep(step, draft, profile.revision, advance);
     try {
@@ -228,23 +249,42 @@ export function OnboardingWizard() {
         body: JSON.stringify(request.body),
       });
       setProfile(saved);
+      if (latestDraftRef.current !== persistedDraft) {
+        setSaveState("idle");
+        setMessage("Newer edits are still waiting to be saved. Keep this page open while autosave catches up.");
+        setMessageTone("info");
+        return false;
+      }
       setDirty(false);
+      setDirtyFields([]);
+      clearOnboardingDraft(window.sessionStorage, saved);
       setSaveState("saved");
       setMessage("");
       return true;
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
         setSaveState("conflict");
-        setMessage("This profile changed in another session. Your current fields are still here; reload the saved version before continuing.");
+        setMessage("This profile changed in another session. Your entries are still here. Load the latest revision before saving them again.");
+        setMessageTone("warning");
       } else {
         setSaveState("error");
         setMessage("We could not save this step. Your fields remain here; try again.");
+        setMessageTone("error");
       }
       return false;
     } finally {
       savingRef.current = false;
     }
   }, [draft, profile, step]);
+
+  useEffect(() => {
+    if (!profile || !dirty || dirtyFields.length === 0) return;
+    writeOnboardingDraft(window.sessionStorage, profile, {
+      values: draft,
+      dirtyFields,
+      step,
+    });
+  }, [dirty, dirtyFields, draft, profile, step]);
 
   useEffect(() => {
     if (!dirty || loading || step === steps.length - 1) return;
@@ -256,8 +296,41 @@ export function OnboardingWizard() {
 
   function update(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setDraft((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setDirtyFields((current) => current.includes(event.target.name)
+      ? current
+      : [...current, event.target.name]);
     setDirty(true);
     setSaveState("idle");
+    setMessage("");
+  }
+
+  async function rebaseConflict() {
+    const preserved = Object.fromEntries(
+      dirtyFields.map((fieldName) => [fieldName, draft[fieldName]]),
+    );
+    setLoading(true);
+    try {
+      const latest = await apiRequest<Profile>("/profile", { cache: "no-store" });
+      const rebasedDraft = { ...hydrateDraft(latest), ...preserved };
+      setProfile(latest);
+      setDraft(rebasedDraft);
+      setDirty(dirtyFields.length > 0);
+      setSaveState("idle");
+      setMessage("The latest saved version is loaded. Only the fields you changed in this tab were kept.");
+      setMessageTone("info");
+      if (dirtyFields.length > 0) {
+        writeOnboardingDraft(window.sessionStorage, latest, {
+          values: rebasedDraft,
+          dirtyFields,
+          step,
+        });
+      }
+    } catch {
+      setMessage("We could not load the latest profile revision. Your entries remain in this tab; try again when your connection returns.");
+      setMessageTone("error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function save(event: FormEvent<HTMLFormElement>) {
@@ -273,7 +346,11 @@ export function OnboardingWizard() {
   }
 
   async function finishLater() {
-    if (!dirty || (formRef.current?.checkValidity() && await persist(false))) {
+    if (dirty && !formRef.current?.checkValidity()) {
+      formRef.current?.reportValidity();
+      return;
+    }
+    if (!dirty || await persist(false)) {
       router.push("/dashboard");
     }
   }
@@ -312,7 +389,7 @@ export function OnboardingWizard() {
               {saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved" : saveState === "conflict" ? "Needs review" : "Autosave ready"}
             </div>
           </div>
-          {message && <Alert tone={saveState === "conflict" ? "warning" : "error"}>{message}{saveState === "conflict" && <button type="button" className={styles.inlineAction} onClick={() => void loadProfile()}>Reload saved profile</button>}</Alert>}
+          {message && <Alert tone={messageTone}>{message}{saveState === "conflict" && <button type="button" className={styles.inlineAction} onClick={() => void rebaseConflict()}>Keep my entries on the latest version</button>}{!profile && <button type="button" className={styles.inlineAction} onClick={() => void loadProfile()}>Retry loading profile</button>}</Alert>}
           {loading ? (
             <div className={styles.loadingState} role="status"><LoaderCircle aria-hidden="true" /> Loading your saved profile…</div>
           ) : (

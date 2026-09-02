@@ -13,6 +13,7 @@ type Activation = DashboardApiResponse["activation"];
 export function ActivationProgress() {
   const [activation, setActivation] = useState<Activation>([]);
   const [unavailable, setUnavailable] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -35,8 +36,12 @@ export function ActivationProgress() {
   const current = activation.find((item) => item.status === "current");
 
   return (
-    <details className={styles.root}>
-      <summary aria-label="Open activation checklist">
+    <details
+      className={styles.root}
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary aria-label={`${open ? "Close" : "Open"} activation checklist`}>
         <ListChecks size={18} aria-hidden="true" />
         <span>{activation.length && complete === activation.length ? "Activated" : `${complete}/${activation.length || 6}`}</span>
       </summary>
