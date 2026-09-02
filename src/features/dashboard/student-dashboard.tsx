@@ -10,7 +10,7 @@ import {
   Clock3,
   FileSearch,
   MapPin,
-  Sparkles,
+  ListChecks,
   Target,
 } from "lucide-react";
 
@@ -29,7 +29,12 @@ export type DashboardState =
 
 export type StudentDashboardData = {
   studentName: string;
-  readiness: number;
+  readiness: {
+    policy_version: string;
+    completed_evidence: number;
+    total_evidence: number;
+    required_complete: boolean;
+  };
   state: DashboardState;
   nextAction: {
     title: string;
@@ -39,6 +44,8 @@ export type StudentDashboardData = {
     estimated_minutes: number;
     unlocks: string;
     completion_criteria: string;
+    policy_version: string;
+    source_facts: string[];
   };
   evidence: Array<{
     label: string;
@@ -119,7 +126,7 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             <Link
               className={styles.actionLink}
               href={data.nextAction.href}
-              onClick={() => trackProductEvent("application_start")}
+              onClick={() => trackProductEvent("readiness_action_open")}
             >
               Complete this action <ArrowRight size={18} aria-hidden="true" />
             </Link>
@@ -133,35 +140,23 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
               <div><dt>Complete when</dt><dd>{data.nextAction.completion_criteria}</dd></div>
               <div><dt>Expected effect</dt><dd>Unlocks {data.nextAction.unlocks.toLowerCase()}</dd></div>
             </dl>
+            <details className={styles.actionEvidence}>
+              <summary>Evidence behind this action</summary>
+              <p>Policy {data.nextAction.policy_version}</p>
+              <ul>{data.nextAction.source_facts.map((fact) => <li key={fact}>{fact}</li>)}</ul>
+            </details>
           </aside>
         </article>
 
         <article className={styles.readinessCard} data-dashboard-reveal>
           <div className={styles.readinessHeader}>
-            <p className={styles.kicker}>Profile readiness</p>
-            <Sparkles size={26} aria-hidden="true" />
+            <p className={styles.kicker}>Reviewed evidence</p>
+            <ListChecks size={26} aria-hidden="true" />
           </div>
-          <div className={styles.scoreRing}>
-            <svg
-            className={styles.readinessRing}
-            role="progressbar"
-            aria-label="Profile readiness score"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={data.readiness}
-            viewBox="0 0 120 120"
-          >
-              <circle className={styles.ringTrack} cx="60" cy="60" r="49" pathLength="100" />
-              <circle
-                className={styles.ringValue}
-                cx="60"
-                cy="60"
-                r="49"
-                pathLength="100"
-                style={{ strokeDasharray: `${Math.min(100, Math.max(0, data.readiness))} 100` }}
-              />
-            </svg>
-            <span><strong>{data.readiness}</strong><small>/ 100</small></span>
+          <div className={styles.evidenceSummary}>
+            <strong>{data.readiness.completed_evidence} of {data.readiness.total_evidence}</strong>
+            <span>evidence areas complete</span>
+            <small>{data.readiness.required_complete ? "Required identity and resume evidence are ready." : "Required evidence is still incomplete."}</small>
           </div>
           <dl className={styles.evidenceList}>
             {data.evidence.map((item) => (
@@ -178,6 +173,7 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
               </div>
             ))}
           </dl>
+          <p className={styles.policyVersion}>Readiness policy {data.readiness.policy_version}</p>
         </article>
       </section>
 

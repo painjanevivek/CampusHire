@@ -29,6 +29,7 @@ type Profile = {
   github_url: string | null;
   portfolio_url: string | null;
   readiness: number;
+  checklist: Array<{ key: string; label: string; complete: boolean; required: boolean }>;
 };
 
 export function ProfileWorkspace() {
@@ -49,9 +50,10 @@ export function ProfileWorkspace() {
     return () => window.clearTimeout(pending);
   }, [loadProfile]);
 
-  const readiness = profile?.readiness ?? 0;
   const educationCount = profile?.education.length ?? 0;
   const skillCount = profile?.skills.length ?? 0;
+  const requiredItems = profile?.checklist.filter((item) => item.required) ?? [];
+  const requiredCompleted = requiredItems.filter((item) => item.complete).length;
 
   return (
     <main id="main-content" className={styles.page}>
@@ -81,24 +83,19 @@ export function ProfileWorkspace() {
         <article className={styles.progressCard}>
           <div className={styles.progressHeading}>
             <div><p>Profile completion</p><span>Required and optional details are kept distinct.</span></div>
-            <strong>{profile ? `${readiness}%` : "—"}</strong>
+            <strong>{profile ? `${requiredCompleted} / ${requiredItems.length}` : "—"}</strong>
           </div>
-          <div
-            className={styles.progressTrack}
-            role="progressbar"
-            aria-label="Profile completion"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={profile ? readiness : undefined}
-          >
-            <span style={{ width: `${readiness}%` }} />
-          </div>
+          <p className={styles.progressNote} role="status">{requiredCompleted === requiredItems.length && requiredItems.length > 0 ? "All required profile details are complete." : `${requiredItems.length - requiredCompleted} required detail ${requiredItems.length - requiredCompleted === 1 ? "area" : "areas"} remaining.`}</p>
+          <details>
+            <summary>Review required profile evidence</summary>
+            <ul>{requiredItems.map((item) => <li key={item.key}>{item.complete ? "Complete" : "Missing"}: {item.label}</li>)}</ul>
+          </details>
           <dl className={styles.profileFacts}>
             <div><GraduationCap aria-hidden="true" /><dt>Education</dt><dd>{educationCount} record{educationCount === 1 ? "" : "s"}</dd></div>
             <div><BookOpen aria-hidden="true" /><dt>Target role</dt><dd>{profile?.target_roles[0] ?? "Not selected"}</dd></div>
             <div><ShieldCheck aria-hidden="true" /><dt>Reviewed skills</dt><dd>{skillCount}</dd></div>
           </dl>
-          <p className={styles.progressNote}>Skills and portfolio links stay optional unless a published role explicitly requires them.</p>
+          <p className={styles.progressNote}>Skills and portfolio links stay optional unless a published role explicitly requires them. This is a checklist, not an employability score.</p>
         </article>
       </section>
 

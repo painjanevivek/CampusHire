@@ -53,11 +53,19 @@ describe("StudentRoadmap", () => {
   beforeEach(() => {
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
-    apiRequestMock.mockImplementation((path: string) =>
-      path === "/roadmaps/templates"
-        ? Promise.resolve([])
-        : Promise.resolve(roadmap),
-    );
+    apiRequestMock.mockImplementation((path: string) => path === "/roadmaps/availability"
+      ? Promise.resolve({ status: "available", reason: "", guidance_provider_status: "available", templates: [] })
+      : Promise.resolve(roadmap));
+  });
+
+  it("shows saved evidence progressively and permits an explicit correction", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    csrfRequestMock.mockResolvedValue({ ...roadmap, completed_count: 0, nodes: roadmap.nodes.map((node) => node.key === "python" ? { ...node, state: "next", evidence: {} } : node) });
+    render(<StudentRoadmap />);
+
+    expect(await screen.findByText("Saved completion evidence")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Correct completion" }));
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/roadmaps/nodes/python", expect.objectContaining({ body: expect.stringContaining('"completed":false') })));
   });
 
   it("preserves the page heading while roadmap data is loading", () => {

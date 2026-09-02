@@ -20,17 +20,17 @@
 .reason dl div { padding: 8px 0; border-top: 1px solid var(--line); }
 .reason dt { color: var(--ink-muted); font-size: .66rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .reason dd { margin: 2px 0 0; color: var(--ink); font-size: .76rem; }
+.actionEvidence { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; font-size: .75rem; }
+.actionEvidence summary { cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
+.actionEvidence ul { margin: 8px 0 0; padding-left: 18px; }
 .readinessCard { padding: 26px; }
 .readinessHeader { display: flex; justify-content: space-between; }
 .readinessHeader svg { color: var(--brand-blue); }
-.scoreRing { width: 150px; margin: 12px auto 24px; position: relative; }
-.readinessRing { display: block; width: 100%; transform: rotate(-90deg); }
-.ringTrack, .ringValue { fill: none; stroke-width: 10; }
-.ringTrack { stroke: var(--line); }
-.ringValue { stroke: var(--verified); stroke-linecap: round; }
-.scoreRing > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
-.scoreRing strong { font-size: 1.8rem; }
-.scoreRing small { color: var(--ink-muted); }
+.evidenceSummary { display: grid; gap: 3px; margin: 18px 0 22px; padding: 18px; border-left: 4px solid var(--verified); background: var(--brand-blue-soft); }
+.evidenceSummary strong { font-size: 1.7rem; }
+.evidenceSummary span { font-weight: 750; }
+.evidenceSummary small, .policyVersion { color: var(--ink-muted); }
+.policyVersion { margin: 14px 0 0; font-size: .68rem; }
 .evidenceList { margin: 0; }
 .evidenceList > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .78rem; }
 .evidenceList dt { color: var(--ink-muted); }

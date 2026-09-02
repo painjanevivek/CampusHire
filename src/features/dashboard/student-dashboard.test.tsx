@@ -8,7 +8,7 @@ import {
 
 const readyDashboard: StudentDashboardData = {
   studentName: "Aarav",
-  readiness: 83,
+  readiness: { policy_version: "readiness-v2", completed_evidence: 3, total_evidence: 4, required_complete: true },
   state: "ready",
   nextAction: {
     title: "Add deployment evidence",
@@ -18,6 +18,8 @@ const readyDashboard: StudentDashboardData = {
     estimated_minutes: 15,
     unlocks: "Verified project evidence",
     completion_criteria: "A live deployment link is saved and verified.",
+    policy_version: "readiness-v2",
+    source_facts: ["reviewed_resume:available", "roadmap:deployment_pending"],
   },
   evidence: [
     { label: "Education", value: "Verified", status: "verified" },
@@ -48,12 +50,9 @@ describe("StudentDashboard", () => {
     expect(screen.getByText("15 minutes")).toBeInTheDocument();
     expect(screen.getByText("A live deployment link is saved and verified.")).toBeInTheDocument();
     expect(screen.getByText("Unlocks verified project evidence")).toBeInTheDocument();
-    const readiness = screen.getByRole("progressbar", { name: "Profile readiness score" });
-    expect(readiness).toHaveAttribute(
-      "aria-valuenow",
-      "83",
-    );
-    expect(readiness.tagName).toBe("svg");
+    expect(screen.getByText("3 of 4")).toBeInTheDocument();
+    expect(screen.getByText("Readiness policy readiness-v2")).toBeInTheDocument();
+    expect(screen.getByText("Evidence behind this action")).toBeInTheDocument();
 
     const opportunity = screen.getByRole("article", {
       name: "AI Platform Intern at Northstar Labs",

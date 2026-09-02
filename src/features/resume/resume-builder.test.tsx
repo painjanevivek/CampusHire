@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ResumeBuilder } from "./resume-builder";
+import { ApiError } from "@/lib/api/client";
 
 const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),
@@ -38,6 +39,10 @@ const version = {
   page_count: 1,
   created_at: "2026-08-24T00:00:00Z",
   review_completed_at: null,
+  review_revision: 4,
+  evidence_digest: "b".repeat(64),
+  generator_version: null,
+  processing_stage: "review",
   safe_error_code: null,
   extracted_data: {
     proposed: { full_name: "Asha Patil", email: "asha@example.edu" },
@@ -85,7 +90,7 @@ describe("ResumeBuilder", () => {
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
       "/resumes/resume-1/suggestion-review",
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ method: "POST", body: expect.stringContaining('"expected_revision":4') }),
     ));
     expect(await screen.findByText("Decision recorded: edited.")).toBeInTheDocument();
   });
@@ -110,7 +115,21 @@ describe("ResumeBuilder", () => {
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
       "/resumes/resume-1/review",
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ method: "POST", body: expect.stringContaining('"expected_revision":4') }),
     ));
+  });
+
+  it("reloads newer review decisions instead of overwriting another tab", async () => {
+    csrfRequestMock.mockRejectedValueOnce(new ApiError(409, "Review changed", "resume_review_revision_conflict"));
+    apiRequestMock.mockResolvedValueOnce(version).mockResolvedValueOnce({ ...version, review_revision: 5 });
+    render(<ResumeBuilder />);
+
+    await screen.findByRole("combobox", { name: "Decision for full name" });
+    fireEvent.change(screen.getByRole("combobox", { name: "Decision for full name" }), { target: { value: "accept" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "Decision for email" }), { target: { value: "reject" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save extraction decisions" }));
+
+    expect(await screen.findByText(/newer review was saved in another tab/i)).toBeInTheDocument();
+    expect(apiRequestMock).toHaveBeenCalledWith("/resumes/resume-1", { cache: "no-store" });
   });
 });

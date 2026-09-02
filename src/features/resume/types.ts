@@ -1,3 +1,15 @@
+export type ResumePipelineStage =
+  | "quarantined"
+  | "scanning"
+  | "scan_retry"
+  | "parsing"
+  | "parser_retry"
+  | "review"
+  | "generated"
+  | "ready"
+  | "failed"
+  | "cancelled";
+
 export type ResumeJob = {
   id: string;
   status: "queued" | "processing" | "cancellation_requested" | "completed" | "failed" | "cancelled";
@@ -9,6 +21,7 @@ export type ResumeJob = {
   started_at: string | null;
   finished_at: string | null;
   duration_ms: number | null;
+  stage: ResumePipelineStage;
 };
 
 export type ResumeSuggestion = {
@@ -31,12 +44,18 @@ export type ResumeVersion = {
   page_count: number | null;
   created_at: string;
   review_completed_at: string | null;
+  review_revision: number;
+  evidence_digest: string;
+  generator_version: string | null;
+  processing_stage: ResumePipelineStage;
   safe_error_code: string | null;
   locked_by_application: boolean;
   extracted_data: {
     proposed?: Record<string, string | string[]>;
     decisions?: Record<string, { action: "accept" | "edit" | "reject"; value: unknown }>;
     accepted?: Record<string, unknown>;
+    evidence_digest?: string;
+    generator_version?: string;
   };
   job: ResumeJob | null;
   suggestions: ResumeSuggestion[];

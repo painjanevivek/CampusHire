@@ -661,6 +661,28 @@ export type DashboardOpportunity = {
 };
 
 /**
+ * DashboardReadinessSummary
+ */
+export type DashboardReadinessSummary = {
+    /**
+     * Completed Evidence
+     */
+    completed_evidence: number;
+    /**
+     * Policy Version
+     */
+    policy_version: string;
+    /**
+     * Required Complete
+     */
+    required_complete: boolean;
+    /**
+     * Total Evidence
+     */
+    total_evidence: number;
+};
+
+/**
  * DashboardResponse
  */
 export type DashboardResponse = {
@@ -677,10 +699,7 @@ export type DashboardResponse = {
      * Opportunities
      */
     opportunities: Array<DashboardOpportunity>;
-    /**
-     * Readiness
-     */
-    readiness: number;
+    readiness: DashboardReadinessSummary;
     roadmap: RoadmapResponse | null;
     /**
      * State
@@ -1170,6 +1189,10 @@ export type ExtractionReviewRequest = {
      * Decisions
      */
     decisions: Array<ExtractionFieldDecision>;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
 };
 
 /**
@@ -2362,6 +2385,10 @@ export type ResumeJobResponse = {
      */
     safe_error_code: string | null;
     /**
+     * Stage
+     */
+    stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    /**
      * Started At
      */
     started_at: string | null;
@@ -2444,11 +2471,19 @@ export type ResumeVersionResponse = {
      */
     created_at: string;
     /**
+     * Evidence Digest
+     */
+    evidence_digest: string;
+    /**
      * Extracted Data
      */
     extracted_data?: {
         [key: string]: unknown;
     };
+    /**
+     * Generator Version
+     */
+    generator_version: string | null;
     /**
      * Id
      */
@@ -2467,9 +2502,17 @@ export type ResumeVersionResponse = {
      */
     page_count: number | null;
     /**
+     * Processing Stage
+     */
+    processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    /**
      * Review Completed At
      */
     review_completed_at: string | null;
+    /**
+     * Review Revision
+     */
+    review_revision: number;
     /**
      * Safe Error Code
      */
@@ -3250,6 +3293,10 @@ export type SuggestionDecisionRequest = {
      * Edited Text
      */
     edited_text?: string | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
 };
 
 /**
@@ -3260,6 +3307,10 @@ export type SuggestionReviewBatch = {
      * Decisions
      */
     decisions: Array<SuggestionBatchItem>;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
 };
 
 /**

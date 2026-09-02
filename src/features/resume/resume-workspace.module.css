@@ -210,6 +210,16 @@
 .versionMain span, .versionMain small { font-size: .78rem; }
 .versionMain p { margin: 5px 0 0; font-size: .875rem; }
 .versionMain small { display: block; margin-top: 6px; color: var(--status-danger); }
+.versionMain .pipelineNow { color: var(--ink); font-size: .8rem; }
+.pipelineDetails { margin-top: 9px; font-size: .76rem; }
+.pipelineDetails summary { width: fit-content; cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
+.pipelineDetails ol { display: flex; flex-wrap: wrap; gap: 6px; margin: 9px 0; padding: 0; list-style: none; }
+.pipelineDetails li { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-muted); }
+.pipelineDetails li[data-state="complete"] { border-color: var(--verified); color: var(--verified); }
+.pipelineDetails li[data-state="current"] { border-color: var(--brand-blue); background: var(--brand-blue-soft); color: var(--brand-blue-dark); font-weight: 750; }
+.pipelineDetails dl { margin: 8px 0 0; }
+.pipelineDetails dl div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; padding: 3px 0; }
+.pipelineDetails dd { margin: 0; overflow-wrap: anywhere; }
 .versionActions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 .versionActions a, .versionActions button { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: .82rem; font-weight: 700; text-decoration: none; cursor: pointer; }
 .locked { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); font-size: .75rem; }

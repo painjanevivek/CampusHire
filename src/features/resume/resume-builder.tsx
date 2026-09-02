@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
-import { apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
+import { ApiError, apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
 import type { ResumeSuggestion, ResumeVersion } from "./types";
 import styles from "./resume-builder.module.css";
 
@@ -66,6 +66,13 @@ export function ResumeBuilder() {
     setSuggestionDecisions({});
   }, []);
 
+  const reconcileConflict = useCallback(async (selected: ResumeVersion) => {
+    const latest = await apiRequest<ResumeVersion>(`/resumes/${selected.id}`, { cache: "no-store" });
+    selectVersion(latest);
+    setState("idle");
+    setMessage("A newer review was saved in another tab. The latest decisions are now loaded; check them before continuing.");
+  }, [selectVersion]);
+
   useEffect(() => {
     let active = true;
     async function load() {
@@ -105,6 +112,7 @@ export function ResumeBuilder() {
       const updated = await csrfRequest<ResumeVersion>(`/resumes/${version.id}/review`, {
         method: "POST",
         body: JSON.stringify({
+          expected_revision: version.review_revision,
           decisions: Object.entries(decisions).map(([field_path, decision]) => ({
             field_path,
             action: decision.action,
@@ -115,7 +123,11 @@ export function ResumeBuilder() {
       selectVersion(updated);
       setMessage("Extraction decisions saved. Only accepted or edited fields can enter the reviewed version.");
       setState("idle");
-    } catch {
+    } catch (error) {
+      if (error instanceof ApiError && error.code === "resume_review_revision_conflict") {
+        try { await reconcileConflict(version); } catch { setState("error"); setMessage("A newer review exists, but it could not be loaded. Refresh before editing again."); }
+        return;
+      }
       setState("error");
       setMessage("Those extraction decisions could not be saved. No proposed field was accepted.");
     }
@@ -143,13 +155,17 @@ export function ResumeBuilder() {
         `/resumes/${version.id}/suggestion-review`,
         {
           method: "POST",
-          body: JSON.stringify({ decisions: staged.map(([suggestion_id, decision]) => ({ suggestion_id, ...decision })) }),
+          body: JSON.stringify({ expected_revision: version.review_revision, decisions: staged.map(([suggestion_id, decision]) => ({ suggestion_id, ...decision })) }),
         },
       );
       selectVersion(updated);
       setMessage("Suggestion decisions saved together. Rejected wording remains unchanged.");
       setState("idle");
-    } catch {
+    } catch (error) {
+      if (error instanceof ApiError && error.code === "resume_review_revision_conflict") {
+        try { await reconcileConflict(version); } catch { setState("error"); setMessage("A newer review exists, but it could not be loaded. Refresh before editing again."); }
+        return;
+      }
       setState("error");
       setMessage("That wording may add a claim your resume does not support. Edit it to match your resume or reject it.");
     }
@@ -223,6 +239,7 @@ export function ResumeBuilder() {
       </header>
 
       {message && <Alert tone={state === "error" ? "error" : "success"}>{message}</Alert>}
+      {generated ? <details className={styles.generatedEvidence}><summary>Generated version evidence</summary><dl><div><dt>Generator</dt><dd>{generated.generator_version ?? "CampusHire generator"}</dd></div><div><dt>Evidence digest</dt><dd><code>{generated.evidence_digest}</code></dd></div></dl><p>The digest identifies the reviewed content used for this PDF; it is not a credential verification.</p></details> : null}
 
       <div className={styles.grid}>
         <section className={styles.paper} aria-label="Resume preview">

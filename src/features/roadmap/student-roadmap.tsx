@@ -104,6 +104,24 @@ export function StudentRoadmap() {
     }
   }
 
+  async function reopen(node: RoadmapNode) {
+    if (!window.confirm(`Mark ${node.title} as needing evidence again? Later milestones remain recorded.`)) return;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      setRoadmap(await csrfRequest<Roadmap>(`/roadmaps/nodes/${node.key}`, {
+        method: "POST",
+        body: JSON.stringify({ completed: false, evidence_label: null, evidence_reference: null }),
+      }));
+      setNotice(`${node.title} reopened. Add new completion details when the evidence is ready.`);
+    } catch {
+      setError("That milestone could not be reopened. Saved progress is unchanged.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading)
     return (
       <main id="main-content" className={styles.state} aria-busy="true">
@@ -126,7 +144,7 @@ export function StudentRoadmap() {
             </span>
           </div>
           <div className={styles.score}>
-            <strong>08</strong>
+            <strong>{String(templates.length).padStart(2, "0")}</strong>
             <span>
               reviewed
               <br />
@@ -242,6 +260,18 @@ export function StudentRoadmap() {
                   ? "NEXT MILESTONE"
                   : `${node.prerequisites.length} EARLIER STEPS`}
             </span>
+            {node.state === "completed" && Object.keys(node.evidence).length > 0 ? (
+              <details className={styles.savedEvidence}>
+                <summary>Saved completion evidence</summary>
+                {typeof node.evidence.label === "string" ? <p>{node.evidence.label}</p> : null}
+                {typeof node.evidence.reference === "string" ? <Link href={node.evidence.reference}>Open linked CampusHire evidence</Link> : null}
+              </details>
+            ) : null}
+            {node.state === "completed" ? (
+              <button type="button" className={styles.secondaryAction} disabled={busy} onClick={() => void reopen(node)}>
+                Correct completion
+              </button>
+            ) : null}
             {node.state === "next" && (
               <button
                 type="button"

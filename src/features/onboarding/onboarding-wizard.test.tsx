@@ -37,6 +37,11 @@ describe("OnboardingWizard", () => {
     revision: 1,
     readiness: 0,
     is_complete: false,
+    checklist: [
+      { key: "identity", label: "Institution identity", complete: false, required: true },
+      { key: "education", label: "Education", complete: false, required: true },
+      { key: "target_role", label: "Target role", complete: false, required: true },
+    ],
   };
 
   beforeEach(() => {

@@ -14,7 +14,7 @@ describe("ConnectedStudentDashboard", () => {
     apiRequestMock.mockReset();
     apiRequestMock.mockResolvedValue({
       student_name: "Asha",
-      readiness: 80,
+      readiness: { policy_version: "readiness-v1", completed_evidence: 3, total_evidence: 4, required_complete: true },
       state: "ready",
       next_action: {
         key: "roadmap",

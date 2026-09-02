@@ -51,7 +51,12 @@ export type NotificationPage = {
 
 export type DashboardApiResponse = {
   student_name: string;
-  readiness: number;
+  readiness: {
+    policy_version: string;
+    completed_evidence: number;
+    total_evidence: number;
+    required_complete: boolean;
+  };
   state:
     "ready" | "incomplete" | "processing" | "manual-review" | "ai-unavailable";
   next_action: {

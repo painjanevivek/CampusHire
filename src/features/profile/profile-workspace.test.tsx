@@ -34,6 +34,11 @@ describe("ProfileWorkspace session controls", () => {
           github_url: null,
           portfolio_url: null,
           readiness: 60,
+          checklist: [
+            { key: "identity", label: "Institution identity", complete: true, required: true },
+            { key: "education", label: "Education", complete: false, required: true },
+            { key: "skills", label: "Skills", complete: false, required: false },
+          ],
         });
       }
       return Promise.resolve([{
@@ -118,6 +123,10 @@ describe("ProfileWorkspace session controls", () => {
           github_url: null,
           portfolio_url: null,
           readiness: 60,
+          checklist: [
+            { key: "identity", label: "Institution identity", complete: true, required: true },
+            { key: "education", label: "Education", complete: false, required: true },
+          ],
         });
       }
       return Promise.resolve([]);

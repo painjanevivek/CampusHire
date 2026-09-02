@@ -71,6 +71,7 @@ type Profile = {
   revision: number;
   readiness: number;
   is_complete: boolean;
+  checklist: Array<{ key: string; label: string; complete: boolean; required: boolean }>;
 };
 
 type Draft = Record<string, string>;
@@ -399,7 +400,7 @@ export function OnboardingWizard() {
               {step === 2 && <><Input id="skills" label="Skills (optional)" hint="Comma-separated, such as Python, SQL, React." {...field("skills")} /><Select id="proficiency" label="Current comfort" {...field("proficiency")}><option value="learning">Learning</option><option value="comfortable">Comfortable</option><option value="strong">Strong</option></Select></>}
               {step === 3 && <Select id="target_roles" label="Primary target role" required {...field("target_roles")}><option value="">Select a role…</option>{roles.map((role) => <option key={role}>{role}</option>)}</Select>}
               {step === 4 && <><Input id="github_url" type="url" label="GitHub profile (optional)" placeholder="https://github.com/username" hint="Use a complete GitHub profile URL." {...field("github_url")} /><Input id="portfolio_url" type="url" label="Portfolio (optional)" placeholder="https://yourname.dev" {...field("portfolio_url")} /><Alert><GitBranch size={18} aria-hidden="true" /> Links stay optional unless a published role clearly requires one.</Alert></>}
-              {step === 5 && <div className={styles.reviewList}><div><Check aria-hidden="true" /><span><strong>Required profile details</strong><small>Your identity, education, and target role are needed to finish.</small></span></div><div><Sparkles aria-hidden="true" /><span><strong>{profile?.readiness ?? 0}% profile ready</strong><small>Skills, links, and a reviewed PDF are helpful, but not secretly required.</small></span></div></div>}
+              {step === 5 && <div className={styles.reviewList}><div><Check aria-hidden="true" /><span><strong>Required profile details</strong><small>Your identity, education, and target role are needed to finish.</small></span></div><div><Sparkles aria-hidden="true" /><span><strong>{profile?.checklist.filter((item) => item.required && item.complete).length ?? 0} of {profile?.checklist.filter((item) => item.required).length ?? 0} required areas complete</strong><small>Skills, links, and a reviewed PDF are helpful, but not secretly required. This is not an employability score.</small></span></div></div>}
               <div className={styles.actions}>{step > 0 && <Button type="button" variant="quiet" onClick={() => setStep(step - 1)}><ArrowLeft size={18} aria-hidden="true" /> Back</Button>}<Button type="submit" disabled={saveState === "saving"}>{step === steps.length - 1 ? "Finish profile" : "Save and continue"}<ArrowRight size={18} aria-hidden="true" /></Button></div>
             </form>
           )}

@@ -21,7 +21,7 @@ import {
 
 import { Alert } from "@/components/ui/feedback";
 import { apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
-import type { ResumeUpload, ResumeVersion } from "./types";
+import type { ResumePipelineStage, ResumeUpload, ResumeVersion } from "./types";
 import styles from "./resume-workspace.module.css";
 
 const statusCopy: Record<ResumeVersion["status"], string> = {
@@ -45,6 +45,34 @@ const failureCopy: Record<string, string> = {
   resume_job_cancelled: "Processing was cancelled by an authorized placement operator.",
 };
 
+const pipelineStages: Array<{ key: ResumePipelineStage; label: string }> = [
+  { key: "quarantined", label: "Stored privately" },
+  { key: "scanning", label: "Malware scan" },
+  { key: "parsing", label: "Isolated extraction" },
+  { key: "review", label: "Student review" },
+  { key: "ready", label: "Ready for use" },
+];
+
+const pipelineCopy: Record<ResumePipelineStage, string> = {
+  quarantined: "Stored privately and waiting for the malware scanner.",
+  scanning: "The malware scanner is checking the quarantined file.",
+  scan_retry: "The scanner is unavailable; the durable job will retry safely.",
+  parsing: "A network-isolated parser is extracting proposed details.",
+  parser_retry: "Extraction will retry; the private original remains unchanged.",
+  review: "Extraction is complete and waiting for your decisions.",
+  generated: "A reviewed CampusHire PDF was generated.",
+  ready: "The reviewed upload is ready for authorized use.",
+  failed: "Processing stopped safely. No unreviewed detail was accepted.",
+  cancelled: "Processing was cancelled; the file was not accepted for use.",
+};
+
+function progressStage(stage: ResumePipelineStage): ResumePipelineStage {
+  if (stage === "scan_retry") return "scanning";
+  if (stage === "parser_retry") return "parsing";
+  if (stage === "generated") return "ready";
+  return stage;
+}
+
 function mergeVersion(current: ResumeVersion[], version: ResumeVersion) {
   const others = current.filter((item) => item.id !== version.id);
   return [version, ...others].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
@@ -60,6 +88,9 @@ export function ResumeWorkspace() {
   const [state, setState] = useState<"loading" | "idle" | "uploading" | "complete" | "error">("loading");
   const [message, setMessage] = useState("");
   const [compareIds, setCompareIds] = useState<[string, string]>(["", ""]);
+  const [pollCycle, setPollCycle] = useState(0);
+  const [pollFailures, setPollFailures] = useState(0);
+  const [processingNotice, setProcessingNotice] = useState("");
 
   const loadVersions = useCallback(async () => {
     try {
@@ -86,19 +117,25 @@ export function ResumeWorkspace() {
 
   useEffect(() => {
     if (pendingIds.length === 0) return;
+    let active = true;
     const timeout = window.setTimeout(async () => {
       const settled = await Promise.allSettled(
         pendingIds.map((id) => apiRequest<ResumeVersion>(`/resumes/${id}`, { cache: "no-store" })),
       );
+      if (!active) return;
+      const failed = settled.some((result) => result.status === "rejected");
       setVersions((current) => settled.reduce(
         (next, result) => result.status === "fulfilled" && isResumeVersion(result.value)
           ? mergeVersion(next, result.value)
           : next,
         current,
       ));
-    }, 1_500);
-    return () => window.clearTimeout(timeout);
-  }, [pendingIds]);
+      setPollFailures((count) => failed ? Math.min(count + 1, 4) : 0);
+      setProcessingNotice(failed ? "Processing is still running. Status refresh will retry automatically; you can safely leave this page." : "");
+      setPollCycle((cycle) => cycle + 1);
+    }, Math.min(1_500 * (2 ** pollFailures), 12_000));
+    return () => { active = false; window.clearTimeout(timeout); };
+  }, [pendingIds, pollCycle, pollFailures]);
 
   async function upload(event: FormEvent) {
     event.preventDefault();
@@ -205,6 +242,7 @@ export function ResumeWorkspace() {
           <div><p className={styles.eyebrow}>Saved history</p><h2 id="versions-title">Resume versions</h2></div>
           <button type="button" className={styles.refresh} onClick={() => void loadVersions()}><RefreshCw size={15} aria-hidden="true" /> Refresh</button>
         </div>
+        {processingNotice ? <Alert tone="warning">{processingNotice}</Alert> : null}
         {state === "loading" && <div className={styles.emptyState} role="status"><LoaderCircle className={styles.spinner} aria-hidden="true" /> Loading saved versions…</div>}
         {state !== "loading" && versions.length === 0 && <div className={styles.emptyState}><FileText aria-hidden="true" /><strong>No resume versions yet</strong><span>Your first validated PDF will appear here with its review state.</span></div>}
         <div className={styles.versionList}>{versions.map((version) => (
@@ -213,7 +251,19 @@ export function ResumeWorkspace() {
             <div className={styles.versionMain}>
               <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Uploaded PDF"}</span></div>
               <p>{statusCopy[version.status]}</p>
+              <p className={styles.pipelineNow}>{pipelineCopy[version.processing_stage]}</p>
               {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No resume details were accepted."}</small>}
+              <details className={styles.pipelineDetails}>
+                <summary>Processing and evidence details</summary>
+                <ol>{pipelineStages.map((stage) => {
+                  const currentIndex = pipelineStages.findIndex((item) => item.key === progressStage(version.processing_stage));
+                  const stageIndex = pipelineStages.findIndex((item) => item.key === stage.key);
+                  const terminal = ["generated", "ready"].includes(version.processing_stage);
+                  const complete = terminal || (currentIndex >= 0 && stageIndex < currentIndex);
+                  return <li key={stage.key} data-state={stage.key === progressStage(version.processing_stage) ? "current" : complete ? "complete" : "upcoming"}>{stage.label}</li>;
+                })}</ol>
+                <dl><div><dt>Evidence digest</dt><dd><code>{version.evidence_digest}</code></dd></div>{version.generator_version ? <div><dt>Generator</dt><dd>{version.generator_version}</dd></div> : null}<div><dt>Review revision</dt><dd>{version.review_revision}</dd></div></dl>
+              </details>
             </div>
             <div className={styles.versionActions}>
               {version.status === "review_required" && <Link href={`/resume/builder?version=${version.id}`}>Review changes <ArrowRight size={15} aria-hidden="true" /></Link>}
