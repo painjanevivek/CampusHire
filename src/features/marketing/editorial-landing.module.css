@@ -1,8 +1,11 @@
 .page { min-height: 100svh; background: white; color: var(--ink); }
 .header { min-height: 64px; border-bottom: 1px solid var(--line); background: white; }
 .headerInner { width: min(100% - 40px, 1280px); min-height: 64px; margin: auto; display: flex; align-items: stretch; gap: 28px; }
+.brandGroup { display: flex; align-items: center; gap: 14px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: var(--brand-blue); color: white; font-weight: 800; }
+.docsLink { min-height: 32px; display: inline-flex; align-items: center; border-left: 1px solid var(--line); padding-left: 14px; color: var(--brand-blue-dark); font-size: .82rem; font-weight: 760; text-decoration: none; }
+.docsLink:hover { text-decoration: underline; text-underline-offset: 4px; }
 .header nav { display: flex; align-items: stretch; }
 .header nav a { min-height: 64px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-muted); font-size: .84rem; font-weight: 650; text-decoration: none; }
 .headerActions { margin-inline-start: auto; display: flex; align-items: center; gap: 4px; }

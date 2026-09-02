@@ -10,6 +10,7 @@ describe("EditorialLanding", () => {
     expect(screen.getByRole("heading", { name: /accept your invitation/i })).toBeInTheDocument();
     expect(screen.getByText(/private to verified members/i)).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Product preview" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Docs" })[0]).toHaveAttribute("href", "/docs");
   });
 
   it("keeps one profile action and separates eligibility from match", () => {
@@ -19,5 +20,6 @@ describe("EditorialLanding", () => {
     expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
     expect(screen.getByText("A match score never decides whether you can apply.")).toBeInTheDocument();
+    expect(document.querySelectorAll("[data-reveal-group]")).toHaveLength(5);
   });
 });
