@@ -22,7 +22,7 @@ export function EditorialLanding() {
       <main id="main-content">
         <section className={styles.hero} aria-labelledby="landing-title">
           <div><p className={styles.eyebrow}>Campus hiring verified by your institution</p><h1 id="landing-title">Accept your invitation. Apply with confidence.</h1><p>CampusHire gives you one clear next step, explains eligibility rule by rule, and saves the details and policy used for every application.</p>
-            <div className={styles.heroActions}><Link href="/sign-up">Accept invitation <ArrowRight size={18} aria-hidden="true" /></Link><Link href="/sign-in">I already have an account</Link></div>
+            <div className={styles.heroActions}><Link href="/sign-up">How invitations work <ArrowRight size={18} aria-hidden="true" /></Link><Link href="/sign-in">I already have an account</Link></div>
             <small><LockKeyhole size={15} aria-hidden="true" /> Opportunities stay private to verified members of participating colleges.</small>
           </div>
           <aside aria-label="Activation expectations"><p>Before you begin</p><strong>About 12 minutes</strong><span>Have your enrolment details, academic record, target role, and optional PDF resume ready.</span><dl><div><dt>Required</dt><dd>Identity · education · target role</dd></div><div><dt>Unlocks</dt><dd>Eligibility · roadmaps · applications</dd></div></dl></aside>

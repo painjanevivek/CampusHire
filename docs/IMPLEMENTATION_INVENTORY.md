@@ -4,7 +4,7 @@ This inventory records the implementation state through Phase 6. It distinguishe
 
 | Surface | Current disposition | Owner phase |
 | --- | --- | --- |
-| Landing, privacy, sign-in, sign-up, offline and global error states | Reusable production UI; authentication forms use the credentialed API client | 1 and 6 |
+| Landing, privacy, sign-in, invitation guidance/activation, offline and global error states | Reusable production UI; invitation activation and sign-in use the credentialed API client, while public account creation remains unavailable | 1, 6 and current enrollment hardening |
 | Student workspace and navigation | Shared shell with Readiness, Opportunities, Resume, Roadmap and Profile routes | 1 |
 | Dashboard | API-backed single next action with versioned rationale, component readiness and eligible opportunities | Complete in 5 |
 | Onboarding/profile | Resumable API-backed wizard with section autosave, revision-safe conflict recovery and minimum/optional disclosure | Complete in 2 |

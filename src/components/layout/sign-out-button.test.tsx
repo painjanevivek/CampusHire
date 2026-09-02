@@ -52,9 +52,11 @@ describe("SignOutButton", () => {
     render(<SignOutButton destination="/admin/sign-in" />);
     fireEvent.click(screen.getByRole("button", { name: "Sign out" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(
       "Sign out failed. Your session is still active.",
     );
+    expect(alert).not.toHaveClass("srOnly");
     expect(window.sessionStorage.getItem("campushire.private")).toBe("keep-until-revoked");
     expect(replaceMock).not.toHaveBeenCalled();
     expect(refreshMock).not.toHaveBeenCalled();

@@ -28,5 +28,9 @@ describe("AdminWorkspace", () => {
       "href",
       "/admin/operations",
     );
+    expect(screen.queryByRole("button", { name: "Open notifications" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Open administrator account" }))
+      .not.toBeInTheDocument();
   });
 });

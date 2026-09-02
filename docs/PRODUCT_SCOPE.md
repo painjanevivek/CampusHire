@@ -10,7 +10,7 @@ CampusHire AI helps students become placement-ready and helps a college Training
 
 A student can:
 
-- Create an account with email and password.
+- Activate a verified institution invitation and create a password.
 - Complete a resumable profile questionnaire.
 - Add education, skills, preferred roles, and optional professional links.
 - Upload, review, improve, version, and download a resume.
@@ -31,7 +31,7 @@ A TNP administrator can:
 
 ## MVP capabilities
 
-- Email/password authentication with revocable secure sessions; no OTP.
+- Invitation-based email/password activation with revocable secure sessions, administrator authenticator MFA, and recovery codes; no phone OTP.
 - Student and administrator role separation.
 - Progressive onboarding with autosave and clear completion guidance.
 - Optional GitHub and portfolio links shown on profiles and generated resumes.

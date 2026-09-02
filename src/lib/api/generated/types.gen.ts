@@ -733,6 +733,16 @@ export type DataDeletionResponse = {
 };
 
 /**
+ * DemoSignInRequest
+ */
+export type DemoSignInRequest = {
+    /**
+     * Role
+     */
+    role: 'student' | 'tnp_admin';
+};
+
+/**
  * DriveCreate
  */
 export type DriveCreate = {
@@ -4639,6 +4649,31 @@ export type CsrfApiV1AuthCsrfGetResponses = {
 };
 
 export type CsrfApiV1AuthCsrfGetResponse = CsrfApiV1AuthCsrfGetResponses[keyof CsrfApiV1AuthCsrfGetResponses];
+
+export type DemoSignInApiV1AuthDemoSignInPostData = {
+    body: DemoSignInRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/demo-sign-in';
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostError = DemoSignInApiV1AuthDemoSignInPostErrors[keyof DemoSignInApiV1AuthDemoSignInPostErrors];
+
+export type DemoSignInApiV1AuthDemoSignInPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SignInResponse;
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostResponse = DemoSignInApiV1AuthDemoSignInPostResponses[keyof DemoSignInApiV1AuthDemoSignInPostResponses];
 
 export type ValidateInvitationApiV1AuthInvitationsTokenGetData = {
     body?: never;

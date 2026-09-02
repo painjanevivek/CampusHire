@@ -7,5 +7,6 @@ function safeReturnTo(value?: string) {
 
 export default async function AdminSignInPage({ searchParams }: { searchParams: Promise<{ returnTo?: string }> }) {
   const { returnTo } = await searchParams;
-  return <AuthShell eyebrow="T&P workspace" title="Manage placements with an assigned account." description="Administrator access is invitation-only and requires an authenticator check after your password." footer={<a href="/sign-in">Use a student account</a>}><AuthForm mode="sign-in" redirectTo={safeReturnTo(returnTo)} /></AuthShell>;
+  const demoRole = process.env.DEMO_LOGIN_ENABLED === "true" ? "tnp_admin" : undefined;
+  return <AuthShell eyebrow="T&P workspace" title="Manage placements with an assigned account." description="Administrator access is invitation-only and requires an authenticator check after your password." footer={<a href="/sign-in">Use a student account</a>}><AuthForm redirectTo={safeReturnTo(returnTo)} demoRole={demoRole} /></AuthShell>;
 }

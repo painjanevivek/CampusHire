@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { csrfRequest } from "@/lib/api/client";
+import styles from "./sign-out-button.module.css";
 
 export function clearCampusHireBrowserState() {
   for (const storageName of ["localStorage", "sessionStorage"] as const) {
@@ -50,12 +51,12 @@ export function SignOutButton({ destination }: { destination: "/sign-in" | "/adm
   }
 
   return (
-    <>
+    <div className={styles.root}>
       <button type="button" onClick={() => void signOut()} disabled={pending} aria-label="Sign out">
         <LogOut aria-hidden="true" />
         <span className="srOnly">{pending ? "Signing out" : "Sign out"}</span>
       </button>
-      {error ? <span className="srOnly" role="alert">{error}</span> : null}
-    </>
+      {error ? <span className={styles.error} role="alert">{error}</span> : null}
+    </div>
   );
 }

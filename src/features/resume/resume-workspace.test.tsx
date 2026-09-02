@@ -79,7 +79,7 @@ describe("ResumeWorkspace", () => {
     expect(await screen.findByText("Locked by application")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Earlier version"), { target: { value: "resume-1" } });
     fireEvent.change(screen.getByLabelText("Later version"), { target: { value: "resume-2" } });
-    expect(screen.getByRole("table", { name: "Resume evidence comparison" })).toHaveTextContent("Python, SQL");
+    expect(screen.getByRole("table", { name: "Resume version comparison" })).toHaveTextContent("Python, SQL");
     expect(screen.getAllByRole("button", { name: /Delete/i })).toHaveLength(1);
   });
 });
