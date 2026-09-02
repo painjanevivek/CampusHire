@@ -8,9 +8,11 @@ import {
   CircleAlert,
   FileCheck2,
   FileSearch,
+  Pencil,
   Plus,
   RefreshCcw,
   Send,
+  Trash2,
 } from "lucide-react";
 
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
@@ -34,6 +36,12 @@ const initialRule: RuleDefinition = {
   label: "Program eligibility",
 };
 
+function toDateTimeLocal(value: string): string {
+  const date = new Date(value);
+  const localTime = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localTime.toISOString().slice(0, 16);
+}
+
 export function AdminDrives() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [drives, setDrives] = useState<Drive[]>([]);
@@ -44,7 +52,7 @@ export function AdminDrives() {
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [rules, setRules] = useState<RuleDefinition[]>([initialRule]);
   const [panel, setPanel] = useState<
-    "none" | "drive" | "role" | "rules" | "extract"
+    "none" | "drive" | "edit-drive" | "role" | "rules" | "extract"
   >("none");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -135,34 +143,86 @@ export function AdminDrives() {
     return () => window.clearTimeout(pending);
   }, [loadRules, selectedRole]);
 
-  async function createDrive(event: FormEvent<HTMLFormElement>) {
+  async function saveDrive(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
     setBusy(true);
     setError("");
     setNotice("");
     const data = new FormData(event.currentTarget);
+    const editingDrive =
+      panel === "edit-drive"
+        ? drives.find((drive) => drive.id === selectedDrive)
+        : undefined;
     try {
-      const created = await csrfRequest<Drive>("/admin/recruitment/drives", {
-        method: "POST",
-        body: JSON.stringify({
-          company_id: data.get("company_id"),
-          title: data.get("title"),
-          description: data.get("description"),
-          location: data.get("location"),
-          work_mode: data.get("work_mode"),
-          opens_at: new Date(String(data.get("opens_at"))).toISOString(),
-          deadline_at: new Date(String(data.get("deadline_at"))).toISOString(),
-        }),
-      });
-      setDrives((current) => [created, ...current]);
-      setSelectedDrive(created.id);
+      const saved = await csrfRequest<Drive>(
+        editingDrive
+          ? `/admin/recruitment/drives/${editingDrive.id}`
+          : "/admin/recruitment/drives",
+        {
+          method: editingDrive ? "PATCH" : "POST",
+          body: JSON.stringify({
+            company_id: data.get("company_id"),
+            title: data.get("title"),
+            description: data.get("description"),
+            location: data.get("location"),
+            work_mode: data.get("work_mode"),
+            opens_at: new Date(String(data.get("opens_at"))).toISOString(),
+            deadline_at: new Date(String(data.get("deadline_at"))).toISOString(),
+          }),
+        },
+      );
+      setDrives((current) =>
+        editingDrive
+          ? current.map((drive) => (drive.id === saved.id ? saved : drive))
+          : [saved, ...current],
+      );
+      setSelectedDrive(saved.id);
       setPanel("none");
       setNotice(
-        "Draft drive created. Add a role and reviewed eligibility rules before publishing.",
+        editingDrive
+          ? "Draft drive updated."
+          : "Draft drive created. Add a role and reviewed eligibility rules before publishing.",
       );
     } catch {
       setError(
-        "The drive was not created. Verify its company, application window, and required details.",
+        editingDrive
+          ? "The draft was not updated. Verify its company, application window, and required details."
+          : "The drive was not created. Verify its company, application window, and required details.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteDraft(drive: Drive) {
+    if (busy || drive.status !== "draft") return;
+    if (
+      !window.confirm(
+        `Delete the draft “${drive.title}”? This also removes its draft roles and eligibility setup. This cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await csrfRequest<void>(`/admin/recruitment/drives/${drive.id}`, {
+        method: "DELETE",
+      });
+      const remaining = drives.filter((item) => item.id !== drive.id);
+      setDrives(remaining);
+      setSelectedDrive(remaining[0]?.id ?? "");
+      setSelectedRole("");
+      setRoles([]);
+      setRuleSets([]);
+      setExtractions([]);
+      setPanel("none");
+      setNotice("Draft drive deleted.");
+    } catch {
+      setError(
+        "The draft was not deleted. Refresh the drive and confirm it has not been published.",
       );
     } finally {
       setBusy(false);
@@ -353,6 +413,7 @@ export function AdminDrives() {
   }
 
   const activeDrive = drives.find((item) => item.id === selectedDrive);
+  const editingDrive = panel === "edit-drive" ? activeDrive : undefined;
   const activeRole = roles.find((item) => item.id === selectedRole);
   const publishedRules = ruleSets.find((item) => item.status === "published");
 
@@ -392,13 +453,26 @@ export function AdminDrives() {
         </Alert>
       ) : null}
 
-      {panel === "drive" ? (
-        <form className={styles.editor} onSubmit={createDrive}>
+      {panel === "drive" || editingDrive ? (
+        <form
+          key={editingDrive?.id ?? "new-drive"}
+          className={styles.editor}
+          onSubmit={saveDrive}
+        >
           <div className={styles.editorHeading}>
-            <p>Step 1</p>
-            <h2>New placement drive</h2>
+            <p>{editingDrive ? "Draft settings" : "Step 1"}</p>
+            <h2>{editingDrive ? "Edit draft drive" : "New placement drive"}</h2>
+            {editingDrive ? (
+              <span>Changes apply only to this unpublished draft.</span>
+            ) : null}
           </div>
-          <Select id="drive-company" name="company_id" label="Company" required>
+          <Select
+            id="drive-company"
+            name="company_id"
+            label="Company"
+            defaultValue={editingDrive?.company_id}
+            required
+          >
             {companies.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.name}
@@ -409,6 +483,7 @@ export function AdminDrives() {
             id="drive-title"
             name="title"
             label="Drive title"
+            defaultValue={editingDrive?.title}
             required
             minLength={3}
           />
@@ -416,9 +491,15 @@ export function AdminDrives() {
             id="drive-location"
             name="location"
             label="Location"
+            defaultValue={editingDrive?.location}
             required
           />
-          <Select id="drive-mode" name="work_mode" label="Work mode">
+          <Select
+            id="drive-mode"
+            name="work_mode"
+            label="Work mode"
+            defaultValue={editingDrive?.work_mode ?? "on-site"}
+          >
             <option value="on-site">On-site</option>
             <option value="hybrid">Hybrid</option>
             <option value="remote">Remote</option>
@@ -428,6 +509,9 @@ export function AdminDrives() {
             name="opens_at"
             label="Opens at"
             type="datetime-local"
+            defaultValue={
+              editingDrive ? toDateTimeLocal(editingDrive.opens_at) : undefined
+            }
             required
           />
           <Input
@@ -435,18 +519,33 @@ export function AdminDrives() {
             name="deadline_at"
             label="Deadline"
             type="datetime-local"
+            defaultValue={
+              editingDrive ? toDateTimeLocal(editingDrive.deadline_at) : undefined
+            }
             required
           />
           <label className={styles.wide}>
             <span>Description</span>
-            <textarea name="description" required minLength={10} rows={3} />
+            <textarea
+              name="description"
+              defaultValue={editingDrive?.description}
+              required
+              minLength={10}
+              rows={3}
+            />
           </label>
           <div className={styles.actions}>
             <button type="button" onClick={() => setPanel("none")}>
               Cancel
             </button>
             <button className={styles.primary} type="submit" disabled={busy}>
-              {busy ? "Creating…" : "Create draft"}
+              {busy
+                ? editingDrive
+                  ? "Saving…"
+                  : "Creating…"
+                : editingDrive
+                  ? "Save changes"
+                  : "Create draft"}
             </button>
           </div>
         </form>
@@ -537,6 +636,27 @@ export function AdminDrives() {
                 </div>
               </div>
               <div className={styles.commandBar}>
+                {activeDrive.status === "draft" ? (
+                  <>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setPanel("edit-drive")}
+                    >
+                      <Pencil aria-hidden="true" />
+                      Edit draft
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.danger}
+                      disabled={busy}
+                      onClick={() => void deleteDraft(activeDrive)}
+                    >
+                      <Trash2 aria-hidden="true" />
+                      Delete draft
+                    </button>
+                  </>
+                ) : null}
                 <button
                   type="button"
                   disabled={activeDrive.status !== "draft"}

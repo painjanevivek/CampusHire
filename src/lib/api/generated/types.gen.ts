@@ -843,6 +843,10 @@ export type DriveResponse = {
  */
 export type DriveUpdate = {
     /**
+     * Company Id
+     */
+    company_id?: string | null;
+    /**
      * Deadline At
      */
     deadline_at?: string | null;
@@ -4109,6 +4113,36 @@ export type AddDriveApiV1AdminRecruitmentDrivesPostResponses = {
 };
 
 export type AddDriveApiV1AdminRecruitmentDrivesPostResponse = AddDriveApiV1AdminRecruitmentDrivesPostResponses[keyof AddDriveApiV1AdminRecruitmentDrivesPostResponses];
+
+export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/drives/{drive_id}';
+};
+
+export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteError = RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors[keyof RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors];
+
+export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponse = RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses[keyof RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses];
 
 export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchData = {
     body: DriveUpdate;
