@@ -9,11 +9,13 @@ describe("frontend security policy", () => {
     const policy = response.headers.get("Content-Security-Policy") ?? "";
 
     expect(policy).toMatch(/script-src 'self' 'nonce-[^']+' 'strict-dynamic'/);
+    expect(policy).toMatch(/script-src-elem 'self' 'nonce-[^']+'/);
     expect(policy).toContain("object-src 'none'");
     expect(policy).toContain("frame-ancestors 'none'");
     expect(policy).toContain("base-uri 'self'");
     expect(policy).toContain("form-action 'self'");
     expect(policy).not.toContain("script-src 'self' 'unsafe-inline'");
+    expect(policy).not.toContain("script-src-elem 'self' 'unsafe-inline'");
   });
 
   it("redirects signed-out student routes with a relative return target", () => {

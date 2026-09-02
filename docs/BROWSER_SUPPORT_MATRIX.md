@@ -1,19 +1,20 @@
 # Browser Support Matrix
 
-## Automated release baseline
+## Automated engineering baseline
 
-Playwright `1.61.0` runs the production bundle in its pinned Chromium, Firefox, and WebKit engines. Each engine covers public and student routes at 360×800, 768×1024, and 1440×900; administrator routes cover tablet and desktop. Release automation requires rendered WCAG 2.0–2.2 A/AA axe checks, a main landmark and heading, complete visible keyboard traversal, visible focus, no horizontal overflow, reduced motion, forced colors, 200% reflow equivalence, and no unexpected console errors.
+| Surface | Chromium | Firefox | WebKit | Required viewports |
+| --- | --- | --- | --- | --- |
+| Public degraded routes | Required | Required | Required | 320×800, 360×800, 768×1024, 1440×900 |
+| Authenticated student routes | Required | Required | Required | 320×800, 360×800, 768×1024, 1440×900 |
+| Authenticated T&P routes | Required | Required | Required | 320×800, 360×800, 768×1024, 1440×900 |
+| Reduced motion | Required | Required | Required | 1440×900 |
+| Forced colors | Required | Required | Required | 1440×900 |
+| Reflow | Required | Required | Required | 200% and 400% equivalents |
 
-| Engine | Keyboard mode | Automated status |
-| --- | --- | --- |
-| Chromium | Native tab order | Required |
-| Firefox | Native tab order | Required |
-| WebKit | Emulated macOS Full Keyboard Access | Required |
-
-WebKit headless inherits Safari’s OS-level keyboard preference. The runner assigns explicit test-only `tabindex` values to native focusable controls to emulate Full Keyboard Access. This changes only the browser test document, not production code.
+Chromium and Firefox use their native tab order. Headless WebKit explicitly emulates the macOS Full Keyboard Access preference for native controls. That emulation is engineering evidence only and is not a real Safari acceptance result.
 
 ## Human compatibility gate
 
-Playwright WebKit is not branded Safari and cannot prove device-specific assistive-technology behavior. Before release, record the critical student and administrator journeys in current stable Chrome, Firefox, Edge, and Safari on supported desktop platforms, plus Safari on iOS and Chrome on Android. Complete a real Safari/macOS keyboard session with Full Keyboard Access enabled and the screen-reader sessions defined in `docs/PILOT_UAT_SESSION_PACK.md`.
+Before a real-data release, retain complete critical-journey results for current stable Chrome, Firefox, Edge, and Safari on supported desktop platforms, Safari on iOS, and Chrome on Android. Complete real Safari/macOS keyboard testing with Full Keyboard Access enabled and the screen-reader sessions in `docs/PILOT_UAT_SESSION_PACK.md`.
 
-Record browser/OS versions, device, viewport, assistive technology, candidate SHAs, result, issue links, and retest evidence. A failing critical journey, inaccessible blocker, or unsupported security behavior rejects the candidate.
+Record browser/OS version, device, viewport, assistive technology, exact frontend/backend SHAs, result, issue links, and retest evidence. A failing critical journey, inaccessible blocker, or unsupported security behavior rejects the candidate.

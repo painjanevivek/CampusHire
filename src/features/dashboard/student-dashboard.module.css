@@ -21,7 +21,7 @@
 .reason dt { color: var(--ink-muted); font-size: .66rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .reason dd { margin: 2px 0 0; color: var(--ink); font-size: .76rem; }
 .actionEvidence { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; font-size: .75rem; }
-.actionEvidence summary { cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
+.actionEvidence summary { min-height: var(--control-min-size); display: inline-flex; align-items: center; cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
 .actionEvidence ul { margin: 8px 0 0; padding-left: 18px; }
 .readinessCard { padding: 26px; }
 .readinessHeader { display: flex; justify-content: space-between; }
@@ -45,7 +45,7 @@
 .opportunityCard { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(150px, auto) minmax(120px, auto) 44px; gap: 16px; align-items: center; min-height: 112px; padding: 16px 4px; border-top: 1px solid var(--line); }
 .opportunityNumber { display: none; }
 .opportunityIdentity { display: flex; align-items: center; gap: 13px; }
-.companyMark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 8px; background: #edf0f2; color: var(--brand-blue-dark); }
+.companyMark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 8px; background: var(--surface-muted); color: var(--brand-blue-dark); }
 .opportunityIdentity p, .opportunityIdentity h3 { margin: 0; }
 .opportunityIdentity p { color: var(--ink-muted); font-size: .74rem; }
 .opportunityIdentity h3 { font-size: 1rem; }
@@ -54,7 +54,7 @@
 .match { display: grid; gap: 2px; }
 .match strong { color: var(--brand-blue-dark); font-size: .84rem; }
 .match span { color: var(--ink-muted); font-size: .65rem; }
-.viewRole { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; background: var(--brand-blue); color: white; }
+.viewRole { width: var(--control-min-size); height: var(--control-min-size); display: grid; place-items: center; border-radius: 10px; background: var(--brand-blue); color: var(--on-primary); }
 .emptyState { display: flex; align-items: center; gap: 16px; padding: 24px; border: 1px dashed var(--line); }
 .emptyState h3, .emptyState p { margin: 0; }
 .emptyState p { color: var(--ink-muted); }

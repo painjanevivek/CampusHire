@@ -24,7 +24,7 @@
 - Resume upload preserves the selected filename on failure and announces immutable-version success.
 - Resume suggestions require explicit Edit or Accept actions.
 - Roadmap states expose Confirmed, Next best move, and Later with one next action.
-- Profile failure preserves fields; completion keeps the CSRF-protected PATCH, emits `profile_complete`, and redirects to `/opportunities`.
+- Profile failure preserves fields; completion keeps the CSRF-protected PATCH and redirects to `/opportunities`. Product completion events are emitted by the authoritative backend rather than browser-only custom events.
 - Student and administrator protected routes redirect unauthenticated visitors to their respective sign-in routes with a bounded `returnTo` value.
 - Sign-out failures are visibly announced while the current session remains active.
 
@@ -32,14 +32,18 @@
 
 - Navigation, main, article, status, progressbar, heading, and labelled form semantics were inspected in the rendered DOM.
 - Dashboard readiness uses an accessible SVG radial progress indicator.
-- Interactive targets have visible focus and a minimum 44px target.
+- Form controls and action buttons use the shared 44 px minimum target where practical; inline text links remain content-sized and visibly focused.
 - `prefers-reduced-motion` disables continuous and transition motion while preserving content.
 - Browser inspection of the landing page, invitation guidance, student sign-in, administrator sign-in, and protected-route redirects produced no console errors.
-- The current browser pass covers public and unauthenticated states only. Authenticated workflows, Safari/macOS Full Keyboard Access, mobile real-device checks, and representative participant acceptance still require release-candidate evidence.
+- The Phase 8 browser runner distinguishes public degraded routes from real demo-authenticated student and T&P routes and requires the requested protected path to remain loaded.
+- The exact-candidate automated run passed 180/180 page checks across Chromium, Firefox, and WebKit with no unexpected console errors; all reduced-motion, forced-colors, 200% reflow, and 400% reflow gates passed.
+- Automated viewports include 320 px mobile, 200% and 400% reflow, reduced motion, and forced colors. Real Safari/macOS Full Keyboard Access, mobile real-device checks, screen-reader acceptance, and representative participant acceptance remain external gates.
 
 ## Verification
 
-- `npm run test`: 32 files, 98 tests passed.
+- `npm run test`: 42 files and 146 tests passed for the Phase 8 candidate; rerun after any source change because historical counts are not release evidence.
+- `npm run test:accessibility:authenticated`: Chromium, Firefox, and WebKit engineering matrix for the live synthetic candidate.
+- `npm run test:performance`: bounded local production-build profile; results are not presented as field Core Web Vitals.
 - The checked frontend OpenAPI snapshot matches the current backend export; generated declarations were refreshed from that exact snapshot.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.

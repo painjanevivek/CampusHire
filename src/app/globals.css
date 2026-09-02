@@ -7,6 +7,7 @@
   --ink-muted: #596273;
   --line: #dfe3ea;
   --primary: #2557d6;
+  --on-primary: #ffffff;
   --accent-emerald: #137a4b;
   --accent-blue: #2557d6;
   --brand-blue: #2557d6;
@@ -28,6 +29,12 @@
   --radius-container: 40px;
   --radius-pill: 999px;
   --shadow-soft: 0 8px 30px rgb(0 0 0 / 4%);
+  --control-min-size: 44px;
+  --control-height: 2.9rem;
+  --navigation-glass: rgb(255 255 255 / 84%);
+  --navigation-border: rgb(215 218 224 / 72%);
+  --navigation-shadow: 0 8px 30px rgb(37 87 214 / 7%);
+  --modal-backdrop: oklch(0.12 0.02 180 / 0.55);
   --layer-content: 10;
   --layer-navigation: 50;
   --layer-toast: 80;
@@ -66,7 +73,7 @@ button, .button, nav, .brand { font-family: var(--font-interface), Inter, sans-s
 .hero { min-height: 78svh; padding: 1.25rem clamp(1rem, 4vw, 5rem) 4rem; background: radial-gradient(circle at 85% 15%, var(--sage), transparent 32%), var(--canvas); }
 .topbar { max-width: 88rem; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 800; text-decoration: none; letter-spacing: -0.03em; }
-.brandMark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 0.75rem 0.75rem 0.75rem 0.2rem; background: var(--brand-blue); color: var(--surface); }
+.brandMark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 0.75rem 0.75rem 0.75rem 0.2rem; background: var(--brand-blue); color: var(--on-primary); }
 .navActions, .heroActions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .textLink { min-height: 2.75rem; display: inline-flex; align-items: center; padding: 0 0.5rem; color: var(--ink-muted); text-decoration: none; font-weight: 650; }
 .heroGrid { max-width: 88rem; margin: clamp(4rem, 9vw, 8rem) auto 0; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(19rem, 0.72fr); gap: clamp(2rem, 7vw, 7rem); align-items: center; }
@@ -76,16 +83,17 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 1.5rem; max-width: 12ch; font-size: clamp(3rem, 7vw, 6.6rem); line-height: 0.98; letter-spacing: -0.065em; text-wrap: balance; }
 .lede { max-width: 42rem; margin-bottom: 2rem; color: var(--ink-muted); font-size: clamp(1.05rem, 1.7vw, 1.3rem); }
 .trustLine { margin: 1rem 0 0; color: var(--ink-muted); font-size: 0.88rem; }
-.button { min-height: 2.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid transparent; border-radius: var(--radius-pill); padding: 0.72rem 1.1rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, transform 300ms ease; }
-.button--primary { background: var(--primary); color: white; }
+.button { min-height: var(--control-height); display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid transparent; border-radius: var(--radius-pill); padding: 0.72rem 1.1rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, transform 300ms ease; }
+.button--primary { background: var(--primary); color: var(--on-primary); }
 .button--primary:hover { background: var(--accent-blue); }
 .button--quiet { border-color: var(--line); background: var(--surface); color: var(--ink); }
 .button--quiet:hover { border-color: var(--teal); color: var(--teal-deep); }
 .button:active { transform: translateY(1px); }
 .button:disabled { cursor: not-allowed; opacity: 0.58; }
+.button[aria-busy="true"] { cursor: progress; }
 .field { display: grid; gap: 0.45rem; }
 .field label { font-weight: 750; }
-.field input, .field select { min-height: 2.9rem; width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.8rem; background: var(--surface); color: var(--ink); font: inherit; }
+.field input, .field select { min-height: var(--control-height); width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.8rem; background: var(--surface); color: var(--ink); font: inherit; }
 .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--tangerine-deep); }
 .field small { color: var(--ink-muted); }
 .field .fieldError { color: var(--tangerine-deep); }
@@ -98,9 +106,9 @@ h1 { margin-bottom: 1.5rem; max-width: 12ch; font-size: clamp(3rem, 7vw, 6.6rem)
 .alert--success { border-color: var(--evergreen); background: var(--sage); }
 .emptyState { max-width: 34rem; padding: 2rem; text-align: center; }
 dialog { width: min(32rem, calc(100% - 2rem)); border: 0; border-radius: var(--radius-lg); padding: 1.5rem; background: var(--surface); color: var(--ink); box-shadow: var(--shadow-soft); }
-dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
+dialog::backdrop { background: var(--modal-backdrop); }
 .dialogHeader { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
-.iconButton { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
+.iconButton { min-width: var(--control-min-size); min-height: var(--control-min-size); border: 0; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
 .toast { position: fixed; right: 1rem; bottom: 1rem; z-index: var(--layer-toast); display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
 .toast button { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font-size: 1.2rem; cursor: pointer; }
 .authShell { min-height: 100svh; background: var(--canvas); }
@@ -172,6 +180,10 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
 .skeletonTitle { width: min(36rem, 80vw); height: 5rem; }
 .skeletonLine { width: min(28rem, 65vw); height: 1.2rem; }
 .skeletonPanel { width: min(52rem, 90vw); height: 20rem; }
+.workspaceLoading { width: min(100% - 2rem, 78rem); min-height: calc(100svh - 6rem); display: grid; align-content: start; gap: 1rem; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) 0; }
+.workspaceLoadingHeader { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+.workspaceLoadingGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.workspaceLoadingCard { min-height: 12rem; }
 @keyframes shimmer { to { transform: translateX(100%); } }
 
 @media (max-width: 760px) {
@@ -189,6 +201,7 @@ dialog::backdrop { background: oklch(0.12 0.02 180 / 0.55); }
   .dashboardPage > header { align-items: start; flex-direction: column; }
   .dashboardGrid { grid-template-columns: 1fr; }
   .dashboardGrid article.primaryCard { grid-column: auto; }
+  .workspaceLoadingGrid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

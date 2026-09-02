@@ -4,8 +4,8 @@
 }
 
 .root button {
-  width: var(--utility-control-size, 44px);
-  height: var(--utility-control-size, 44px);
+  width: var(--utility-control-size, var(--control-min-size));
+  height: var(--utility-control-size, var(--control-min-size));
   display: grid;
   place-items: center;
   border: var(--utility-control-border, 1px solid var(--line));

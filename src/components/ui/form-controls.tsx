@@ -13,7 +13,7 @@ export function Input({ id, label, hint, error, ...props }: FieldProps & InputHT
     <div className="field">
       <label htmlFor={id}>{label}</label>
       <input id={id} aria-invalid={Boolean(error)} aria-describedby={hint || error ? messageId : undefined} {...props} />
-      {(error || hint) && <small id={messageId} className={error ? "fieldError" : undefined}>{error ?? hint}</small>}
+      {(error || hint) && <small id={messageId} className={error ? "fieldError" : undefined} role={error ? "alert" : undefined}>{error ?? hint}</small>}
     </div>
   );
 }
@@ -24,7 +24,7 @@ export function Select({ id, label, hint, error, children, ...props }: FieldProp
     <div className="field">
       <label htmlFor={id}>{label}</label>
       <select id={id} aria-invalid={Boolean(error)} aria-describedby={hint || error ? messageId : undefined} {...props}>{children}</select>
-      {(error || hint) && <small id={messageId} className={error ? "fieldError" : undefined}>{error ?? hint}</small>}
+      {(error || hint) && <small id={messageId} className={error ? "fieldError" : undefined} role={error ? "alert" : undefined}>{error ?? hint}</small>}
     </div>
   );
 }

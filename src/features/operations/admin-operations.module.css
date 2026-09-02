@@ -18,7 +18,7 @@
 .queueHeader { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); padding: 14px 20px; }
 .queueHeader h2 { margin: 0; font-size: 1.25rem; }
 .queueHeader label { display: grid; gap: 4px; color: var(--ink-muted); font-size: .72rem; font-weight: 800; }
-.queueHeader select { min-height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 0 32px 0 10px; background: white; color: var(--ink); font: inherit; }
+.queueHeader select { min-height: var(--control-min-size); border: 1px solid var(--line); border-radius: 8px; padding: 0 32px 0 10px; background: var(--surface); color: var(--ink); font: inherit; }
 .loading { min-height: 180px; display: grid; place-items: center; color: var(--ink-muted); }
 .jobList { display: grid; }
 .job { border-bottom: 1px solid var(--line); padding: 18px 20px; }
@@ -33,7 +33,7 @@
 .jobMeta strong { color: var(--ink); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0 0 56px; }
 .timeline { margin: 15px 0 0 56px; border-top: 1px solid var(--line); padding-top: 11px; }
-.timeline summary { width: fit-content; color: var(--brand-blue); font-weight: 800; cursor: pointer; }
+.timeline summary { width: fit-content; min-height: var(--control-min-size); display: inline-flex; align-items: center; color: var(--brand-blue); font-weight: 800; cursor: pointer; }
 .timeline ol { margin: 10px 0 0; padding: 0; list-style: none; }
 .timeline li { display: grid; grid-template-columns: minmax(160px, 1fr) auto minmax(140px, auto); gap: 12px; border-top: 1px solid var(--line); padding: 10px 0; }
 .timeline small { color: var(--ink-muted); }

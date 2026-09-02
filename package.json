@@ -13,6 +13,8 @@
     "release:smoke": "node scripts/release-smoke.mjs",
     "test": "vitest run",
     "test:accessibility": "python scripts/accessibility_matrix.py",
+    "test:accessibility:authenticated": "python scripts/accessibility_matrix.py --authenticated",
+    "test:performance": "python scripts/performance_matrix.py",
     "test:watch": "vitest"
   },
   "dependencies": {

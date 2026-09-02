@@ -14,11 +14,11 @@
   display: flex;
   align-items: center;
   gap: 28px;
-  border: 1px solid rgb(215 218 224 / 72%);
+  border: 1px solid var(--navigation-border);
   border-radius: 999px;
   padding: 0 18px 0 24px;
-  background: rgb(255 255 255 / 84%);
-  box-shadow: 0 8px 30px rgb(37 87 214 / 7%);
+  background: var(--navigation-glass);
+  box-shadow: var(--navigation-shadow);
   backdrop-filter: blur(16px);
 }
 
@@ -39,7 +39,7 @@
   place-items: center;
   border-radius: 9px;
   background: var(--brand-blue);
-  color: white;
+  color: var(--on-primary);
   font-weight: 800;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .utilities {
-  --utility-control-size: 44px;
+  --utility-control-size: var(--control-min-size);
   --utility-icon-size: 18px;
   --utility-control-border: 1px solid var(--line);
   --utility-control-background: var(--surface);
@@ -130,7 +130,7 @@
     inset: 68px 20px auto;
     display: none;
     padding: 8px 16px 16px;
-    background: white;
+    background: var(--surface);
     border-bottom: 1px solid var(--line);
   }
   .navigationOpen { display: grid; }

@@ -19,11 +19,11 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  border: 1px solid rgb(215 218 224 / 72%);
+  border: 1px solid var(--navigation-border);
   border-radius: 16px;
   padding: 0 18px 0 24px;
-  background: rgb(255 255 255 / 88%);
-  box-shadow: 0 8px 30px rgb(37 87 214 / 6%);
+  background: var(--navigation-glass);
+  box-shadow: var(--navigation-shadow);
   backdrop-filter: blur(16px);
 }
 
@@ -43,7 +43,7 @@
   place-items: center;
   border-radius: 10px;
   background: var(--brand-blue);
-  color: white;
+  color: var(--on-primary);
   font-weight: 800;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .navigation a {
-  min-height: 42px;
+  min-height: var(--control-min-size);
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
@@ -74,7 +74,7 @@
 .navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
 
 .utilities {
-  --utility-control-size: 44px;
+  --utility-control-size: var(--control-min-size);
   --utility-icon-size: 18px;
   --utility-control-border: 1px solid var(--line);
   --utility-control-background: var(--surface);
@@ -143,6 +143,10 @@
   .utilities button:first-child,
   .helpControl { display: none; }
   .navigation { inset-block-start: 70px; }
+}
+
+@media (max-width: 420px) {
+  .brand strong { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

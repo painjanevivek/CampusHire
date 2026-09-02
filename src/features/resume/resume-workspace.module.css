@@ -195,7 +195,7 @@
 .versions { margin-top: 24px; padding: clamp(24px, 4vw, 36px); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .sectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .sectionHeader h2 { margin: 0; font-size: clamp(1.35rem, 3vw, 1.8rem); }
-.refresh { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 0 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; font-weight: 700; cursor: pointer; }
+.refresh { min-height: var(--control-min-size); display: inline-flex; align-items: center; gap: 7px; padding: 0 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; font-weight: 700; cursor: pointer; }
 .emptyState { min-height: 190px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--ink-muted); text-align: center; }
 .emptyState svg { color: var(--brand-blue); }
 .versionList { display: grid; }
@@ -206,13 +206,14 @@
 .versionIcon[data-state="failed"] { color: var(--status-danger); background: color-mix(in srgb, var(--status-danger) 9%, var(--surface)); }
 .versionMain { min-width: 0; }
 .versionMain > div { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.versionMain strong { min-width: 0; overflow-wrap: anywhere; }
 .versionMain span, .versionMain p, .versionMain small { color: var(--ink-muted); }
 .versionMain span, .versionMain small { font-size: .78rem; }
 .versionMain p { margin: 5px 0 0; font-size: .875rem; }
 .versionMain small { display: block; margin-top: 6px; color: var(--status-danger); }
 .versionMain .pipelineNow { color: var(--ink); font-size: .8rem; }
 .pipelineDetails { margin-top: 9px; font-size: .76rem; }
-.pipelineDetails summary { width: fit-content; cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
+.pipelineDetails summary { width: fit-content; min-height: var(--control-min-size); display: inline-flex; align-items: center; cursor: pointer; color: var(--brand-blue-dark); font-weight: 750; }
 .pipelineDetails ol { display: flex; flex-wrap: wrap; gap: 6px; margin: 9px 0; padding: 0; list-style: none; }
 .pipelineDetails li { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-muted); }
 .pipelineDetails li[data-state="complete"] { border-color: var(--verified); color: var(--verified); }
@@ -221,13 +222,13 @@
 .pipelineDetails dl div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; padding: 3px 0; }
 .pipelineDetails dd { margin: 0; overflow-wrap: anywhere; }
 .versionActions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
-.versionActions a, .versionActions button { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: .82rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+.versionActions a, .versionActions button { min-height: var(--control-min-size); display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: .82rem; font-weight: 700; text-decoration: none; cursor: pointer; }
 .locked { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); font-size: .75rem; }
 .comparison { margin-top: 28px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--surface); }
 .comparison .sectionHeader > svg { color: var(--brand-blue); }
 .compareSelectors { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 22px; }
 .compareSelectors label { display: grid; gap: 6px; color: var(--ink-muted); font-size: .76rem; font-weight: 750; }
-.compareSelectors select { min-height: 44px; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; background: white; color: var(--ink); }
+.compareSelectors select { min-height: var(--control-min-size); border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; background: var(--surface); color: var(--ink); }
 .diffTable { padding: 0 22px 22px; }
 .diffTable > div { display: grid; grid-template-columns: minmax(120px, .7fr) 1fr 1fr; gap: 14px; padding: 12px; border-top: 1px solid var(--line); }
 .diffTable > div[data-changed="true"] { background: var(--brand-blue-soft); }
