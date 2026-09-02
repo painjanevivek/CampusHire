@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ApiError } from "@/lib/api/client";
 import { StudentOpportunityDetail } from "./student-opportunity-detail";
 
 const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
@@ -60,6 +61,7 @@ const semanticMatch = {
 
 describe("StudentOpportunityDetail", () => {
   beforeEach(() => {
+    window.sessionStorage.clear();
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
     apiRequestMock.mockImplementation((path: string) => {
@@ -81,6 +83,47 @@ describe("StudentOpportunityDetail", () => {
         status: "submitted",
       }),
     );
+  });
+
+  it("keeps deterministic role details available when semantic matching fails", async () => {
+    csrfRequestMock.mockImplementation((path: string) =>
+      path.endsWith("/match")
+        ? Promise.reject(new ApiError(503, "Matching unavailable", "match_unavailable"))
+        : Promise.resolve({ id: "application-1", status: "submitted" }),
+    );
+
+    render(<StudentOpportunityDetail roleId="role-1" />);
+
+    expect(await screen.findByRole("heading", { name: "Software Engineer" }))
+      .toBeInTheDocument();
+    expect(screen.getByText("Why you are eligible")).toBeInTheDocument();
+    expect(screen.getByText(/Skills matching is unavailable/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Review application" })).toBeEnabled();
+  });
+
+  it("reuses the same application key after an unknown outcome", async () => {
+    let applicationAttempts = 0;
+    csrfRequestMock.mockImplementation((path: string) => {
+      if (path.endsWith("/match")) return Promise.resolve(semanticMatch);
+      applicationAttempts += 1;
+      return applicationAttempts === 1
+        ? Promise.reject(new ApiError(0, "Timed out", "request_timeout", undefined, undefined, "timeout"))
+        : Promise.resolve({ id: "application-1", status: "submitted" });
+    });
+
+    render(<StudentOpportunityDetail roleId="role-1" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Review application" }));
+    fireEvent.click(screen.getByRole("button", { name: "Submit application" }));
+    expect(await screen.findByText(/could not confirm the outcome/i)).toBeInTheDocument();
+
+    const firstRequest = csrfRequestMock.mock.calls.find((call) => call[0] === "/applications");
+    fireEvent.click(screen.getByRole("button", { name: "Retry safely" }));
+    expect((await screen.findAllByText(/Application submitted/)).length).toBeGreaterThan(0);
+    const applicationRequests = csrfRequestMock.mock.calls.filter((call) => call[0] === "/applications");
+
+    expect(applicationRequests).toHaveLength(2);
+    expect(applicationRequests[1][1].headers["Idempotency-Key"])
+      .toBe(firstRequest?.[1].headers["Idempotency-Key"]);
   });
 
   it("confirms and submits an immutable application snapshot", async () => {

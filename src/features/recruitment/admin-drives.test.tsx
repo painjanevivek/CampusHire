@@ -49,6 +49,37 @@ const publishedDrive = {
   published_at: "2026-09-02T08:00:00Z",
 };
 
+const draftRole = {
+  id: "role-1",
+  drive_id: draftDrive.id,
+  company_name: company.name,
+  drive_title: draftDrive.title,
+  title: "Software Engineer",
+  description: "Build reliable campus recruitment products.",
+  employment_type: "full-time",
+  location: "Pune, India",
+  work_mode: "hybrid",
+  salary_display: null,
+  skills: ["TypeScript"],
+  requirements: ["B.Tech"],
+  status: "draft",
+  published_at: null,
+  deadline_at: draftDrive.deadline_at,
+};
+
+const approvedPolicy = {
+  id: "11111111-1111-4111-8111-111111111111",
+  title: "Placement eligibility policy",
+  version: 2,
+  source_reference: "placement-policy-v2.pdf",
+  sections: [],
+  status: "approved",
+  review_reason: "Approved by the policy owner.",
+  approved_at: "2026-09-01T08:00:00Z",
+  created_at: "2026-09-01T08:00:00Z",
+  updated_at: "2026-09-01T08:00:00Z",
+};
+
 describe("AdminDrives draft management", () => {
   beforeEach(() => {
     apiRequestMock.mockReset();
@@ -125,5 +156,48 @@ describe("AdminDrives draft management", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Edit draft" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Delete draft" })).not.toBeInTheDocument();
+  });
+
+  it("locks approved policy versions into a new eligibility rule version", async () => {
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
+      if (path === "/admin/recruitment/drives") return Promise.resolve([draftDrive]);
+      if (path === "/admin/intelligence/policies") return Promise.resolve([approvedPolicy]);
+      if (path === "/admin/recruitment/drives/drive-draft/roles") {
+        return Promise.resolve([draftRole]);
+      }
+      return Promise.resolve([]);
+    });
+    csrfRequestMock.mockResolvedValue({
+      id: "rules-2",
+      role_id: draftRole.id,
+      version: 2,
+      status: "draft",
+      rules: [],
+      policy_references: [{
+        id: approvedPolicy.id,
+        title: approvedPolicy.title,
+        version: approvedPolicy.version,
+        source_reference: approvedPolicy.source_reference,
+        approved_at: approvedPolicy.approved_at,
+      }],
+      created_by_user_id: "admin-1",
+      published_at: null,
+      created_at: "2026-09-02T08:00:00Z",
+      updated_at: "2026-09-02T08:00:00Z",
+    });
+
+    render(<AdminDrives />);
+    fireEvent.click(await screen.findByRole("button", { name: "New rule version" }));
+    fireEvent.click(screen.getByLabelText(/Placement eligibility policy/));
+    fireEvent.click(screen.getByRole("button", { name: "Create draft version" }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/admin/recruitment/roles/role-1/rule-sets",
+      expect.objectContaining({
+        method: "POST",
+        body: expect.stringContaining(approvedPolicy.id),
+      }),
+    ));
   });
 });

@@ -164,6 +164,13 @@ export type RuleSet = {
   version: number;
   status: string;
   rules: RuleDefinition[];
+  policy_references: Array<{
+    id: string;
+    title: string;
+    version: number;
+    source_reference: string;
+    approved_at: string | null;
+  }>;
   created_by_user_id: string;
   published_at: string | null;
   created_at: string;

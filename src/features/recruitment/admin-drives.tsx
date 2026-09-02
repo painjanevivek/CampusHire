@@ -24,6 +24,7 @@ import type {
   Eligibility,
   ExtractionProposal,
   PlacementRole,
+  PolicyDocument,
   RuleDefinition,
   RuleSet,
 } from "./types";
@@ -48,9 +49,12 @@ export function AdminDrives() {
   const [roles, setRoles] = useState<PlacementRole[]>([]);
   const [ruleSets, setRuleSets] = useState<RuleSet[]>([]);
   const [extractions, setExtractions] = useState<ExtractionProposal[]>([]);
+  const [policies, setPolicies] = useState<PolicyDocument[]>([]);
+  const [policyLoadUnavailable, setPolicyLoadUnavailable] = useState(false);
   const [selectedDrive, setSelectedDrive] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [rules, setRules] = useState<RuleDefinition[]>([initialRule]);
+  const [selectedPolicyIds, setSelectedPolicyIds] = useState<string[]>([]);
   const [panel, setPanel] = useState<
     "none" | "drive" | "edit-drive" | "role" | "rules" | "extract"
   >("none");
@@ -64,15 +68,23 @@ export function AdminDrives() {
     await Promise.resolve();
     setLoading(true);
     setError("");
+    setPolicyLoadUnavailable(false);
     try {
-      const [companyItems, driveItems] = await Promise.all([
+      const [companyItems, driveItems, policyItems] = await Promise.all([
         apiRequest<Company[]>("/admin/recruitment/companies", {
           cache: "no-store",
         }),
         apiRequest<Drive[]>("/admin/recruitment/drives", { cache: "no-store" }),
+        apiRequest<PolicyDocument[]>("/admin/intelligence/policies", {
+          cache: "no-store",
+        }).catch(() => {
+          setPolicyLoadUnavailable(true);
+          return [];
+        }),
       ]);
       setCompanies(companyItems);
       setDrives(driveItems);
+      setPolicies(policyItems.filter((policy) => policy.status === "approved"));
       setSelectedDrive((current) => current || driveItems[0]?.id || "");
     } catch {
       setError(
@@ -292,9 +304,16 @@ export function AdminDrives() {
       }));
       const created = await csrfRequest<RuleSet>(
         `/admin/recruitment/roles/${selectedRole}/rule-sets`,
-        { method: "POST", body: JSON.stringify({ rules: normalized }) },
+        {
+          method: "POST",
+          body: JSON.stringify({
+            rules: normalized,
+            policy_ids: selectedPolicyIds,
+          }),
+        },
       );
       setRuleSets((current) => [created, ...current]);
+      setSelectedPolicyIds([]);
       setPanel("none");
       setNotice(
         `Draft rule version ${created.version} created. Preview the rows, then publish it.`,
@@ -978,6 +997,12 @@ export function AdminDrives() {
                               </li>
                             ))}
                           </ul>
+                          {set.policy_references?.length ? (
+                            <p className={styles.policyReferences}>
+                              Policy evidence: {set.policy_references.map((policy) =>
+                                `${policy.title} v${policy.version}`).join(", ")}
+                            </p>
+                          ) : null}
                         </article>
                       ))}
                     </>
@@ -1143,6 +1168,41 @@ export function AdminDrives() {
             <Plus aria-hidden="true" />
             Add rule
           </button>
+          <fieldset className={styles.policyEvidence}>
+            <legend>Approved policy evidence</legend>
+            <p>
+              Attach the exact approved versions used to prepare these rules.
+              The references are locked when this rule version is created.
+            </p>
+            {policyLoadUnavailable ? (
+              <Alert tone="warning">
+                Approved policy evidence could not be verified. Refresh before
+                creating a rule version that depends on policy evidence.
+              </Alert>
+            ) : policies.length ? (
+              policies.map((policy) => (
+                <label key={policy.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedPolicyIds.includes(policy.id)}
+                    onChange={(event) => setSelectedPolicyIds((current) =>
+                      event.target.checked
+                        ? [...current, policy.id]
+                        : current.filter((id) => id !== policy.id))}
+                  />
+                  <span>
+                    <strong>{policy.title} · version {policy.version}</strong>
+                    <small>{policy.source_reference}</small>
+                  </span>
+                </label>
+              ))
+            ) : (
+              <Alert tone="warning">
+                No approved policy version is available. Publish reviewed policy
+                evidence before attaching it to this rule version.
+              </Alert>
+            )}
+          </fieldset>
           <Alert tone="warning">
             <CircleAlert aria-hidden="true" /> Preview carefully: once
             published, this version is locked and applications keep

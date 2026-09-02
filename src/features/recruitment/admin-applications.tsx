@@ -181,7 +181,7 @@ export function AdminApplications() {
           event_key: `feedback:${selected.id}:${selected.status}`,
           title: data.get("title"),
           body: data.get("body"),
-          deep_link: `/opportunities/${selected.role_id}`,
+          deep_link: `/applications/${selected.id}`,
         }),
       });
       setNotice(

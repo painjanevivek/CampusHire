@@ -2918,9 +2918,39 @@ export type Rule = {
 };
 
 /**
+ * RulePolicyReference
+ */
+export type RulePolicyReference = {
+    /**
+     * Approved At
+     */
+    approved_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Source Reference
+     */
+    source_reference: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
  * RuleSetCreate
  */
 export type RuleSetCreate = {
+    /**
+     * Policy Ids
+     */
+    policy_ids?: Array<string>;
     /**
      * Rules
      */
@@ -2943,6 +2973,10 @@ export type RuleSetResponse = {
      * Id
      */
     id: string;
+    /**
+     * Policy References
+     */
+    policy_references: Array<RulePolicyReference>;
     /**
      * Published At
      */

@@ -119,6 +119,8 @@ describe("AdminApplications", () => {
         }),
       ),
     );
+    const payload = JSON.parse(csrfRequestMock.mock.calls.at(-1)?.[1].body as string);
+    expect(payload.deep_link).toBe("/applications/application-1");
   });
 
   it("previews bulk transitions before applying and reports notification outcomes", async () => {

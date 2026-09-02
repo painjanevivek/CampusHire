@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 
 import { Alert, Badge } from "@/components/ui/feedback";
-import { apiRequest, csrfRequest } from "@/lib/api/client";
+import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
+import {
+  clearIdempotencyKey,
+  getOrCreateIdempotencyKey,
+} from "@/lib/idempotency";
 import type {
   Opportunity,
   PlacementApplication,
@@ -24,6 +28,18 @@ import type {
   SemanticMatch,
 } from "./types";
 import styles from "./student-opportunity-detail.module.css";
+
+function eligibilityHeading(status: Opportunity["eligibility"]["status"]): string {
+  if (status === "eligible") return "Why you are eligible";
+  if (status === "ineligible") return "Why this role is not currently available";
+  if (status === "needs_manual_review") return "What needs manual review";
+  return "Why eligibility is unavailable";
+}
+
+function outcomeIsUnknown(error: unknown): boolean {
+  return error instanceof ApiError &&
+    ["offline", "timeout", "dependency", "server"].includes(error.kind);
+}
 
 export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
@@ -35,28 +51,30 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
   const [notice, setNotice] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submissionUncertain, setSubmissionUncertain] = useState(false);
 
   const load = useCallback(async () => {
     await Promise.resolve();
     setLoading(true);
     setError("");
+    const relevance = csrfRequest<SemanticMatch>(`/opportunities/${roleId}/match`, {
+      method: "POST",
+    }).catch(() => null);
     try {
-      const [role, versions, relevance] = await Promise.all([
+      const [role, versions] = await Promise.all([
         apiRequest<Opportunity>(`/opportunities/${roleId}`, {
           cache: "no-store",
         }),
         apiRequest<ResumeChoice[]>("/resumes", { cache: "no-store" }),
-        csrfRequest<SemanticMatch>(`/opportunities/${roleId}/match`, {
-          method: "POST",
-        }),
       ]);
       const selectable = versions.filter(
         (item) => item.status === "completed" && item.scan_status === "clean",
       );
       setOpportunity(role);
-      setMatch(relevance);
       setResumes(selectable);
       setSelectedResume((current) => current || selectable[0]?.id || "");
+      setLoading(false);
+      setMatch(await relevance);
     } catch {
       setError(
         "This role could not be loaded. It may be closed, unpublished, or temporarily unavailable.",
@@ -87,6 +105,8 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
 
   async function apply() {
     if (!opportunity || !selectedResume) return;
+    const operationScope = `apply:${opportunity.id}:${selectedResume}`;
+    const idempotencyKey = getOrCreateIdempotencyKey(operationScope);
     setSubmitting(true);
     setError("");
     try {
@@ -94,7 +114,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
         "/applications",
         {
           method: "POST",
-          headers: { "Idempotency-Key": crypto.randomUUID() },
+          headers: { "Idempotency-Key": idempotencyKey },
           body: JSON.stringify({
             role_id: opportunity.id,
             resume_version_id: selectedResume,
@@ -109,11 +129,32 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
       setNotice(
         "Application submitted. Your selected resume and eligibility result are now saved with this application.",
       );
+      clearIdempotencyKey(operationScope);
+      setSubmissionUncertain(false);
       setConfirming(false);
-    } catch {
-      setError(
-        "The application was not submitted. Check the deadline, eligibility result, and selected resume, then try again.",
-      );
+    } catch (caught) {
+      if (
+        caught instanceof ApiError &&
+        (caught.code === "application_already_exists" ||
+          caught.message === "application_already_exists")
+      ) {
+        clearIdempotencyKey(operationScope);
+        setSubmissionUncertain(false);
+        setConfirming(false);
+        await load();
+        setNotice("Your application already exists. Its locked record is available in Applications.");
+      } else if (outcomeIsUnknown(caught)) {
+        setSubmissionUncertain(true);
+        setError(
+          "CampusHire could not confirm the outcome. Retry here to safely reuse the same request, or check Applications before leaving this page.",
+        );
+      } else {
+        clearIdempotencyKey(operationScope);
+        setSubmissionUncertain(false);
+        setError(
+          "The application was not accepted. Check the deadline, eligibility result, and selected resume, then try again.",
+        );
+      }
     } finally {
       setSubmitting(false);
     }
@@ -234,7 +275,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             <div className={styles.sectionTitle}>
               <div>
                 <p>Based on published rules</p>
-                <h2>Why you are eligible</h2>
+                <h2>{eligibilityHeading(opportunity.eligibility.status)}</h2>
               </div>
               <Badge tone={statusTone}>
                 {opportunity.eligibility.status.replaceAll("_", " ")}
@@ -278,6 +319,12 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
                 from your current profile
               </p>
             )}
+            {opportunity.eligibility.missing_evidence.length ? (
+              <Alert tone="warning">
+                Manual review needs: {opportunity.eligibility.missing_evidence.join(", ")}.
+                Missing information does not cause an automatic rejection.
+              </Alert>
+            ) : null}
           </section>
         </article>
 
@@ -380,7 +427,11 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
                 version, and eligibility explanation.
               </p>
               <div>
-                <button type="button" onClick={() => setConfirming(false)}>
+                <button
+                  type="button"
+                  onClick={() => setConfirming(false)}
+                  disabled={submissionUncertain}
+                >
                   Cancel
                 </button>
                 <button
@@ -388,9 +439,19 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
                   onClick={() => void apply()}
                   disabled={submitting}
                 >
-                  {submitting ? "Submitting…" : "Submit application"}
+                  {submitting
+                    ? "Submitting…"
+                    : submissionUncertain
+                      ? "Retry safely"
+                      : "Submit application"}
                 </button>
               </div>
+              {submissionUncertain ? (
+                <p>
+                  The selected resume is held for this retry. You can also{" "}
+                  <Link href="/applications">check Applications</Link>.
+                </p>
+              ) : null}
             </div>
           ) : null}
           <p className={styles.policy}>
