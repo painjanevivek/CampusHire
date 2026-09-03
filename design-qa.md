@@ -52,3 +52,44 @@
 ## Known Non-blocking Warning
 
 Vitest reports a future Vite native config-loader migration notice for `vitest.config.ts`. It does not affect test execution or production output.
+
+## Role-specific application packet — 2026-09-03
+
+Status: **internal synthetic design QA passed; external pilot UAT remains unclaimed.**
+
+Recorded: `2026-09-03T17:41:13Z`
+
+## Source and implementation
+
+- Approved review concept: `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-7ed41754-9843-47ef-ad27-a12107ecafaa.png` (`1536 × 1024`).
+- Supporting approved concepts:
+  - `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-81250884-e60b-4b6b-98ef-4d6919a63100.png`
+  - `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-fbb4dd9d-61cc-4ae8-8bfa-c96b82aaf359.png`
+- Implementation route: `http://127.0.0.1:3199/opportunities/8e9ef5ee-c73a-4fdc-87e2-8ab722e1b304/apply`
+- Browser: Codex in-app browser.
+- Captures reviewed in the Codex session: default desktop viewport and explicit `390 × 844` mobile viewport. The approved source and implementation captures were inspected together before and after the mobile correction.
+
+## Comparison history
+
+1. The first implementation capture matched the CampusHire shell, typography, colour tokens, card treatment, progress affordance, exact-packet hierarchy, and fixed final action pattern from the approved concepts. The implementation intentionally uses the requested four steps rather than the exploratory six-step review concept.
+2. The first `390 × 844` capture exposed a horizontally scrolling stepper and placed the summary before the active task. The stepper was changed to a 2 × 2 grid and the task now precedes its summary.
+3. Reloading a saved draft on Review exposed a missing client-side review fetch. Review recovery now fetches the exact server preview and was rechecked in the browser.
+4. The corrected mobile capture showed no stepper overflow, preserved readable headings and controls, and kept the final actions reachable without hiding packet content.
+
+## Interaction and accessibility checks
+
+- Signed in with a synthetic student fixture and opened an eligible institution-published role.
+- Created and resumed the server-saved draft.
+- Selected a clean completed PDF, confirmed the limited profile snapshot, opened every optional disclosure choice including “Prefer not to answer”, and reached the exact review packet.
+- Reloaded on Review and confirmed the resume, profile snapshot, disclosure status, form version, and immutable notice were restored.
+- Confirmed the accuracy checkbox controls the enabled state of the submit action.
+- Verified ordered step semantics and `aria-current="step"` through the accessibility tree.
+- Verified semantic labels, read-only account email, live saved timestamp, and keyboard-selectable disclosure controls.
+- Verified mobile navigation and the four-step 2 × 2 reflow at `390 × 844`.
+- Inspected the reduced-motion media rule; spinner animation is disabled under `prefers-reduced-motion: reduce`.
+- Browser console inspection returned no warnings or errors during the desktop journey.
+- Final submission behavior is covered by the automated idempotency test; the visual QA session stopped at the enabled synthetic submit action.
+
+## Final assessment
+
+The implementation preserves the approved visual direction while fitting the existing CampusHire design system and the requested four-step information architecture. No external UAT, legal, institutional-policy, or governance approval is implied by this internal synthetic QA pass.

@@ -56,6 +56,81 @@ export type ResumeChoice = {
   original_name: string;
   status: string;
   scan_status: string;
+  parent_version_id?: string | null;
+  purpose_role_id?: string | null;
+};
+
+export type DisclosureQuestion = {
+  id: string;
+  prompt: string;
+  type: "single_select" | "multi_select" | "boolean";
+  options: string[];
+};
+
+export type ApplicationForm = {
+  id: string;
+  role_id: string;
+  version: number;
+  status: string;
+  purpose: string;
+  compliance_owner: string;
+  retention_days: number;
+  questions: DisclosureQuestion[];
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DisclosureAnswer = boolean | string | string[];
+
+export type ApplicationDraft = {
+  id: string;
+  role_id: string;
+  role_title: string;
+  company_name: string;
+  deadline_at: string;
+  current_step: "resume" | "profile" | "disclosures" | "review" | "submitted";
+  revision: number;
+  expires_at: string;
+  last_saved_at: string;
+  profile_revision: number | null;
+  resume: (ResumeChoice & { created_at: string }) | null;
+  form: ApplicationForm | null;
+  disclosure_answers: Record<string, DisclosureAnswer>;
+  disclosure_completed: boolean;
+  submitted_application_id: string | null;
+};
+
+export type ApplicationProfile = {
+  id: string;
+  account_email: string | null;
+  full_name: string | null;
+  department: string | null;
+  academic_year: string | null;
+  phone: string | null;
+  city: string | null;
+  country_code: string | null;
+  education: Array<Record<string, unknown>>;
+  revision: number;
+  updated_at: string;
+};
+
+export type ResumeContent = {
+  full_name: string;
+  email: string;
+  phone: string | null;
+  github_url: string | null;
+  portfolio_url: string | null;
+  summary: string;
+  skills: string[];
+  projects: string[];
+  education: string[];
+};
+
+export type ApplicationReview = {
+  draft: ApplicationDraft;
+  profile_snapshot: Record<string, unknown>;
+  immutable_notice: string;
 };
 
 export type ApplicationEvent = {
@@ -91,6 +166,9 @@ export type PlacementApplication = {
   rule_snapshot: Record<string, unknown>;
   eligibility_snapshot: Eligibility;
   decision_snapshot: Record<string, unknown>;
+  profile_snapshot: Record<string, unknown>;
+  application_form_snapshot: Record<string, unknown>;
+  disclosure_status: "not_configured" | "collected" | "declined";
   institution_timezone: string;
   created_at: string;
   updated_at: string;

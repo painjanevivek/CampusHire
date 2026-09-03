@@ -61,6 +61,7 @@ const semanticMatch = {
 
 describe("StudentOpportunityDetail", () => {
   beforeEach(() => {
+    delete process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1;
     window.sessionStorage.clear();
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
@@ -161,5 +162,15 @@ describe("StudentOpportunityDetail", () => {
     expect(
       screen.getByText("This score never changes your rule-based eligibility."),
     ).toBeInTheDocument();
+  });
+
+  it("routes eligible students into the packet wizard when the pilot flag is enabled", async () => {
+    process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1 = "true";
+    render(<StudentOpportunityDetail roleId="role-1" />);
+
+    const link = await screen.findByRole("link", { name: "Build application packet" });
+    expect(link).toHaveAttribute("href", "/opportunities/role-1/apply");
+    expect(screen.queryByRole("button", { name: "Review application" }))
+      .not.toBeInTheDocument();
   });
 });

@@ -36,6 +36,8 @@ export type ResumeSuggestion = {
 
 export type ResumeVersion = {
   id: string;
+  parent_version_id: string | null;
+  purpose_role_id: string | null;
   version_number: number | null;
   source: "upload" | "generated";
   original_name: string;

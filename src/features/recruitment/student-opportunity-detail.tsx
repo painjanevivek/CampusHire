@@ -42,6 +42,7 @@ function outcomeIsUnknown(error: unknown): boolean {
 }
 
 export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
+  const wizardEnabled = process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1 === "true";
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [resumes, setResumes] = useState<ResumeChoice[]>([]);
   const [match, setMatch] = useState<SemanticMatch | null>(null);
@@ -401,21 +402,27 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             </p>
           ) : null}
           {canApply && !confirming ? (
-            <button
-              className={styles.primary}
-              type="button"
-              disabled={!selectedResume}
-              onClick={() => setConfirming(true)}
-            >
-              Review application
-            </button>
+            wizardEnabled ? (
+              <Link className={styles.primary} href={`/opportunities/${roleId}/apply`}>
+                Build application packet
+              </Link>
+            ) : (
+              <button
+                className={styles.primary}
+                type="button"
+                disabled={!selectedResume}
+                onClick={() => setConfirming(true)}
+              >
+                Review application
+              </button>
+            )
           ) : null}
           {!canApply && !opportunity.application_status ? (
             <button className={styles.primary} type="button" disabled>
               Application unavailable
             </button>
           ) : null}
-          {confirming ? (
+          {confirming && !wizardEnabled ? (
             <div
               className={styles.confirm}
               role="group"

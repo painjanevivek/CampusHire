@@ -149,6 +149,161 @@ export type ApplicationCreate = {
 };
 
 /**
+ * ApplicationDisclosureResponse
+ */
+export type ApplicationDisclosureResponse = {
+    /**
+     * Answers
+     */
+    answers: {
+        [key: string]: boolean | string | Array<string>;
+    };
+    /**
+     * Application Id
+     */
+    application_id: string;
+    form: ApplicationFormResponse;
+    /**
+     * Retention Until
+     */
+    retention_until: string;
+};
+
+/**
+ * ApplicationDraftResponse
+ */
+export type ApplicationDraftResponse = {
+    /**
+     * Company Name
+     */
+    company_name: string;
+    /**
+     * Current Step
+     */
+    current_step: string;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
+    /**
+     * Disclosure Answers
+     */
+    disclosure_answers: {
+        [key: string]: boolean | string | Array<string>;
+    };
+    /**
+     * Disclosure Completed
+     */
+    disclosure_completed: boolean;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    form: ApplicationFormResponse | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Last Saved At
+     */
+    last_saved_at: string;
+    /**
+     * Profile Revision
+     */
+    profile_revision: number | null;
+    resume: DraftResumeSummary | null;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Role Title
+     */
+    role_title: string;
+    /**
+     * Submitted Application Id
+     */
+    submitted_application_id: string | null;
+};
+
+/**
+ * ApplicationFormResponse
+ */
+export type ApplicationFormResponse = {
+    /**
+     * Compliance Owner
+     */
+    compliance_owner: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Purpose
+     */
+    purpose: string;
+    /**
+     * Questions
+     */
+    questions: Array<DisclosureQuestion>;
+    /**
+     * Retention Days
+     */
+    retention_days: number;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
+ * ApplicationFormUpdate
+ */
+export type ApplicationFormUpdate = {
+    /**
+     * Compliance Owner
+     */
+    compliance_owner: string;
+    /**
+     * Purpose
+     */
+    purpose: string;
+    /**
+     * Questions
+     */
+    questions?: Array<DisclosureQuestion>;
+    /**
+     * Retention Days
+     */
+    retention_days: number;
+};
+
+/**
  * ApplicationOverrideCreate
  */
 export type ApplicationOverrideCreate = {
@@ -175,6 +330,12 @@ export type ApplicationResponse = {
      */
     appeals?: Array<ApplicationAppealResponse>;
     /**
+     * Application Form Snapshot
+     */
+    application_form_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
      * Can Withdraw
      */
     can_withdraw: boolean;
@@ -188,6 +349,10 @@ export type ApplicationResponse = {
     decision_snapshot: {
         [key: string]: unknown;
     };
+    /**
+     * Disclosure Status
+     */
+    disclosure_status: string;
     /**
      * Eligibility Snapshot
      */
@@ -216,6 +381,12 @@ export type ApplicationResponse = {
      * Overrides
      */
     overrides?: Array<OverrideResponse>;
+    /**
+     * Profile Snapshot
+     */
+    profile_snapshot: {
+        [key: string]: unknown;
+    };
     /**
      * Resume Snapshot
      */
@@ -270,6 +441,23 @@ export type ApplicationResponse = {
      * Withdrawn At
      */
     withdrawn_at: string | null;
+};
+
+/**
+ * ApplicationReviewResponse
+ */
+export type ApplicationReviewResponse = {
+    draft: ApplicationDraftResponse;
+    /**
+     * Immutable Notice
+     */
+    immutable_notice: string;
+    /**
+     * Profile Snapshot
+     */
+    profile_snapshot: {
+        [key: string]: unknown;
+    };
 };
 
 /**
@@ -762,6 +950,112 @@ export type DemoSignInRequest = {
 };
 
 /**
+ * DisclosureQuestion
+ */
+export type DisclosureQuestion = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Options
+     */
+    options?: Array<string>;
+    /**
+     * Prompt
+     */
+    prompt: string;
+    /**
+     * Type
+     */
+    type: 'single_select' | 'multi_select' | 'boolean';
+};
+
+/**
+ * DraftDisclosureUpdate
+ */
+export type DraftDisclosureUpdate = {
+    /**
+     * Answers
+     */
+    answers?: {
+        [key: string]: boolean | string | Array<string>;
+    };
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * DraftProfileConfirmation
+ */
+export type DraftProfileConfirmation = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Profile Revision
+     */
+    profile_revision: number;
+};
+
+/**
+ * DraftResumeSummary
+ */
+export type DraftResumeSummary = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Original Name
+     */
+    original_name: string;
+    /**
+     * Parent Version Id
+     */
+    parent_version_id?: string | null;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+};
+
+/**
+ * DraftResumeUpdate
+ */
+export type DraftResumeUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Resume Version Id
+     */
+    resume_version_id: string;
+};
+
+/**
+ * DraftSubmitRequest
+ */
+export type DraftSubmitRequest = {
+    /**
+     * Confirmation
+     */
+    confirmation: 'I CONFIRM THIS APPLICATION IS ACCURATE';
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
  * DriveCreate
  */
 export type DriveCreate = {
@@ -1251,6 +1545,14 @@ export type IdentityUpdate = {
      * Academic Year
      */
     academic_year?: string | null;
+    /**
+     * City
+     */
+    city?: string | null;
+    /**
+     * Country Code
+     */
+    country_code?: string | null;
     /**
      * Department
      */
@@ -2059,9 +2361,21 @@ export type ProfileResponse = {
      */
     academic_year: string | null;
     /**
+     * Account Email
+     */
+    account_email?: string | null;
+    /**
      * Checklist
      */
     checklist: Array<ReadinessItem>;
+    /**
+     * City
+     */
+    city: string | null;
+    /**
+     * Country Code
+     */
+    country_code: string | null;
     /**
      * Department
      */
@@ -2142,6 +2456,14 @@ export type ProfileUpdate = {
      * Academic Year
      */
     academic_year?: string | null;
+    /**
+     * City
+     */
+    city?: string | null;
+    /**
+     * Country Code
+     */
+    country_code?: string | null;
     /**
      * Department
      */
@@ -2528,9 +2850,17 @@ export type ResumeVersionResponse = {
      */
     page_count: number | null;
     /**
+     * Parent Version Id
+     */
+    parent_version_id?: string | null;
+    /**
      * Processing Stage
      */
     processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    /**
+     * Purpose Role Id
+     */
+    purpose_role_id?: string | null;
     /**
      * Review Completed At
      */
@@ -3376,6 +3706,17 @@ export type SupportRequestResponse = {
 };
 
 /**
+ * TailoredResumeRequest
+ */
+export type TailoredResumeRequest = {
+    content: ResumeContent;
+    /**
+     * Role Id
+     */
+    role_id: string;
+};
+
+/**
  * UserResponse
  */
 export type UserResponse = {
@@ -3653,6 +3994,36 @@ export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRet
 };
 
 export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponse = RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses[keyof RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses];
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/compliance/applications/{application_id}/disclosures';
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetError = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors];
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDisclosureResponse;
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponse = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses];
 
 export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostData = {
     body: ExtractionReview;
@@ -4529,6 +4900,98 @@ export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses = {
 
 export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponse = EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses[keyof EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses];
 
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetError = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors];
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses = {
+    /**
+     * Response Read Role Application Form Api V1 Admin Recruitment Roles  Role Id  Application Form Get
+     *
+     * Successful Response
+     */
+    200: ApplicationFormResponse | null;
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponse = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses];
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutData = {
+    body: ApplicationFormUpdate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutError = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors];
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationFormResponse;
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponse = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses];
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form/publish';
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostError = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors];
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationFormResponse;
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponse = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses];
+
 export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostData = {
     body: EligibilityPreviewRequest;
     path: {
@@ -4685,6 +5148,222 @@ export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetId
 
 export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponse = PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses[keyof PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses];
 
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}';
+};
+
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteError = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors];
+
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponse = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses];
+
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}';
+};
+
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetError = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors];
+
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponse = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses];
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutData = {
+    body: DraftDisclosureUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/disclosures';
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutError = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors];
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponse = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses];
+
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutData = {
+    body: DraftProfileConfirmation;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/profile-confirmation';
+};
+
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutError = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors];
+
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponse = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses];
+
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutData = {
+    body: DraftResumeUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/resume';
+};
+
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutError = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors];
+
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponse = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses];
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetData = {
+    body?: never;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/review';
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetError = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors];
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationReviewResponse;
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponse = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses];
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostData = {
+    body: DraftSubmitRequest;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/submit';
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostError = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors];
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ApplicationResponse;
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponse = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses];
+
 export type ReadStudentApplicationsApiV1ApplicationsGetData = {
     body?: never;
     path?: never;
@@ -4836,6 +5515,36 @@ export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcs
      */
     200: unknown;
 };
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/disclosures';
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetError = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors];
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDisclosureResponse;
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponse = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses];
 
 export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostData = {
     body: ApplicationWithdrawal;
@@ -6041,6 +6750,36 @@ export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponses = {
 
 export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponse = ReadOpportunityApiV1OpportunitiesRoleIdGetResponses[keyof ReadOpportunityApiV1OpportunitiesRoleIdGetResponses];
 
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunities/{role_id}/application-draft';
+};
+
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostError = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors];
+
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponse = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses];
+
 export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostData = {
     body?: never;
     path: {
@@ -6466,6 +7205,36 @@ export type DownloadResumeApiV1ResumesResumeIdDownloadGetResponses = {
     200: unknown;
 };
 
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/editable-content';
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetError = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors];
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeContent;
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponse = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses];
+
 export type RetryResumeJobApiV1ResumesResumeIdRetryPostData = {
     body?: never;
     path: {
@@ -6589,6 +7358,36 @@ export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPos
 };
 
 export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostData = {
+    body: TailoredResumeRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/tailored-versions';
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostError = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors];
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ResumeVersionResponse;
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponse = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses];
 
 export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetData = {
     body?: never;
