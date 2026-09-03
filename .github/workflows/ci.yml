@@ -52,11 +52,11 @@ jobs:
       - name: Build the production frontend image
         run: docker build --build-arg NEXT_PUBLIC_API_URL=https://staging.invalid/api/v1 --tag campushire-frontend:test .
       - run: npm audit --audit-level=high
-      - name: Check out the bound Backend phase-09 source
+      - name: Check out the mirrored Backend phase-10 controls
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: painjanevivek/CampusHire-backend
-          ref: cf8ceaa55e0cd7ad3cb016e5ab6f096b07e80e00
+          ref: 1f41c8118141094557fdda4a32f2265236eb158f
           path: .compat/backend
           persist-credentials: false
       - name: Validate the cross-repository pilot compatibility manifest
