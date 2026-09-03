@@ -45,6 +45,23 @@ describe("API client", () => {
     );
   });
 
+  it("refuses redirects for credentialed requests", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiRequest("/profile");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringMatching(/\/api\/v1\/profile$/),
+      expect.objectContaining({ credentials: "include", redirect: "error" }),
+    );
+  });
+
   it("preserves typed conflict details for recoverable editing flows", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
       detail: {

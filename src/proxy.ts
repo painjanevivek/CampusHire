@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { normalizeApiBaseUrl } from "./lib/api/base-url";
+
 const studentRoutes = [
   "/dashboard",
   "/onboarding",
@@ -22,13 +24,9 @@ export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const development = process.env.NODE_ENV === "development";
   const configuredApi = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
-  let apiOrigin = "http://localhost:8000";
-  try {
-    const parsed = new URL(configuredApi);
-    if (parsed.protocol === "http:" || parsed.protocol === "https:") apiOrigin = parsed.origin;
-  } catch {
-    // A malformed deployment value remains blocked by the restrictive fallback policy.
-  }
+  const apiOrigin = new URL(
+    normalizeApiBaseUrl(configuredApi, "NEXT_PUBLIC_API_URL"),
+  ).origin;
   const policy = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${development ? " 'unsafe-eval'" : ""}`,

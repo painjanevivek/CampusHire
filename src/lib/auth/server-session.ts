@@ -1,6 +1,7 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { normalizeApiBaseUrl } from "../api/base-url";
 import { safeReturnTo } from "./return-to";
 
 export type SessionUser = {
@@ -24,16 +25,20 @@ export async function requireServerSession(lane: "student" | "admin"): Promise<S
     lane === "admin" ? "/admin/dashboard" : "/dashboard",
     lane === "admin" ? "/admin/" : undefined,
   );
-  const apiBase = (
+  const configuredApiBase =
     process.env.INTERNAL_API_URL
     ?? process.env.NEXT_PUBLIC_API_URL
-    ?? "http://localhost:8000/api/v1"
-  ).replace(/\/$/, "");
+    ?? "http://localhost:8000/api/v1";
+  const apiBase = normalizeApiBaseUrl(
+    configuredApiBase,
+    process.env.INTERNAL_API_URL ? "INTERNAL_API_URL" : "NEXT_PUBLIC_API_URL",
+  );
   let response: Response;
   try {
     response = await fetch(`${apiBase}/auth/me`, {
       headers: { cookie: cookieStore.toString(), accept: "application/json" },
       cache: "no-store",
+      redirect: "error",
       signal: AbortSignal.timeout(5_000),
     });
   } catch {

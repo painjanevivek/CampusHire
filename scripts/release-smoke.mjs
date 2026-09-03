@@ -1,6 +1,19 @@
 const baseUrl = (process.env.BASE_URL ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const requireHsts = process.env.REQUIRE_HSTS === "true";
 
+for (const variableName of ["NEXT_PUBLIC_API_URL", "INTERNAL_API_URL"]) {
+  const configuredApi = process.env[variableName];
+  if (!configuredApi) continue;
+  const parsed = new URL(configuredApi);
+  const loopback = ["localhost", "127.0.0.1", "[::1]"].includes(parsed.hostname);
+  if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && loopback)) {
+    console.error(
+      `CampusHire release smoke failed: ${variableName} must use HTTPS unless it targets loopback.`,
+    );
+    process.exit(1);
+  }
+}
+
 const routes = ["/", "/sign-in", "/admin/sign-in", "/privacy"];
 const requiredHeaders = new Map([
   ["x-content-type-options", "nosniff"],

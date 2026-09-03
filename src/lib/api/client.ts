@@ -1,16 +1,8 @@
-function normalizeApiUrl(value: string): string {
-  const parsed = new URL(value);
-  if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password) {
-    throw new Error("NEXT_PUBLIC_API_URL must be an HTTP(S) URL without credentials.");
-  }
-  if (parsed.search || parsed.hash) {
-    throw new Error("NEXT_PUBLIC_API_URL cannot contain a query or fragment.");
-  }
-  return parsed.toString().replace(/\/$/, "");
-}
+import { normalizeApiBaseUrl } from "./base-url";
 
-const apiUrl = normalizeApiUrl(
+const apiUrl = normalizeApiBaseUrl(
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1",
+  "NEXT_PUBLIC_API_URL",
 );
 
 export type ApiErrorKind =
@@ -98,6 +90,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
       ...init,
       credentials: "include",
       headers,
+      redirect: "error",
       signal: init?.signal ?? AbortSignal.timeout(15_000),
     });
   } catch (cause) {
