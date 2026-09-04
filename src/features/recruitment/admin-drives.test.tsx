@@ -95,6 +95,17 @@ describe("AdminDrives draft management", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
   });
 
+  it("explains why a new draft is not visible to students", async () => {
+    render(<AdminDrives />);
+
+    expect(
+      await screen.findByText(
+        "Not visible to students. Add a role, publish an eligibility rule version, publish the role, then publish this drive.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Publish drive" })).toBeDisabled();
+  });
+
   it("edits and deletes only the selected draft drive", async () => {
     const updatedDrive = {
       ...draftDrive,

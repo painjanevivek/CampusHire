@@ -3,10 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentOpportunities } from "./student-opportunities";
 
-const { apiRequestMock, csrfRequestMock, replaceMock } = vi.hoisted(() => ({
+const { apiRequestMock, csrfRequestMock, replaceMock, searchParamsMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),
   csrfRequestMock: vi.fn(),
   replaceMock: vi.fn(),
+  searchParamsMock: vi.fn(),
 }));
 
 vi.mock("@/lib/api/client", async (importOriginal) => ({
@@ -17,7 +18,7 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => searchParamsMock(),
 }));
 
 const opportunity = {
@@ -45,6 +46,8 @@ const opportunity = {
 describe("StudentOpportunities", () => {
   beforeEach(() => {
     apiRequestMock.mockReset(); csrfRequestMock.mockReset(); replaceMock.mockReset();
+    searchParamsMock.mockReset();
+    searchParamsMock.mockReturnValue(new URLSearchParams());
     apiRequestMock.mockResolvedValue({ items: [opportunity], page: 1, page_size: 20, total: 1 });
   });
 
@@ -63,5 +66,31 @@ describe("StudentOpportunities", () => {
     fireEvent.click(save);
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/opportunities/role-1/save", { method: "POST" }));
     expect(screen.getByRole("button", { name: "Remove Software Engineer from saved roles" })).toBeInTheDocument();
+  });
+
+  it("does not misreport a request failure as an empty opportunity list", async () => {
+    apiRequestMock.mockRejectedValueOnce(new Error("API unavailable"));
+
+    render(<StudentOpportunities />);
+
+    expect(await screen.findByText(/Opportunities could not be loaded/)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "No open placement drive yet" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("synchronizes visible filters when the URL query is cleared", async () => {
+    searchParamsMock.mockReturnValue(new URLSearchParams("q=Test1&skill=next.js"));
+    const { rerender } = render(<StudentOpportunities />);
+
+    expect(await screen.findByRole("heading", { name: "Software Engineer" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Role, company, or keyword" })).toHaveValue("Test1");
+    expect(screen.getByRole("textbox", { name: "Skill" })).toHaveValue("next.js");
+
+    searchParamsMock.mockReturnValue(new URLSearchParams());
+    rerender(<StudentOpportunities />);
+
+    expect(screen.getByRole("textbox", { name: "Role, company, or keyword" })).toHaveValue("");
+    expect(screen.getByRole("textbox", { name: "Skill" })).toHaveValue("");
   });
 });

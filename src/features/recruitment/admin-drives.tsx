@@ -654,6 +654,16 @@ export function AdminDrives() {
                   </span>
                 </div>
               </div>
+              {activeDrive.status === "draft" ? (
+                <Alert tone="warning">
+                  <CircleAlert aria-hidden="true" />
+                  {roles.length === 0
+                    ? "Not visible to students. Add a role, publish an eligibility rule version, publish the role, then publish this drive."
+                    : roles.some((item) => item.status === "published")
+                      ? "Ready for student visibility. Publish the drive; it will appear only during its active application window."
+                      : "Not visible to students. Publish an eligibility rule version and the role before publishing this drive."}
+                </Alert>
+              ) : null}
               <div className={styles.commandBar}>
                 {activeDrive.status === "draft" ? (
                   <>

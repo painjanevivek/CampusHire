@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
+  turbopack: {
+    root: __dirname,
+  },
   async headers() {
     const tokenPageHeaders = [
       { key: "Referrer-Policy", value: "no-referrer" },

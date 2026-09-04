@@ -101,7 +101,12 @@ export function StudentOpportunities() {
         <Link href="/opportunities?saved_only=true"><Bookmark aria-hidden="true" /> Saved roles</Link>
       </header>
 
-      <form className={styles.searchPanel} onSubmit={updateFilters} aria-label="Search opportunities">
+      <form
+        key={queryString}
+        className={styles.searchPanel}
+        onSubmit={updateFilters}
+        aria-label="Search opportunities"
+      >
         <label className={styles.searchField}>
           <Search aria-hidden="true" />
           <span className="srOnly">Role, company, or keyword</span>
@@ -130,7 +135,7 @@ export function StudentOpportunities() {
         <section className={styles.results} aria-labelledby="opportunity-results">
           <div className={styles.sectionHeader}><h2 id="opportunity-results">{loading ? "Loading roles…" : `${data?.total ?? 0} opportunities`}</h2><span>Deadline first</span></div>
           {loading ? <div className={styles.loading} role="status"><span /><span /><span /></div> : null}
-          {!loading && !items.length ? <EmptyState title={data?.empty_reason === "profile_incomplete" ? "Complete your required profile" : data?.empty_reason === "filters_exclude_results" ? "No roles match these filters" : "No open placement drive yet"}><span>{data?.empty_reason === "profile_incomplete" ? "Add required education and target-role facts so eligibility can be explained." : data?.empty_reason === "filters_exclude_results" ? "Clear or broaden filters; your saved roles and applications are unchanged." : "Your placement cell has not published an open role, or the current drive has closed."}</span></EmptyState> : null}
+          {!loading && !error && !items.length ? <EmptyState title={data?.empty_reason === "profile_incomplete" ? "Complete your required profile" : data?.empty_reason === "filters_exclude_results" ? "No roles match these filters" : "No open placement drive yet"}><span>{data?.empty_reason === "profile_incomplete" ? "Add required education and target-role facts so eligibility can be explained." : data?.empty_reason === "filters_exclude_results" ? "Clear or broaden filters; your saved roles and applications are unchanged." : "Your placement cell has not published an open role, or the current drive has closed."}</span></EmptyState> : null}
           <div className={styles.list}>
             {items.map((opportunity) => (
               <article key={opportunity.id} className={styles.card}>
