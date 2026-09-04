@@ -45,7 +45,7 @@
   color: var(--brand-blue);
   font-family: var(--font-mono), monospace;
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: var(--font-weight-emphasis);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -97,7 +97,7 @@
   background: var(--verified-soft);
   color: var(--verified);
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: var(--font-weight-emphasis);
   text-transform: uppercase;
 }
 
@@ -112,7 +112,7 @@
 .settingsButton {
   min-height: var(--control-min-size);
   border-radius: var(--radius-pill);
-  font-weight: 800;
+  font-weight: var(--font-weight-emphasis);
   cursor: pointer;
 }
 
@@ -126,7 +126,7 @@
 .actions a {
   color: var(--brand-blue-dark);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: var(--font-weight-emphasis);
   text-underline-offset: 4px;
 }
 

@@ -46,6 +46,6 @@
   box-shadow: var(--shadow-soft);
   color: var(--status-danger);
   font-size: 0.82rem;
-  font-weight: 650;
+  font-weight: var(--font-weight-emphasis);
   line-height: 1.4;
 }

@@ -12,6 +12,8 @@ const { apiRequestMock, csrfRequestMock, refreshMock, replaceMock } = vi.hoisted
 
 vi.mock("@/lib/api/client", () => ({
   apiRequest: apiRequestMock,
+  cachedApiRequest: apiRequestMock,
+  clearApiQueryCache: vi.fn(),
   csrfRequest: csrfRequestMock,
 }));
 vi.mock("next/navigation", () => ({

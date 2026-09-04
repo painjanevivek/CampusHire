@@ -38,7 +38,7 @@
   background: var(--brand-blue);
   color: white;
   font-size: 0.62rem;
-  font-weight: 850;
+  font-weight: var(--font-weight-emphasis);
 }
 .panel {
   position: absolute;
@@ -65,7 +65,7 @@
   margin: 0 0 3px;
   color: var(--brand-blue);
   font-size: 0.68rem;
-  font-weight: 850;
+  font-weight: var(--font-weight-emphasis);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -105,7 +105,7 @@
   background: var(--brand-blue-soft);
 }
 .items span {
-  font-weight: 850;
+  font-weight: var(--font-weight-emphasis);
 }
 .items p {
   margin: 4px 0 8px;

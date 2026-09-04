@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
-import { apiRequest, csrfRequest } from "@/lib/api/client";
+import { cachedApiRequest, csrfRequest } from "@/lib/api/client";
 import type { Opportunity, OpportunityPage } from "./types";
 import styles from "./student-opportunities.module.css";
 
@@ -42,12 +42,12 @@ export function StudentOpportunities() {
   const [saving, setSaving] = useState<string | null>(null);
 
   const queryString = searchParams.toString();
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     await Promise.resolve();
     setLoading(true);
     setError("");
     try {
-      setData(await apiRequest<OpportunityPage>(`/opportunities${queryString ? `?${queryString}` : ""}`, { cache: "no-store" }));
+      setData(await cachedApiRequest<OpportunityPage>(`/opportunities${queryString ? `?${queryString}` : ""}`, { force }));
     } catch {
       setError("Opportunities could not be loaded. Your filters are preserved; retry when the connection returns.");
     } finally {
@@ -124,7 +124,7 @@ export function StudentOpportunities() {
         </div>
       </form>
 
-      {error && <Alert tone="error">{error} <button type="button" onClick={() => void load()}>Retry</button></Alert>}
+      {error && <Alert tone="error">{error} <button type="button" onClick={() => void load(true)}>Retry</button></Alert>}
 
       <div className={styles.content} aria-busy={loading}>
         <section className={styles.results} aria-labelledby="opportunity-results">

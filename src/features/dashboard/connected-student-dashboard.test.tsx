@@ -7,6 +7,7 @@ const { apiRequestMock } = vi.hoisted(() => ({ apiRequestMock: vi.fn() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/client")>()),
   apiRequest: apiRequestMock,
+  cachedApiRequest: apiRequestMock,
 }));
 
 describe("ConnectedStudentDashboard", () => {
@@ -44,9 +45,7 @@ describe("ConnectedStudentDashboard", () => {
         name: "Complete Python foundations",
       }),
     ).toBeInTheDocument();
-    expect(apiRequestMock).toHaveBeenCalledWith("/dashboard", {
-      cache: "no-store",
-    });
+    expect(apiRequestMock).toHaveBeenCalledWith("/dashboard", { force: false });
   });
 
   it("keeps a page heading while the dashboard API is unavailable", async () => {

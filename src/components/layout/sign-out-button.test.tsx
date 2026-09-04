@@ -9,7 +9,10 @@ const { csrfRequestMock, refreshMock, replaceMock } = vi.hoisted(() => ({
   replaceMock: vi.fn(),
 }));
 
-vi.mock("@/lib/api/client", () => ({ csrfRequest: csrfRequestMock }));
+vi.mock("@/lib/api/client", () => ({
+  clearApiQueryCache: vi.fn(),
+  csrfRequest: csrfRequestMock,
+}));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock, refresh: refreshMock }),
 }));

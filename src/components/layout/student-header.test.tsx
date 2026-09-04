@@ -1,40 +1,43 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentHeader } from "./student-header";
 
+const route = vi.hoisted(() => ({ pathname: "/dashboard" }));
+
+vi.mock("next/navigation", () => ({ usePathname: () => route.pathname }));
 vi.mock("@/features/engagement/activation-progress", () => ({
-  ActivationProgress: () => <button type="button">Activation progress</button>,
+  ActivationProgress: () => <span>Activation progress</span>,
 }));
 vi.mock("@/features/engagement/notification-center", () => ({
-  NotificationCenter: () => <button type="button">Notifications</button>,
+  NotificationCenter: () => <span>Notifications</span>,
 }));
 vi.mock("./sign-out-button", () => ({
   SignOutButton: () => <button type="button">Sign out</button>,
 }));
 
 describe("StudentHeader", () => {
-  it("provides the central student destinations", () => {
-    render(<StudentHeader active="Applications" />);
-
-    expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("href", "/applications");
-    expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("href", "/profile");
+  beforeEach(() => {
+    route.pathname = "/dashboard";
   });
 
-  it("closes the responsive navigation after selection or Escape", () => {
-    render(<StudentHeader />);
-    const menu = screen.getByRole("button", { name: "Open student navigation" });
+  it("derives the active navigation item from the current route", () => {
+    const { rerender } = render(<StudentHeader />);
 
-    fireEvent.click(menu);
-    expect(screen.getByRole("button", { name: "Close student navigation" })).toHaveAttribute("aria-expanded", "true");
-    fireEvent.keyDown(window, { key: "Escape" });
-    expect(screen.getByRole("button", { name: "Open student navigation" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("link", { name: "Readiness" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
 
-    fireEvent.click(menu);
-    const profile = screen.getByRole("link", { name: "Profile" });
-    profile.addEventListener("click", (event) => event.preventDefault(), { once: true });
-    fireEvent.click(profile);
-    expect(screen.getByRole("button", { name: "Open student navigation" })).toHaveAttribute("aria-expanded", "false");
+    route.pathname = "/applications/application-1";
+    rerender(<StudentHeader />);
+
+    expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "Readiness" })).not.toHaveAttribute(
+      "aria-current",
+    );
   });
 });

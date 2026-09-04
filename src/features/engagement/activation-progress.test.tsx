@@ -7,6 +7,7 @@ const { apiRequestMock } = vi.hoisted(() => ({ apiRequestMock: vi.fn() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/client")>()),
   apiRequest: apiRequestMock,
+  cachedApiRequest: apiRequestMock,
 }));
 
 const activation = [

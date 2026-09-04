@@ -4,10 +4,11 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { csrfRequest } from "@/lib/api/client";
+import { clearApiQueryCache, csrfRequest } from "@/lib/api/client";
 import styles from "./sign-out-button.module.css";
 
 export function clearCampusHireBrowserState() {
+  clearApiQueryCache();
   for (const storageName of ["localStorage", "sessionStorage"] as const) {
     try {
       const storage = window[storageName];

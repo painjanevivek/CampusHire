@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Alert } from "@/components/ui/feedback";
 import type { DashboardApiResponse } from "@/features/engagement/types";
-import { apiRequest } from "@/lib/api/client";
+import { cachedApiRequest } from "@/lib/api/client";
 import { safeInternalHref } from "@/lib/navigation";
 import {
   StudentDashboard,
@@ -37,15 +37,13 @@ export function ConnectedStudentDashboard() {
   const [data, setData] = useState<StudentDashboardData | null>(null);
   const [error, setError] = useState("");
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     await Promise.resolve();
     setError("");
     try {
       setData(
         toDashboardData(
-          await apiRequest<DashboardApiResponse>("/dashboard", {
-            cache: "no-store",
-          }),
+          await cachedApiRequest<DashboardApiResponse>("/dashboard", { force }),
         ),
       );
     } catch {
@@ -67,7 +65,7 @@ export function ConnectedStudentDashboard() {
         {error ? (
           <Alert tone="error">
             {error}{" "}
-            <button type="button" onClick={() => void load()}>
+            <button type="button" onClick={() => void load(true)}>
               Retry
             </button>
           </Alert>

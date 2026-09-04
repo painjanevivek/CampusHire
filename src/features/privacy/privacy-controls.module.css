@@ -1,6 +1,6 @@
 .page { width: min(100% - 40px, 1120px); margin: 0 auto; padding: 64px 0 96px; }
 .page > header { max-width: 850px; margin-bottom: 44px; }
-.page > header p, .choices p, .cookieNote p { margin: 0 0 7px; color: var(--brand-blue); font-size: .72rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+.page > header p, .choices p, .cookieNote p { margin: 0 0 7px; color: var(--brand-blue); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .1em; text-transform: uppercase; }
 .page > header h1 { max-width: 13ch; margin-bottom: 14px; font-size: clamp(3rem, 7vw, 6rem); }
 .page > header span, .choices span, .cookieNote span { color: var(--ink-muted); }
 .principles { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
@@ -11,7 +11,7 @@
 .choices { display: flex; align-items: end; justify-content: space-between; gap: 30px; border-bottom: 1px solid var(--line); padding: 48px 0; }
 .choices > div { max-width: 720px; }
 .choices h2 { margin-bottom: 8px; font-size: 2rem; }
-.choices a { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; color: var(--brand-blue); font-weight: 800; text-decoration: none; }
+.choices a { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; color: var(--brand-blue); font-weight: var(--font-weight-emphasis); text-decoration: none; }
 .cookieNote { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; margin-top: 48px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(22px, 4vw, 34px); background: var(--surface); }
 .cookieNote > svg { width: 28px; height: 28px; color: var(--brand-blue); }
 .cookieNote h2 { margin-bottom: 8px; font-size: 1.7rem; }

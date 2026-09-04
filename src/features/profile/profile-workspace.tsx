@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
-import { apiRequest } from "@/lib/api/client";
+import { cachedApiRequest } from "@/lib/api/client";
 import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
 import { SessionManagement } from "./session-management";
@@ -35,9 +35,9 @@ export function ProfileWorkspace() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [message, setMessage] = useState("");
 
-  const loadProfile = useCallback(async () => {
+  const loadProfile = useCallback(async (force = false) => {
     try {
-      setProfile(await apiRequest<Profile>("/profile", { cache: "no-store" }));
+      setProfile(await cachedApiRequest<Profile>("/profile", { force }));
       setMessage("");
     } catch {
       setMessage("Your profile summary could not be refreshed. Your saved details are unchanged.");
@@ -64,7 +64,7 @@ export function ProfileWorkspace() {
 
       {message ? (
         <Alert tone="warning">
-          {message} <button type="button" onClick={() => void loadProfile()}>Retry</button>
+          {message} <button type="button" onClick={() => void loadProfile(true)}>Retry</button>
         </Alert>
       ) : null}
 

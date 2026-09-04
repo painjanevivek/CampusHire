@@ -8,7 +8,7 @@ import { AdminWorkspace } from "@/components/layout/admin-workspace";
 import { StudentWorkspace } from "@/components/layout/student-workspace";
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/admin/operations",
+  usePathname: () => "/dashboard",
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock("@/features/engagement/notification-center", () => ({
@@ -33,7 +33,7 @@ async function expectNoAutomatedViolations(container: HTMLElement) {
 describe("critical shell accessibility", () => {
   it("has no automated structural violations in the student shell", async () => {
     const { container } = render(
-      <StudentWorkspace active="Readiness">
+      <StudentWorkspace>
         <main id="main-content"><h1>Readiness</h1><p>One clear next action.</p></main>
       </StudentWorkspace>,
     );

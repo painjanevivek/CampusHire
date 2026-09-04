@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, CircleDashed, ListChecks } from "lucide-react";
 
-import { apiRequest } from "@/lib/api/client";
+import { cachedApiRequest } from "@/lib/api/client";
 import type { DashboardApiResponse } from "./types";
 import styles from "./activation-progress.module.css";
 
@@ -17,9 +17,7 @@ export function ActivationProgress() {
 
   const load = useCallback(async () => {
     try {
-      const dashboard = await apiRequest<DashboardApiResponse>("/dashboard", {
-        cache: "no-store",
-      });
+      const dashboard = await cachedApiRequest<DashboardApiResponse>("/dashboard");
       setActivation(dashboard.activation ?? []);
       setUnavailable(false);
     } catch {

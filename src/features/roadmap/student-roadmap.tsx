@@ -11,7 +11,7 @@ import type {
   RoadmapNode,
   RoadmapTemplate,
 } from "@/features/engagement/types";
-import { apiRequest, csrfRequest } from "@/lib/api/client";
+import { cachedApiRequest, csrfRequest } from "@/lib/api/client";
 import styles from "./student-roadmap.module.css";
 
 export function StudentRoadmap() {
@@ -24,16 +24,14 @@ export function StudentRoadmap() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     await Promise.resolve();
     setLoading(true);
     setError("");
     try {
       const [options, current] = await Promise.all([
-        apiRequest<RoadmapAvailability>("/roadmaps/availability", {
-          cache: "no-store",
-        }),
-        apiRequest<Roadmap | null>("/roadmaps/current", { cache: "no-store" }),
+        cachedApiRequest<RoadmapAvailability>("/roadmaps/availability", { force }),
+        cachedApiRequest<Roadmap | null>("/roadmaps/current", { force }),
       ]);
       setAvailability(options);
       setTemplates(options.templates);
@@ -155,7 +153,7 @@ export function StudentRoadmap() {
         {error && (
           <Alert tone="error">
             {error}{" "}
-            <button type="button" onClick={() => void load()}>
+            <button type="button" onClick={() => void load(true)}>
               Retry
             </button>
           </Alert>
@@ -213,7 +211,7 @@ export function StudentRoadmap() {
       {error && (
         <Alert tone="error">
           {error}{" "}
-          <button type="button" onClick={() => void load()}>
+          <button type="button" onClick={() => void load(true)}>
             Retry
           </button>
         </Alert>

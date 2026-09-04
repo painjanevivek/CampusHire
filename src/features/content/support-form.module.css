@@ -1,7 +1,7 @@
 .form { display: grid; gap: 18px; margin-top: 30px; padding: clamp(22px, 5vw, 38px); border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-.form label { display: grid; gap: 7px; font-weight: 750; }
+.form label { display: grid; gap: 7px; font-weight: var(--font-weight-label); }
 .form input, .form select, .form textarea { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 12px; background: var(--surface); color: var(--ink); font: inherit; }
 .form textarea { min-height: 150px; resize: vertical; }
-.form small { color: var(--ink-muted); font-weight: 450; }
-.form button { width: fit-content; min-height: 44px; border: 0; border-radius: 999px; padding: 0 20px; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
+.form small { color: var(--ink-muted); font-weight: var(--font-weight-regular); }
+.form button { width: fit-content; min-height: 44px; border: 0; border-radius: 999px; padding: 0 20px; background: var(--primary); color: white; font-weight: var(--font-weight-emphasis); cursor: pointer; }
 .status { padding: 14px; border-left: 3px solid var(--verified); background: var(--surface-muted); }

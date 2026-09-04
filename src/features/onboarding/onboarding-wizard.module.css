@@ -1,6 +1,6 @@
 .page { width: min(1180px, calc(100% - 40px)); min-height: calc(100vh - 72px); margin: 0 auto; padding: 48px 0 72px; }
 .hero { display: flex; align-items: end; justify-content: space-between; gap: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
-.hero p, .panelHeader p, .stepRail > p { margin: 0 0 8px; color: var(--brand-blue); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.hero p, .panelHeader p, .stepRail > p { margin: 0 0 8px; color: var(--brand-blue); font-size: .75rem; font-weight: var(--font-weight-label); letter-spacing: .08em; text-transform: uppercase; }
 .hero h1 { margin: 0; font-size: clamp(2.25rem, 5vw, 3.75rem); letter-spacing: -.045em; line-height: 1; }
 .hero div > span { display: block; max-width: 650px; margin-top: 12px; color: var(--ink-muted); }
 .stepCount { min-width: 142px; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 18px; color: var(--ink); background: var(--brand-soft); border: 1px solid color-mix(in srgb, var(--brand-blue) 30%, var(--line)); border-radius: 12px; }
@@ -12,19 +12,19 @@
 .stepRail ol { display: grid; gap: 6px; margin: 18px 0; padding: 0; list-style: none; }
 .stepRail li { min-height: 46px; display: grid; grid-template-columns: 24px 18px 1fr; align-items: center; gap: 8px; padding: 8px 10px; color: var(--ink-muted); border-radius: 8px; font-size: .875rem; }
 .stepRail li > span { font-size: .7rem; }
-.stepRail li[data-state="current"] { color: var(--brand-blue-dark); background: var(--brand-soft); font-weight: 700; }
+.stepRail li[data-state="current"] { color: var(--brand-blue-dark); background: var(--brand-soft); font-weight: var(--font-weight-label); }
 .stepRail li[data-state="complete"] { color: var(--verified); }
-.stepRail button { min-height: 44px; width: 100%; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 10px; font-weight: 700; cursor: pointer; }
+.stepRail button { min-height: 44px; width: 100%; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 10px; font-weight: var(--font-weight-label); cursor: pointer; }
 .panel { padding: clamp(24px, 4vw, 44px); }
 .panelHeader { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
 .panelHeader h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); }
 .panelHeader > span { display: block; max-width: 600px; margin: 10px 0 28px; color: var(--ink-muted); }
 .panelHeader > div:first-child > span { display: block; max-width: 600px; margin: 10px 0 28px; color: var(--ink-muted); }
-.saveStatus { min-width: max-content; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: var(--ink-muted); background: var(--canvas); border: 1px solid var(--line); border-radius: 999px; font-size: .75rem; font-weight: 700; }
+.saveStatus { min-width: max-content; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: var(--ink-muted); background: var(--canvas); border: 1px solid var(--line); border-radius: 999px; font-size: .75rem; font-weight: var(--font-weight-label); }
 .saveStatus[data-state="saved"] { color: var(--verified); background: var(--verified-soft); }
 .saveStatus[data-state="conflict"], .saveStatus[data-state="error"] { color: var(--status-warning); }
 .saveStatus[data-state="saving"] svg, .loadingState svg { animation: spin .9s linear infinite; }
-.inlineAction { margin-left: 10px; padding: 5px 8px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 7px; font: inherit; font-weight: 700; cursor: pointer; }
+.inlineAction { margin-left: 10px; padding: 5px 8px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 7px; font: inherit; font-weight: var(--font-weight-label); cursor: pointer; }
 .loadingState { min-height: 260px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--ink-muted); }
 .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .form :global(.field) { align-content: start; }

@@ -5,6 +5,16 @@ const apiUrl = normalizeApiBaseUrl(
   "NEXT_PUBLIC_API_URL",
 );
 
+const DEFAULT_QUERY_TTL_MS = 30_000;
+
+type ApiQueryCacheEntry = {
+  expiresAt: number;
+  value?: unknown;
+  request?: Promise<unknown>;
+};
+
+const apiQueryCache = new Map<string, ApiQueryCacheEntry>();
+
 export type ApiErrorKind =
   | "unauthenticated"
   | "forbidden"
@@ -116,6 +126,47 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
   return response.json() as Promise<T>;
 }
 
+export function clearApiQueryCache(pathPrefix?: string) {
+  if (pathPrefix === undefined) {
+    apiQueryCache.clear();
+    return;
+  }
+  for (const path of apiQueryCache.keys()) {
+    if (path.startsWith(pathPrefix)) apiQueryCache.delete(path);
+  }
+}
+
+export async function cachedApiRequest<T>(
+  path: string,
+  options: { force?: boolean; ttlMs?: number } = {},
+): Promise<T> {
+  if (typeof window === "undefined") {
+    return apiRequest<T>(path, { cache: "no-store" });
+  }
+
+  const cached = apiQueryCache.get(path);
+  if (cached?.request) return cached.request as Promise<T>;
+  if (!options.force && cached && cached.expiresAt > Date.now()) {
+    return cached.value as T;
+  }
+
+  const request = apiRequest<T>(path, { cache: "no-store" })
+    .then((value) => {
+      apiQueryCache.set(path, {
+        expiresAt: Date.now() + (options.ttlMs ?? DEFAULT_QUERY_TTL_MS),
+        value,
+      });
+      return value;
+    })
+    .catch((error: unknown) => {
+      if (apiQueryCache.get(path)?.request === request) apiQueryCache.delete(path);
+      throw error;
+    });
+
+  apiQueryCache.set(path, { expiresAt: 0, request });
+  return request;
+}
+
 export async function csrfRequest<T>(path: string, init: RequestInit): Promise<T> {
   let token = cookie("campushire_csrf");
   if (!token) {
@@ -132,7 +183,9 @@ export async function csrfRequest<T>(path: string, init: RequestInit): Promise<T
   };
 
   try {
-    return await send(token);
+    const result = await send(token);
+    clearApiQueryCache();
+    return result;
   } catch (error) {
     if (
       !(error instanceof ApiError)
@@ -146,6 +199,8 @@ export async function csrfRequest<T>(path: string, init: RequestInit): Promise<T
     if (!refreshedToken) {
       throw new Error("CampusHire could not refresh the secure form session.");
     }
-    return send(refreshedToken);
+    const result = await send(refreshedToken);
+    clearApiQueryCache();
+    return result;
   }
 }

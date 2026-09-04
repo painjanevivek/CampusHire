@@ -8,6 +8,7 @@ const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({ apiRequestMock: 
 vi.mock("@/lib/api/client", async (importOriginal) => ({
   ...await importOriginal<typeof import("@/lib/api/client")>(),
   apiRequest: apiRequestMock,
+  cachedApiRequest: apiRequestMock,
   csrfRequest: csrfRequestMock,
 }));
 

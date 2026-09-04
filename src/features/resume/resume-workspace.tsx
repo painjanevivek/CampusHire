@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
-import { apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
+import { apiPath, apiRequest, cachedApiRequest, csrfRequest } from "@/lib/api/client";
 import type { ResumePipelineStage, ResumeUpload, ResumeVersion } from "./types";
 import styles from "./resume-workspace.module.css";
 
@@ -92,9 +92,9 @@ export function ResumeWorkspace() {
   const [pollFailures, setPollFailures] = useState(0);
   const [processingNotice, setProcessingNotice] = useState("");
 
-  const loadVersions = useCallback(async () => {
+  const loadVersions = useCallback(async (force = false) => {
     try {
-      const loaded = await apiRequest<ResumeVersion[]>("/resumes", { cache: "no-store" });
+      const loaded = await cachedApiRequest<ResumeVersion[]>("/resumes", { force });
       if (!Array.isArray(loaded)) throw new Error("Invalid resume list response");
       setVersions(loaded);
       setState("idle");
@@ -240,7 +240,7 @@ export function ResumeWorkspace() {
       <section className={styles.versions} aria-labelledby="versions-title" aria-busy={state === "loading"}>
         <div className={styles.sectionHeader}>
           <div><p className={styles.eyebrow}>Saved history</p><h2 id="versions-title">Resume versions</h2></div>
-          <button type="button" className={styles.refresh} onClick={() => void loadVersions()}><RefreshCw size={15} aria-hidden="true" /> Refresh</button>
+          <button type="button" className={styles.refresh} onClick={() => void loadVersions(true)}><RefreshCw size={15} aria-hidden="true" /> Refresh</button>
         </div>
         {processingNotice ? <Alert tone="warning">{processingNotice}</Alert> : null}
         {state === "loading" && <div className={styles.emptyState} role="status"><LoaderCircle className={styles.spinner} aria-hidden="true" /> Loading saved versions…</div>}

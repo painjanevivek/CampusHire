@@ -1,20 +1,20 @@
 .page { width: min(100%, 1080px); margin: 0 auto; padding: 48px 20px 88px; }
 .page > header { display: flex; align-items: end; justify-content: space-between; gap: 30px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
-.page > header p, .list li p { margin: 0 0 7px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.page > header p, .list li p { margin: 0 0 7px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .1em; text-transform: uppercase; }
 .page > header h1 { margin: 0 0 9px; font-size: clamp(2.4rem, 5vw, 4.5rem); letter-spacing: -.06em; }
 .page > header span, .list span, .list small, .empty p { color: var(--ink-muted); }
 .page > header > strong { font-size: 3rem; color: var(--brand-blue); }
 .empty { max-width: 640px; margin: 60px auto 0; padding: 42px; border: 1px dashed var(--line-strong); border-radius: 16px; text-align: center; }
 .empty svg { color: var(--brand-blue); }
-.empty a { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; color: var(--brand-blue-dark); font-weight: 750; }
+.empty a { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
 .list { display: grid; margin: 24px 0 0; padding: 0; list-style: none; }
 .list li { display: grid; grid-template-columns: 1fr auto; gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--line); }
 .list h2 { margin: 0 0 8px; }
 .list li > div:last-child { display: grid; justify-items: end; align-content: center; gap: 7px; }
 .list li > div:last-child > strong { color: var(--verified-dark); font-size: .78rem; text-transform: capitalize; }
-.list a { display: inline-flex; align-items: center; gap: 6px; color: var(--brand-blue-dark); font-weight: 750; }
+.list a { display: inline-flex; align-items: center; gap: 6px; color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
 .list details { margin-top: 14px; }
-.list summary { color: var(--brand-blue-dark); cursor: pointer; font-weight: 750; }
+.list summary { color: var(--brand-blue-dark); cursor: pointer; font-weight: var(--font-weight-label); }
 .list details ol { margin: 10px 0 0; padding-left: 18px; }
 .list details li { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 8px 0; border: 0; }
 .list details strong { font-size: .8rem; text-transform: capitalize; }

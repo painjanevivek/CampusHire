@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CircleHelp, Menu, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationCenter } from "@/features/engagement/notification-center";
@@ -10,7 +11,7 @@ import { SignOutButton } from "./sign-out-button";
 
 import styles from "./student-header.module.css";
 
-export type WorkspaceSection =
+type WorkspaceSection =
   "Readiness" | "Opportunities" | "Applications" | "Resume" | "Roadmap" | "Profile";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
@@ -22,7 +23,8 @@ const navigation: Array<{ href: string; label: WorkspaceSection }> = [
   { href: "/profile", label: "Profile" },
 ];
 
-export function StudentHeader({ active }: { active?: WorkspaceSection }) {
+export function StudentHeader() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
           aria-label="Student navigation"
         >
           {navigation.map(({ href, label }) => {
-            const selected = active === label;
+            const selected = pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
                 key={label}

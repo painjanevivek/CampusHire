@@ -1,4 +1,3 @@
-import { StudentWorkspace } from "@/components/layout/student-workspace";
 import { StudentApplicationDetail } from "@/features/recruitment/student-application-detail";
 
 export default async function ApplicationDetailPage({
@@ -7,5 +6,5 @@ export default async function ApplicationDetailPage({
   params: Promise<{ applicationId: string }>;
 }) {
   const { applicationId } = await params;
-  return <StudentWorkspace active="Applications"><StudentApplicationDetail applicationId={applicationId} /></StudentWorkspace>;
+  return <StudentApplicationDetail applicationId={applicationId} />;
 }

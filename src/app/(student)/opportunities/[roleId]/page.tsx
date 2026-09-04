@@ -1,4 +1,3 @@
-import { StudentWorkspace } from "@/components/layout/student-workspace";
 import { StudentOpportunityDetail } from "@/features/recruitment/student-opportunity-detail";
 import { notFound } from "next/navigation";
 
@@ -9,9 +8,5 @@ export default async function OpportunityDetailPage({
 }) {
   const { roleId } = await params;
   if (roleId === "demo") notFound();
-  return (
-    <StudentWorkspace active="Opportunities">
-      <StudentOpportunityDetail roleId={roleId} />
-    </StudentWorkspace>
-  );
+  return <StudentOpportunityDetail roleId={roleId} />;
 }

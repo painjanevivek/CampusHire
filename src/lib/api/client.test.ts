@@ -1,8 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError, apiPath, apiRequest, csrfRequest } from "./client";
+import {
+  ApiError,
+  apiPath,
+  apiRequest,
+  cachedApiRequest,
+  clearApiQueryCache,
+  csrfRequest,
+} from "./client";
 
 afterEach(() => {
+  clearApiQueryCache();
   vi.unstubAllGlobals();
   document.cookie = "campushire_csrf=; Max-Age=0; Path=/";
 });
@@ -60,6 +68,52 @@ describe("API client", () => {
       expect.stringMatching(/\/api\/v1\/profile$/),
       expect.objectContaining({ credentials: "include", redirect: "error" }),
     );
+  });
+
+  it("deduplicates concurrent reads and reuses a short-lived browser result", async () => {
+    let resolveFetch!: (response: Response) => void;
+    const fetchMock = vi.fn().mockImplementation(() => new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const first = cachedApiRequest<{ ready: boolean }>("/dashboard");
+    const second = cachedApiRequest<{ ready: boolean }>("/dashboard");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    resolveFetch(new Response(JSON.stringify({ ready: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+
+    await expect(Promise.all([first, second])).resolves.toEqual([
+      { ready: true },
+      { ready: true },
+    ]);
+    await expect(cachedApiRequest<{ ready: boolean }>("/dashboard"))
+      .resolves.toEqual({ ready: true });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports explicit refresh and evicts failed cached reads", async () => {
+    const fetchMock = vi.fn()
+      .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ version: 1 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ version: 2 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(cachedApiRequest("/profile")).rejects.toEqual(
+      expect.objectContaining({ kind: "offline" }),
+    );
+    await expect(cachedApiRequest("/profile")).resolves.toEqual({ version: 1 });
+    await expect(cachedApiRequest("/profile", { force: true })).resolves.toEqual({ version: 2 });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it("preserves typed conflict details for recoverable editing flows", async () => {

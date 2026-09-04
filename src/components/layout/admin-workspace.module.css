@@ -61,7 +61,7 @@
   padding: 0 18px;
   color: var(--ink-muted);
   font-size: 0.86rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-label);
   text-decoration: none;
 }
 

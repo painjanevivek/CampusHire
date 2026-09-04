@@ -3,14 +3,17 @@ import { describe, expect, it, vi } from "vitest";
 
 import { StudentWorkspace } from "./student-workspace";
 
+const navigation = vi.hoisted(() => ({ pathname: "/dashboard" }));
+
 vi.mock("next/navigation", () => ({
+  usePathname: () => navigation.pathname,
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
 }));
 
 describe("StudentWorkspace", () => {
   it("exposes the current section and profile progress to assistive technology", () => {
     render(
-      <StudentWorkspace active="Readiness">
+      <StudentWorkspace>
         <main>Dashboard content</main>
       </StudentWorkspace>,
     );
@@ -30,15 +33,16 @@ describe("StudentWorkspace", () => {
   });
 
   it.each([
-    "Readiness",
-    "Opportunities",
-    "Applications",
-    "Resume",
-    "Roadmap",
-    "Profile",
-  ] as const)("keeps one shared navigation when %s is active", (active) => {
+    ["Readiness", "/dashboard"],
+    ["Opportunities", "/opportunities"],
+    ["Applications", "/applications"],
+    ["Resume", "/resume"],
+    ["Roadmap", "/roadmap"],
+    ["Profile", "/profile"],
+  ] as const)("keeps one shared navigation when %s is active", (active, pathname) => {
+    navigation.pathname = pathname;
     render(
-      <StudentWorkspace active={active}>
+      <StudentWorkspace>
         <main>{active} content</main>
       </StudentWorkspace>,
     );

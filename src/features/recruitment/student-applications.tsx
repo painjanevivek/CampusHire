@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, FileLock2 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
-import { apiRequest } from "@/lib/api/client";
+import { cachedApiRequest } from "@/lib/api/client";
 import type { PlacementApplication } from "./types";
 import styles from "./student-applications.module.css";
 
@@ -20,10 +20,10 @@ export function StudentApplications() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     setLoading(true);
     try {
-      setItems(await apiRequest<PlacementApplication[]>("/applications", { cache: "no-store" }));
+      setItems(await cachedApiRequest<PlacementApplication[]>("/applications", { force }));
       setError("");
     } catch {
       setError("Applications could not be refreshed. Your submitted records are unchanged.");
@@ -40,7 +40,7 @@ export function StudentApplications() {
   return (
     <main id="main-content" className={styles.page}>
       <header><div><p>Applications</p><h1>Your decision record.</h1><span>Every submission keeps its selected resume, eligibility result, and policy version.</span></div><strong>{items.length}</strong></header>
-      {error ? <Alert tone="warning">{error} <button type="button" onClick={() => void load()}>Retry</button></Alert> : null}
+      {error ? <Alert tone="warning">{error} <button type="button" onClick={() => void load(true)}>Retry</button></Alert> : null}
       {loading ? <p role="status">Loading application history…</p> : !items.length ? (
         <section className={styles.empty}><FileLock2 aria-hidden="true" /><h2>No applications yet</h2><p>Review an eligible institution-published role, select a clean resume version, and confirm your submission.</p><Link href="/opportunities">Explore opportunities <ArrowRight size={17} aria-hidden="true" /></Link></section>
       ) : <ol className={styles.list}>{items.map((item) => {
