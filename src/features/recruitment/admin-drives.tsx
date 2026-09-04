@@ -56,7 +56,13 @@ export function AdminDrives() {
   const [rules, setRules] = useState<RuleDefinition[]>([initialRule]);
   const [selectedPolicyIds, setSelectedPolicyIds] = useState<string[]>([]);
   const [panel, setPanel] = useState<
-    "none" | "drive" | "edit-drive" | "role" | "rules" | "extract"
+    | "none"
+    | "drive"
+    | "edit-drive"
+    | "role"
+    | "edit-role"
+    | "rules"
+    | "extract"
   >("none");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -193,13 +199,17 @@ export function AdminDrives() {
       setPanel("none");
       setNotice(
         editingDrive
-          ? "Draft drive updated."
+          ? editingDrive.status === "published"
+            ? "Drive changes staged. Students still see the saved version until you select Save changes."
+            : "Draft drive updated."
           : "Draft drive created. Add a role and reviewed eligibility rules before publishing.",
       );
     } catch {
       setError(
         editingDrive
-          ? "The draft was not updated. Verify its company, application window, and required details."
+          ? editingDrive.status === "published"
+            ? "The drive changes were not staged. Verify its company, application window, and required details."
+            : "The draft was not updated. Verify its company, application window, and required details."
           : "The drive was not created. Verify its company, application window, and required details.",
       );
     } finally {
@@ -241,18 +251,24 @@ export function AdminDrives() {
     }
   }
 
-  async function createRole(event: FormEvent<HTMLFormElement>) {
+  async function saveRole(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selectedDrive) return;
     setBusy(true);
     setError("");
     setNotice("");
     const data = new FormData(event.currentTarget);
+    const editingRole =
+      panel === "edit-role"
+        ? roles.find((role) => role.id === selectedRole)
+        : undefined;
     try {
-      const created = await csrfRequest<PlacementRole>(
-        `/admin/recruitment/drives/${selectedDrive}/roles`,
+      const saved = await csrfRequest<PlacementRole>(
+        editingRole
+          ? `/admin/recruitment/roles/${editingRole.id}`
+          : `/admin/recruitment/drives/${selectedDrive}/roles`,
         {
-          method: "POST",
+          method: editingRole ? "PATCH" : "POST",
           body: JSON.stringify({
             title: data.get("title"),
             description: data.get("description"),
@@ -271,16 +287,28 @@ export function AdminDrives() {
           }),
         },
       );
-      setRoles((current) => [...current, created]);
-      setSelectedRole(created.id);
+      setRoles((current) =>
+        editingRole
+          ? current.map((role) => (role.id === saved.id ? saved : role))
+          : [...current, saved],
+      );
+      setSelectedRole(saved.id);
       setPanel("none");
       setNotice(
-        "Draft role created. Publish a rule version next.",
+        editingRole
+          ? activeDrive?.status === "published"
+            ? "Role changes staged. They will take effect only when the drive is saved."
+            : "Role updated before drive publication."
+          : activeDrive?.status === "published"
+            ? "New role staged. Add its rules, then save the drive to make it visible."
+            : "Draft role created. Publish a rule version next.",
       );
-      void loadRoot();
+      await loadRoot();
     } catch {
       setError(
-        "The role was not created. Review required text, lists, and the selected draft drive.",
+        editingRole
+          ? "The role changes were not staged. Review the required text and lists, then retry."
+          : "The role was not created. Review required text, lists, and the selected drive.",
       );
     } finally {
       setBusy(false);
@@ -316,8 +344,11 @@ export function AdminDrives() {
       setSelectedPolicyIds([]);
       setPanel("none");
       setNotice(
-        `Draft rule version ${created.version} created. Preview the rows, then publish it.`,
+        activeDrive?.status === "published"
+          ? `Rule version ${created.version} staged. It will take effect only when the drive is saved.`
+          : `Draft rule version ${created.version} created. Preview the rows, then publish it.`,
       );
+      await loadRoot();
     } catch {
       setError(
         "The rule version was not created. Every rule needs a supported field, operator, value, and clear label.",
@@ -406,6 +437,13 @@ export function AdminDrives() {
     }
   }
 
+  function openRuleEditor() {
+    const latest = ruleSets[0];
+    setRules(latest?.rules.map((rule) => ({ ...rule })) ?? [{ ...initialRule }]);
+    setSelectedPolicyIds(latest?.policy_references.map((policy) => policy.id) ?? []);
+    setPanel("rules");
+  }
+
   async function previewEligibility(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selectedRole) return;
@@ -434,7 +472,15 @@ export function AdminDrives() {
   const activeDrive = drives.find((item) => item.id === selectedDrive);
   const editingDrive = panel === "edit-drive" ? activeDrive : undefined;
   const activeRole = roles.find((item) => item.id === selectedRole);
+  const editingRole = panel === "edit-role" ? activeRole : undefined;
+  const effectiveDrive = editingDrive
+    ? { ...editingDrive, ...editingDrive.pending_changes }
+    : undefined;
+  const effectiveRole = editingRole
+    ? { ...editingRole, ...editingRole.pending_changes }
+    : undefined;
   const publishedRules = ruleSets.find((item) => item.status === "published");
+  const stagedRules = ruleSets.find((item) => item.status === "draft");
 
   return (
     <main id="main-content" className={styles.page}>
@@ -479,17 +525,33 @@ export function AdminDrives() {
           onSubmit={saveDrive}
         >
           <div className={styles.editorHeading}>
-            <p>{editingDrive ? "Draft settings" : "Step 1"}</p>
-            <h2>{editingDrive ? "Edit draft drive" : "New placement drive"}</h2>
+            <p>
+              {editingDrive
+                ? editingDrive.status === "published"
+                  ? "Staged drive settings"
+                  : "Draft settings"
+                : "Step 1"}
+            </p>
+            <h2>
+              {editingDrive
+                ? editingDrive.status === "published"
+                  ? "Edit published drive"
+                  : "Edit draft drive"
+                : "New placement drive"}
+            </h2>
             {editingDrive ? (
-              <span>Changes apply only to this unpublished draft.</span>
+              <span>
+                {editingDrive.status === "published"
+                  ? "These values remain private until you save the complete drive revision."
+                  : "Changes apply only to this unpublished draft."}
+              </span>
             ) : null}
           </div>
           <Select
             id="drive-company"
             name="company_id"
             label="Company"
-            defaultValue={editingDrive?.company_id}
+            defaultValue={effectiveDrive?.company_id}
             required
           >
             {companies.map((item) => (
@@ -502,7 +564,7 @@ export function AdminDrives() {
             id="drive-title"
             name="title"
             label="Drive title"
-            defaultValue={editingDrive?.title}
+            defaultValue={effectiveDrive?.title}
             required
             minLength={3}
           />
@@ -510,14 +572,14 @@ export function AdminDrives() {
             id="drive-location"
             name="location"
             label="Location"
-            defaultValue={editingDrive?.location}
+            defaultValue={effectiveDrive?.location}
             required
           />
           <Select
             id="drive-mode"
             name="work_mode"
             label="Work mode"
-            defaultValue={editingDrive?.work_mode ?? "on-site"}
+            defaultValue={effectiveDrive?.work_mode ?? "on-site"}
           >
             <option value="on-site">On-site</option>
             <option value="hybrid">Hybrid</option>
@@ -529,7 +591,7 @@ export function AdminDrives() {
             label="Opens at"
             type="datetime-local"
             defaultValue={
-              editingDrive ? toDateTimeLocal(editingDrive.opens_at) : undefined
+              effectiveDrive ? toDateTimeLocal(effectiveDrive.opens_at) : undefined
             }
             required
           />
@@ -539,7 +601,7 @@ export function AdminDrives() {
             label="Deadline"
             type="datetime-local"
             defaultValue={
-              editingDrive ? toDateTimeLocal(editingDrive.deadline_at) : undefined
+              effectiveDrive ? toDateTimeLocal(effectiveDrive.deadline_at) : undefined
             }
             required
           />
@@ -547,7 +609,7 @@ export function AdminDrives() {
             <span>Description</span>
             <textarea
               name="description"
-              defaultValue={editingDrive?.description}
+              defaultValue={effectiveDrive?.description}
               required
               minLength={10}
               rows={3}
@@ -563,7 +625,9 @@ export function AdminDrives() {
                   ? "Saving…"
                   : "Creating…"
                 : editingDrive
-                  ? "Save changes"
+                  ? editingDrive.status === "published"
+                    ? "Stage drive changes"
+                    : "Save changes"
                   : "Create draft"}
             </button>
           </div>
@@ -663,18 +727,26 @@ export function AdminDrives() {
                       ? "Ready for student visibility. Publish the drive; it will appear only during its active application window."
                       : "Not visible to students. Publish an eligibility rule version and the role before publishing this drive."}
                 </Alert>
+              ) : activeDrive.has_pending_changes ? (
+                <Alert tone="warning">
+                  <CircleAlert aria-hidden="true" />
+                  Changes are staged for this drive. Students still see the last
+                  saved drive, roles, and eligibility rules.
+                </Alert>
               ) : null}
               <div className={styles.commandBar}>
+                {["draft", "published"].includes(activeDrive.status) ? (
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setPanel("edit-drive")}
+                  >
+                    <Pencil aria-hidden="true" />
+                    {activeDrive.status === "published" ? "Edit drive" : "Edit draft"}
+                  </button>
+                ) : null}
                 {activeDrive.status === "draft" ? (
                   <>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => setPanel("edit-drive")}
-                    >
-                      <Pencil aria-hidden="true" />
-                      Edit draft
-                    </button>
                     <button
                       type="button"
                       className={styles.danger}
@@ -688,7 +760,9 @@ export function AdminDrives() {
                 ) : null}
                 <button
                   type="button"
-                  disabled={activeDrive.status !== "draft"}
+                  disabled={
+                    busy || !["draft", "published"].includes(activeDrive.status)
+                  }
                   onClick={() => setPanel("role")}
                 >
                   <Plus aria-hidden="true" />
@@ -711,6 +785,22 @@ export function AdminDrives() {
                   <Send aria-hidden="true" />
                   Publish drive
                 </button>
+                {activeDrive.status === "published" ? (
+                  <button
+                    type="button"
+                    className={styles.primary}
+                    disabled={busy || !activeDrive.has_pending_changes}
+                    onClick={() =>
+                      void postAction(
+                        `/admin/recruitment/drives/${activeDrive.id}/save`,
+                        "Drive changes saved. Students now see the updated roles and eligibility rules.",
+                      )
+                    }
+                  >
+                    <FileCheck2 aria-hidden="true" />
+                    Save changes
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   disabled={busy || activeDrive.status !== "published"}
@@ -735,16 +825,28 @@ export function AdminDrives() {
                 </button>
               </div>
 
-              {panel === "role" ? (
-                <form className={styles.editor} onSubmit={createRole}>
+              {panel === "role" || editingRole ? (
+                <form
+                  key={editingRole?.id ?? "new-role"}
+                  className={styles.editor}
+                  onSubmit={saveRole}
+                >
                   <div className={styles.editorHeading}>
-                    <p>Step 2</p>
-                    <h2>Add a role</h2>
+                    <p>{editingRole ? "Staged role settings" : "Step 2"}</p>
+                    <h2>{editingRole ? "Edit role" : "Add a role"}</h2>
+                    {editingRole ? (
+                      <span>
+                        {activeDrive.status === "published"
+                          ? "Students keep the saved role until the complete drive is saved."
+                          : "This role remains private until the drive is published."}
+                      </span>
+                    ) : null}
                   </div>
                   <Input
                     id="role-title"
                     name="title"
                     label="Role title"
+                    defaultValue={effectiveRole?.title}
                     required
                   />
                   <Input
@@ -752,12 +854,13 @@ export function AdminDrives() {
                     name="location"
                     label="Location"
                     required
-                    defaultValue={activeDrive.location}
+                    defaultValue={effectiveRole?.location ?? activeDrive.location}
                   />
                   <Select
                     id="role-employment"
                     name="employment_type"
                     label="Employment"
+                    defaultValue={effectiveRole?.employment_type ?? "full-time"}
                   >
                     <option value="full-time">Full-time</option>
                     <option value="internship">Internship</option>
@@ -767,7 +870,7 @@ export function AdminDrives() {
                     id="role-mode"
                     name="work_mode"
                     label="Work mode"
-                    defaultValue={activeDrive.work_mode}
+                    defaultValue={effectiveRole?.work_mode ?? activeDrive.work_mode}
                   >
                     <option value="on-site">On-site</option>
                     <option value="hybrid">Hybrid</option>
@@ -777,17 +880,20 @@ export function AdminDrives() {
                     id="role-salary"
                     name="salary_display"
                     label="Compensation (optional)"
+                    defaultValue={effectiveRole?.salary_display ?? ""}
                   />
                   <Input
                     id="role-skills"
                     name="skills"
                     label="Skills"
                     hint="Comma-separated"
+                    defaultValue={effectiveRole?.skills.join(", ")}
                   />
                   <label className={styles.wide}>
                     <span>Description</span>
                     <textarea
                       name="description"
+                      defaultValue={effectiveRole?.description}
                       required
                       minLength={10}
                       rows={3}
@@ -797,6 +903,7 @@ export function AdminDrives() {
                     <span>Requirements</span>
                     <textarea
                       name="requirements"
+                      defaultValue={effectiveRole?.requirements.join("\n")}
                       rows={3}
                       placeholder="One requirement per line"
                     />
@@ -810,7 +917,11 @@ export function AdminDrives() {
                       type="submit"
                       disabled={busy}
                     >
-                      Create draft role
+                      {editingRole
+                        ? activeDrive.status === "published"
+                          ? "Stage role changes"
+                          : "Save role changes"
+                        : "Create draft role"}
                     </button>
                   </div>
                 </form>
@@ -854,13 +965,23 @@ export function AdminDrives() {
                           <p>Selected role</p>
                           <h3>{activeRole.title}</h3>
                         </div>
-                        <Badge tone={publishedRules ? "success" : "warning"}>
-                          {publishedRules
+                        <Badge tone={stagedRules ? "warning" : publishedRules ? "success" : "warning"}>
+                          {stagedRules
+                            ? `Rules v${stagedRules.version} staged`
+                            : publishedRules
                             ? `Rules v${publishedRules.version}`
                             : "Rules required"}
                         </Badge>
                       </div>
                       <div className={styles.ruleActions}>
+                        <button
+                          type="button"
+                          disabled={busy || !["draft", "published"].includes(activeRole.status)}
+                          onClick={() => setPanel("edit-role")}
+                        >
+                          <Pencil aria-hidden="true" />
+                          Edit role
+                        </button>
                         <button
                           type="button"
                           disabled={activeRole.status !== "draft"}
@@ -871,29 +992,35 @@ export function AdminDrives() {
                         </button>
                         <button
                           type="button"
-                          disabled={activeRole.status !== "draft"}
-                          onClick={() => setPanel("rules")}
-                        >
-                          <Plus aria-hidden="true" />
-                          New rule version
-                        </button>
-                        <button
-                          type="button"
                           disabled={
                             busy ||
-                            activeRole.status !== "draft" ||
-                            !publishedRules
+                            !["draft", "published"].includes(activeRole.status) ||
+                            !["draft", "published"].includes(activeDrive.status)
                           }
-                          onClick={() =>
-                            void postAction(
-                              `/admin/recruitment/roles/${activeRole.id}/publish`,
-                              "Role published and ready for its drive publication.",
-                            )
-                          }
+                          onClick={openRuleEditor}
                         >
-                          <BadgeCheck aria-hidden="true" />
-                          Publish role
+                          <Pencil aria-hidden="true" />
+                          {publishedRules || stagedRules ? "Edit rules" : "Add rules"}
                         </button>
+                        {activeDrive.status === "draft" ? (
+                          <button
+                            type="button"
+                            disabled={
+                              busy ||
+                              activeRole.status !== "draft" ||
+                              !publishedRules
+                            }
+                            onClick={() =>
+                              void postAction(
+                                `/admin/recruitment/roles/${activeRole.id}/publish`,
+                                "Role published and ready for its drive publication.",
+                              )
+                            }
+                          >
+                            <BadgeCheck aria-hidden="true" />
+                            Publish role
+                          </button>
+                        ) : null}
                       </div>
                       <details className={styles.rulePreview}>
                         <summary>Preview eligibility with synthetic facts</summary>
@@ -978,7 +1105,7 @@ export function AdminDrives() {
                             >
                               {set.status}
                             </Badge>
-                            {set.status === "draft" ? (
+                            {set.status === "draft" && activeDrive.status === "draft" ? (
                               <button
                                 type="button"
                                 disabled={busy}
@@ -991,6 +1118,8 @@ export function AdminDrives() {
                               >
                                 Publish
                               </button>
+                            ) : set.status === "draft" ? (
+                              <span className={styles.stagedNote}>Saved with drive</span>
                             ) : null}
                           </header>
                           <ul>
@@ -1068,9 +1197,16 @@ export function AdminDrives() {
       {panel === "rules" && activeRole ? (
         <form className={styles.ruleEditor} onSubmit={createRules}>
           <div className={styles.editorHeading}>
-            <p>Step 3</p>
-            <h2>Eligibility rule version for {activeRole.title}</h2>
-            <span>Missing facts automatically route to manual review.</span>
+            <p>{ruleSets.length ? "Staged rule revision" : "Step 3"}</p>
+            <h2>
+              {ruleSets.length ? "Edit eligibility rules" : "Eligibility rule version"} for{" "}
+              {activeRole.title}
+            </h2>
+            <span>
+              {activeDrive?.status === "published"
+                ? "This version remains private until the complete drive is saved."
+                : "Missing facts automatically route to manual review."}
+            </span>
           </div>
           {rules.map((rule, index) => (
             <div className={styles.ruleRow} key={index}>
@@ -1214,16 +1350,18 @@ export function AdminDrives() {
             )}
           </fieldset>
           <Alert tone="warning">
-            <CircleAlert aria-hidden="true" /> Preview carefully: once
-            published, this version is locked and applications keep
-            it.
+            <CircleAlert aria-hidden="true" /> Preview carefully. Existing
+            applications retain their original decision evidence; this version
+            applies only after the drive is saved.
           </Alert>
           <div className={styles.actions}>
             <button type="button" onClick={() => setPanel("none")}>
               Cancel
             </button>
             <button className={styles.primary} type="submit" disabled={busy}>
-              Create draft version
+              {activeDrive?.status === "published"
+                ? "Stage rule changes"
+                : "Create draft version"}
             </button>
           </div>
         </form>

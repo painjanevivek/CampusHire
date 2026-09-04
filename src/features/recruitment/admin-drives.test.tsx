@@ -39,6 +39,8 @@ const draftDrive = {
   created_at: "2026-09-01T08:00:00Z",
   updated_at: "2026-09-01T08:00:00Z",
   role_count: 0,
+  pending_changes: {},
+  has_pending_changes: false,
 };
 
 const publishedDrive = {
@@ -65,6 +67,29 @@ const draftRole = {
   status: "draft",
   published_at: null,
   deadline_at: draftDrive.deadline_at,
+  pending_changes: {},
+};
+
+const publishedRole = {
+  ...draftRole,
+  id: "role-published",
+  drive_id: publishedDrive.id,
+  drive_title: publishedDrive.title,
+  status: "published",
+  published_at: "2026-09-02T08:00:00Z",
+};
+
+const publishedRuleSet = {
+  id: "rules-published",
+  role_id: publishedRole.id,
+  version: 1,
+  status: "published",
+  rules: [{ field: "degree", operator: "eq", value: "B.Tech", label: "Degree" }],
+  policy_references: [],
+  created_by_user_id: "admin-1",
+  published_at: "2026-09-02T08:00:00Z",
+  created_at: "2026-09-02T08:00:00Z",
+  updated_at: "2026-09-02T08:00:00Z",
 };
 
 const approvedPolicy = {
@@ -199,7 +224,7 @@ describe("AdminDrives draft management", () => {
     });
 
     render(<AdminDrives />);
-    fireEvent.click(await screen.findByRole("button", { name: "New rule version" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Add rules" }));
     fireEvent.click(screen.getByLabelText(/Placement eligibility policy/));
     fireEvent.click(screen.getByRole("button", { name: "Create draft version" }));
 
@@ -210,5 +235,68 @@ describe("AdminDrives draft management", () => {
         body: expect.stringContaining(approvedPolicy.id),
       }),
     ));
+  });
+
+  it("stages published recruitment edits until the drive is saved", async () => {
+    const stagedDrive = {
+      ...publishedDrive,
+      pending_changes: { title: "Revised engineering drive" },
+      has_pending_changes: true,
+    };
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
+      if (path === "/admin/recruitment/drives") {
+        return Promise.resolve([draftDrive, publishedDrive]);
+      }
+      if (path === "/admin/recruitment/drives/drive-published/roles") {
+        return Promise.resolve([publishedRole]);
+      }
+      if (path === "/admin/recruitment/roles/role-published/rule-sets") {
+        return Promise.resolve([publishedRuleSet]);
+      }
+      return Promise.resolve([]);
+    });
+    csrfRequestMock.mockImplementation((path: string, init: RequestInit) => {
+      if (path === "/admin/recruitment/drives/drive-published" && init.method === "PATCH") {
+        return Promise.resolve(stagedDrive);
+      }
+      if (path === "/admin/recruitment/drives/drive-published/save" && init.method === "POST") {
+        return Promise.resolve({
+          ...stagedDrive,
+          title: "Revised engineering drive",
+          pending_changes: {},
+          has_pending_changes: false,
+        });
+      }
+      return Promise.reject(new Error(`Unexpected request: ${init.method} ${path}`));
+    });
+
+    render(<AdminDrives />);
+    fireEvent.click(await screen.findByRole("button", { name: /Published engineering drive/ }));
+
+    expect(await screen.findByRole("button", { name: "Edit drive" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Add role" })).toBeEnabled();
+    expect(await screen.findByRole("button", { name: "Edit role" })).toBeEnabled();
+    expect(await screen.findByRole("button", { name: "Edit rules" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit drive" }));
+    fireEvent.change(screen.getByLabelText("Drive title"), {
+      target: { value: "Revised engineering drive" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Stage drive changes" }));
+
+    expect(
+      await screen.findByText(/Drive changes staged\. Students still see the saved version/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(csrfRequestMock).toHaveBeenCalledWith(
+        "/admin/recruitment/drives/drive-published/save",
+        { method: "POST" },
+      ),
+    );
   });
 });

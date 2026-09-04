@@ -207,27 +207,46 @@ export type Company = {
   updated_at: string;
 };
 
-export type Drive = {
-  id: string;
+type DriveEditableFields = {
   company_id: string;
-  company_name: string;
   title: string;
   description: string;
   location: string;
   work_mode: string;
   opens_at: string;
   deadline_at: string;
+};
+
+export type Drive = DriveEditableFields & {
+  id: string;
+  company_name: string;
   status: string;
   published_at: string | null;
   created_at: string;
   updated_at: string;
   role_count: number;
+  pending_changes: Partial<DriveEditableFields>;
+  has_pending_changes: boolean;
 };
 
 export type PlacementRole = Omit<
   Opportunity,
   "eligibility" | "saved" | "application_id" | "application_status"
->;
+> & {
+  pending_changes: Partial<
+    Pick<
+      Opportunity,
+      | "title"
+      | "description"
+      | "employment_type"
+      | "location"
+      | "work_mode"
+      | "salary_display"
+      | "skills"
+      | "requirements"
+    >
+  >;
+};
 
 export type RuleDefinition = {
   field: string;

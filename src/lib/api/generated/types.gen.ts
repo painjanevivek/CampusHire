@@ -1114,6 +1114,10 @@ export type DriveResponse = {
      */
     description: string;
     /**
+     * Has Pending Changes
+     */
+    has_pending_changes?: boolean;
+    /**
      * Id
      */
     id: string;
@@ -1125,6 +1129,12 @@ export type DriveResponse = {
      * Opens At
      */
     opens_at: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes?: {
+        [key: string]: unknown;
+    };
     /**
      * Published At
      */
@@ -2112,6 +2122,12 @@ export type OpportunityResponse = {
      * Location
      */
     location: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes?: {
+        [key: string]: unknown;
+    };
     /**
      * Published At
      */
@@ -3119,6 +3135,12 @@ export type RoleResponse = {
      * Location
      */
     location: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes?: {
+        [key: string]: unknown;
+    };
     /**
      * Published At
      */
@@ -4869,6 +4891,36 @@ export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses = {
 };
 
 export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponse = AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses[keyof AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses];
+
+export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/drives/{drive_id}/save';
+};
+
+export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostError = SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors[keyof SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors];
+
+export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses];
 
 export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchData = {
     body: RoleUpdate;
