@@ -21,8 +21,10 @@ export function ContentPage({
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
-        <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire AI</Link>
-        <nav aria-label="Guidance"><Link href="/help">Help center</Link><Link href="/status">Service status</Link></nav>
+        <div className={styles.headerInner}>
+          <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire AI</Link>
+          <nav aria-label="Guidance"><Link href="/help">Help center</Link><Link href="/status">Service status</Link></nav>
+        </div>
       </header>
       <main id="main-content" className={styles.main}>
         <div className={styles.hero}>

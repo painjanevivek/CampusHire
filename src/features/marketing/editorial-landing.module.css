@@ -7,13 +7,13 @@
 .docsLink { min-height: var(--control-min-size); display: inline-flex; align-items: center; border-left: 1px solid var(--line); padding-left: 14px; color: var(--brand-blue-dark); font-size: .82rem; font-weight: var(--font-weight-emphasis); text-decoration: none; }
 .docsLink:hover { text-decoration: underline; text-underline-offset: 4px; }
 .header nav { display: flex; align-items: stretch; }
-.header nav a { min-height: 64px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-muted); font-size: .84rem; font-weight: var(--font-weight-emphasis); text-decoration: none; }
+.header nav a { min-height: 64px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-muted); font-size: .84rem; font-weight: var(--font-weight-medium); text-decoration: none; }
 .headerActions { margin-inline-start: auto; display: flex; align-items: center; gap: 4px; }
 .headerActions a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-muted); font-size: .84rem; font-weight: var(--font-weight-label); text-decoration: none; }
 .headerActions a:first-child { color: var(--brand-blue-dark); }
-.hero { width: min(100% - 40px, 1180px); min-height: 650px; margin: auto; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(290px, .6fr); align-items: center; gap: clamp(44px, 8vw, 110px); padding: 72px 0; }
+.hero { width: min(100% - 40px, 1280px); margin: auto; display: grid; grid-template-columns: minmax(0, 7fr) minmax(290px, 5fr); align-items: center; gap: clamp(40px, 6vw, 84px); padding: clamp(64px, 8vw, 104px) 0; }
 .eyebrow, .journey header p, .preview header p, .preview article > p, .trust > header p, .audiences article p, .faq > p { margin: 0 0 12px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .11em; text-transform: uppercase; }
-.hero h1 { max-width: 820px; margin: 0 0 22px; font-size: clamp(3rem, 6.7vw, 6.6rem); line-height: .94; letter-spacing: -.07em; }
+.hero h1 { max-width: 12ch; margin: 0 0 22px; font-size: clamp(3rem, 6vw, 5.9rem); line-height: .95; letter-spacing: -.065em; }
 .hero > div > p:not(.eyebrow) { max-width: 680px; color: var(--ink-muted); font-size: 1.08rem; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 28px 0 16px; }
 .heroActions a { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; border-radius: 10px; color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
@@ -27,7 +27,7 @@
 .hero aside dl div { padding: 12px 0; border-top: 1px solid var(--line); }
 .hero aside dt { color: var(--ink-muted); font-size: .7rem; font-weight: var(--font-weight-label); text-transform: uppercase; }
 .hero aside dd { margin: 3px 0 0; font-size: .85rem; }
-.journey, .trust, .faq { padding: 88px max(20px, calc((100vw - 1120px) / 2)); background: var(--canvas); }
+.journey, .trust, .faq { padding: clamp(72px, 8vw, 104px) max(20px, calc((100vw - 1280px) / 2)); background: var(--canvas); }
 .journey header, .preview header, .trust > header, .faq { max-width: 760px; }
 .journey h2, .preview h2, .trust h2, .faq h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.03; letter-spacing: -.05em; }
 .journey ol { display: grid; grid-template-columns: repeat(4, 1fr); margin: 46px 0 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
@@ -36,7 +36,7 @@
 .journey li > span { color: var(--brand-blue); font: var(--font-weight-emphasis) 1.6rem/1 monospace; }
 .journey h3 { margin: 34px 0 8px; font-size: 1.05rem; }
 .journey li p, .trustGrid p { color: var(--ink-muted); }
-.preview { padding: 96px max(20px, calc((100vw - 1120px) / 2)); }
+.preview { padding: clamp(72px, 8vw, 104px) max(20px, calc((100vw - 1280px) / 2)); }
 .preview header > span { display: block; margin-top: 13px; color: var(--ink-muted); }
 .previewGrid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; margin-top: 42px; }
 .previewGrid article { min-height: 260px; padding: 28px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
@@ -68,7 +68,7 @@
 .faq details:first-of-type { margin-top: 32px; border-top: 1px solid var(--line); }
 .faq summary { min-height: var(--control-min-size); display: flex; align-items: center; cursor: pointer; font-weight: var(--font-weight-label); }
 .faq details p { color: var(--ink-muted); }
-.footer { padding: 34px max(20px, calc((100vw - 1120px) / 2)); display: grid; grid-template-columns: 1fr auto; gap: 22px; border-top: 1px solid var(--line); }
+.footer { padding: 34px max(20px, calc((100vw - 1280px) / 2)); display: grid; grid-template-columns: 1fr auto; gap: 22px; border-top: 1px solid var(--line); }
 .footer div { display: grid; }
 .footer span, .footer p { color: var(--ink-muted); font-size: .82rem; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 20px; }

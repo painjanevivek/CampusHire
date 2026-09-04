@@ -154,6 +154,11 @@ def authenticate_demo(
 
     page.on("request", record_auth_request)
     page.goto(f"{base_url}{sign_in_route}", wait_until="networkidle", timeout=30_000)
+    cookie_preference = page.get_by_role(
+        "button", name="Save essential-only preference", exact=True
+    )
+    if cookie_preference.count() == 1 and cookie_preference.is_visible():
+        cookie_preference.click()
     button = page.get_by_role("button", name=button_name, exact=True)
     if button.count() != 1:
         raise RuntimeError(
@@ -380,7 +385,12 @@ def classify_console_errors(
             and "Failed to load resource" in message
             and "503" in message
         )
-        if is_expected_api_failure:
+        is_expected_https_bridge_hmr_failure = (
+            "WebSocket connection to 'wss://127.0.0.1:" in message
+            and "/_next/hmr?" in message
+            and "ERR_SSL_PROTOCOL_ERROR" in message
+        )
+        if is_expected_api_failure or is_expected_https_bridge_hmr_failure:
             expected += 1
         else:
             unexpected.append(message)

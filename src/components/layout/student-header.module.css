@@ -7,7 +7,10 @@
 }
 
 .inner {
-  width: min(100% - 40px, 1280px);
+  width: min(
+    calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)),
+    var(--layout-student-max)
+  );
   min-height: 70px;
   margin: 0 auto;
   display: flex;
@@ -119,13 +122,13 @@
 
 .menuButton { display: none; cursor: pointer; }
 
-@media (max-width: 900px) {
+@media (max-width: 1120px) {
   .header { padding-top: 8px; }
   .inner { min-height: 60px; align-items: center; border-radius: 16px; }
   .menuButton { display: grid; margin-inline-start: auto; }
   .navigation {
     position: absolute;
-    inset: 68px 20px auto;
+    inset: 68px var(--layout-gutter-tablet) auto;
     display: none;
     padding: 8px 16px 16px;
     background: var(--surface);
@@ -137,14 +140,15 @@
   .utilities { margin-inline-start: 0; }
 }
 
-@media (max-width: 480px) {
-  .inner { width: min(100% - 20px, 1280px); gap: 8px; padding-inline: 14px; }
+@media (max-width: 620px) {
+  .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 12px; }
   .brand strong { display: none; }
+  .helpControl { display: none; }
   .utilities { gap: 6px; }
 }
 
-@media (max-width: 360px) {
-  .helpControl { display: none; }
+@media (max-width: 420px) {
+  .utilities { gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

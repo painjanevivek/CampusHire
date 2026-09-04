@@ -3,7 +3,7 @@
 .back svg { width: 16px; }
 .page > header { display: flex; align-items: end; justify-content: space-between; gap: 30px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
 .page > header p, .summary p, .history header p { margin: 0 0 8px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .1em; text-transform: uppercase; }
-.page > header h1 { margin: 0 0 9px; font-size: clamp(2.3rem, 5vw, 4.6rem); letter-spacing: -.06em; }
+.page > header h1 { max-width: 18ch; margin: 0 0 9px; font-size: clamp(2.25rem, 4vw, 3.75rem); letter-spacing: -.05em; line-height: 1.02; text-wrap: balance; }
 .page > header span, .summary span, .appeals span { color: var(--ink-muted); }
 .page > header > strong { padding: 8px 13px; border-radius: 999px; background: var(--brand-blue-soft); color: var(--brand-blue-dark); font-size: .78rem; text-transform: capitalize; }
 .summary { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 28px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }

@@ -7,7 +7,7 @@
 .hero { display: grid; grid-template-columns: 70px minmax(0, 1fr) 46px; gap: 18px; align-items: start; padding: 28px; border-bottom: 1px solid var(--line); }
 .mark { width: 66px; height: 66px; display: grid; place-items: center; border-radius: 15px; background: var(--ink); color: white; font-size: 1.7rem; font-weight: var(--font-weight-emphasis); }
 .hero p { margin: 0 0 5px; color: var(--ink-muted); }
-.hero h1 { max-width: none; margin-bottom: 10px; font-size: clamp(2.1rem, 5vw, 3.8rem); }
+.hero h1 { max-width: 20ch; margin-bottom: 10px; font-size: clamp(2.1rem, 4vw, 3.75rem); line-height: 1.02; text-wrap: balance; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--ink-muted); font-size: .85rem; }
 .meta span { display: inline-flex; align-items: center; gap: 5px; }
 .meta svg { width: 16px; }

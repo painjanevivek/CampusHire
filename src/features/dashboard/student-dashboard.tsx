@@ -14,6 +14,7 @@ import {
   Target,
 } from "lucide-react";
 
+import { PageContainer, PageHeader } from "@/components/layout/page-layout";
 import { useDashboardMotion } from "./dashboard-motion";
 import styles from "./student-dashboard.module.css";
 
@@ -91,16 +92,18 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
   useDashboardMotion(pageRef);
 
   return (
-    <main ref={pageRef} id="main-content" className={styles.page}>
-      <header className={styles.topbar} data-dashboard-reveal>
-        <div>
-          <p className={styles.eyebrow}>Student readiness workspace</p>
-          <h1>{data.studentName}, here is the one move that matters next.</h1>
-        </div>
-        <Link className={styles.utilityLink} href="/opportunities">
-          Browse all opportunities <ArrowRight size={17} aria-hidden="true" />
-        </Link>
-      </header>
+    <PageContainer ref={pageRef} context="student" className={styles.page}>
+      <PageHeader
+        className={styles.topbar}
+        data-dashboard-reveal
+        eyebrow="Student readiness workspace"
+        title={`${data.studentName}, here is the one move that matters next.`}
+        actions={(
+          <Link className={styles.utilityLink} href="/opportunities">
+            Browse all opportunities <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        )}
+      />
 
       {data.state !== "ready" ? (
         <section className={styles.stateNotice} role="status" data-dashboard-reveal>
@@ -244,6 +247,6 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
           Match is decision support, not hiring probability.
         </p>
       </section>
-    </main>
+    </PageContainer>
   );
 }

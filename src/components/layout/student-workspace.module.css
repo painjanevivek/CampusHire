@@ -5,13 +5,13 @@
 }
 
 .content {
-  width: min(100%, 1480px);
+  width: min(100%, var(--layout-student-max));
   margin: 0 auto;
 }
 
 .withAside {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   align-items: start;
 }
 

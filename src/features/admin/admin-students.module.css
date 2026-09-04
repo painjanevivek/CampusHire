@@ -1,7 +1,7 @@
-.page { width: min(100% - 40px, 1440px); margin: 0 auto; padding: 42px 0 80px; }
+.page { width: min(100% - 40px, 1440px); margin: 0 auto; padding: 38px 0 80px; }
 .page > header, .roster > header, .directory > header { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
 .page > header { margin-bottom: 24px; }
-.page h1 { max-width: none; margin-bottom: 6px; font-size: clamp(2.8rem, 5vw, 5rem); }
+.page h1 { max-width: 18ch; margin-bottom: 6px; font-size: clamp(2.25rem, 3.5vw, 3.75rem); line-height: 1.02; text-wrap: balance; }
 .page header span, .page header p { color: var(--ink-muted); }
 .upload { min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 18px; background: var(--ink); color: white; font-weight: var(--font-weight-emphasis); cursor: pointer; }
 .headerActions { display: flex; align-items: center; gap: 10px; }

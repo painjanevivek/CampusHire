@@ -1,5 +1,5 @@
 .workspace {
-  --workspace-inline-gutter: 20px;
+  --workspace-inline-gutter: var(--layout-gutter-desktop);
 
   min-height: 100svh;
   background: var(--canvas);
@@ -15,7 +15,10 @@
 }
 
 .inner {
-  width: calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter));
+  width: min(
+    calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter)),
+    var(--layout-admin-max)
+  );
   min-height: 70px;
   margin: 0 auto;
   display: flex;
@@ -63,12 +66,12 @@
   padding: 0 18px;
   color: var(--ink-muted);
   font-size: 0.86rem;
-  font-weight: var(--font-weight-label);
+  font-weight: var(--font-weight-medium);
   text-decoration: none;
 }
 
 .navigation a:hover { color: var(--ink); }
-.navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
+.navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
 
 .utilities {
   --utility-control-size: var(--control-min-size);
@@ -120,12 +123,16 @@
 }
 
 .content > main {
-  width: calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter));
-  max-width: none;
+  width: min(
+    calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter)),
+    var(--layout-admin-max)
+  );
+  max-width: var(--layout-admin-max);
+  margin-inline: auto;
 }
 
 @media (max-width: 1080px) {
-  .workspace { --workspace-inline-gutter: 12px; }
+  .workspace { --workspace-inline-gutter: var(--layout-gutter-tablet); }
   .menuButton { display: grid; margin-inline-start: auto; }
   .navigation {
     position: absolute;
@@ -141,7 +148,7 @@
 }
 
 @media (max-width: 620px) {
-  .workspace { --workspace-inline-gutter: 8px; }
+  .workspace { --workspace-inline-gutter: var(--layout-gutter-mobile); }
   .header { padding-top: 8px; }
   .inner { min-height: 62px; padding-inline: 12px; }
   .brand strong { font-size: 0.9rem; }
