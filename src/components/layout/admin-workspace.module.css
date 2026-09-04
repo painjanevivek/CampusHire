@@ -36,15 +36,10 @@
   text-decoration: none;
 }
 
-.brand span {
+.brand svg {
   width: 34px;
   height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--brand-blue);
-  color: var(--on-primary);
-  font-weight: 800;
+  flex: 0 0 auto;
 }
 
 .navigation {

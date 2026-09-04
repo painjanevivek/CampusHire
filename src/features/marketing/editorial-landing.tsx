@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Building2, FileCheck2, LockKeyhole, Route, Scale, ShieldCheck, UserCheck } from "lucide-react";
 
+import { BrandMark } from "@/components/brand-mark";
 import { LandingMotion } from "./landing-motion";
 import styles from "./editorial-landing.module.css";
 
@@ -15,7 +16,7 @@ export function EditorialLanding() {
   return (
     <LandingMotion className={styles.page}>
       <header className={styles.header} data-landing-header><div className={styles.headerInner}>
-        <div className={styles.brandGroup}><Link className={styles.brand} href="/" aria-label="CampusHire home"><span data-brand-mark aria-hidden="true">C</span><strong>CampusHire</strong></Link><Link className={styles.docsLink} href="/docs">Docs</Link></div>
+        <div className={styles.brandGroup}><Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark /><strong>CampusHire</strong></Link><Link className={styles.docsLink} href="/docs">Docs</Link></div>
         <nav aria-label="Primary navigation"><a href="#how-it-works">How it works</a><a href="#preview">Product preview</a><a href="#trust">Trust</a><a href="#faq">FAQ</a></nav>
         <div className={styles.headerActions}><Link href="/sign-in">Student sign in</Link><Link href="/admin/sign-in">T&amp;P access</Link></div>
       </div></header>

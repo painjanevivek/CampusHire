@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/app/icon.svg" alt="CampusHire Bridge C logo" width="96" height="96" />
+</p>
+
 # CampusHire AI
 
 CampusHire AI is a student-first campus recruitment and career-readiness platform. The frontend provides separate, accessible experiences for students and Training and Placement administrators.

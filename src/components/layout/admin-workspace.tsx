@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleHelp, Menu, UserRound, X } from "lucide-react";
 
+import { BrandMark } from "@/components/brand-mark";
 import styles from "./admin-workspace.module.css";
 import { SignOutButton } from "./sign-out-button";
 
@@ -30,7 +31,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       <header className={styles.header}>
         <div className={styles.inner}>
           <Link className={styles.brand} href="/admin/dashboard" aria-label="CampusHire admin home">
-            <span aria-hidden="true">C</span>
+            <BrandMark />
             <strong>CampusHire AI</strong>
           </Link>
           <button

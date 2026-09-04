@@ -13,6 +13,7 @@ import {
   UserCheck,
 } from "lucide-react";
 
+import { BrandMark } from "@/components/brand-mark";
 import styles from "./docs.module.css";
 
 export const metadata: Metadata = {
@@ -43,7 +44,7 @@ export default function DocsPage() {
         <div className={styles.headerInner}>
           <div className={styles.brandGroup}>
             <Link className={styles.brand} href="/" aria-label="CampusHire home">
-              <span aria-hidden="true">C</span>
+              <BrandMark />
               <strong>CampusHire</strong>
             </Link>
             <span className={styles.docsLabel}>Docs</span>

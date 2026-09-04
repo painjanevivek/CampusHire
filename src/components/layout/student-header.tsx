@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CircleHelp, Menu, X } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
 import { SignOutButton } from "./sign-out-button";
@@ -37,7 +38,7 @@ export function StudentHeader({ active }: { active?: WorkspaceSection }) {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label="CampusHire home">
-          <span aria-hidden="true">C</span>
+          <BrandMark />
           <strong>CampusHire AI</strong>
         </Link>
 

@@ -1,6 +1,7 @@
 .shell { min-height: 100svh; background: var(--canvas); }
 .header { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 clamp(20px, 5vw, 72px); border-bottom: 1px solid var(--line); background: color-mix(in oklch, var(--surface) 94%, transparent); }
-.brand { color: var(--ink); font-family: var(--font-interface); font-weight: 850; text-decoration: none; letter-spacing: -.03em; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-family: var(--font-interface); font-weight: 850; text-decoration: none; letter-spacing: -.03em; }
+.brand > svg { width: 34px; height: 34px; flex: 0 0 auto; }
 .header nav { display: flex; gap: 20px; }
 .header nav a, .footer a { color: var(--ink-muted); font-weight: 700; text-decoration: none; }
 .main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: clamp(54px, 9vw, 112px) 0; }

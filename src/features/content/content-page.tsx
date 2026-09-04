@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BrandMark } from "@/components/brand-mark";
 import styles from "./content-page.module.css";
 
 export type ContentSection = { title: string; body: ReactNode };
@@ -20,7 +21,7 @@ export function ContentPage({
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
-        <Link className={styles.brand} href="/">CampusHire AI</Link>
+        <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire AI</Link>
         <nav aria-label="Guidance"><Link href="/help">Help center</Link><Link href="/status">Service status</Link></nav>
       </header>
       <main id="main-content" className={styles.main}>

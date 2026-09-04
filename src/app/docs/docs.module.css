@@ -3,7 +3,7 @@
 .headerInner { width: min(100% - 40px, 1240px); min-height: 64px; display: flex; align-items: center; gap: 24px; margin: auto; }
 .brandGroup { display: flex; align-items: center; gap: 14px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; text-decoration: none; }
-.brand > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: var(--brand-blue); color: white; }
+.brand > svg { width: 34px; height: 34px; flex: 0 0 auto; }
 .docsLabel { border-left: 1px solid var(--line); padding-left: 14px; color: var(--brand-blue-dark); font-size: .82rem; font-weight: 780; }
 .header nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .header nav a { min-height: 42px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-muted); font-size: .84rem; font-weight: 700; text-decoration: none; }

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 type AuthShellProps = {
   eyebrow: string;
@@ -14,7 +15,7 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
     <div className="authShell">
       <header className="authHeader">
         <Link className="brand" href="/" aria-label="CampusHire home">
-          <span className="brandMark" aria-hidden="true">C</span>
+          <BrandMark className="brandMark" />
           <span>CampusHire</span>
         </Link>
         <Link className="authJobsLink" href="/#how-it-works">How it works</Link>
