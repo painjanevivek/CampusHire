@@ -12,12 +12,13 @@ vi.mock("next/navigation", () => ({
 
 describe("StudentWorkspace", () => {
   it("exposes the current section and profile progress to assistive technology", () => {
-    render(
+    const { container } = render(
       <StudentWorkspace>
         <main>Dashboard content</main>
       </StudentWorkspace>,
     );
 
+    expect(container.querySelector('[data-workspace="student"]')).toBeInTheDocument();
     const navigation = screen.getByRole("navigation", { name: "Student navigation" });
     expect(navigation).toContainElement(
       screen.getByRole("link", { name: "Readiness" }),

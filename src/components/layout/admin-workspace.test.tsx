@@ -10,12 +10,13 @@ vi.mock("next/navigation", () => ({
 
 describe("AdminWorkspace", () => {
   it("keeps placement operations separate from student navigation", () => {
-    render(
+    const { container } = render(
       <AdminWorkspace>
         <main>Admin content</main>
       </AdminWorkspace>,
     );
 
+    expect(container.querySelector('[data-workspace="admin"]')).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Placement operations" }))
       .toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Drives" })).toHaveAttribute(

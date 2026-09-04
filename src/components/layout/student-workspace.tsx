@@ -11,7 +11,7 @@ export function StudentWorkspace({
   aside?: ReactNode;
 }) {
   return (
-    <div className={styles.workspace}>
+    <div className={styles.workspace} data-workspace="student">
       <StudentHeader />
       <div className={`${styles.content} ${aside ? styles.withAside : ""}`}>
         <div className={styles.body}>{children}</div>

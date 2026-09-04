@@ -27,7 +27,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   if (pathname === "/admin/sign-in" || pathname.startsWith("/admin/mfa")) return children;
 
   return (
-    <div className={styles.workspace}>
+    <div className={styles.workspace} data-workspace="admin">
       <header className={styles.header}>
         <div className={styles.inner}>
           <Link className={styles.brand} href="/admin/dashboard" aria-label="CampusHire admin home">

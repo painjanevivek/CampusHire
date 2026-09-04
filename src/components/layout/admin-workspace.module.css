@@ -1,4 +1,6 @@
 .workspace {
+  --workspace-inline-gutter: 20px;
+
   min-height: 100svh;
   background: var(--canvas);
   color: var(--ink);
@@ -13,7 +15,7 @@
 }
 
 .inner {
-  width: min(100% - 40px, 1440px);
+  width: calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter));
   min-height: 70px;
   margin: 0 auto;
   display: flex;
@@ -113,10 +115,17 @@
 .utilities svg,
 .menuButton svg { width: 18px; height: 18px; }
 .menuButton { display: none; }
-.content { width: min(100%, 1510px); margin: 0 auto; }
+.content {
+  width: 100%;
+}
+
+.content > main {
+  width: calc(100% - var(--workspace-inline-gutter) - var(--workspace-inline-gutter));
+  max-width: none;
+}
 
 @media (max-width: 1080px) {
-  .inner { width: min(100% - 24px, 1440px); }
+  .workspace { --workspace-inline-gutter: 12px; }
   .menuButton { display: grid; margin-inline-start: auto; }
   .navigation {
     position: absolute;
@@ -132,8 +141,9 @@
 }
 
 @media (max-width: 620px) {
+  .workspace { --workspace-inline-gutter: 8px; }
   .header { padding-top: 8px; }
-  .inner { width: min(100% - 16px, 1440px); min-height: 62px; padding-inline: 12px; }
+  .inner { min-height: 62px; padding-inline: 12px; }
   .brand strong { font-size: 0.9rem; }
   .utilities button:first-child,
   .helpControl { display: none; }
