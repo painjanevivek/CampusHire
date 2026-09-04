@@ -1,50 +1,9 @@
-"use client";
-
-import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { DatabaseZap, ShieldCheck, Trash2 } from "lucide-react";
+import { Cookie, DatabaseZap, ShieldCheck } from "lucide-react";
 
-import { Alert } from "@/components/ui/feedback";
-import { ApiError, csrfRequest } from "@/lib/api/client";
-import type { DataDeletionResponse } from "@/lib/api/generated";
 import styles from "./privacy-controls.module.css";
 
-const confirmation = "DELETE MY CAMPUSHIRE DATA";
-
 export function PrivacyControls() {
-  const [value, setValue] = useState("");
-  const [state, setState] = useState<"idle" | "submitting" | "complete">("idle");
-  const [message, setMessage] = useState("");
-
-  async function requestDeletion(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (value !== confirmation) return;
-    setState("submitting");
-    setMessage("");
-    try {
-      const response = await csrfRequest<DataDeletionResponse>("/privacy/deletion-requests", {
-        method: "POST",
-        body: JSON.stringify({
-          confirmation: value,
-          scope: "account_all_memberships",
-        }),
-      });
-      setState("complete");
-      setMessage(`${response.message} Reference ${response.id.slice(0, 8)}.`);
-    } catch (error) {
-      setState("idle");
-      if (error instanceof ApiError && error.status === 409) {
-        setMessage(
-          "Your college must keep an application decision record for now. Contact your placement cell to check the policy and what can be deleted.",
-        );
-      } else if (error instanceof ApiError && error.status === 401) {
-        setMessage("Sign in with the student account whose data you want to delete.");
-      } else {
-        setMessage("The deletion request could not be completed. No account data was changed.");
-      }
-    }
-  }
-
   return (
     <main id="main-content" className={styles.page}>
       <header>
@@ -77,33 +36,13 @@ export function PrivacyControls() {
         <Link href="/profile">Review profile details</Link>
       </section>
 
-      <section className={styles.danger} aria-labelledby="deletion-title">
+      <section id="cookies" className={styles.cookieNote} aria-labelledby="cookie-details-title">
+        <Cookie aria-hidden="true" />
         <div>
-          <Trash2 aria-hidden="true" />
-          <p>Irreversible action</p>
-          <h2 id="deletion-title">Delete eligible student data</h2>
-          <span>
-            This action removes data that can be deleted and memberships from every college linked to this CampusHire account. This includes your profile, sign-ins, resumes, readiness progress, saved roles, notifications, and match details. Private files are removed through a process that retries if needed. Your college may need to keep submitted application records for a set time.
-          </span>
+          <p>Cookie controls</p>
+          <h2 id="cookie-details-title">Essential cookies, without tracking.</h2>
+          <span>CampusHire uses security and session cookies when you sign in or submit a protected form. The website does not currently use analytics or advertising cookies.</span>
         </div>
-        {message ? <Alert tone={state === "complete" ? "success" : "warning"}>{message}</Alert> : null}
-        {state !== "complete" ? (
-          <form onSubmit={requestDeletion}>
-            <label htmlFor="deletion-confirmation">
-              Type <strong>{confirmation}</strong> to confirm
-            </label>
-            <input
-              id="deletion-confirmation"
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              autoComplete="off"
-              spellCheck={false}
-            />
-            <button type="submit" disabled={value !== confirmation || state === "submitting"}>
-              {state === "submitting" ? "Removing eligible data…" : "Delete eligible data"}
-            </button>
-          </form>
-        ) : null}
       </section>
     </main>
   );

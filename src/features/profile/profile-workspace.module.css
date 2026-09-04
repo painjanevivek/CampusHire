@@ -110,8 +110,7 @@
 }
 
 .primaryAction,
-.secondaryAction,
-.dangerAction {
+.secondaryAction {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -517,11 +516,6 @@
 .secondaryAction {
   border: 1px solid var(--brand-blue);
   color: var(--brand-blue-dark);
-}
-
-.dangerAction {
-  border: 1px solid var(--status-danger);
-  color: var(--status-danger);
 }
 
 .inlineLinks {

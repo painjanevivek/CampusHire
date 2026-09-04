@@ -9,7 +9,6 @@ import {
   GraduationCap,
   KeyRound,
   ShieldCheck,
-  Trash2,
   UserRound,
 } from "lucide-react";
 
@@ -138,18 +137,6 @@ export function ProfileWorkspace() {
             </div>
           </AccountDisclosure>
 
-          <AccountDisclosure
-            icon={Trash2}
-            eyebrow="High-risk action"
-            title="Account deletion"
-            description="Request deletion of student data that can be removed. Confirmation is always required."
-            tone="danger"
-          >
-            <div className={styles.governanceContent}>
-              <p>Some recruitment, audit, or institutional records may need to be retained with a documented reason.</p>
-              <Link className={styles.dangerAction} href="/privacy#deletion-title">Open deletion controls</Link>
-            </div>
-          </AccountDisclosure>
         </div>
       </section>
     </main>

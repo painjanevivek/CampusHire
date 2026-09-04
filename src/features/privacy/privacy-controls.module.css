@@ -1,8 +1,8 @@
 .page { width: min(100% - 40px, 1120px); margin: 0 auto; padding: 64px 0 96px; }
 .page > header { max-width: 850px; margin-bottom: 44px; }
-.page > header p, .choices p, .danger p { margin: 0 0 7px; color: var(--brand-blue); font-size: .72rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+.page > header p, .choices p, .cookieNote p { margin: 0 0 7px; color: var(--brand-blue); font-size: .72rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
 .page > header h1 { max-width: 13ch; margin-bottom: 14px; font-size: clamp(3rem, 7vw, 6rem); }
-.page > header span, .choices span, .danger span { color: var(--ink-muted); }
+.page > header span, .choices span, .cookieNote span { color: var(--ink-muted); }
 .principles { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .principles article { min-height: 250px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 26px; background: var(--surface); }
 .principles svg { width: 28px; height: 28px; margin-bottom: 48px; color: var(--brand-blue); }
@@ -12,16 +12,8 @@
 .choices > div { max-width: 720px; }
 .choices h2 { margin-bottom: 8px; font-size: 2rem; }
 .choices a { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; color: var(--brand-blue); font-weight: 800; text-decoration: none; }
-.danger { margin-top: 48px; border: 1px solid color-mix(in srgb, var(--status-danger) 32%, var(--line)); border-radius: 18px; padding: clamp(22px, 4vw, 34px); background: color-mix(in srgb, var(--status-danger) 3%, var(--surface)); }
-.danger > div:first-child { max-width: 780px; }
-.danger > div:first-child > svg { width: 28px; height: 28px; margin-bottom: 18px; color: var(--status-danger); }
-.danger p { color: var(--status-danger); }
-.danger h2 { margin-bottom: 8px; font-size: 1.7rem; }
-.danger > [role="alert"], .danger > [role="status"] { margin-top: 20px; }
-.danger form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; margin-top: 24px; }
-.danger label { grid-column: 1 / -1; font-weight: 750; }
-.danger label strong { font-family: var(--font-mono), monospace; }
-.danger input { min-height: 46px; border: 1px solid var(--line); border-radius: 8px; padding: 0 11px; background: white; font: inherit; }
-.danger button { min-height: 46px; border: 0; border-radius: 999px; padding: 0 18px; background: var(--status-danger); color: white; font-weight: 800; cursor: pointer; }
-.danger button:disabled { cursor: not-allowed; opacity: .45; }
-@media (max-width: 700px) { .page { width: min(100% - 24px, 1120px); padding-top: 36px; }.principles { grid-template-columns: 1fr; }.choices { align-items: start; flex-direction: column; }.danger form { grid-template-columns: 1fr; }.danger label { grid-column: auto; } }
+.cookieNote { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; margin-top: 48px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(22px, 4vw, 34px); background: var(--surface); }
+.cookieNote > svg { width: 28px; height: 28px; color: var(--brand-blue); }
+.cookieNote h2 { margin-bottom: 8px; font-size: 1.7rem; }
+.cookieNote div { max-width: 780px; }
+@media (max-width: 700px) { .page { width: min(100% - 24px, 1120px); padding-top: 36px; }.principles { grid-template-columns: 1fr; }.choices { align-items: start; flex-direction: column; }.cookieNote { grid-template-columns: 1fr; } }

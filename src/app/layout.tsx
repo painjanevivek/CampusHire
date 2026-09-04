@@ -7,6 +7,7 @@ import {
   Montserrat,
 } from "next/font/google";
 import "./globals.css";
+import { CookiePreferences } from "@/components/cookie-preferences";
 import { ServiceBanner } from "@/components/service-banner";
 
 const display = Instrument_Serif({
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skipLink" href="#main-content">Skip to main content</a>
         <Suspense fallback={null}><ServiceBanner /></Suspense>
         {children}
+        <CookiePreferences />
       </body>
     </html>
   );
