@@ -41,3 +41,11 @@ For local demo buttons, set the server-only `DEMO_LOGIN_ENABLED=true` in `.env.l
 - Backend: <https://github.com/painjanevivek/CampusHire-backend>
 
 The backend API URL is configured through `NEXT_PUBLIC_API_URL`.
+
+## Vercel deployment
+
+Import this repository as a Next.js Vercel project and use the repository root
+as the Root Directory. Set `NEXT_PUBLIC_API_URL` and `INTERNAL_API_URL` to the
+same HTTPS backend base URL. Keep `DEMO_LOGIN_ENABLED=false` in production. See
+[the Vercel deployment runbook](docs/VERCEL_DEPLOYMENT.md) for the exact project,
+domain, and verification steps.
