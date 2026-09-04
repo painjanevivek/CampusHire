@@ -4,7 +4,6 @@
   z-index: var(--layer-navigation);
   padding: 14px 0 0;
   background: transparent;
-  border-bottom: 1px solid var(--line);
 }
 
 .inner {
