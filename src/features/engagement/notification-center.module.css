@@ -128,3 +128,8 @@
 .error {
   color: var(--status-danger);
 }
+.categories { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px; }
+.categories button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.categories [aria-pressed="true"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
+.items > section { border-bottom: 1px solid var(--line); }
+.items > section > button, .items > a { display: block; width: 100%; padding: 16px; text-align: left; min-height: 44px; background: var(--surface); border: 0; color: var(--ink); }

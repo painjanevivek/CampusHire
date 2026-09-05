@@ -23,6 +23,7 @@ const notification = {
   read_at: null,
   created_at: "2026-08-24T00:00:00Z",
 };
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: pushMock }) }));
 
 describe("NotificationCenter", () => {
   beforeEach(() => {
@@ -44,9 +45,8 @@ describe("NotificationCenter", () => {
     fireEvent.click(
       await screen.findByRole("button", { name: "Open updates, 1 unread" }),
     );
-    fireEvent.click(
-      screen.getByRole("button", { name: /Application shortlisted/ }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Updates" }));
+    fireEvent.click(screen.getByRole("button", { name: /Application shortlisted/ }));
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
         "/notifications/notice-1/read",
@@ -65,6 +65,7 @@ describe("NotificationCenter", () => {
     fireEvent.click(
       await screen.findByRole("button", { name: "Open updates, 1 unread" }),
     );
+    fireEvent.click(screen.getByRole("button", { name: "Updates" }));
     fireEvent.click(screen.getByRole("button", { name: /Application shortlisted/ }));
     expect(await screen.findByText(/does not contain a safe CampusHire destination/)).toBeInTheDocument();
     expect(pushMock).not.toHaveBeenCalled();

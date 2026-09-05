@@ -164,3 +164,30 @@
 @media (prefers-reduced-motion: reduce) {
   .inner { backdrop-filter: none; }
 }
+
+/* The sidebar and the complete workspace share one bounded shell. */
+.workspace { max-width: 1440px; margin-inline: auto; }
+.inner { width: calc(100% - 64px); position: relative; }
+.utilities { margin-left: auto; }
+.navigation { position: absolute; left: 0; top: 96px; width: 208px; display: grid; align-content: start; gap: 18px; margin: 0; padding: 16px; border-radius: 12px; max-height: calc(100dvh - 130px); overflow-y: auto; }
+.group { display: grid; gap: 2px; }
+.group p { margin: 0 0 4px; padding-inline: 12px; color: var(--ink-muted); font-size: .72rem; letter-spacing: .04em; }
+.navigation a { border-radius: 8px; padding-inline: 12px; }
+.content { width: auto; margin-left: 264px; margin-right: 32px; }
+.content > main { width: 100%; max-width: 100%; }
+@media (max-width: 1199px) {
+  .workspace { --workspace-inline-gutter: var(--layout-gutter-tablet); }
+  .inner { width: calc(100% - 48px); }
+  .menuButton { display: grid; margin-left: auto; }
+  .utilities { margin-left: 0; }
+  .navigation { display: none; position: absolute; inset: 94px 24px auto; width: auto; max-height: calc(100dvh - 120px); }
+  .navigationOpen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .content { margin-inline: 24px; }
+}
+@media (max-width: 620px) {
+  .inner { width: calc(100% - 32px); gap: 8px; }
+  .content { margin-inline: 16px; }
+  .navigation { inset: 78px 16px auto; }
+  .navigationOpen { grid-template-columns: 1fr; }
+  .helpControl { display: grid; }
+}

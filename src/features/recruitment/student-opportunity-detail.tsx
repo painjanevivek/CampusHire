@@ -235,6 +235,8 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             </button>
           </header>
 
+          <section><h2>Prepare for this opportunity</h2><p>Compare the published requirements with your reviewed evidence, without changing eligibility.</p><Link href={`/preparation?role=${roleId}`}>Review preparation guidance</Link></section>
+
           <section>
             <h2>Role overview</h2>
             <p>{opportunity.description}</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleHelp, Menu, UserRound, X } from "lucide-react";
@@ -11,18 +11,26 @@ import styles from "./admin-workspace.module.css";
 import { SignOutButton } from "./sign-out-button";
 
 const navigation = [
-  { href: "/admin/drives", label: "Drives" },
-  { href: "/admin/companies", label: "Companies" },
-  { href: "/admin/applications", label: "Applications" },
-  { href: "/admin/policies", label: "Policies" },
-  { href: "/admin/operations", label: "Operations" },
-  { href: "/admin/students", label: "Students" },
-  { href: "/admin/audit", label: "Audit" },
+  { group: "Overview", items: [{ href: "/admin/dashboard", label: "Overview" }] },
+  { group: "Recruitment", items: [{ href: "/admin/applications", label: "Applications" }, { href: "/admin/drives", label: "Drives" }, { href: "/admin/companies", label: "Companies" }] },
+  { group: "Institution", items: [{ href: "/admin/students", label: "Students" }, { href: "/admin/policies", label: "Policies" }] },
+  { group: "Administration", items: [{ href: "/admin/reports", label: "Reports" }, { href: "/admin/operations", label: "Operations" }, { href: "/admin/audit", label: "Audit" }] },
 ] as const;
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const menu = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    menu.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setMenuOpen(false); menuButton.current?.focus(); }
+    };
+    window.addEventListener("keydown", escape);
+    return () => window.removeEventListener("keydown", escape);
+  }, [menuOpen]);
 
   if (pathname === "/admin/sign-in" || pathname.startsWith("/admin/mfa")) return children;
 
@@ -35,6 +43,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             <strong>CampusHire AI</strong>
           </Link>
           <button
+            ref={menuButton}
             className={styles.menuButton}
             type="button"
             aria-label={menuOpen ? "Close placement navigation" : "Open placement navigation"}
@@ -45,18 +54,14 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
           <nav
+            ref={menu}
             id="placement-navigation"
             className={`${styles.navigation} ${menuOpen ? styles.navigationOpen : ""}`}
             aria-label="Placement operations"
           >
-            {navigation.map((item) => {
-              const selected = pathname.startsWith(item.href);
-              return (
-                <Link key={item.href} href={item.href} aria-current={selected ? "page" : undefined}>
-                  {item.label}
-                </Link>
-              );
-            })}
+            {navigation.map(group => <div className={styles.group} key={group.group}>
+              <p>{group.group}</p>{group.items.map(item => <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} aria-current={pathname.startsWith(item.href) ? "page" : undefined}>{item.label}</Link>)}
+            </div>)}
           </nav>
           <div className={styles.utilities} aria-label="Administrator utilities">
             <Link className={styles.helpControl} href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>

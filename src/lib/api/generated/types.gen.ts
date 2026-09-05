@@ -308,6 +308,10 @@ export type ApplicationFormUpdate = {
  */
 export type ApplicationOverrideCreate = {
     /**
+     * Expected Revision
+     */
+    expected_revision?: number | null;
+    /**
      * Policy Reference
      */
     policy_reference: string;
@@ -322,9 +326,77 @@ export type ApplicationOverrideCreate = {
 };
 
 /**
+ * ApplicationQueueItem
+ */
+export type ApplicationQueueItem = {
+    /**
+     * Awaiting Review
+     */
+    awaiting_review: number;
+    /**
+     * Company Name
+     */
+    company_name: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Open Requests
+     */
+    open_requests: number;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Role Title
+     */
+    role_title: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Student Name
+     */
+    student_name: string;
+};
+
+/**
+ * ApplicationQueuePage
+ */
+export type ApplicationQueuePage = {
+    /**
+     * Items
+     */
+    items: Array<ApplicationQueueItem>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
  * ApplicationResponse
  */
 export type ApplicationResponse = {
+    /**
+     * Allowed Actions
+     */
+    allowed_actions?: Array<string>;
     /**
      * Appeals
      */
@@ -335,6 +407,10 @@ export type ApplicationResponse = {
     application_form_snapshot: {
         [key: string]: unknown;
     };
+    /**
+     * Awaiting Review
+     */
+    awaiting_review?: number;
     /**
      * Can Withdraw
      */
@@ -378,6 +454,18 @@ export type ApplicationResponse = {
      */
     institution_timezone: string;
     /**
+     * Next Actor
+     */
+    next_actor?: string;
+    /**
+     * Next Step
+     */
+    next_step?: string;
+    /**
+     * Open Requests
+     */
+    open_requests?: number;
+    /**
      * Overrides
      */
     overrides?: Array<OverrideResponse>;
@@ -397,6 +485,10 @@ export type ApplicationResponse = {
      * Resume Version Id
      */
     resume_version_id: string;
+    /**
+     * Revision
+     */
+    revision?: number;
     /**
      * Role Id
      */
@@ -464,6 +556,10 @@ export type ApplicationReviewResponse = {
  * ApplicationStatusUpdate
  */
 export type ApplicationStatusUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision?: number | null;
     /**
      * Reason
      */
@@ -601,6 +697,12 @@ export type BulkApplicationApplyRequest = {
      */
     confirmation: 'APPLY BULK STATUS';
     /**
+     * Expected Revisions
+     */
+    expected_revisions?: {
+        [key: string]: number;
+    } | null;
+    /**
      * Reason
      */
     reason: string;
@@ -649,6 +751,10 @@ export type BulkApplicationPreviewItem = {
      */
     explanation: string;
     /**
+     * Revision
+     */
+    revision?: number;
+    /**
      * Target Status
      */
     target_status: string;
@@ -680,6 +786,12 @@ export type BulkApplicationStatusRequest = {
      * Application Ids
      */
     application_ids: Array<string>;
+    /**
+     * Expected Revisions
+     */
+    expected_revisions?: {
+        [key: string]: number;
+    } | null;
     /**
      * Reason
      */
@@ -797,6 +909,82 @@ export type CompanyUpdate = {
 };
 
 /**
+ * CorrectionEventResponse
+ */
+export type CorrectionEventResponse = {
+    /**
+     * Action
+     */
+    action: string;
+    /**
+     * Actor User Id
+     */
+    actor_user_id: string;
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Resume Version Id
+     */
+    resume_version_id: string | null;
+};
+
+/**
+ * CorrectionResponse
+ */
+export type CorrectionResponse = {
+    /**
+     * Application Id
+     */
+    application_id: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Deadline At
+     */
+    deadline_at: string | null;
+    /**
+     * Events
+     */
+    events?: Array<CorrectionEventResponse>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Instructions
+     */
+    instructions: string;
+    /**
+     * Overdue
+     */
+    overdue?: boolean;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Status
+     */
+    status: 'open' | 'awaiting_review' | 'resolved' | 'cancelled';
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
  * DashboardEvidence
  */
 export type DashboardEvidence = {
@@ -882,6 +1070,10 @@ export type DashboardResponse = {
      * Evidence
      */
     evidence: Array<DashboardEvidence>;
+    /**
+     * Institution Timezone
+     */
+    institution_timezone?: string;
     next_action: NextAction;
     /**
      * Opportunities
@@ -901,6 +1093,10 @@ export type DashboardResponse = {
      * Unread Notifications
      */
     unread_notifications: number;
+    /**
+     * Upcoming
+     */
+    upcoming?: Array<NextAction>;
 };
 
 /**
@@ -1855,6 +2051,36 @@ export type MembershipStatusUpdate = {
 };
 
 /**
+ * Metric
+ */
+export type Metric = {
+    /**
+     * Explanation
+     */
+    explanation: string;
+    /**
+     * Href
+     */
+    href: string;
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Sample Size
+     */
+    sample_size: number;
+    /**
+     * Value
+     */
+    value: number | null;
+};
+
+/**
  * MfaCodeRequest
  */
 export type MfaCodeRequest = {
@@ -1907,9 +2133,17 @@ export type MfaSetupResponse = {
  */
 export type NextAction = {
     /**
+     * Category
+     */
+    category?: string;
+    /**
      * Completion Criteria
      */
     completion_criteria: string;
+    /**
+     * Deadline At
+     */
+    deadline_at?: string | null;
     /**
      * Description
      */
@@ -1997,6 +2231,10 @@ export type NotificationResponse = {
      */
     body: string;
     /**
+     * Category
+     */
+    category?: string;
+    /**
      * Created At
      */
     created_at: string;
@@ -2016,6 +2254,14 @@ export type NotificationResponse = {
      * Read At
      */
     read_at: string | null;
+    /**
+     * Related Application Id
+     */
+    related_application_id?: string | null;
+    /**
+     * Related Request Id
+     */
+    related_request_id?: string | null;
     /**
      * Title
      */
@@ -2369,6 +2615,78 @@ export type PreferencesUpdate = {
 };
 
 /**
+ * PreparationEvidence
+ */
+export type PreparationEvidence = {
+    /**
+     * Demonstrated
+     */
+    demonstrated: boolean;
+    /**
+     * Evidence
+     */
+    evidence: string;
+    /**
+     * Requirement
+     */
+    requirement: string;
+};
+
+/**
+ * PreparationResponse
+ */
+export type PreparationResponse = {
+    /**
+     * Activities
+     */
+    activities?: Array<{
+        [key: string]: string;
+    }>;
+    /**
+     * Evidence
+     */
+    evidence: Array<PreparationEvidence>;
+    /**
+     * Guidance Stale
+     */
+    guidance_stale: boolean;
+    /**
+     * Mapping Status
+     */
+    mapping_status: string;
+    /**
+     * Requirements
+     */
+    requirements: Array<string>;
+    /**
+     * Roadmap Href
+     */
+    roadmap_href: string;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Role Title
+     */
+    role_title: string;
+    /**
+     * Source Profile Revision
+     */
+    source_profile_revision: number | null;
+    /**
+     * Source Resume Version Id
+     */
+    source_resume_version_id: string | null;
+    /**
+     * Suggestions
+     */
+    suggestions: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+/**
  * ProfileResponse
  */
 export type ProfileResponse = {
@@ -2531,6 +2849,106 @@ export type ProfileUpdate = {
 };
 
 /**
+ * PublishPreview
+ */
+export type PublishPreview = {
+    /**
+     * Blockers
+     */
+    blockers: Array<string>;
+    /**
+     * Company Name
+     */
+    company_name: string;
+    /**
+     * Completed Steps
+     */
+    completed_steps: Array<number>;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
+    /**
+     * Drive Id
+     */
+    drive_id: string;
+    /**
+     * Opens At
+     */
+    opens_at: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes: {
+        [key: string]: unknown;
+    };
+    /**
+     * Roles
+     */
+    roles: Array<PublishRolePreview>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * PublishRolePreview
+ */
+export type PublishRolePreview = {
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Form Questions
+     */
+    form_questions: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Location
+     */
+    location: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes: {
+        [key: string]: unknown;
+    };
+    /**
+     * Requirements
+     */
+    requirements: Array<string>;
+    /**
+     * Rules
+     */
+    rules: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Salary Display
+     */
+    salary_display: string | null;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Visible On Publish
+     */
+    visible_on_publish: boolean;
+    /**
+     * Work Mode
+     */
+    work_mode: string;
+};
+
+/**
  * ReadinessItem
  */
 export type ReadinessItem = {
@@ -2550,6 +2968,78 @@ export type ReadinessItem = {
      * Required
      */
     required: boolean;
+};
+
+/**
+ * ReportResponse
+ */
+export type ReportResponse = {
+    /**
+     * End At
+     */
+    end_at: string;
+    /**
+     * Metrics
+     */
+    metrics: Array<Metric>;
+    /**
+     * Start At
+     */
+    start_at: string;
+    /**
+     * Timezone
+     */
+    timezone: string;
+};
+
+/**
+ * RequestCreate
+ */
+export type RequestCreate = {
+    /**
+     * Deadline At
+     */
+    deadline_at?: string | null;
+    /**
+     * Instructions
+     */
+    instructions: string;
+};
+
+/**
+ * RequestResolution
+ */
+export type RequestResolution = {
+    /**
+     * Action
+     */
+    action: 'resolve' | 'reopen' | 'cancel';
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * RequestResponseCreate
+ */
+export type RequestResponseCreate = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Resume Version Id
+     */
+    resume_version_id?: string | null;
 };
 
 /**
@@ -3438,6 +3928,42 @@ export type SaveResponse = {
      * Saved
      */
     saved: boolean;
+};
+
+/**
+ * SavedViewCreate
+ */
+export type SavedViewCreate = {
+    /**
+     * Filters
+     */
+    filters?: {
+        [key: string]: string;
+    };
+    /**
+     * Name
+     */
+    name: string;
+};
+
+/**
+ * SavedViewResponse
+ */
+export type SavedViewResponse = {
+    /**
+     * Filters
+     */
+    filters?: {
+        [key: string]: string;
+    };
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
 };
 
 /**
@@ -4542,6 +5068,138 @@ export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicat
 
 export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponse = OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponses[keyof OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponses];
 
+export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/{application_id}/requests';
+};
+
+export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetError = AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors[keyof AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors];
+
+export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses = {
+    /**
+     * Response Admin Requests Api V1 Admin Recruitment Applications  Application Id  Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<CorrectionResponse>;
+};
+
+export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponse = AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses[keyof AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses];
+
+export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostData = {
+    body: RequestCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/{application_id}/requests';
+};
+
+export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostError = CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors[keyof CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors];
+
+export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponse = CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses[keyof CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses];
+
+export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+        /**
+         * Event Id
+         */
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/{application_id}/requests/{request_id}/events/{event_id}/resume';
+};
+
+export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetError = SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors[keyof SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors];
+
+export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostData = {
+    body: RequestResolution;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/applications/{application_id}/requests/{request_id}/resolve';
+};
+
+export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostError = ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors[keyof ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors];
+
+export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponse = ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses[keyof ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses];
+
 export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostData = {
     body: ApplicationStatusUpdate;
     path: {
@@ -4830,6 +5488,36 @@ export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostRe
 
 export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponse = DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses[keyof DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses];
 
+export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/drives/{drive_id}/publication-preview';
+};
+
+export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetError = PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors[keyof PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors];
+
+export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PublishPreview;
+};
+
+export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponse = PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses[keyof PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses];
+
 export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetData = {
     body?: never;
     path: {
@@ -4921,6 +5609,136 @@ export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponse
 };
 
 export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses];
+
+export type ReportApiV1AdminRecruitmentReportsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+    };
+    url: '/api/v1/admin/recruitment/reports';
+};
+
+export type ReportApiV1AdminRecruitmentReportsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReportApiV1AdminRecruitmentReportsGetError = ReportApiV1AdminRecruitmentReportsGetErrors[keyof ReportApiV1AdminRecruitmentReportsGetErrors];
+
+export type ReportApiV1AdminRecruitmentReportsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReportResponse;
+};
+
+export type ReportApiV1AdminRecruitmentReportsGetResponse = ReportApiV1AdminRecruitmentReportsGetResponses[keyof ReportApiV1AdminRecruitmentReportsGetResponses];
+
+export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Requests
+         */
+        requests?: string | null;
+        /**
+         * Q
+         */
+        q?: string | null;
+        /**
+         * Review Pending
+         */
+        review_pending?: boolean;
+    };
+    url: '/api/v1/admin/recruitment/review-queue';
+};
+
+export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetError = ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors[keyof ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors];
+
+export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationQueuePage;
+};
+
+export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponse = ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses[keyof ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses];
+
+export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/review-queue/{application_id}';
+};
+
+export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetError = ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors[keyof ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors];
+
+export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponse = ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses[keyof ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses];
 
 export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchData = {
     body: RoleUpdate;
@@ -5597,6 +6415,72 @@ export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosur
 };
 
 export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponse = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses];
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/requests';
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetError = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors];
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses = {
+    /**
+     * Response Student Requests Api V1 Applications  Application Id  Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<CorrectionResponse>;
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponse = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses];
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostData = {
+    body: RequestResponseCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/requests/{request_id}/response';
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostError = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors];
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponse = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses];
 
 export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostData = {
     body: ApplicationWithdrawal;
@@ -6711,6 +7595,10 @@ export type ReadOpportunitiesApiV1OpportunitiesGetData = {
     path?: never;
     query?: {
         /**
+         * Sort
+         */
+        sort?: string;
+        /**
          * Q
          */
         q?: string | null;
@@ -6862,6 +7750,41 @@ export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses = {
 
 export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponse = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses];
 
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: {
+        /**
+         * Resume Id
+         */
+        resume_id?: string | null;
+    };
+    url: '/api/v1/opportunities/{role_id}/preparation';
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetError = PreparationApiV1OpportunitiesRoleIdPreparationGetErrors[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetErrors];
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PreparationResponse;
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponse = PreparationApiV1OpportunitiesRoleIdPreparationGetResponses[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetResponses];
+
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostData = {
     body?: never;
     path: {
@@ -6891,6 +7814,118 @@ export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses = {
 };
 
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponse = SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses[keyof SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses];
+
+export type SavedViewsApiV1OpportunityViewsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunity-views';
+};
+
+export type SavedViewsApiV1OpportunityViewsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavedViewsApiV1OpportunityViewsGetError = SavedViewsApiV1OpportunityViewsGetErrors[keyof SavedViewsApiV1OpportunityViewsGetErrors];
+
+export type SavedViewsApiV1OpportunityViewsGetResponses = {
+    /**
+     * Response Saved Views Api V1 Opportunity Views Get
+     *
+     * Successful Response
+     */
+    200: Array<SavedViewResponse>;
+};
+
+export type SavedViewsApiV1OpportunityViewsGetResponse = SavedViewsApiV1OpportunityViewsGetResponses[keyof SavedViewsApiV1OpportunityViewsGetResponses];
+
+export type CreateViewApiV1OpportunityViewsPostData = {
+    body: SavedViewCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunity-views';
+};
+
+export type CreateViewApiV1OpportunityViewsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateViewApiV1OpportunityViewsPostError = CreateViewApiV1OpportunityViewsPostErrors[keyof CreateViewApiV1OpportunityViewsPostErrors];
+
+export type CreateViewApiV1OpportunityViewsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedViewResponse;
+};
+
+export type CreateViewApiV1OpportunityViewsPostResponse = CreateViewApiV1OpportunityViewsPostResponses[keyof CreateViewApiV1OpportunityViewsPostResponses];
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * View Id
+         */
+        view_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunity-views/{view_id}';
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteError = DeleteViewApiV1OpportunityViewsViewIdDeleteErrors[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteErrors];
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponse = DeleteViewApiV1OpportunityViewsViewIdDeleteResponses[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteResponses];
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutData = {
+    body: SavedViewCreate;
+    path: {
+        /**
+         * View Id
+         */
+        view_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunity-views/{view_id}';
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutError = UpdateViewApiV1OpportunityViewsViewIdPutErrors[keyof UpdateViewApiV1OpportunityViewsViewIdPutErrors];
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedViewResponse;
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutResponse = UpdateViewApiV1OpportunityViewsViewIdPutResponses[keyof UpdateViewApiV1OpportunityViewsViewIdPutResponses];
 
 export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostData = {
     body: DataDeletionCreate;

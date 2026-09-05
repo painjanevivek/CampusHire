@@ -38,7 +38,7 @@ export function StudentApplications() {
   }, [load]);
 
   return (
-    <main id="main-content" className={styles.page}>
+    <main id="main-content" className={styles.page} data-navigation-ready={!loading && !error}>
       <header><div><p>Applications</p><h1>Your decision record.</h1><span>Every submission keeps its selected resume, eligibility result, and policy version.</span></div><strong>{items.length}</strong></header>
       {error ? <Alert tone="warning">{error} <button type="button" onClick={() => void load(true)}>Retry</button></Alert> : null}
       {loading ? <p role="status">Loading application history…</p> : !items.length ? (

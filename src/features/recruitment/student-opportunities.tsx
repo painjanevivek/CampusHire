@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
+import { SavedViews } from "@/features/experience/saved-views";
+import experience from "@/features/experience/experience.module.css";
 import { cachedApiRequest, csrfRequest } from "@/lib/api/client";
 import type { Opportunity, OpportunityPage } from "./types";
 import styles from "./student-opportunities.module.css";
@@ -40,6 +42,7 @@ export function StudentOpportunities() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState<string | null>(null);
+  const [comparison, setComparison] = useState<Array<{ id: string; title: string }>>([]);
 
   const queryString = searchParams.toString();
   const load = useCallback(async (force = false) => {
@@ -48,6 +51,10 @@ export function StudentOpportunities() {
     setError("");
     try {
       setData(await cachedApiRequest<OpportunityPage>(`/opportunities${queryString ? `?${queryString}` : ""}`, { force }));
+      requestAnimationFrame(() => {
+        const savedScroll = window.history.state?.campushireOpportunityScroll;
+        if (typeof savedScroll === "number") window.scrollTo({ top: savedScroll, behavior: "instant" });
+      });
     } catch {
       setError("Opportunities could not be loaded. Your filters are preserved; retry when the connection returns.");
     } finally {
@@ -64,7 +71,7 @@ export function StudentOpportunities() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const params = new URLSearchParams();
-    for (const key of ["q", "location", "work_mode", "skill", "eligibility", "application_state", "deadline_within_days", "saved_only"]) {
+    for (const key of ["q", "location", "work_mode", "skill", "eligibility", "application_state", "deadline_within_days", "saved_only", "sort"]) {
       const value = String(form.get(key) ?? "").trim();
       if (value) params.set(key, value);
     }
@@ -91,7 +98,10 @@ export function StudentOpportunities() {
   const selected = items[0];
 
   return (
-    <main id="main-content" className={styles.page}>
+    <main id="main-content" className={styles.page} data-navigation-ready={!loading && !!data && !error} onClickCapture={event => {
+      const link = (event.target as HTMLElement).closest("a");
+      if (link?.getAttribute("href")?.startsWith("/opportunities/")) window.history.replaceState({ ...window.history.state, campushireOpportunityScroll: window.scrollY }, "");
+    }}>
       <header className={styles.heading}>
         <div>
           <p className={styles.eyebrow}>Published for your institution</p>
@@ -119,6 +129,7 @@ export function StudentOpportunities() {
         </label>
         <button className={styles.searchButton} type="submit">Search roles</button>
         <div className={styles.filters}>
+          <label>Sort<select name="sort" defaultValue={searchParams.get("sort") ?? "deadline"}><option value="deadline">Deadline first</option><option value="newest">Newest first</option><option value="company">Company name</option></select></label>
           <label>Work mode<select name="work_mode" defaultValue={searchParams.get("work_mode") ?? ""}><option value="">All modes</option><option value="on-site">On-site</option><option value="hybrid">Hybrid</option><option value="remote">Remote</option></select></label>
           <label>Skill<input name="skill" defaultValue={searchParams.get("skill") ?? ""} placeholder="e.g. Python" /></label>
           <label>Eligibility<select name="eligibility" defaultValue={searchParams.get("eligibility") ?? ""}><option value="">All eligibility states</option><option value="eligible">Eligible</option><option value="ineligible">Not eligible</option><option value="needs_manual_review">Needs review</option><option value="unavailable">Rules unavailable</option></select></label>
@@ -128,6 +139,7 @@ export function StudentOpportunities() {
           <Link className={styles.clear} href="/opportunities"><RotateCcw aria-hidden="true" /> Clear</Link>
         </div>
       </form>
+      <SavedViews query={queryString} />
 
       {error && <Alert tone="error">{error} <button type="button" onClick={() => void load(true)}>Retry</button></Alert>}
 
@@ -147,6 +159,7 @@ export function StudentOpportunities() {
                   <div className={styles.skills}>{opportunity.skills.slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div>
                 </div>
                 <div className={styles.cardActions}>
+                  <label className={experience.button}><input type="checkbox" checked={comparison.some(item => item.id === opportunity.id)} disabled={comparison.length >= 3 && !comparison.some(item => item.id === opportunity.id)} onChange={event => setComparison(current => event.target.checked ? [...current, { id: opportunity.id, title: opportunity.title }] : current.filter(item => item.id !== opportunity.id))} /> Compare {opportunity.title}</label>
                   <div className={styles.states}><Badge tone={tone(opportunity)}>{eligibilityCopy(opportunity)}</Badge>{opportunity.application_status ? <Badge tone={opportunity.application_status === "withdrawn" ? "neutral" : "success"}>Application · {opportunity.application_status.replaceAll("_", " ")}</Badge> : null}</div>
                   <button type="button" disabled={saving === opportunity.id} onClick={() => void toggleSave(opportunity)} aria-label={opportunity.saved ? `Remove ${opportunity.title} from saved roles` : `Save ${opportunity.title}`}>
                     {opportunity.saved ? <BookmarkCheck aria-hidden="true" /> : <Bookmark aria-hidden="true" />}
@@ -170,6 +183,7 @@ export function StudentOpportunities() {
           <Link href={selected ? `/opportunities/${selected.id}` : "/resume"}><BriefcaseBusiness aria-hidden="true" />{selected ? "Review role details" : "Prepare your resume"}</Link>
         </aside>
       </div>
+      {!!comparison.length && <aside className={experience.tray} aria-label="Comparison tray"><span>{comparison.length} of 3 roles selected</span>{comparison.map(item => <button className={experience.button} key={item.id} onClick={() => setComparison(current => current.filter(role => role.id !== item.id))}>Remove {item.title}</button>)}{comparison.length >= 2 ? <Link className={experience.primary} href={`/opportunities/compare?roles=${comparison.map(item => item.id).join(",")}`}>Compare selected roles</Link> : <span>Select one more role</span>}</aside>}
     </main>
   );
 }

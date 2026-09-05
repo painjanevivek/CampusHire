@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarPlus, CheckCircle2, FileLock2, Scale, Undo2 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
+import { CorrectionPanel } from "@/features/experience/correction-panel";
 import { ApiError, apiPath, apiRequest, csrfRequest } from "@/lib/api/client";
 import {
   clearIdempotencyKey,
@@ -131,6 +132,8 @@ export function StudentApplicationDetail({ applicationId }: { applicationId: str
     <header><div><p>{role.company_name ?? "Published opportunity"}</p><h1>{role.title ?? "Application record"}</h1><span>Submitted {formatDate(application.created_at, application.institution_timezone)} · {application.institution_timezone}</span></div><strong>{application.status.replaceAll("_", " ")}</strong></header>
     {error ? <Alert tone="warning">{error}</Alert> : null}
     {notice ? <Alert tone="success">{notice}</Alert> : null}
+    <section className={styles.history} aria-label="Current application step"><h2>What happens next</h2><p>{application.next_step ?? `Recorded stage: ${application.status.replaceAll("_", " ")}.`}</p><p>Responsible party: {application.next_actor === "student" ? "You" : application.next_actor === "placement_team" ? "T&P" : "As recorded in the current stage"} · Last change {formatDate(application.updated_at, application.institution_timezone)}</p></section>
+    <CorrectionPanel key={application.id} applicationId={application.id} timezone={application.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(application.status)} onChange={() => void load()} />
     <section className={styles.summary} aria-label="Locked application details">
       <article><FileLock2 aria-hidden="true" /><p>Locked resume</p><h2>Version {String(application.resume_snapshot.version_number ?? "—")}</h2><span>{String(application.resume_snapshot.original_name ?? "Reviewed resume")}</span></article>
       <article><Scale aria-hidden="true" /><p>Decision version</p><h2>Rule v{String(rule.version ?? "—")}</h2><span>{policyEvidence ? `${policyEvidence} · ` : ""}{String(application.decision_snapshot.eligibility_fingerprint ?? "").slice(0, 12)} · eligibility record</span></article>

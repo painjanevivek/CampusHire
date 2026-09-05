@@ -110,6 +110,7 @@ describe("AdminDrives draft management", () => {
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
     apiRequestMock.mockImplementation((path: string) => {
+      if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
       if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
       if (path === "/admin/recruitment/drives") {
         return Promise.resolve([draftDrive, publishedDrive]);
@@ -196,6 +197,7 @@ describe("AdminDrives draft management", () => {
 
   it("locks approved policy versions into a new eligibility rule version", async () => {
     apiRequestMock.mockImplementation((path: string) => {
+      if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
       if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
       if (path === "/admin/recruitment/drives") return Promise.resolve([draftDrive]);
       if (path === "/admin/intelligence/policies") return Promise.resolve([approvedPolicy]);
@@ -244,6 +246,7 @@ describe("AdminDrives draft management", () => {
       has_pending_changes: true,
     };
     apiRequestMock.mockImplementation((path: string) => {
+      if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
       if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
       if (path === "/admin/recruitment/drives") {
         return Promise.resolve([draftDrive, publishedDrive]);
@@ -291,6 +294,9 @@ describe("AdminDrives draft management", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
     fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    const confirmation = await screen.findByRole("button", { name: "Confirm and apply staged changes" });
+    await waitFor(() => expect(confirmation).toBeEnabled());
+    fireEvent.click(confirmation);
 
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(

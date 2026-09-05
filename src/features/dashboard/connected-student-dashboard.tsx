@@ -16,6 +16,8 @@ function toDashboardData(response: DashboardApiResponse): StudentDashboardData {
   return {
     studentName: response.student_name,
     readiness: response.readiness,
+    upcoming: response.upcoming?.map(item => ({ ...item, href: safeInternalHref(item.href) })),
+    timezone: response.institution_timezone,
     state: response.state,
     nextAction: {
       ...response.next_action,

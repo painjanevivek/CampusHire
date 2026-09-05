@@ -10,7 +10,7 @@
 .primaryAction { position: relative; min-height: 310px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, .5fr); align-items: stretch; overflow: hidden; }
 .primaryAction::before { position: absolute; inset: 0 auto 0 0; z-index: 1; width: 4px; background: var(--brand-blue); content: ""; }
 .actionNumber { display: none; }
-.actionCopy { align-self: center; padding: clamp(28px, 5vw, 52px); }
+.actionCopy { align-self: start; padding: clamp(24px, 3vw, 32px); }
 .actionCopy h2 { margin: 0 0 13px; font-size: clamp(2rem, 4vw, 3.45rem); line-height: 1; letter-spacing: -.05em; }
 .actionCopy > p:not(.kicker) { max-width: 580px; color: var(--ink-muted); }
 .actionLink { width: fit-content; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 0 18px; border-radius: 12px; background: var(--brand-blue); color: white; font-weight: var(--font-weight-label); text-decoration: none; }
@@ -61,6 +61,9 @@
 .emptyState p { color: var(--ink-muted); }
 .emptyState a { margin-left: auto; color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
 .matchDisclaimer { margin: 16px 0 0; padding-left: 12px; border-left: 4px solid var(--verified); color: var(--ink-muted); font-size: .74rem; }
+.actionGrid { align-items: start; }
+.actionCopy h2 { font-size: clamp(1.8rem, 2.8vw, 2.6rem); }
+.reason { align-content: start; padding: 24px; }
 @media (max-width: 940px) { .actionGrid { grid-template-columns: 1fr; } .primaryAction { min-height: auto; } .opportunityCard { grid-template-columns: minmax(0, 1fr) auto; } .opportunityIdentity { grid-column: 1; } .eligibility, .match { grid-column: 1; } .viewRole { grid-column: 2; grid-row: 1 / 4; } }
 @media (max-width: 680px) { .topbar, .sectionHeader { align-items: start; flex-direction: column; } .primaryAction { grid-template-columns: 1fr; } .actionCopy { padding: 28px 22px; } .reason { border-top: 1px solid var(--line); border-left: 0; } .opportunities { padding: 18px; } .emptyState { align-items: start; flex-direction: column; } .emptyState a { margin-left: 0; } }
 .loadingState { min-height: 65svh; width: min(100% - 40px, 900px); margin: auto; display: grid; align-content: center; gap: 8px; }.loadingState > h1 { max-width: 18ch; margin: 0; font-size: clamp(1.5rem, 4vw, 2.5rem); }.loadingState > p { margin: 0; color: var(--ink-muted); }.loadingState > span { color: var(--ink-muted); }.loadingState button { border: 0; background: transparent; color: inherit; font-weight: var(--font-weight-emphasis); text-decoration: underline; cursor: pointer; }

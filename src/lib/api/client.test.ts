@@ -95,6 +95,20 @@ describe("API client", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("does not repopulate an invalidated cache from an older in-flight request", async () => {
+    let resolveOld!: (response: Response) => void;
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(() => new Promise<Response>(resolve => { resolveOld = resolve; }))
+      .mockResolvedValue(new Response(JSON.stringify({ version: 2 }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const pending = cachedApiRequest("/dashboard");
+    clearApiQueryCache();
+    resolveOld(new Response(JSON.stringify({ version: 1 }), { status: 200 }));
+    await pending;
+    await expect(cachedApiRequest("/dashboard")).resolves.toEqual({ version: 2 });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("supports explicit refresh and evicts failed cached reads", async () => {
     const fetchMock = vi.fn()
       .mockRejectedValueOnce(new TypeError("Failed to fetch"))

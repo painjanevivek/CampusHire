@@ -48,6 +48,10 @@
 .previewGrid li { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--line); font-size: .85rem; }
 .previewGrid li strong { color: var(--verified-dark); }
 .nextAction { background: var(--brand-blue-soft) !important; }
+.productScreens { display: grid; gap: 32px; margin-top: 40px; }
+.productScreens figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.productScreens img { width: 100%; height: auto; display: block; }
+.productScreens figcaption { padding: 18px 24px; border-top: 1px solid var(--line); color: var(--ink-muted); }
 .trust { background: var(--ink); color: var(--on-primary); }
 .trust > header p { color: #93b4ff; }
 .trustGrid { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 40px; border-top: 1px solid rgb(255 255 255 / 18%); }

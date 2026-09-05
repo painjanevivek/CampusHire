@@ -21,25 +21,25 @@ describe("StudentWorkspace", () => {
     expect(container.querySelector('[data-workspace="student"]')).toBeInTheDocument();
     const navigation = screen.getByRole("navigation", { name: "Student navigation" });
     expect(navigation).toContainElement(
-      screen.getByRole("link", { name: "Readiness" }),
+      screen.getByRole("link", { name: "Home" }),
     );
-    expect(screen.getByRole("link", { name: "Readiness" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(screen.getAllByRole("link", { name: "Profile" })).toHaveLength(1);
-    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("href", "/profile");
-    expect(screen.queryByRole("link", { name: "Open student profile" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Open student profile" })).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "Open student profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("link", { name: "Preparation" })).toHaveAttribute("href", "/preparation");
     expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("href", "/applications");
   });
 
   it.each([
-    ["Readiness", "/dashboard"],
+    ["Home", "/dashboard"],
     ["Opportunities", "/opportunities"],
     ["Applications", "/applications"],
-    ["Resume", "/resume"],
-    ["Roadmap", "/roadmap"],
-    ["Profile", "/profile"],
+    ["Preparation", "/resume"],
+    ["Preparation", "/roadmap"],
+    ["Open student profile", "/profile"],
   ] as const)("keeps one shared navigation when %s is active", (active, pathname) => {
     navigation.pathname = pathname;
     render(

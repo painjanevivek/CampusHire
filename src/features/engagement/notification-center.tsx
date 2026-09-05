@@ -2,17 +2,23 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell, CheckCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { apiRequest, csrfRequest } from "@/lib/api/client";
 import { safeInternalHref } from "@/lib/navigation";
-import type { Notification, NotificationPage } from "./types";
+import type { DashboardApiResponse, Notification, NotificationPage } from "./types";
 import styles from "./notification-center.module.css";
 
 export function NotificationCenter({
-  navigate = (href) => window.location.assign(href),
+  navigate,
 }: {
   navigate?: (href: string) => void;
 }) {
+  const router = useRouter();
+  const [category, setCategory] = useState("needs_action");
+  const [upcoming, setUpcoming] = useState<DashboardApiResponse["next_action"][]>([]);
+  const [timezone, setTimezone] = useState("UTC");
   const root = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<NotificationPage>({
     items: [],
@@ -38,6 +44,17 @@ export function NotificationCenter({
     const pending = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(pending);
   }, [load]);
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    const pending = window.setTimeout(() => void load(), 0);
+    void apiRequest<DashboardApiResponse>("/dashboard", { cache: "no-store" }).then(data => {
+      if (active) { setUpcoming([data.next_action, ...(data.upcoming ?? [])].filter(item => item?.deadline_at)); setTimezone(data.institution_timezone ?? "UTC"); }
+    }).catch(() => { if (active) setError("Upcoming deadlines could not be refreshed."); });
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); root.current?.querySelector<HTMLButtonElement>("button")?.focus(); } };
+    window.addEventListener("keydown", escape);
+    return () => { active = false; window.clearTimeout(pending); window.removeEventListener("keydown", escape); };
+  }, [open, load]);
   useEffect(() => {
     function close(event: MouseEvent) {
       if (root.current && !root.current.contains(event.target as Node))
@@ -71,7 +88,7 @@ export function NotificationCenter({
       }
     }
     setOpen(false);
-    navigate(destination);
+    (navigate ?? router.push)(destination);
   }
 
   return (
@@ -119,8 +136,12 @@ export function NotificationCenter({
               appear here.
             </p>
           ) : null}
+          <nav aria-label="Update categories" className={styles.categories}>{[["needs_action", "Needs action"], ["upcoming", "Upcoming"], ["updates", "Updates"]].map(([value, label]) => <button key={value} aria-pressed={category === value} onClick={() => setCategory(value)}>{label}</button>)}</nav>
+          <p className={styles.empty}>Reading an update does not complete its underlying task.</p>
+          {category === "upcoming" && <div className={styles.items}>{upcoming.map(item => <Link key={item.key} href={safeInternalHref(item.href)} onClick={() => setOpen(false)}>{item.title}<p>{item.deadline_at && new Date(item.deadline_at).toLocaleString(undefined, { timeZone: timezone })} ({timezone})</p></Link>)}{!upcoming.length && <p>No known upcoming deadlines in your current action list.</p>}</div>}
           <div className={styles.items}>
-            {page.items.map((item) => (
+            {Object.entries(Object.groupBy(page.items.filter(item => (item.category ?? "updates") === category), item => item.related_application_id ?? item.id)).map(([key, items]) => <section key={key} aria-label={items?.[0]?.related_application_id ? "Application updates" : "Placement update"}>
+            {items?.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -133,7 +154,8 @@ export function NotificationCenter({
                   {new Date(item.created_at).toLocaleString()}
                 </time>
               </button>
-            ))}
+            ))}</section>)}
+            {category !== "upcoming" && !page.items.some(item => (item.category ?? "updates") === category) && <p>No {category.replaceAll("_", " ")} items.</p>}
           </div>
         </section>
       ) : null}

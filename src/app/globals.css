@@ -240,3 +240,4 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .serviceBanner { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--status-warning); background: color-mix(in oklch, var(--status-warning) 18%, var(--surface)); color: var(--ink); font-size: .88rem; }
 .serviceBanner a { color: inherit; font-weight: var(--font-weight-emphasis); }
 @media (max-width: 640px) { .serviceBanner { align-items: flex-start; flex-direction: column; gap: 2px; } }
+main summary { min-height: 44px; padding-block: 10px; cursor: pointer; }

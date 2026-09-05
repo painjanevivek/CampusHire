@@ -152,10 +152,13 @@ export async function cachedApiRequest<T>(
 
   const request = apiRequest<T>(path, { cache: "no-store" })
     .then((value) => {
-      apiQueryCache.set(path, {
-        expiresAt: Date.now() + (options.ttlMs ?? DEFAULT_QUERY_TTL_MS),
-        value,
-      });
+      // A logout, mutation, or targeted invalidation may have removed this read.
+      if (apiQueryCache.get(path)?.request === request) {
+        apiQueryCache.set(path, {
+          expiresAt: Date.now() + (options.ttlMs ?? DEFAULT_QUERY_TTL_MS),
+          value,
+        });
+      }
       return value;
     })
     .catch((error: unknown) => {

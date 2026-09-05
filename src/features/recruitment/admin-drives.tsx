@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
+import { GuidedPublishing } from "@/features/experience/guided-publishing";
 import { Input, Select } from "@/components/ui/form-controls";
-import { apiRequest, csrfRequest } from "@/lib/api/client";
+import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import type {
   Company,
   Drive,
@@ -44,6 +45,8 @@ function toDateTimeLocal(value: string): string {
 }
 
 export function AdminDrives() {
+  const [step, setStep] = useState(1);
+  const [checkedAt, setCheckedAt] = useState(0);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [drives, setDrives] = useState<Drive[]>([]);
   const [roles, setRoles] = useState<PlacementRole[]>([]);
@@ -90,8 +93,12 @@ export function AdminDrives() {
       ]);
       setCompanies(companyItems);
       setDrives(driveItems);
+      setCheckedAt(Date.now());
       setPolicies(policyItems.filter((policy) => policy.status === "approved"));
-      setSelectedDrive((current) => current || driveItems[0]?.id || "");
+      const params = new URLSearchParams(window.location.search);
+      const requested = params.get("drive_id");
+      setSelectedDrive((current) => current || (driveItems.some(item => item.id === requested) ? requested! : driveItems[0]?.id || ""));
+      setStep(Math.min(5, Math.max(1, Number(params.get("step")) || 1)));
     } catch {
       setError(
         "Placement drives could not be loaded. Nothing was changed.",
@@ -428,10 +435,8 @@ export function AdminDrives() {
       await loadRoot();
       await loadRoles(selectedDrive);
       await loadRules(selectedRole);
-    } catch {
-      setError(
-        "This status change was not allowed. Finish the required earlier steps or refresh the page.",
-      );
+    } catch (cause) {
+      setError(cause instanceof ApiError ? `The server did not confirm this change: ${cause.message.replaceAll("_", " ")}. Refresh the checklist and address this issue.` : "This status change could not be confirmed. Refresh the record before retrying.");
     } finally {
       setBusy(false);
     }
@@ -481,9 +486,17 @@ export function AdminDrives() {
     : undefined;
   const publishedRules = ruleSets.find((item) => item.status === "published");
   const stagedRules = ruleSets.find((item) => item.status === "draft");
+  function goToStep(next: number) {
+    setStep(next);
+    const params = new URLSearchParams(window.location.search);
+    params.set("step", String(next)); if (selectedDrive) params.set("drive_id", selectedDrive);
+    window.history.replaceState(null, "", `?${params}`);
+  }
+  const driveFilters = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
+  const visibleDrives = drives.filter(drive => (!driveFilters.get("closing_within_days") || (drive.status === "published" && new Date(drive.deadline_at).getTime() >= (Date.parse(driveFilters.get("deadline_from") ?? "") || checkedAt) && new Date(drive.deadline_at).getTime() <= (Date.parse(driveFilters.get("deadline_to") ?? "") || checkedAt + 7 * 86400000))) && (!driveFilters.get("closing_within_days") || !driveFilters.get("drive_id") || drive.id === driveFilters.get("drive_id")));
 
   return (
-    <main id="main-content" className={styles.page}>
+    <main id="main-content" className={styles.page} data-navigation-ready={!loading && !error}>
       <header className={styles.header}>
         <div>
           <p>Placement operations</p>
@@ -512,6 +525,7 @@ export function AdminDrives() {
         </Alert>
       )}
       {notice && <Alert tone="success">{notice}</Alert>}
+      {(activeDrive || loading) && <div className={styles.publishingRegion}>{activeDrive ? <GuidedPublishing key={`${activeDrive.id}:${activeDrive.updated_at}:${roles.map(role => role.status).join("")}:${ruleSets.map(rule => rule.status).join("")}`} drive={activeDrive} step={step} onStep={goToStep} busy={busy} onEdit={value => value === "rules" ? openRuleEditor() : setPanel(value)} onPublish={() => void postAction(activeDrive.status === "published" ? `/admin/recruitment/drives/${activeDrive.id}/save` : `/admin/recruitment/drives/${activeDrive.id}/actions/publish`, "Drive publication saved. Existing application snapshots are unchanged.")} /> : <section role="status" aria-label="Loading publishing workspace"><h2>Loading your publishing workspace…</h2><p>Checking saved drives, roles, and publication requirements.</p></section>}</div>}
       {!companies.length && !loading ? (
         <Alert tone="warning">
           Create a company record before opening a placement drive.
@@ -653,12 +667,12 @@ export function AdminDrives() {
             </EmptyState>
           ) : null}
           <div className={styles.rows}>
-            {drives.map((drive) => (
+            {visibleDrives.map((drive) => (
               <button
                 key={drive.id}
                 type="button"
                 className={drive.id === selectedDrive ? styles.selected : ""}
-                onClick={() => setSelectedDrive(drive.id)}
+                onClick={() => { setSelectedDrive(drive.id); setStep(1); const params = new URLSearchParams(window.location.search); params.set("drive_id", drive.id); params.set("step", "1"); window.history.replaceState(null, "", `?${params}`); }}
               >
                 <span>
                   <strong>{drive.title}</strong>
@@ -775,12 +789,7 @@ export function AdminDrives() {
                     activeDrive.status !== "draft" ||
                     !roles.some((item) => item.status === "published")
                   }
-                  onClick={() =>
-                    void postAction(
-                      `/admin/recruitment/drives/${activeDrive.id}/actions/publish`,
-                      "Drive published. Students can now discover roles inside its active window.",
-                    )
-                  }
+                  onClick={() => goToStep(5)}
                 >
                   <Send aria-hidden="true" />
                   Publish drive
@@ -790,12 +799,7 @@ export function AdminDrives() {
                     type="button"
                     className={styles.primary}
                     disabled={busy || !activeDrive.has_pending_changes}
-                    onClick={() =>
-                      void postAction(
-                        `/admin/recruitment/drives/${activeDrive.id}/save`,
-                        "Drive changes saved. Students now see the updated roles and eligibility rules.",
-                      )
-                    }
+                    onClick={() => goToStep(5)}
                   >
                     <FileCheck2 aria-hidden="true" />
                     Save changes

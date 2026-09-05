@@ -10,6 +10,8 @@
 @media (max-width: 1050px) { .workspace { grid-template-columns: 1fr; }.rail { position: static; }.rows { grid-template-columns: repeat(2, 1fr); }.rows > button { border-right: 1px solid var(--line); }.editor { grid-template-columns: 1fr 1fr; }.ruleRow { grid-template-columns: 1fr 1fr; }.ruleRow > button { justify-self: start; } }
 @media (max-width: 700px) { .page { width: min(100% - 24px, 1440px); padding-top: 28px; }.header, .driveSummary { align-items: start; flex-direction: column; }.driveSummary > div:last-child { justify-items: start; }.rows { grid-template-columns: 1fr; }.roleGrid { grid-template-columns: 1fr; }.roleList { border-right: 0; border-bottom: 1px solid var(--line); }.editor { grid-template-columns: 1fr; }.editorHeading, .wide, .actions { grid-column: auto; }.actions { justify-content: stretch; }.actions button { flex: 1; }.ruleRow { grid-template-columns: 1fr; } }
 .inlineActions { margin-left: auto; display: inline-flex; gap: 8px; }
+.publishingRegion { min-height: 28rem; margin-bottom: 20px; }
+.publishingRegion > [role="status"] { padding: 28px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .ruleVersion header .inlineActions button { margin-left: 0; }
 .ruleVersion header .inlineActions button:last-child { border-radius: 999px; padding: 7px 12px; background: var(--ink); color: white; }
 .rulePreview { margin: 0 0 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-muted); }

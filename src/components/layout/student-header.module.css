@@ -121,6 +121,7 @@
 }
 
 .menuButton { display: none; cursor: pointer; }
+.navigation .mobileHelp { display: none; }
 
 @media (max-width: 1120px) {
   .header { padding-top: 8px; }
@@ -144,6 +145,7 @@
   .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 12px; }
   .brand strong { display: none; }
   .helpControl { display: none; }
+  .navigation .mobileHelp { display: flex; }
   .utilities { gap: 6px; }
 }
 

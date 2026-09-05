@@ -24,7 +24,7 @@ describe("StudentHeader", () => {
   it("derives the active navigation item from the current route", () => {
     const { rerender } = render(<StudentHeader />);
 
-    expect(screen.getByRole("link", { name: "Readiness" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -36,7 +36,7 @@ describe("StudentHeader", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByRole("link", { name: "Readiness" })).not.toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute(
       "aria-current",
     );
   });

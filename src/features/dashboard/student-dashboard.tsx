@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -15,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { PageContainer, PageHeader } from "@/components/layout/page-layout";
-import { useDashboardMotion } from "./dashboard-motion";
 import styles from "./student-dashboard.module.css";
 
 export type DashboardState =
@@ -27,6 +25,8 @@ export type DashboardState =
   | "error";
 
 export type StudentDashboardData = {
+  upcoming?: Array<{ key: string; title: string; reason: string; href: string; deadline_at?: string | null }>;
+  timezone?: string;
   studentName: string;
   readiness: {
     policy_version: string;
@@ -36,6 +36,7 @@ export type StudentDashboardData = {
   };
   state: DashboardState;
   nextAction: {
+    deadline_at?: string | null;
     title: string;
     description: string;
     reason: string;
@@ -88,11 +89,8 @@ const stateMessages: Record<
 };
 
 export function StudentDashboard({ data }: { data: StudentDashboardData }) {
-  const pageRef = useRef<HTMLElement>(null);
-  useDashboardMotion(pageRef);
-
   return (
-    <PageContainer ref={pageRef} context="student" className={styles.page}>
+    <PageContainer context="student" className={styles.page} data-navigation-ready="true">
       <PageHeader
         className={styles.topbar}
         data-dashboard-reveal
@@ -121,9 +119,10 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             01
           </div>
           <div className={styles.actionCopy}>
-            <p className={styles.kicker}>Your single next readiness action</p>
+            <p className={styles.kicker}>Your next placement action</p>
             <h2 id="next-action-title">{data.nextAction.title}</h2>
             <p>{data.nextAction.description}</p>
+            {data.nextAction.deadline_at && <p>Due {new Date(data.nextAction.deadline_at).toLocaleString(undefined, { timeZone: data.timezone ?? "UTC" })} ({data.timezone ?? "UTC"})</p>}
             <Link
               className={styles.actionLink}
               href={data.nextAction.href}
@@ -174,6 +173,10 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             ))}
           </dl>
           <p className={styles.policyVersion}>Readiness policy {data.readiness.policy_version}</p>
+          {!!data.upcoming?.length && <section aria-label="Upcoming actions"><h2>Also on your horizon</h2><ul>{data.upcoming.slice(0, 5).map(item => <li key={item.key}>
+            <Link href={item.href}>{item.title}</Link><p>{item.reason}</p>
+            {item.deadline_at && <small>{new Date(item.deadline_at).toLocaleString(undefined, { timeZone: data.timezone ?? "UTC" })} ({data.timezone ?? "UTC"})</small>}
+          </li>)}</ul></section>}
         </article>
       </section>
 

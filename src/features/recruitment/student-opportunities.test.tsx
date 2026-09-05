@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentOpportunities } from "./student-opportunities";
+vi.mock("@/features/experience/saved-views", () => ({ SavedViews: () => null }));
 
 const { apiRequestMock, csrfRequestMock, replaceMock, searchParamsMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),

@@ -1,9 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AdminApplications } from "./admin-applications";
 
-const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
+const { apiRequestMock, csrfRequestMock, navigation } = vi.hoisted(() => ({
+  navigation: { query: "", push: vi.fn(), replace: vi.fn() },
   apiRequestMock: vi.fn(),
   csrfRequestMock: vi.fn(),
 }));
@@ -14,6 +15,8 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 }));
 
 const application = {
+  revision: 3,
+  allowed_actions: ["shortlisted", "rejected"],
   id: "application-1",
   role_id: "role-1",
   student_user_id: "student-123456",
@@ -58,117 +61,59 @@ const application = {
   overrides: [],
 };
 
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(navigation.query), useRouter: () => ({ push: navigation.push, replace: navigation.replace }) }));
+vi.mock("@/features/experience/correction-panel", () => ({ CorrectionPanel: () => null }));
+
+const row = { id: application.id, student_name: application.student_name, role_title: "Software Engineer", company_name: "Nexora Labs", status: "under_review", revision: 3, open_requests: 0, awaiting_review: 0 };
 describe("AdminApplications", () => {
   beforeEach(() => {
-    apiRequestMock.mockReset();
-    csrfRequestMock.mockReset();
-    apiRequestMock.mockResolvedValue({
-      items: [application],
-      page: 1,
-      page_size: 50,
-      total: 1,
-    });
+    navigation.query = ""; window.history.replaceState(null, "", "/admin/applications");
+    navigation.push.mockReset(); navigation.replace.mockReset(); csrfRequestMock.mockReset();
+    apiRequestMock.mockReset().mockImplementation((path: string) => Promise.resolve(path.includes("/review-queue/") ? application : { items: [row], total: 51, page: 1 }));
   });
-
-  it("requires reasoned overrides and keeps eligibility checks visible", async () => {
-    csrfRequestMock.mockResolvedValue({
-      ...application,
-      status: "shortlisted",
-      overrides: [{ id: "override-1" }],
-    });
+  it("fetches detail only for the selected candidate and sends reasoned revision-checked decisions", async () => {
     render(<AdminApplications />);
-    expect(await screen.findByText("Active backlogs")).toBeInTheDocument();
+    expect(await screen.findByText(/Active backlogs/)).toBeInTheDocument();
+    expect(apiRequestMock).toHaveBeenCalledWith("/admin/recruitment/review-queue/application-1", expect.anything());
+    fireEvent.change(screen.getByLabelText("Next recorded stage"), { target: { value: "shortlisted" } });
+    fireEvent.change(screen.getByLabelText("Decision explanation and useful next step"), { target: { value: "Your reviewed project evidence meets the published requirements." } });
+    csrfRequestMock.mockResolvedValue(application);
+    fireEvent.click(screen.getByRole("button", { name: "Save decision" }));
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/admin/recruitment/applications/application-1/status", expect.objectContaining({ body: expect.stringContaining('"expected_revision":3') })));
+  });
+  it("requires an explicit policy reference for overrides and retains feedback publishing", async () => {
+    render(<AdminApplications />); await screen.findByText(/Active backlogs/);
     fireEvent.click(screen.getByText("Authorized override"));
-    fireEvent.change(screen.getByLabelText("Reason"), {
-      target: { value: "Policy permits a reviewed equivalent record." },
-    });
-    fireEvent.change(screen.getByLabelText("Policy reference"), {
-      target: { value: "Policy §4.2" },
-    });
+    expect(screen.getByLabelText("Policy reference")).toBeRequired();
+    fireEvent.change(screen.getByLabelText("Reason"), { target: { value: "Policy permits reviewed equivalent academic evidence." } });
+    fireEvent.change(screen.getByLabelText("Policy reference"), { target: { value: "Policy section 4.2" } });
+    csrfRequestMock.mockResolvedValue(application);
     fireEvent.click(screen.getByRole("button", { name: "Record override" }));
-    await waitFor(() =>
-      expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/recruitment/applications/application-1/override",
-        expect.objectContaining({
-          body: expect.stringContaining("Policy permits"),
-        }),
-      ),
-    );
-  });
-
-  it("publishes constructive feedback through a deduplicated internal update", async () => {
-    csrfRequestMock.mockResolvedValue({ id: "notice-1" });
-    render(<AdminApplications />);
-    expect(await screen.findByText("Active backlogs")).toBeInTheDocument();
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(expect.stringContaining("/override"), expect.objectContaining({ body: expect.stringContaining("Policy section 4.2") })));
     fireEvent.click(screen.getByText("Publish student feedback"));
-    fireEvent.change(screen.getByLabelText("Update title"), {
-      target: { value: "Next interview step" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Explain the decision and one useful next action."), {
-      target: {
-        value:
-          "Review the role requirements and prepare one project explanation.",
-      },
-    });
+    fireEvent.change(screen.getByLabelText("Update title"), { target: { value: "Review next steps" } });
+    fireEvent.change(screen.getByLabelText("Constructive feedback"), { target: { value: "Review your project explanation." } });
     fireEvent.click(screen.getByRole("button", { name: "Publish update" }));
-    await waitFor(() =>
-      expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/notifications",
-        expect.objectContaining({
-          body: expect.stringContaining("feedback:application-1:under_review"),
-        }),
-      ),
-    );
-    const payload = JSON.parse(csrfRequestMock.mock.calls.at(-1)?.[1].body as string);
-    expect(payload.deep_link).toBe("/applications/application-1");
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/admin/notifications", expect.objectContaining({ body: expect.stringContaining("feedback:application-1:under_review") })));
   });
-
-  it("previews bulk transitions before applying and reports notification outcomes", async () => {
-    csrfRequestMock
-      .mockResolvedValueOnce({
-        items: [{ application_id: "application-1", current_status: "under_review", target_status: "shortlisted", allowed: true, explanation: "Transition follows the documented application lifecycle." }],
-        allowed_count: 1,
-        blocked_count: 0,
-      })
-      .mockResolvedValueOnce({ updated_count: 1, notification_count: 1, application_ids: ["application-1"] });
-    render(<AdminApplications />);
-    expect(await screen.findByText("Active backlogs")).toBeInTheDocument();
-    fireEvent.click(screen.getByText("Bulk review with preview"));
-    const applications = screen.getByRole("listbox") as HTMLSelectElement;
-    applications.options[0].selected = true;
-    fireEvent.change(applications);
-    fireEvent.change(screen.getByLabelText("Target status"), { target: { value: "shortlisted" } });
-    fireEvent.change(screen.getByPlaceholderText("Explain the decision and give the student a useful next step."), { target: { value: "The details were reviewed against the published policy." } });
+  it("uses page checkboxes and preview revisions before confirming a bulk action", async () => {
+    render(<AdminApplications />); await screen.findByText(/Active backlogs/);
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select Asha Patil for bulk review" }));
+    fireEvent.change(within(screen.getByRole("region", { name: "Selection toolbar" })).getByLabelText("Constructive feedback"), { target: { value: "The submitted evidence has been reviewed by the placement team." } });
+    csrfRequestMock.mockResolvedValueOnce({ items: [{ application_id: row.id, revision: 3, allowed: true, explanation: "Allowed" }], allowed_count: 1, blocked_count: 0 }).mockResolvedValueOnce({ updated_count: 1 });
     fireEvent.click(screen.getByRole("button", { name: "Preview changes" }));
-    expect(await screen.findByText("1 allowed · 0 blocked")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirm and notify students" }));
-    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
-      "/admin/recruitment/applications/bulk/status",
-      expect.objectContaining({ body: expect.stringContaining("APPLY BULK STATUS") }),
-    ));
-    expect(await screen.findByText("1 applications updated; 1 students notified.")).toBeInTheDocument();
+    const confirmation = await screen.findByRole("button", { name: "Confirm and notify students" });
+    await waitFor(() => expect(confirmation).toBeEnabled());
+    fireEvent.click(confirmation);
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(expect.stringContaining("/bulk/status"), expect.objectContaining({ body: expect.stringContaining('"expected_revisions":{"application-1":3}') })));
   });
-
-  it("loads status filters and pagination from the authoritative server page", async () => {
-    apiRequestMock.mockResolvedValue({
-      items: [application],
-      page: 1,
-      page_size: 25,
-      total: 51,
-    });
+  it("preserves URL filters and candidate identity during navigation", async () => {
+    navigation.query = "application_status=under_review&page=2&selected=application-1";
+    window.history.replaceState(null, "", "/admin/applications?" + navigation.query);
     render(<AdminApplications />);
-    expect(await screen.findByText("Page 1 of 3")).toBeInTheDocument();
-
+    await screen.findByText(/Active backlogs/);
+    expect(apiRequestMock).toHaveBeenCalledWith("/admin/recruitment/review-queue?application_status=under_review&page=2", expect.anything());
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
-    await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith(
-      "/admin/recruitment/applications?page=2&page_size=25",
-      { cache: "no-store" },
-    ));
-
-    fireEvent.click(screen.getByRole("button", { name: "shortlisted" }));
-    await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith(
-      "/admin/recruitment/applications?page=1&page_size=25&application_status=shortlisted",
-      { cache: "no-store" },
-    ));
+    expect(navigation.push).toHaveBeenCalledWith("/admin/applications?application_status=under_review&page=3", { scroll: false });
   });
 });

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api/client";
 import { StudentApplicationDetail } from "./student-application-detail";
+vi.mock("@/features/experience/correction-panel", () => ({ CorrectionPanel: () => null }));
 
 const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),

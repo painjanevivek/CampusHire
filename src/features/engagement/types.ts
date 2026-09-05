@@ -35,6 +35,9 @@ export type Roadmap = {
 };
 
 export type Notification = {
+  category?: "needs_action" | "upcoming" | "updates";
+  related_request_id?: string | null;
+  related_application_id?: string | null;
   id: string;
   event_key: string;
   title: string;
@@ -50,6 +53,8 @@ export type NotificationPage = {
 };
 
 export type DashboardApiResponse = {
+  institution_timezone?: string;
+  upcoming?: DashboardApiResponse["next_action"][];
   student_name: string;
   readiness: {
     policy_version: string;
@@ -60,6 +65,8 @@ export type DashboardApiResponse = {
   state:
     "ready" | "incomplete" | "processing" | "manual-review" | "ai-unavailable";
   next_action: {
+    category?: string;
+    deadline_at?: string | null;
     key: string;
     title: string;
     description: string;

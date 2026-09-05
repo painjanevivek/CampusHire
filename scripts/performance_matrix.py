@@ -85,6 +85,9 @@ def authenticate_demo(
     context = browser.new_context(viewport={"width": 1440, "height": 900})
     page = context.new_page()
     page.goto(f"{base_url}{sign_in_route}", wait_until="networkidle", timeout=30_000)
+    consent = page.get_by_role("button", name="Save essential-only preference", exact=True)
+    if consent.count() and consent.is_visible():
+        consent.click()
     page.get_by_role("button", name=button_name, exact=True).click()
     page.wait_for_url(
         lambda url: (

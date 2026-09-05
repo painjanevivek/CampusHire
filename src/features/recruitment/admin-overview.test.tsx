@@ -11,8 +11,9 @@ describe("AdminOverview", () => {
     vi.mocked(apiRequest).mockImplementation(async (path: string) => {
       if (path.endsWith("/companies")) return [{ id: "company-1" }, { id: "company-2" }] as never;
       if (path.endsWith("/drives")) return [{ status: "published" }, { status: "draft" }] as never;
-      if (path.includes("/applications?")) {
+      if (path.includes("/review-queue?")) {
         return {
+          total: 2,
           items: [
             { status: "submitted", eligibility_snapshot: { status: "eligible" } },
             { status: "under_review", eligibility_snapshot: { status: "needs_manual_review" } },

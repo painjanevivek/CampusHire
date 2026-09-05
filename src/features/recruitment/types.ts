@@ -153,6 +153,12 @@ export type ApplicationOverride = {
 };
 
 export type PlacementApplication = {
+  revision?: number;
+  next_actor?: string;
+  next_step?: string;
+  open_requests?: number;
+  awaiting_review?: number;
+  allowed_actions?: string[];
   id: string;
   role_id: string;
   student_user_id: string;
