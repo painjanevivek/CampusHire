@@ -74,8 +74,8 @@
   font-size: 1.05rem;
 }
 .panel header button {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 1px solid var(--line);
@@ -133,3 +133,8 @@
 .categories [aria-pressed="true"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
 .items > section { border-bottom: 1px solid var(--line); }
 .items > section > button, .items > a { display: block; width: 100%; padding: 16px; text-align: left; min-height: 44px; background: var(--surface); border: 0; color: var(--ink); }
+@media (max-width: 680px) {
+  .panel { position: fixed; top: 72px; right: 16px; left: 16px; width: auto; max-height: calc(100svh - 96px); border-radius: 12px; }
+  .categories { padding: 8px 0; gap: 4px; }
+  .categories button { flex: 1; padding: 8px; font-size: .75rem; }
+}

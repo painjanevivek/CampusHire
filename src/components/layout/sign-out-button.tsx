@@ -30,7 +30,7 @@ export function clearCampusHireBrowserState() {
   }
 }
 
-export function SignOutButton({ destination }: { destination: "/sign-in" | "/admin/sign-in" }) {
+export function SignOutButton({ destination, labeled = false }: { destination: "/sign-in" | "/admin/sign-in"; labeled?: boolean }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -52,10 +52,10 @@ export function SignOutButton({ destination }: { destination: "/sign-in" | "/adm
   }
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${labeled ? styles.labeled : ""}`}>
       <button type="button" onClick={() => void signOut()} disabled={pending} aria-label="Sign out">
         <LogOut aria-hidden="true" />
-        <span className="srOnly">{pending ? "Signing out" : "Sign out"}</span>
+        <span className={labeled ? undefined : "srOnly"}>{pending ? "Signing out" : "Sign out"}</span>
       </button>
       {error ? <span className={styles.error} role="alert">{error}</span> : null}
     </div>

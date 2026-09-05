@@ -25,7 +25,7 @@ describe("ActivationProgress", () => {
   it("keeps progress compact and discloses the current step on demand", async () => {
     render(<ActivationProgress />);
 
-    await waitFor(() => expect(screen.getByText("1/3")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("1/3 activation steps")).toBeInTheDocument());
     const summary = screen.getByLabelText("Open activation checklist");
     fireEvent.click(summary);
 

@@ -10,7 +10,7 @@ import styles from "./activation-progress.module.css";
 
 type Activation = DashboardApiResponse["activation"];
 
-export function ActivationProgress() {
+export function ActivationProgress({ inline = false }: { inline?: boolean }) {
   const [activation, setActivation] = useState<Activation>([]);
   const [unavailable, setUnavailable] = useState(false);
   const [open, setOpen] = useState(false);
@@ -35,18 +35,18 @@ export function ActivationProgress() {
 
   return (
     <details
-      className={styles.root}
+      className={`${styles.root} ${inline ? styles.inline : ""}`}
       open={open}
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
       <summary aria-label={`${open ? "Close" : "Open"} activation checklist`}>
         <ListChecks size={18} aria-hidden="true" />
-        <span>{activation.length && complete === activation.length ? "Activated" : `${complete}/${activation.length || 6}`}</span>
+        <span>{unavailable ? "Activation unavailable" : !activation.length ? "Loading activation…" : complete === activation.length ? "Activated" : `${complete}/${activation.length} activation steps`}</span>
       </summary>
       <section aria-label="Activation checklist">
         <header>
           <p>Student activation</p>
-          <strong>{current ? current.label : unavailable ? "Progress unavailable" : "All steps complete"}</strong>
+          <strong>{current ? current.label : unavailable ? "Progress unavailable" : activation.length && complete === activation.length ? "All steps complete" : "Activation checklist"}</strong>
         </header>
         {unavailable ? (
           <p className={styles.notice}>Your saved progress is unchanged. Refresh this checklist when your connection returns.</p>

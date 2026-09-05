@@ -9,7 +9,6 @@ import {
   GraduationCap,
   KeyRound,
   ShieldCheck,
-  UserRound,
 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
@@ -17,6 +16,8 @@ import { cachedApiRequest } from "@/lib/api/client";
 import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
 import { SessionManagement } from "./session-management";
+import { ActivationProgress } from "@/features/engagement/activation-progress";
+import { ProfilePhotoUpload } from "./profile-photo";
 import styles from "./profile-workspace.module.css";
 
 type Profile = {
@@ -58,8 +59,8 @@ export function ProfileWorkspace() {
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
         <p>Profile and account</p>
-        <h1>Your placement identity, in one place.</h1>
-        <span>Keep the information used for opportunities current. Open account controls only when you need them.</span>
+        <h1>Your profile.</h1>
+        <span>Manage your placement details, activation, and account settings.</span>
       </header>
 
       {message ? (
@@ -70,7 +71,7 @@ export function ProfileWorkspace() {
 
       <section className={styles.overview} aria-labelledby="profile-overview-title">
         <article className={styles.identityCard}>
-          <div className={styles.identityIcon}><UserRound aria-hidden="true" /></div>
+          <ProfilePhotoUpload />
           <div className={styles.identityStatus}><ShieldCheck aria-hidden="true" /> Institution-linked profile</div>
           <h2 id="profile-overview-title">{profile?.full_name ?? "Complete your profile"}</h2>
           <p>{profile?.department ?? "Add your department and academic details to explain eligibility clearly."}</p>
@@ -84,7 +85,7 @@ export function ProfileWorkspace() {
             <div><p>Profile completion</p><span>Required and optional details are kept distinct.</span></div>
             <strong>{profile ? `${requiredCompleted} / ${requiredItems.length}` : "—"}</strong>
           </div>
-          <p className={styles.progressNote} role="status">{requiredCompleted === requiredItems.length && requiredItems.length > 0 ? "All required profile details are complete." : `${requiredItems.length - requiredCompleted} required detail ${requiredItems.length - requiredCompleted === 1 ? "area" : "areas"} remaining.`}</p>
+          <p className={styles.progressNote} role="status">{!profile ? "Profile completion is not available yet." : requiredCompleted === requiredItems.length && requiredItems.length > 0 ? "All required profile details are complete." : `${requiredItems.length - requiredCompleted} required detail ${requiredItems.length - requiredCompleted === 1 ? "area" : "areas"} remaining.`}</p>
           <details>
             <summary>Review required profile evidence</summary>
             <ul>{requiredItems.map((item) => <li key={item.key}>{item.complete ? "Complete" : "Missing"}: {item.label}</li>)}</ul>
@@ -95,10 +96,11 @@ export function ProfileWorkspace() {
             <div><ShieldCheck aria-hidden="true" /><dt>Reviewed skills</dt><dd>{skillCount}</dd></div>
           </dl>
           <p className={styles.progressNote}>Skills and portfolio links stay optional unless a published role explicitly requires them. This is a checklist, not an employability score.</p>
+          <ActivationProgress inline />
         </article>
       </section>
 
-      <section className={styles.settings} aria-labelledby="account-settings-title">
+      <section id="account-settings" className={styles.settings} aria-labelledby="account-settings-title" tabIndex={-1}>
         <header className={styles.settingsHeader}>
           <div><p>Account settings</p><h2 id="account-settings-title">Manage only what you need</h2></div>
           <span>Each section opens independently.</span>

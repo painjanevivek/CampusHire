@@ -665,6 +665,16 @@ export type BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPr
 };
 
 /**
+ * Body_upload_photo_api_v1_profile_photo_put
+ */
+export type BodyUploadPhotoApiV1ProfilePhotoPut = {
+    /**
+     * File
+     */
+    file: Blob | File;
+};
+
+/**
  * Body_upload_resume_api_v1_resumes_post
  */
 export type BodyUploadResumeApiV1ResumesPost = {
@@ -2684,6 +2694,16 @@ export type PreparationResponse = {
     suggestions: Array<{
         [key: string]: unknown;
     }>;
+};
+
+/**
+ * ProfilePhotoResponse
+ */
+export type ProfilePhotoResponse = {
+    /**
+     * Data Url
+     */
+    data_url?: string | null;
 };
 
 /**
@@ -8076,6 +8096,81 @@ export type ReplaceLinksApiV1ProfileLinksPutResponses = {
 };
 
 export type ReplaceLinksApiV1ProfileLinksPutResponse = ReplaceLinksApiV1ProfileLinksPutResponses[keyof ReplaceLinksApiV1ProfileLinksPutResponses];
+
+export type RemovePhotoApiV1ProfilePhotoDeleteData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteError = RemovePhotoApiV1ProfilePhotoDeleteErrors[keyof RemovePhotoApiV1ProfilePhotoDeleteErrors];
+
+export type RemovePhotoApiV1ProfilePhotoDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteResponse = RemovePhotoApiV1ProfilePhotoDeleteResponses[keyof RemovePhotoApiV1ProfilePhotoDeleteResponses];
+
+export type ReadPhotoApiV1ProfilePhotoGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetError = ReadPhotoApiV1ProfilePhotoGetErrors[keyof ReadPhotoApiV1ProfilePhotoGetErrors];
+
+export type ReadPhotoApiV1ProfilePhotoGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfilePhotoResponse;
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetResponse = ReadPhotoApiV1ProfilePhotoGetResponses[keyof ReadPhotoApiV1ProfilePhotoGetResponses];
+
+export type UploadPhotoApiV1ProfilePhotoPutData = {
+    body: BodyUploadPhotoApiV1ProfilePhotoPut;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutError = UploadPhotoApiV1ProfilePhotoPutErrors[keyof UploadPhotoApiV1ProfilePhotoPutErrors];
+
+export type UploadPhotoApiV1ProfilePhotoPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfilePhotoResponse;
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutResponse = UploadPhotoApiV1ProfilePhotoPutResponses[keyof UploadPhotoApiV1ProfilePhotoPutResponses];
 
 export type ReplacePreferencesApiV1ProfilePreferencesPutData = {
     body: PreferencesUpdate;

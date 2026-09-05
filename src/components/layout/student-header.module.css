@@ -149,7 +149,7 @@
 
 @media (max-width: 680px) {
   .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 0; }
-  .brand strong { display: none; }
+  .brand strong { display: inline; font-size: .875rem; }
   .helpControl { display: none; }
   .navigation .mobileHelp { display: flex; }
   .utilities { gap: 6px; }
@@ -157,7 +157,10 @@
 
 @media (max-width: 420px) {
   .utilities { gap: 4px; }
+  .inner { gap: 6px; }
+  .brand { gap: 6px; }
 }
+@media (max-width: 359px) { .brand strong { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .inner { backdrop-filter: none; }

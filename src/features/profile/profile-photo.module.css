@@ -1,0 +1,9 @@
+.image { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+.editor { display: grid; grid-template-columns: 80px minmax(0, 1fr); align-items: center; gap: 12px; margin-bottom: 24px; }
+.avatar { display: grid; place-items: center; width: 80px; height: 80px; border: 1px solid var(--line); border-radius: 50%; background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
+.avatar > svg { width: 32px; height: 32px; }
+.controls { display: flex; flex-wrap: wrap; gap: 4px; }
+.controls button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: .8125rem; cursor: pointer; }
+.controls button:disabled { opacity: .6; cursor: wait; }
+.editor p { grid-column: 1 / -1; margin: 0; color: var(--ink-muted); font-size: .75rem; line-height: 1.6; }
+.editor [role="alert"] { color: var(--status-danger); }

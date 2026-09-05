@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BriefcaseBusiness, CircleHelp, ClipboardList, Home, ListChecks, Menu, UserRound, X } from "lucide-react";
+import { BriefcaseBusiness, ClipboardList, Home, ListChecks, Menu, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationCenter } from "@/features/engagement/notification-center";
-import { ActivationProgress } from "@/features/engagement/activation-progress";
-import { SignOutButton } from "./sign-out-button";
+import { ProfileMenu } from "./profile-menu";
 
 import styles from "./student-header.module.css";
 
@@ -24,7 +23,11 @@ const navigationIcons = { Home, Opportunities: BriefcaseBusiness, Applications: 
 
 export function StudentHeader() {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [surface, setSurface] = useState<"navigation" | "profile" | "notifications" | null>(null);
+  const menuOpen = surface === "navigation";
+  const setMenuOpen = useCallback((open: boolean) => setSurface(open ? "navigation" : null), []);
+  const setProfileOpen = useCallback((open: boolean) => setSurface(current => open ? "profile" : current === "profile" ? null : current), []);
+  const setNotificationsOpen = useCallback((open: boolean) => setSurface(current => open ? "notifications" : current === "notifications" ? null : current), []);
   const menuButton = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLElement>(null);
 
@@ -35,8 +38,12 @@ export function StudentHeader() {
       if (event.key === "Escape") { setMenuOpen(false); menuButton.current?.focus(); }
     }
     window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [menuOpen]);
+    function closeOutside(event: PointerEvent) {
+      if (!menu.current?.contains(event.target as Node) && !menuButton.current?.contains(event.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("pointerdown", closeOutside);
+    return () => { window.removeEventListener("keydown", closeOnEscape); document.removeEventListener("pointerdown", closeOutside); };
+  }, [menuOpen, setMenuOpen]);
 
   return (
     <header className={styles.header}>
@@ -55,7 +62,7 @@ export function StudentHeader() {
           }
           aria-expanded={menuOpen}
           aria-controls="student-navigation"
-          onClick={() => setMenuOpen((current) => !current)}
+          onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
         </button>
@@ -65,6 +72,7 @@ export function StudentHeader() {
           id="student-navigation"
           className={`${styles.navigation} ${menuOpen ? styles.navigationOpen : ""}`}
           aria-label="Student navigation"
+          onBlur={event => { if (menuOpen && !event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false); }}
         >
           {navigation.map(({ href, label }) => {
             const Icon = navigationIcons[label];
@@ -80,17 +88,11 @@ export function StudentHeader() {
               </Link>
             );
           })}
-          <Link className={styles.mobileHelp} href="/help" onClick={() => setMenuOpen(false)}>Help center</Link>
         </nav>
 
         <div className={styles.utilities}>
-          <Link className={styles.utilityControl} href="/profile" aria-label="Open student profile" aria-current={pathname.startsWith("/profile") ? "page" : undefined}><UserRound aria-hidden="true" /></Link>
-          <ActivationProgress />
-          <NotificationCenter />
-          <Link className={`${styles.utilityControl} ${styles.helpControl}`} href="/help" aria-label="Open help center">
-            <CircleHelp aria-hidden="true" />
-          </Link>
-          <SignOutButton destination="/sign-in" />
+          <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} />
+          <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} />
         </div>
       </div>
     </header>

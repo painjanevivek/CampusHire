@@ -1,0 +1,116 @@
+{
+  "checks": [
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false,
+      "headerButtons": [
+        {
+          "label": "Open student navigation",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open updates, 11 unread",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open profile menu",
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "axe_violations": []
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "overflow": false,
+      "headerButtons": [
+        {
+          "label": "Open student navigation",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open updates, 11 unread",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open profile menu",
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "axe_violations": []
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "overflow": false,
+      "headerButtons": [
+        {
+          "label": "Open updates, 11 unread",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open profile menu",
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "axe_violations": []
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "overflow": false,
+      "headerButtons": [
+        {
+          "label": "Open updates, 11 unread",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open profile menu",
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "axe_violations": []
+    },
+    {
+      "width": 320,
+      "height": 800,
+      "overflow": false,
+      "headerButtons": [
+        {
+          "label": "Open student navigation",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open updates, 11 unread",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Open profile menu",
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "axe_violations": []
+    }
+  ],
+  "photo_round_trip": "upload, header update, persistence after reload passed",
+  "console_errors": [],
+  "photo_cleanup": "synthetic photo removed",
+  "mobile_navigation": "focus, navigate to Home, and close passed",
+  "sign_out": "profile menu sign-out passed for the test session",
+  "browser": "149.0.7827.55",
+  "reduced_motion": true
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type SetStateAction } from "react";
 import { Bell, CheckCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,8 +12,12 @@ import styles from "./notification-center.module.css";
 
 export function NotificationCenter({
   navigate,
+  open: controlledOpen,
+  onOpenChange,
 }: {
   navigate?: (href: string) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const router = useRouter();
   const [category, setCategory] = useState("needs_action");
@@ -24,7 +28,12 @@ export function NotificationCenter({
     items: [],
     unread_count: 0,
   });
-  const [open, setOpen] = useState(false);
+  const [localOpen, setLocalOpen] = useState(false);
+  const open = controlledOpen ?? localOpen;
+  const setOpen = useCallback((value: SetStateAction<boolean>) => {
+    const next = typeof value === "function" ? value(open) : value;
+    if (onOpenChange) onOpenChange(next); else setLocalOpen(next);
+  }, [open, onOpenChange]);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
@@ -54,7 +63,7 @@ export function NotificationCenter({
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); root.current?.querySelector<HTMLButtonElement>("button")?.focus(); } };
     window.addEventListener("keydown", escape);
     return () => { active = false; window.clearTimeout(pending); window.removeEventListener("keydown", escape); };
-  }, [open, load]);
+  }, [open, load, setOpen]);
   useEffect(() => {
     function close(event: MouseEvent) {
       if (root.current && !root.current.contains(event.target as Node))
@@ -62,7 +71,7 @@ export function NotificationCenter({
     }
     document.addEventListener("pointerdown", close);
     return () => document.removeEventListener("pointerdown", close);
-  }, []);
+  }, [setOpen]);
 
   async function follow(item: Notification) {
     const destination = safeInternalHref(item.deep_link, "");

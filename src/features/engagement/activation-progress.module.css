@@ -25,3 +25,8 @@
   .root summary { width: var(--utility-control-size, 44px); min-width: var(--utility-control-size, 44px); padding: 0; }
   .root section { inset-inline-end: -92px; }
 }
+.inline { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px; }
+.inline summary { width: auto; min-width: 44px; justify-content: flex-start; padding: 0 12px; border-radius: 8px; }
+.inline summary span { display: inline; }
+.inline section { position: static; width: 100%; padding: 16px 0 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+.inline li a { display: inline-flex; align-items: center; min-height: 44px; }

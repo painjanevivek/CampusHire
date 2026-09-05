@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { StudentWorkspace } from "./student-workspace";
@@ -11,7 +11,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("StudentWorkspace", () => {
-  it("exposes the current section and profile progress to assistive technology", () => {
+  it("keeps account actions in a profile menu and help in the footer", () => {
     const { container } = render(
       <StudentWorkspace>
         <main>Dashboard content</main>
@@ -27,8 +27,17 @@ describe("StudentWorkspace", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getAllByRole("link", { name: "Open student profile" })).toHaveLength(1);
-    expect(screen.getByRole("link", { name: "Open student profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.queryByLabelText("Open activation checklist")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Sign out" })).not.toBeInTheDocument();
+    const trigger = screen.getByRole("button", { name: "Open profile menu" });
+    fireEvent.click(trigger);
+    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", "/profile#account-settings");
+    expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(trigger).toHaveFocus();
+    expect(screen.queryByRole("link", { name: "Settings" })).not.toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toContainElement(screen.getByRole("link", { name: "Help center" }));
     expect(screen.getByRole("link", { name: "Preparation" })).toHaveAttribute("href", "/preparation");
     expect(screen.getByRole("link", { name: "Applications" })).toHaveAttribute("href", "/applications");
   });
@@ -39,7 +48,6 @@ describe("StudentWorkspace", () => {
     ["Applications", "/applications"],
     ["Preparation", "/resume"],
     ["Preparation", "/roadmap"],
-    ["Open student profile", "/profile"],
   ] as const)("keeps one shared navigation when %s is active", (active, pathname) => {
     navigation.pathname = pathname;
     render(

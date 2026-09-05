@@ -49,3 +49,6 @@
   font-weight: var(--font-weight-emphasis);
   line-height: 1.4;
 }
+.labeled { display: block; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
+.labeled button { display: flex; gap: 10px; justify-content: flex-start; width: 100%; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 6px; font-size: .875rem; }
+.labeled .error { position: static; display: block; width: auto; margin-top: 8px; box-shadow: none; }
