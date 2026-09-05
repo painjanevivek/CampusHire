@@ -48,7 +48,7 @@ export function AdminOverview() {
     <PageContainer context="admin" className={styles.page} aria-busy={loading}>
       <PageHeader
         eyebrow="T&P control room"
-        title={loading ? "Loading operations…" : reviewCount ? `${reviewCount} applications need review.` : "Placement operations are clear."}
+        title={loading ? "Loading operations…" : reviewCount ? `${reviewCount} ${reviewCount === 1 ? "application needs" : "applications need"} review.` : "Placement operations are clear."}
         description="Only live college records are shown. AI issues never block drives, eligibility, or applications."
         actions={(
           <button className={styles.refresh} type="button" onClick={() => void load()}>

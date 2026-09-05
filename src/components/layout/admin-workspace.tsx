@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleHelp, Menu, UserRound, X } from "lucide-react";
+import { Building2, CircleHelp, ClipboardList, FileClock, FileText, Home, Menu, Settings2, ShieldCheck, Users, UserRound, X, ChartNoAxesCombined } from "lucide-react";
 
 import { BrandMark } from "@/components/brand-mark";
 import styles from "./admin-workspace.module.css";
@@ -16,6 +16,7 @@ const navigation = [
   { group: "Institution", items: [{ href: "/admin/students", label: "Students" }, { href: "/admin/policies", label: "Policies" }] },
   { group: "Administration", items: [{ href: "/admin/reports", label: "Reports" }, { href: "/admin/operations", label: "Operations" }, { href: "/admin/audit", label: "Audit" }] },
 ] as const;
+const navigationIcons = { Overview: Home, Applications: ClipboardList, Drives: FileClock, Companies: Building2, Students: Users, Policies: FileText, Reports: ChartNoAxesCombined, Operations: Settings2, Audit: ShieldCheck };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -40,7 +41,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         <div className={styles.inner}>
           <Link className={styles.brand} href="/admin/dashboard" aria-label="CampusHire admin home">
             <BrandMark />
-            <strong>CampusHire AI</strong>
+            <strong>CampusHire</strong>
           </Link>
           <button
             ref={menuButton}
@@ -60,7 +61,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             aria-label="Placement operations"
           >
             {navigation.map(group => <div className={styles.group} key={group.group}>
-              <p>{group.group}</p>{group.items.map(item => <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} aria-current={pathname.startsWith(item.href) ? "page" : undefined}>{item.label}</Link>)}
+              <p>{group.group}</p>{group.items.map(item => { const Icon = navigationIcons[item.label]; return <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} aria-current={pathname.startsWith(item.href) ? "page" : undefined}><Icon size={17} aria-hidden="true" />{item.label}</Link>; })}
             </div>)}
           </nav>
           <div className={styles.utilities} aria-label="Administrator utilities">

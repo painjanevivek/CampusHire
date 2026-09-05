@@ -4,7 +4,7 @@ import {
   Instrument_Serif,
   Inter,
   JetBrains_Mono,
-  Montserrat,
+  Manrope,
 } from "next/font/google";
 import "./globals.css";
 import { CookiePreferences } from "@/components/cookie-preferences";
@@ -21,7 +21,7 @@ const body = Inter({
   variable: "--font-body",
 });
 
-const interfaceFont = Montserrat({
+const interfaceFont = Manrope({
   subsets: ["latin"],
   variable: "--font-interface",
 });

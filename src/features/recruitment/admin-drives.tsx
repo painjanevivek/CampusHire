@@ -46,6 +46,7 @@ function toDateTimeLocal(value: string): string {
 
 export function AdminDrives() {
   const [step, setStep] = useState(1);
+  const [publishingOpen, setPublishingOpen] = useState(false);
   const [checkedAt, setCheckedAt] = useState(0);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [drives, setDrives] = useState<Drive[]>([]);
@@ -99,6 +100,7 @@ export function AdminDrives() {
       const requested = params.get("drive_id");
       setSelectedDrive((current) => current || (driveItems.some(item => item.id === requested) ? requested! : driveItems[0]?.id || ""));
       setStep(Math.min(5, Math.max(1, Number(params.get("step")) || 1)));
+      setPublishingOpen(params.has("step"));
     } catch {
       setError(
         "Placement drives could not be loaded. Nothing was changed.",
@@ -487,6 +489,7 @@ export function AdminDrives() {
   const publishedRules = ruleSets.find((item) => item.status === "published");
   const stagedRules = ruleSets.find((item) => item.status === "draft");
   function goToStep(next: number) {
+    setPublishingOpen(true);
     setStep(next);
     const params = new URLSearchParams(window.location.search);
     params.set("step", String(next)); if (selectedDrive) params.set("drive_id", selectedDrive);
@@ -525,7 +528,13 @@ export function AdminDrives() {
         </Alert>
       )}
       {notice && <Alert tone="success">{notice}</Alert>}
-      {(activeDrive || loading) && <div className={styles.publishingRegion}>{activeDrive ? <GuidedPublishing key={`${activeDrive.id}:${activeDrive.updated_at}:${roles.map(role => role.status).join("")}:${ruleSets.map(rule => rule.status).join("")}`} drive={activeDrive} step={step} onStep={goToStep} busy={busy} onEdit={value => value === "rules" ? openRuleEditor() : setPanel(value)} onPublish={() => void postAction(activeDrive.status === "published" ? `/admin/recruitment/drives/${activeDrive.id}/save` : `/admin/recruitment/drives/${activeDrive.id}/actions/publish`, "Drive publication saved. Existing application snapshots are unchanged.")} /> : <section role="status" aria-label="Loading publishing workspace"><h2>Loading your publishing workspace…</h2><p>Checking saved drives, roles, and publication requirements.</p></section>}</div>}
+      {activeDrive && <section className={styles.publishingRegion} aria-label="Drive publication">
+        <div className={styles.publicationBar}><div><strong>{activeDrive.title}</strong><span>Review saved details before publishing.</span></div><button type="button" aria-expanded={publishingOpen} aria-controls="publication-workflow" onClick={() => {
+          if (!publishingOpen) goToStep(1);
+          else { setPublishingOpen(false); const params = new URLSearchParams(window.location.search); params.delete("step"); window.history.replaceState(null, "", `?${params}`); }
+        }}>{publishingOpen ? "Close publishing guide" : "Review & publish"}</button></div>
+        {publishingOpen && <div id="publication-workflow"><GuidedPublishing key={`${activeDrive.id}:${activeDrive.updated_at}:${roles.map(role => role.status).join("")}:${ruleSets.map(rule => rule.status).join("")}`} drive={activeDrive} step={step} onStep={goToStep} busy={busy} onEdit={value => value === "rules" ? openRuleEditor() : setPanel(value)} onPublish={() => void postAction(activeDrive.status === "published" ? `/admin/recruitment/drives/${activeDrive.id}/save` : `/admin/recruitment/drives/${activeDrive.id}/actions/publish`, "Drive publication saved. Existing application snapshots are unchanged.")} /></div>}
+      </section>}
       {!companies.length && !loading ? (
         <Alert tone="warning">
           Create a company record before opening a placement drive.
@@ -672,7 +681,7 @@ export function AdminDrives() {
                 key={drive.id}
                 type="button"
                 className={drive.id === selectedDrive ? styles.selected : ""}
-                onClick={() => { setSelectedDrive(drive.id); setStep(1); const params = new URLSearchParams(window.location.search); params.set("drive_id", drive.id); params.set("step", "1"); window.history.replaceState(null, "", `?${params}`); }}
+                onClick={() => { setSelectedDrive(drive.id); setStep(1); setPublishingOpen(false); const params = new URLSearchParams(window.location.search); params.set("drive_id", drive.id); params.delete("step"); window.history.replaceState(null, "", `?${params}`); }}
               >
                 <span>
                   <strong>{drive.title}</strong>

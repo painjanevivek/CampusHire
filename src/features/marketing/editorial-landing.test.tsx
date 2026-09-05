@@ -7,7 +7,7 @@ describe("EditorialLanding", () => {
   it("explains the invitation-led journey without exposing private role search", () => {
     render(<EditorialLanding />);
     expect(screen.queryByRole("search")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /accept your invitation/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /your next step, clearly in view/i })).toBeInTheDocument();
     expect(screen.getByText(/private to verified members/i)).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Product preview" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Docs" })[0]).toHaveAttribute("href", "/docs");

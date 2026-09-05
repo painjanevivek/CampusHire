@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleHelp, Menu, UserRound, X } from "lucide-react";
+import { BriefcaseBusiness, CircleHelp, ClipboardList, Home, ListChecks, Menu, UserRound, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
@@ -20,6 +20,7 @@ const navigation: Array<{ href: string; label: WorkspaceSection }> = [
   { href: "/applications", label: "Applications" },
   { href: "/preparation", label: "Preparation" },
 ];
+const navigationIcons = { Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks };
 
 export function StudentHeader() {
   const pathname = usePathname();
@@ -42,7 +43,7 @@ export function StudentHeader() {
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label="CampusHire home">
           <BrandMark />
-          <strong>CampusHire AI</strong>
+          <strong>CampusHire</strong>
         </Link>
 
         <button
@@ -66,6 +67,7 @@ export function StudentHeader() {
           aria-label="Student navigation"
         >
           {navigation.map(({ href, label }) => {
+            const Icon = navigationIcons[label];
             const selected = pathname === href || pathname.startsWith(`${href}/`) || (href === "/preparation" && ["/resume", "/roadmap"].some(path => pathname.startsWith(path)));
             return (
               <Link
@@ -74,7 +76,7 @@ export function StudentHeader() {
                 aria-current={selected ? "page" : undefined}
                 onClick={() => setMenuOpen(false)}
               >
-                {label}
+                <Icon size={16} aria-hidden="true" />{label}
               </Link>
             );
           })}

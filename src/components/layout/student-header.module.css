@@ -2,8 +2,9 @@
   position: sticky;
   inset-block-start: 0;
   z-index: var(--layer-navigation);
-  padding: 14px 0 0;
-  background: transparent;
+  padding: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 
 .inner {
@@ -11,20 +12,20 @@
     calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)),
     var(--layout-student-max)
   );
-  min-height: 70px;
+  min-height: 64px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 28px;
-  border: 1px solid var(--navigation-border);
-  border-radius: 999px;
-  padding: 0 18px 0 24px;
-  background: var(--navigation-glass);
-  box-shadow: var(--navigation-shadow);
-  backdrop-filter: blur(16px);
+  border: 0;
+  border-radius: 6px;
+  padding: 0;
+  background: var(--surface);
+  box-shadow: none;
 }
 
 .brand {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -48,12 +49,13 @@
 }
 
 .navigation a {
-  min-height: 40px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 0 15px;
+  border-radius: 6px;
+  padding: 0 12px;
+  gap: 8px;
   color: var(--ink-muted);
   font-size: 0.875rem;
   font-weight: var(--font-weight-medium);
@@ -99,7 +101,7 @@
   display: grid;
   place-items: center;
   border: var(--utility-control-border, 1px solid var(--line));
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 0;
   background: var(--utility-control-background, var(--surface));
   color: var(--ink);
@@ -124,8 +126,8 @@
 .navigation .mobileHelp { display: none; }
 
 @media (max-width: 1120px) {
-  .header { padding-top: 8px; }
-  .inner { min-height: 60px; align-items: center; border-radius: 16px; }
+  .header { padding-top: 0; }
+  .inner { min-height: 64px; align-items: center; border-radius: 0; }
   .menuButton { display: grid; margin-inline-start: auto; }
   .navigation {
     position: absolute;
@@ -141,8 +143,12 @@
   .utilities { margin-inline-start: 0; }
 }
 
-@media (max-width: 620px) {
-  .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 12px; }
+@media (max-width: 1080px) {
+  .inner { width: calc(100% - var(--layout-gutter-tablet) - var(--layout-gutter-tablet)); }
+}
+
+@media (max-width: 680px) {
+  .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 0; }
   .brand strong { display: none; }
   .helpControl { display: none; }
   .navigation .mobileHelp { display: flex; }

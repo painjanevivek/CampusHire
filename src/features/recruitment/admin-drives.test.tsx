@@ -130,6 +130,9 @@ describe("AdminDrives draft management", () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Publish drive" })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /1. Company and drive/ })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Review & publish" }));
+    expect(await screen.findByRole("button", { name: /1. Company and drive/ })).toBeInTheDocument();
   });
 
   it("edits and deletes only the selected draft drive", async () => {

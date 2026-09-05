@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, CheckCircle2, RefreshCw, X } from "lucide-react";
 import { Alert, Badge } from "@/components/ui/feedback";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import { CorrectionPanel } from "@/features/experience/correction-panel";
@@ -37,7 +38,8 @@ export function AdminApplications() {
   const [refresh, setRefresh] = useState(0);
   const queueRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const detailId = selectedId || queue.items[0]?.id || "";
+  const returnFocusId = useRef("");
+  const detailId = selectedId;
   const selected = detail?.id === detailId ? detail : null;
   const latestSelected = useRef(selectedId);
   useEffect(() => { latestSelected.current = selectedId; }, [selectedId]);
@@ -47,6 +49,20 @@ export function AdminApplications() {
     Object.entries(changes).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key));
     (replaceHistory ? replace : push)(`/admin/applications${next.size ? `?${next}` : ""}`, { scroll: false });
   }, [push, replace]);
+
+  useEffect(() => {
+    if (!selectedId && returnFocusId.current) {
+      const target = returnFocusId.current;
+      returnFocusId.current = "";
+      requestAnimationFrame(() => queueRef.current?.querySelector<HTMLButtonElement>(`button[data-application-id="${target}"]`)?.focus());
+    }
+    if (!selectedId) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { returnFocusId.current = selectedId; changeQuery({ selected: null }); }
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [selectedId, changeQuery]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -139,11 +155,29 @@ export function AdminApplications() {
       requests: String(data.get("requests") ?? ""), page: null, selected: null });
   }
 
+  function closeDetail() {
+    returnFocusId.current = detailId;
+    changeQuery({ selected: null });
+  }
+  function nextAction(item: QueueItem) {
+    if (item.awaiting_review) return "Review response";
+    if (item.open_requests) return "Awaiting student";
+    if (["offered", "rejected", "withdrawn"].includes(item.status)) return "View recorded decision";
+    return "Review application";
+  }
+  const selectedRow = queue.items.find(item => item.id === detailId);
+  const nextCandidate = queue.items[queue.items.findIndex(item => item.id === detailId) + 1];
+
   return <main id="main-content" className={styles.page} data-navigation-ready={!loading && !detailLoading && (!detailId || !!selected) && !error}>
     <header className={styles.header}><div><p>Accountable review</p><h1>Applications</h1><span>Review evidence, ask for clarification, and record a reasoned decision.</span></div>
-      <button onClick={() => setRefresh(value => value + 1)} disabled={busy}>Refresh</button></header>
+      <button onClick={() => setRefresh(value => value + 1)} disabled={busy}><RefreshCw size={16} aria-hidden="true" />Refresh</button></header>
     {error && <Alert tone="error">{error}</Alert>}{notice && <p role="status">{notice}</p>}
-    <form key={queryString} className={ui.toolbar} onSubmit={filters} aria-label="Candidate filters">
+    <nav className={styles.views} aria-label="Application views">
+      <button aria-current={!params.get("application_status") && !params.get("requests") ? "page" : undefined} onClick={() => changeQuery({ application_status: null, requests: null, page: null, selected: null })}>All applications</button>
+      <button aria-current={params.get("application_status") === "submitted" ? "page" : undefined} onClick={() => changeQuery({ application_status: "submitted", requests: null, page: null, selected: null })}>Submitted</button>
+      <button aria-current={params.get("requests") === "awaiting_review" ? "page" : undefined} onClick={() => changeQuery({ application_status: null, requests: "awaiting_review", page: null, selected: null })}>Responses to review</button>
+    </nav>
+    <form key={queryString} className={`${ui.toolbar} ${styles.filters}`} onSubmit={filters} aria-label="Candidate filters">
       <label>Candidate search<input name="q" defaultValue={params.get("q") ?? ""} placeholder="Name or email" /></label>
       <label>Status<select name="status" defaultValue={params.get("application_status") ?? ""}><option value="">All statuses</option>{statuses.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
       <label>Information requests<select name="requests" defaultValue={params.get("requests") ?? ""}><option value="">All requests</option><option value="open">Awaiting student</option><option value="overdue">Overdue</option><option value="awaiting_review">Response to review</option></select></label>
@@ -162,30 +196,35 @@ export function AdminApplications() {
     </section>}
     <div className={styles.workspace} data-detail-open={!!selectedId}>
       <section className={styles.queue} aria-label="Candidate queue" aria-busy={loading}>
-        <h2>Candidate queue</h2><p>{queue.total} records</p>{loading && <p role="status">Refreshing results…</p>}
+        <div className={styles.sectionHeader}><h2>Candidate queue</h2><span>{queue.total} records</span>{loading && <span role="status">Refreshing…</span>}</div>
         {!loading && !queue.items.length && <p>No applications in this view.</p>}
-        <div ref={queueRef} className={styles.queueList}>{queue.items.map(item => <div key={item.id} className={styles.queueRow}>
-          <label className={styles.rowCheck}><input type="checkbox" aria-label={`Select ${item.student_name} for bulk review`} checked={checked.includes(item.id)}
-            onChange={event => { setChecked(current => event.target.checked ? [...current, item.id] : current.filter(id => id !== item.id)); setPreview(null); setDraft(null); }} /></label>
-          <button data-application-id={item.id} className={item.id === detailId ? styles.selected : ""} aria-pressed={item.id === detailId} onClick={() => changeQuery({ selected: item.id })}>
-            <span><strong>{item.student_name}</strong><small>{item.role_title} · {item.company_name}</small><small>{item.status.replaceAll("_", " ")} · {item.open_requests} awaiting student · {item.awaiting_review} responses</small></span>
-          </button></div>)}</div>
+        <div ref={queueRef} className={styles.tableWrap} tabIndex={0} role="region" aria-label="Scrollable application table"><table className={styles.table} aria-label="Applications">
+          <thead><tr><th scope="col"><label className={styles.rowCheck}><input type="checkbox" aria-label="Select this page" disabled={loading || !queue.items.length} checked={queue.items.length > 0 && checked.length === queue.items.length} onChange={event => { setChecked(event.target.checked ? queue.items.map(item => item.id) : []); setPreview(null); setDraft(null); }} /></label></th><th scope="col">Candidate</th><th scope="col">Role / company</th><th scope="col">Status</th><th scope="col">Next action</th></tr></thead>
+          <tbody>{queue.items.map(item => <tr key={item.id} data-selected={item.id === detailId}>
+            <td><label className={styles.rowCheck}><input type="checkbox" aria-label={`Select ${item.student_name} for bulk review`} disabled={loading} checked={checked.includes(item.id)}
+              onChange={event => { setChecked(current => event.target.checked ? [...current, item.id] : current.filter(id => id !== item.id)); setPreview(null); setDraft(null); }} /></label></td>
+            <td><button data-application-id={item.id} className={styles.candidateLink} aria-label={`Review ${item.student_name} for ${item.role_title} at ${item.company_name}`} aria-pressed={item.id === detailId} onClick={() => changeQuery({ selected: item.id })}>{item.student_name}</button></td>
+            <td><span>{item.role_title}</span><small>{item.company_name}</small></td>
+            <td><span className={styles.status} data-status={item.status}>{item.status.replaceAll("_", " ")}</span></td>
+            <td><span className={styles.nextAction}>{nextAction(item)}</span></td>
+          </tr>)}</tbody>
+        </table></div>
         <nav className={styles.pagination} aria-label="Application pages"><button disabled={loading || page === 1} onClick={() => changeQuery({ page: String(page - 1), selected: null })}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(queue.total / 25))}</span><button disabled={loading || page * 25 >= queue.total} onClick={() => changeQuery({ page: String(page + 1), selected: null })}>Next</button></nav>
       </section>
-      <section data-selected-application={!detailLoading ? selected?.id : undefined} className={styles.inspector} aria-label="Candidate decision details" aria-busy={detailLoading}>
-        <button className={styles.backToResults} onClick={() => { changeQuery({ selected: null }); requestAnimationFrame(() => queueRef.current?.querySelector<HTMLButtonElement>("button")?.focus()); }}>Back to results</button>
+      {!!selectedId && <section data-selected-application={!detailLoading ? selected?.id : undefined} className={styles.inspector} aria-label="Candidate decision details" aria-busy={detailLoading}>
+        <div className={styles.inspectorControls}><button onClick={closeDetail}><X size={16} aria-hidden="true" />Back to results</button><button disabled={!nextCandidate || busy} onClick={() => changeQuery({ selected: nextCandidate?.id ?? null })}>Next candidate<ArrowRight size={16} aria-hidden="true" /></button></div>
         {detailLoading && <p role="status">Loading candidate evidence…</p>}
         {selected ? <div className={ui.stack}>
           <header><h2 tabIndex={-1} ref={headingRef}>{selected.student_name}</h2><p>{String(selected.role_snapshot.title)} · {String(selected.role_snapshot.company_name)}</p>
-            <Badge tone="neutral">{selected.status.replaceAll("_", " ")}</Badge><p>{selected.next_step}</p><p>Last change {new Date(selected.updated_at).toLocaleString(undefined, { timeZone: selected.institution_timezone })} ({selected.institution_timezone})</p>{!!selected.allowed_actions?.length && <a className={ui.button} href="#review-decision">Go to review decision</a>}</header>
-          <section className={ui.panel}><h3>Eligibility evidence</h3><p>{selected.eligibility_snapshot.status.replaceAll("_", " ")}</p>
-            <ul>{selected.eligibility_snapshot.results.map(result => <li key={result.label}>{result.label}: {result.reason}</li>)}</ul>
+            <Badge tone="neutral">{selected.status.replaceAll("_", " ")}</Badge><p className={styles.guidance}>{selectedRow?.awaiting_review ? "Student response received. Review the additional evidence." : selectedRow?.open_requests ? "Awaiting the student's response to an information request." : "Review the recorded application and its supporting evidence."}</p><p className={styles.updated}>Last change {new Date(selected.updated_at).toLocaleString(undefined, { timeZone: selected.institution_timezone })} ({selected.institution_timezone})</p>{!!selected.allowed_actions?.length && <a className={ui.primary} href="#review-decision">Go to review decision</a>}</header>
+          <section className={styles.evidence}><h3>Eligibility evidence</h3><p>{selected.eligibility_snapshot.status.replaceAll("_", " ")}</p>
+            <ul>{selected.eligibility_snapshot.results.map(result => <li key={result.label}>{result.passed === true && <CheckCircle2 size={16} aria-hidden="true" />}<span>{result.label}: {result.reason}</span></li>)}</ul>
             <details><summary>Technical decision evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ rules: selected.rule_snapshot, decision: selected.decision_snapshot }, null, 2)}</pre></details>
           </section>
-          <section className={ui.panel}><h3>Submitted resume</h3><p>{String(selected.resume_snapshot.original_name ?? "Reviewed resume")} · version {String(selected.resume_snapshot.version_number ?? "Not recorded")}</p>
+          <section className={styles.evidence}><h3>Submitted resume</h3><p>{String(selected.resume_snapshot.original_name ?? "Reviewed resume")} · version {String(selected.resume_snapshot.version_number ?? "Not recorded")}</p>
             <details><summary>Immutable resume and profile evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ resume: selected.resume_snapshot, profile: selected.profile_snapshot }, null, 2)}</pre></details></section>
           <CorrectionPanel key={selected.id} applicationId={selected.id} admin timezone={selected.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(selected.status)} onChange={() => setRefresh(value => value + 1)} />
-          <section className={ui.panel}><h3>Decision history</h3><ol className={ui.timeline}>{selected.history.map(item => <li key={item.id}><p>{item.to_status.replaceAll("_", " ")} · {new Date(item.created_at).toLocaleString()}</p><p>{item.reason ?? "No additional reason recorded"}</p><details><summary>Actor evidence</summary><code>{item.actor_user_id}</code></details></li>)}</ol></section>
+          <details className={styles.evidence}><summary>Decision history</summary><ol className={ui.timeline}>{selected.history.map(item => <li key={item.id}><p>{item.to_status.replaceAll("_", " ")} · {new Date(item.created_at).toLocaleString()}</p><p>{item.reason ?? "No additional reason recorded"}</p><details><summary>Actor evidence</summary><code>{item.actor_user_id}</code></details></li>)}</ol></details>
           {!!selected.allowed_actions?.length && <form id="review-decision" className={ui.form} key={`${selected.id}:${selected.revision}`} onSubmit={event => void review(event)}>
             <h3>Record review decision</h3><label>Next recorded stage<select name="status" defaultValue="" required><option value="" disabled>Choose a decision</option>{selected.allowed_actions.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
             <label>Decision explanation and useful next step<textarea name="reason" required minLength={10} maxLength={500} /></label><button className={ui.primary} disabled={busy || detailLoading}>Save decision</button>
@@ -198,7 +237,7 @@ export function AdminApplications() {
               <label>Reason<textarea name="reason" minLength={10} maxLength={500} required /></label><label>Policy reference<input name="policy_reference" minLength={3} maxLength={300} required /></label><button className={ui.button} disabled={busy || detailLoading}>Record override</button>
             </form></details>
         </div> : !detailLoading && <p>Select an application to review its evidence.</p>}
-      </section>
+      </section>}
     </div>
   </main>;
 }

@@ -67,9 +67,42 @@ vi.mock("@/features/experience/correction-panel", () => ({ CorrectionPanel: () =
 const row = { id: application.id, student_name: application.student_name, role_title: "Software Engineer", company_name: "Nexora Labs", status: "under_review", revision: 3, open_requests: 0, awaiting_review: 0 };
 describe("AdminApplications", () => {
   beforeEach(() => {
-    navigation.query = ""; window.history.replaceState(null, "", "/admin/applications");
+    navigation.query = "selected=application-1"; window.history.replaceState(null, "", "/admin/applications?selected=application-1");
     navigation.push.mockReset(); navigation.replace.mockReset(); csrfRequestMock.mockReset();
     apiRequestMock.mockReset().mockImplementation((path: string) => Promise.resolve(path.includes("/review-queue/") ? application : { items: [row], total: 51, page: 1 }));
+  });
+  it("starts with a compact table and does not fetch evidence until a row is opened", async () => {
+    navigation.query = "";
+    window.history.replaceState(null, "", "/admin/applications");
+    render(<AdminApplications />);
+    const table = await screen.findByRole("table", { name: "Applications" });
+    expect(within(table).getByRole("columnheader", { name: "Candidate" })).toBeInTheDocument();
+    expect(within(table).getByRole("columnheader", { name: "Next action" })).toBeInTheDocument();
+    await screen.findByRole("button", { name: /Review Asha Patil/ });
+    expect(apiRequestMock.mock.calls.some(([path]) => path === "/admin/recruitment/review-queue/application-1")).toBe(false);
+    expect(screen.queryByRole("region", { name: "Candidate decision details" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Review Asha Patil/ }));
+    expect(navigation.push).toHaveBeenCalledWith("/admin/applications?selected=application-1", { scroll: false });
+  });
+  it("selects only the loaded page and clears a pending bulk preview when selection changes", async () => {
+    render(<AdminApplications />);
+    await screen.findByText(/Active backlogs/);
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
+    expect(screen.getByRole("checkbox", { name: "Select Asha Patil for bulk review" })).toBeChecked();
+    expect(screen.getByRole("region", { name: "Selection toolbar" })).toHaveTextContent("1 selected on this page");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
+    expect(screen.queryByRole("region", { name: "Selection toolbar" })).not.toBeInTheDocument();
+  });
+  it("renders a bounded page for a 500-record queue without downloading candidate details", async () => {
+    navigation.query = "";
+    apiRequestMock.mockResolvedValue({ items: Array.from({ length: 25 }, (_, index) => ({ ...row, id: `application-${index}`, student_name: `Student ${index + 1}` })), total: 500, page: 1 });
+    render(<AdminApplications />);
+    const table = await screen.findByRole("table", { name: "Applications" });
+    await screen.findByRole("button", { name: /Review Student 25 / });
+    expect(within(table).getAllByRole("row")).toHaveLength(26);
+    expect(screen.getByText("Page 1 of 20")).toBeInTheDocument();
+    expect(apiRequestMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
   });
   it("fetches detail only for the selected candidate and sends reasoned revision-checked decisions", async () => {
     render(<AdminApplications />);

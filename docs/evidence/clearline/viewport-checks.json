@@ -1,0 +1,580 @@
+{
+  "checks": [
+    {
+      "action": {
+        "bottom": 564.2234420776367,
+        "height": 43.99620819091797,
+        "left": 31.8087100982666,
+        "right": 344.554895401001,
+        "top": 520.2272338867188,
+        "width": 312.7461853027344,
+        "x": 31.8087100982666,
+        "y": 520.2272338867188
+      },
+      "heading": "Applications",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 375,
+      "state": "candidate selected",
+      "width": 390
+    },
+    {
+      "action": {
+        "bottom": 493.0870895385742,
+        "height": 43.99620819091797,
+        "left": 45.81439208984375,
+        "right": 708.7310180664062,
+        "top": 449.09088134765625,
+        "width": 662.9166259765625,
+        "x": 45.81439208984375,
+        "y": 449.09088134765625
+      },
+      "heading": "Applications",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 753,
+      "state": "candidate selected",
+      "width": 768
+    },
+    {
+      "action": {
+        "bottom": 362.41475677490234,
+        "height": 43.99620819091797,
+        "left": 1043.2764892578125,
+        "right": 1365.700714111328,
+        "top": 318.4185485839844,
+        "width": 322.4242248535156,
+        "x": 1043.2764892578125,
+        "y": 318.4185485839844
+      },
+      "heading": "Applications",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 1425,
+      "state": "candidate selected",
+      "width": 1440
+    },
+    {
+      "action": {
+        "bottom": 362.41475677490234,
+        "height": 43.99620819091797,
+        "left": 1523.2763671875,
+        "right": 1845.7005920410156,
+        "top": 318.4185485839844,
+        "width": 322.4242248535156,
+        "x": 1523.2763671875,
+        "y": 318.4185485839844
+      },
+      "heading": "Applications",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 1905,
+      "state": "candidate selected",
+      "width": 1920
+    },
+    {
+      "heading": "Loading operations…",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/dashboard",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Loading operations…",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/dashboard",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "1 application needs review.",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/dashboard",
+      "scrollWidth": 1440,
+      "width": 1440
+    },
+    {
+      "heading": "1 application needs review.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/dashboard",
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "heading": "Companies",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/companies",
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "heading": "Companies",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/companies",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "heading": "Companies",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/companies",
+      "scrollWidth": 1440,
+      "width": 1440
+    },
+    {
+      "heading": "Companies",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/companies",
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "heading": "Drives and eligibility",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/drives",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Drives and eligibility",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/drives",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Drives and eligibility",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/drives",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Drives and eligibility",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/drives",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Students",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/students",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Students",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/students",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Students",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/students",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Students",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/students",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Policy answers with clear sources.",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/policies",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Policy answers with clear sources.",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/policies",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Policy answers with clear sources.",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/policies",
+      "scrollWidth": 1440,
+      "width": 1440
+    },
+    {
+      "heading": "Policy answers with clear sources.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/policies",
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "heading": "Placement operations, from recorded facts.",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/reports",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Placement operations, from recorded facts.",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/reports",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Placement operations, from recorded facts.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/reports",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Placement operations, from recorded facts.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/reports",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Background jobs",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/operations",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Background jobs",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/operations",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "heading": "Background jobs",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/operations",
+      "scrollWidth": 1440,
+      "width": 1440
+    },
+    {
+      "heading": "Background jobs",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/operations",
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "heading": "Manage placements with an assigned account.",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/sign-in",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Manage placements with an assigned account.",
+      "height": 900,
+      "overflow": false,
+      "route": "/admin/sign-in",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Continue your placement plan.",
+      "height": 900,
+      "overflow": false,
+      "route": "/sign-in",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Continue your placement plan.",
+      "height": 844,
+      "overflow": false,
+      "route": "/sign-in",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Welcome back, Aarav.",
+      "height": 844,
+      "overflow": false,
+      "route": "/dashboard",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Welcome back, Aarav.",
+      "height": 900,
+      "overflow": false,
+      "route": "/dashboard",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Turn your evidence into a clear next step.",
+      "height": 844,
+      "overflow": false,
+      "route": "/preparation",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Find your next opportunity",
+      "height": 844,
+      "overflow": false,
+      "route": "/opportunities",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Your decision record.",
+      "height": 844,
+      "overflow": false,
+      "route": "/applications",
+      "scrollWidth": 390,
+      "width": 390
+    },
+    {
+      "heading": "Resume",
+      "height": 844,
+      "overflow": false,
+      "route": "/resume",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Career roadmap",
+      "height": 844,
+      "overflow": false,
+      "route": "/roadmap",
+      "scrollWidth": 390,
+      "width": 390
+    },
+    {
+      "heading": "Your placement identity, in one place.",
+      "height": 844,
+      "overflow": false,
+      "route": "/profile",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Your next step, clearly in view.",
+      "height": 844,
+      "overflow": false,
+      "route": "/",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "heading": "Your next step, clearly in view.",
+      "height": 1024,
+      "overflow": false,
+      "route": "/",
+      "scrollWidth": 753,
+      "width": 768
+    },
+    {
+      "heading": "Your next step, clearly in view.",
+      "height": 900,
+      "overflow": false,
+      "route": "/",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "heading": "Your next step, clearly in view.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Your placement data has a defined purpose.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/privacy",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "heading": "Your placement data has a defined purpose.",
+      "height": 844,
+      "overflow": false,
+      "route": "/privacy",
+      "scrollWidth": 375,
+      "state": "cookie settings open",
+      "width": 390
+    },
+    {
+      "heading": "Welcome back, Aarav.",
+      "height": 844,
+      "overflow": false,
+      "route": "/dashboard",
+      "scrollWidth": 375,
+      "state": "final alignment",
+      "width": 390
+    },
+    {
+      "heading": "Welcome back, Aarav.",
+      "height": 1024,
+      "overflow": false,
+      "route": "/dashboard",
+      "scrollWidth": 753,
+      "state": "final alignment",
+      "width": 768
+    },
+    {
+      "heading": "Welcome back, Aarav.",
+      "height": 1080,
+      "overflow": false,
+      "route": "/dashboard",
+      "scrollWidth": 1905,
+      "state": "final alignment",
+      "width": 1920
+    },
+    {
+      "heading": "Applications",
+      "height": 844,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 375,
+      "state": "final compact review",
+      "width": 390
+    },
+    {
+      "heading": "Applications",
+      "height": 1024,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 753,
+      "state": "final compact review",
+      "width": 768
+    },
+    {
+      "heading": "Applications",
+      "height": 1080,
+      "overflow": false,
+      "route": "/admin/applications",
+      "scrollWidth": 1905,
+      "state": "final compact review",
+      "width": 1920
+    }
+  ],
+  "studentAlignment": {
+    "brand": {
+      "bottom": 48.99620723724365,
+      "height": 33.99620819091797,
+      "left": 72.72726440429688,
+      "right": 212.26324462890625,
+      "top": 14.999999046325684,
+      "width": 139.53598022460938,
+      "x": 72.72726440429688,
+      "y": 14.999999046325684
+    },
+    "font": "Inter, \"Inter Fallback\", Inter, system-ui, sans-serif",
+    "heading": {
+      "bottom": 160.90907669067383,
+      "height": 38.3901481628418,
+      "left": 72.72726440429688,
+      "right": 399.4412536621094,
+      "top": 122.51892852783205,
+      "width": 326.7139892578125,
+      "x": 72.72726440429688,
+      "y": 122.51892852783205
+    },
+    "height": 900,
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  "finalAppGeometry": {
+    "font": "Inter, \"Inter Fallback\", Inter, system-ui, sans-serif",
+    "fontSize": "13px",
+    "heading": {
+      "bottom": 55.19886016845703,
+      "height": 31.20265007019043,
+      "left": 223.99620056152344,
+      "right": 691.1173858642578,
+      "top": 23.9962100982666,
+      "width": 467.1211853027344,
+      "x": 223.99620056152344,
+      "y": 23.9962100982666
+    },
+    "height": 900,
+    "inspector": {
+      "bottom": 876.6003360748291,
+      "height": 852.6041259765625,
+      "left": 1021.458251953125,
+      "right": 1401.4582214355469,
+      "top": 23.9962100982666,
+      "width": 379.9999694824219,
+      "x": 1021.458251953125,
+      "y": 23.9962100982666
+    },
+    "overflow": false,
+    "row": {
+      "bottom": 376.7045249938965,
+      "height": 52.59469223022461,
+      "left": 224.60226440429688,
+      "right": 1000.8522033691406,
+      "top": 324.1098327636719,
+      "width": 776.2499389648438,
+      "x": 224.60226440429688,
+      "y": 324.1098327636719
+    },
+    "table": {
+      "bottom": 428.6931610107422,
+      "height": 149.1855926513672,
+      "left": 224.60226440429688,
+      "right": 1000.8522033691406,
+      "top": 279.507568359375,
+      "width": 776.2499389648438,
+      "x": 224.60226440429688,
+      "y": 279.507568359375
+    },
+    "width": 1440
+  },
+  "notes": [
+    "Measurements are actual CSS dimensions. Some early viewport-set attempts settled late and are retained with their actual sizes, not counted as the requested size.",
+    "Local synthetic data only; dashboard match explanation warning is existing provider unavailability, not an eligibility failure."
+  ]
+}

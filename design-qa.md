@@ -1,95 +1,83 @@
-# CampusHire Frontend — MVP Design QA
+# Clearline implementation — design QA
 
-**Current result: engineering checks passed; authenticated pilot UAT remains an external gate.**
+final result: passed
 
-## Route Consistency
+Date: 2026-09-05. This is a scoped frontend design/interaction review, not a release qualification or a pixel-identical reproduction of fictional records.
 
-- `/dashboard`, `/opportunities`, `/resume`, `/resume/builder`, `/roadmap`, and `/onboarding` use the shared student workspace structure.
-- The hard-coded `/opportunities/demo` and `/admin/drives/demo` fixture routes have been retired. The reserved `demo` opportunity identifier now resolves through the application not-found boundary rather than shadowing the live opportunity route.
-- All student tabs use `StudentWorkspace`; the duplicate Opportunities sidebar and its teal/Aptos styles were removed.
-- Active-route pills, the CampusHire brand, and profile completion stay identical across routes.
+## Visual truth and implementation
 
-## Visual System
+- Selected option: 1, Clearline.
+- Original source: `C:/Users/ASUS/.codex/generated_images/01a0682b-60ac-7903-b02d-e8b7b6ba54fd/exec-ece3cad8-aa37-4a1c-9872-2e402ebe26f5.png`.
+- Portable source: [selected-clearline.png](docs/evidence/clearline/selected-clearline.png), 1448 × 1086 design board.
+- Preview: <http://127.0.0.1:3001/>; review workspace: <http://127.0.0.1:3001/admin/applications>.
+- Frontend base: `cc83ef244e2cb74a0611c2477f1139e7df008df2`, with the uncommitted Clearline changes.
+- Backend candidate identifier: `cae7e3f256ae72c54169629360cb719df16a541a`.
+- Tracked frontend `src` patch SHA-256: `048f15d1f5c9d5ccc5ad5564721a4a81836ae35b52d74659ce122f94233bdeb5`. Computed from `git -c core.safecrlf=false diff --no-ext-diff -- src`, joining output lines with LF, UTF-8, without a trailing LF. Evidence files are not part of this patch hash.
 
-- Rendered routes use `#FAFAFA` canvas, white cards, `#111827` foreground, black primary actions, blue interaction, and labelled emerald verification.
-- Instrument Serif drives outcome headlines; Inter handles body copy; Montserrat handles controls; JetBrains Mono handles metrics and technical labels.
-- Grid-backed heroes, 24px cards, 40px containers, glass navigation, dark technical panels, subtle borders, and restrained shadows match `design.md`.
-- A 1280 × 720 live-browser sweep showed no document-level overflow. Responsive rules were reviewed at the 1120px, 980px, 900px, 850px, 800px, 760px, and 700px breakpoints; the mobile shell becomes a fixed glass header with horizontally scrollable pill tabs.
+## Evidence and comparison method
 
-## Interaction and State Coverage
+Source and implementation were placed together in each comparison input, then opened and inspected:
 
-- Account entry is canonically invitation-based. The browser no longer contains a public-signup mutation path, and the public guidance page explains how to obtain an institutional invitation.
-- Opportunity search, filters, clear action, and empty-state recovery are covered.
-- Formal eligibility precedes decision-support match guidance in DOM and visible order.
-- Resume upload preserves the selected filename on failure and announces immutable-version success.
-- Resume suggestions require explicit Edit or Accept actions.
-- Roadmap states expose Confirmed, Next best move, and Later with one next action.
-- Profile failure preserves fields; completion keeps the CSRF-protected PATCH and redirects to `/opportunities`. Product completion events are emitted by the authoritative backend rather than browser-only custom events.
-- Student and administrator protected routes redirect unauthenticated visitors to their respective sign-in routes with a bounded `returnTo` value.
-- Sign-out failures are visibly announced while the current session remains active.
+- [Applications full comparison](docs/evidence/clearline/applications-comparison.png).
+- [Applications focused toolbar/table comparison](docs/evidence/clearline/applications-focused-comparison.png).
+- [Student comparison](docs/evidence/clearline/student-comparison.png).
+- [Landing comparison](docs/evidence/clearline/landing-comparison.png).
+- [Mobile candidate review](docs/evidence/clearline/applications-390.png).
+- [Mobile landing](docs/evidence/clearline/landing-390.png).
+- [T&P authentication](docs/evidence/clearline/admin-sign-in-1440.png).
+- [Actual viewport and geometry observations](docs/evidence/clearline/viewport-checks.json).
 
-## Accessibility and Motion
+The source is a composite concept board, not a browser capture with a declared CSS viewport. Its main application frame is approximately 1409 × 659 pixels; landing and student frames are approximately 673 × 275 and 697 × 275. Comparisons normalize each frame and actual screenshot to a common 1000-pixel width without distorting the aspect ratio. Extra implementation height is retained, not mistaken for a source layout defect. The focused comparison isolates the application title, filters, table headings, and first rows.
 
-- Navigation, main, article, status, progressbar, heading, and labelled form semantics were inspected in the rendered DOM.
-- Dashboard readiness uses an accessible SVG radial progress indicator.
-- Form controls and action buttons use the shared 44 px minimum target where practical; inline text links remain content-sized and visibly focused.
-- `prefers-reduced-motion` disables continuous and transition motion while preserving content.
-- Browser inspection of the landing page, invitation guidance, student sign-in, administrator sign-in, and protected-route redirects produced no console errors.
-- The Phase 8 browser runner distinguishes public degraded routes from real demo-authenticated student and T&P routes and requires the requested protected path to remain loaded.
-- The exact-candidate automated run passed 180/180 page checks across Chromium, Firefox, and WebKit with no unexpected console errors; all reduced-motion, forced-colors, 200% reflow, and 400% reflow gates passed.
-- Automated viewports include 320 px mobile, 200% and 400% reflow, reduced motion, and forced colors. Real Safari/macOS Full Keyboard Access, mobile real-device checks, screen-reader acceptance, and representative participant acceptance remain external gates.
+Implementation captures use the Codex in-app browser and actual CSS viewports of 390 × 844, 768 × 1024, 1440 × 900, and 1920 × 1080 for the principal screens. At 1440 × 900, the tool returns 1425 × 900 image pixels after excluding the scrollbar. Windows 165% display scaling causes this tool's raster content to occupy the upper-left portion of a padded capture. `normalize-captures.mjs` crops that capture padding at a 1/1.65 ratio and scales it back uniformly. Raw bytes are retained in `*-raw.png` (the tool returns JPEG-encoded bytes despite the filename). No UI, data, text, or missing rows were painted into the captures. These images support composition review, not pixel-sharp antialiasing certification.
 
-## Verification
+State: local synthetic accounts, light theme. The application reference and implementation both show Aarav Sharma / Meridian Systems with a response awaiting officer review. The actual database contains two application records, not the board's illustrative 500. Student state has roadmap guidance, no upcoming items, and an existing match-explanation availability warning; the implementation preserves those facts rather than creating the board's example deadlines.
 
-- `npm run test`: 42 files and 146 tests passed for the Phase 8 candidate; rerun after any source change because historical counts are not release evidence.
-- `npm run test:accessibility:authenticated`: Chromium, Firefox, and WebKit engineering matrix for the live synthetic candidate.
-- `npm run test:performance`: bounded local production-build profile; results are not presented as field Core Web Vitals.
-- The checked frontend OpenAPI snapshot matches the current backend export; generated declarations were refreshed from that exact snapshot.
+## Findings and comparison history
+
+1. **P2, fixed — inspector started below the filters.** The early implementation pushed evidence too far down. The selected-record desktop grid now places the inspector in the right column from the page heading. Final observed inspector top is 24px, width 380px, height approximately 853px at 1440 × 900. The mobile view hides the results/filter regions while a candidate is open, retaining Back to results and the review action.
+2. **P2, fixed — double student gutters.** The early screenshot had the navigation brand at approximately x=73px but the page heading at x=113px. Removed the redundant width constraint from the student workspace wrapper and synchronized tablet/mobile header gutters. Post-fix DOM measurements put both brand and heading at x=72.73px at 1440 × 900. See the updated student comparison.
+3. **P2, fixed — table/toolbar density.** Reduced title, inter-section spacing, queue heading, and cell padding. Final application rows measure approximately 52.6px, with 44px interactive targets; table text is 13px. Native table semantics, page limits, selection, and bounded scrolling are retained. See the post-fix focused comparison.
+4. **P1, fixed — cookie launcher covered desktop utilities.** The initial footer controls occupied y=837–881 while the launcher occupied y=833–877. Reserved 64px below the desktop utility row. Post-fix controls end at y=817, with a measured 16px clearance before the launcher; browser hit-testing confirms Help is unobstructed. See [utility-clearance.json](docs/evidence/clearline/utility-clearance.json) and the recaptured application comparison. Mobile retains its top-bar utilities.
+
+No remaining actionable P0/P1/P2 issue was found in the reviewed states. This conclusion does not imply unvisited pages or unperformed accessibility matrices passed.
+
+## Required fidelity surfaces
+
+- **Typography:** Inter content, Manrope controls/navigation, existing JetBrains Mono evidence. Normal body text, medium controls, stronger headings/selected rows/metrics. The board's compact sans-serif hierarchy is preserved; literal font identity cannot be recovered from an image. Headings wrap naturally. Browser computed table font was Inter at 13px. Raster sharpness remains a capture limitation, not an app font defect.
+- **Layout:** 200px desktop T&P rail, fluid operational content with 24px gutters, aligned heading/inspector, bounded table scrolling. Student content and navigation share the 1280px grid. Landing retains a controlled split hero, auth retains a focused form and role-specific context, public prose stays narrow. The mobile form/review action comes first.
+- **Color/tokens:** Existing cobalt/white/neutral palette, restrained selection fills, quiet borders, smaller radii, green only for verified evidence. The decision spine identifies the active review/primary student action. Persistent decorative tab underlines were not reintroduced.
+- **Assets:** Existing supplied CampusHire bridge-C mark and outline icon library reused. No fabricated logos or decorative CSS illustrations. Landing's existing lower product screenshots remain genuine synthetic captures of the preceding interface revision; refreshing those marketing images at full capture resolution is follow-up polish, not evidence of the new interface.
+- **Copy/data:** Landing headline follows the chosen board. Existing invitation/access/privacy explanations remain. Real API counts, statuses, timestamps, evidence, corrections, and allowed actions remain authoritative. No invented Export action, reminders, roll numbers, interview schedule, or 500-row browser fixture was introduced.
+
+## Verification actually completed
+
+- `npm test`: **51 files, 189 tests passed**, final full run 2026-09-05 at 12:14 local time.
 - `npm run typecheck`: passed.
-- `npm run lint`: passed.
-- `npm run build`: passed; the production route table contains no demo fixture routes.
+- `npm run lint`: passed after converting the evidence utilities to ES modules.
+- `npm run build`: passed after final visual corrections and the 44px brand-link target.
+- `npm run api:check`: passed; checked OpenAPI/types unchanged.
+- Focused regression coverage includes a 500-total/25-loaded queue, no detail request before selection, page-bounded selection, existing revision-checked decisions, feedback, URL pagination, bulk previews, and on-demand publishing guide.
+- Browser: both synthetic sign-ins; candidate selection; Next candidate; browser Back; Back to results with row focus restoration; page checkbox selection/clear; guide opening/closing; student mobile-menu initial focus and close-after-navigation; cookie preferences opening/saving.
+- Browser console error checks returned no entries in the inspected states.
+- No production decisions, bulk updates, or publication mutations were performed during the browser review.
 
-## Known Non-blocking Warning
+Measured containment: applications review, landing, and student dashboard at all four principal widths; both sign-ins at 390/1440; additional admin and student subpages at the actual sizes recorded in `viewport-checks.json`. All recorded settled checks had no page-level horizontal overflow. The JSON deliberately retains some early resize attempts that settled at a different width and two dashboard loading states; those are **not** counted as completed checks of their intended size or loaded content. Wide tables remain internally scrollable.
 
-Vitest reports a future Vite native config-loader migration notice for `vitest.config.ts`. It does not affect test execution or production output.
+## Follow-up / pending verification
 
-## Role-specific application packet — 2026-09-03
+- Full public/authenticated accessibility and performance runners, 200% browser zoom, screen-reader exercise, full reduced-motion browser matrix, and exhaustive empty/error states were not rerun.
+- The real browser fixture has two applications; the 500-record pagination test is an automated component fixture. No 500- or 1000-concurrent-user capacity claim is made.
+- The local student dashboard reports existing match-explanation unavailability while preserving formal eligibility. No provider recovery is claimed.
+- Refresh lower landing product screenshots when a crisp full-resolution capture is available. The normalized QA images should not replace marketing assets.
+- Representative student/T&P usability feedback, staging checks, security qualification, and external approvals remain pending. Authoritative release status was not promoted.
+- No commit, push, deployment, paid service, backend change, or database change was performed in this turn.
 
-Status: **internal synthetic design QA passed; external pilot UAT remains unclaimed.**
+## Implementation checklist
 
-Recorded: `2026-09-03T17:41:13Z`
-
-## Source and implementation
-
-- Approved review concept: `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-7ed41754-9843-47ef-ad27-a12107ecafaa.png` (`1536 × 1024`).
-- Supporting approved concepts:
-  - `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-81250884-e60b-4b6b-98ef-4d6919a63100.png`
-  - `C:\Users\ASUS\.codex\generated_images\01a06764-0469-7ef2-b5d7-b68de4060d4b\exec-fbb4dd9d-61cc-4ae8-8bfa-c96b82aaf359.png`
-- Implementation route: `http://127.0.0.1:3199/opportunities/8e9ef5ee-c73a-4fdc-87e2-8ab722e1b304/apply`
-- Browser: Codex in-app browser.
-- Captures reviewed in the Codex session: default desktop viewport and explicit `390 × 844` mobile viewport. The approved source and implementation captures were inspected together before and after the mobile correction.
-
-## Comparison history
-
-1. The first implementation capture matched the CampusHire shell, typography, colour tokens, card treatment, progress affordance, exact-packet hierarchy, and fixed final action pattern from the approved concepts. The implementation intentionally uses the requested four steps rather than the exploratory six-step review concept.
-2. The first `390 × 844` capture exposed a horizontally scrolling stepper and placed the summary before the active task. The stepper was changed to a 2 × 2 grid and the task now precedes its summary.
-3. Reloading a saved draft on Review exposed a missing client-side review fetch. Review recovery now fetches the exact server preview and was rechecked in the browser.
-4. The corrected mobile capture showed no stepper overflow, preserved readable headings and controls, and kept the final actions reachable without hiding packet content.
-
-## Interaction and accessibility checks
-
-- Signed in with a synthetic student fixture and opened an eligible institution-published role.
-- Created and resumed the server-saved draft.
-- Selected a clean completed PDF, confirmed the limited profile snapshot, opened every optional disclosure choice including “Prefer not to answer”, and reached the exact review packet.
-- Reloaded on Review and confirmed the resume, profile snapshot, disclosure status, form version, and immutable notice were restored.
-- Confirmed the accuracy checkbox controls the enabled state of the submit action.
-- Verified ordered step semantics and `aria-current="step"` through the accessibility tree.
-- Verified semantic labels, read-only account email, live saved timestamp, and keyboard-selectable disclosure controls.
-- Verified mobile navigation and the four-step 2 × 2 reflow at `390 × 844`.
-- Inspected the reduced-motion media rule; spinner animation is disabled under `prefers-reduced-motion: reduce`.
-- Browser console inspection returned no warnings or errors during the desktop journey.
-- Final submission behavior is covered by the automated idempotency test; the visual QA session stopped at the enabled synthetic submit action.
-
-## Final assessment
-
-The implementation preserves the approved visual direction while fitting the existing CampusHire design system and the requested four-step information architecture. No external UAT, legal, institutional-policy, or governance approval is implied by this internal synthetic QA pass.
+- [x] Apply selected Clearline direction to shared shells and principal screens.
+- [x] Preserve live workflows and real data; compact application table and optional inspector.
+- [x] Replace always-visible publishing guide with an on-demand control.
+- [x] Fix reviewed alignment/density issues and recapture.
+- [x] Record actual automated and representative browser results.
+- [ ] Complete the separate release/UAT/security and exhaustive accessibility/performance gates before release approval.

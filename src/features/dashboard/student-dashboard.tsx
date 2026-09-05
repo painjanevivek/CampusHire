@@ -94,8 +94,9 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
       <PageHeader
         className={styles.topbar}
         data-dashboard-reveal
-        eyebrow="Student readiness workspace"
-        title={`${data.studentName}, here is the one move that matters next.`}
+        eyebrow="Your placement workspace"
+        title={`Welcome back, ${data.studentName}.`}
+        description="Here’s what’s next."
         actions={(
           <Link className={styles.utilityLink} href="/opportunities">
             Browse all opportunities <ArrowRight size={17} aria-hidden="true" />
@@ -130,9 +131,8 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
               Complete this action <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </div>
-          <aside className={styles.reason} aria-label="Reason for this recommendation">
-            <Target size={21} aria-hidden="true" />
-            <strong>Why this next?</strong>
+          <details className={styles.reason} aria-label="Reason for this recommendation">
+            <summary><Target size={17} aria-hidden="true" />Why this next?</summary>
             <p>{data.nextAction.reason}</p>
             <dl>
               <div><dt>Expected effort</dt><dd>{data.nextAction.estimated_minutes} minutes</dd></div>
@@ -144,10 +144,14 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
               <p>Policy {data.nextAction.policy_version}</p>
               <ul>{data.nextAction.source_facts.map((fact) => <li key={fact}>{fact}</li>)}</ul>
             </details>
-          </aside>
+          </details>
         </article>
 
         <article className={styles.readinessCard} data-dashboard-reveal>
+          {!!data.upcoming?.length && <section className={styles.upcoming} aria-label="Upcoming actions"><h2>Upcoming</h2><ul>{data.upcoming.slice(0, 5).map(item => <li key={item.key}>
+            <Link href={item.href}>{item.title}</Link><p>{item.reason}</p>
+            {item.deadline_at && <small>{new Date(item.deadline_at).toLocaleString(undefined, { timeZone: data.timezone ?? "UTC" })} ({data.timezone ?? "UTC"})</small>}
+          </li>)}</ul></section>}
           <div className={styles.readinessHeader}>
             <p className={styles.kicker}>Reviewed evidence</p>
             <ListChecks size={26} aria-hidden="true" />
@@ -173,10 +177,6 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             ))}
           </dl>
           <p className={styles.policyVersion}>Readiness policy {data.readiness.policy_version}</p>
-          {!!data.upcoming?.length && <section aria-label="Upcoming actions"><h2>Also on your horizon</h2><ul>{data.upcoming.slice(0, 5).map(item => <li key={item.key}>
-            <Link href={item.href}>{item.title}</Link><p>{item.reason}</p>
-            {item.deadline_at && <small>{new Date(item.deadline_at).toLocaleString(undefined, { timeZone: data.timezone ?? "UTC" })} ({data.timezone ?? "UTC"})</small>}
-          </li>)}</ul></section>}
         </article>
       </section>
 

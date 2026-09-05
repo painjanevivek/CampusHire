@@ -24,11 +24,16 @@ export function EditorialLanding() {
 
       <main id="main-content">
         <section className={styles.hero} aria-labelledby="landing-title" data-landing-hero>
-          <div data-hero-copy><p className={styles.eyebrow}>Campus hiring verified by your institution</p><h1 id="landing-title">Accept your invitation. Apply with confidence.</h1><p>CampusHire gives you one clear next step, explains eligibility rule by rule, and saves the details and policy used for every application.</p>
-            <div className={styles.heroActions}><Link href="/sign-up">How invitations work <ArrowRight size={18} aria-hidden="true" /></Link><Link href="/sign-in">I already have an account</Link></div>
+          <div data-hero-copy><p className={styles.eyebrow}>Your campus placement workspace</p><h1 id="landing-title">Your next step, clearly in view.</h1><p>Prepare. Apply. Track.</p><p>CampusHire connects students and placement teams in one place, with clear requirements and a next step you can act on.</p>
+            <div className={styles.heroActions}><Link href="/sign-in">Student access <ArrowRight size={18} aria-hidden="true" /></Link><Link href="/admin/sign-in">T&amp;P access</Link></div>
             <small><LockKeyhole size={15} aria-hidden="true" /> Opportunities stay private to verified members of participating colleges.</small>
+            <Link className={styles.invitationLink} href="/sign-up">How invitations work</Link>
           </div>
-          <aside aria-label="Activation expectations" data-hero-card><p>Before you begin</p><strong>Your institution’s invitation</strong><span>Have your enrolment details, academic record, target role, and optional PDF resume ready.</span><dl><div><dt>Required</dt><dd>Identity · education · target role</dd></div><div><dt>Unlocks</dt><dd>Eligibility · roadmaps · applications</dd></div></dl></aside>
+          <aside className={styles.heroPreview} aria-label="Illustrative workspace preview" data-hero-card><header><strong>Your placement workspace</strong><span>Illustrative preview</span></header><ul>
+            <li><UserCheck aria-hidden="true" /><div><strong>Prepare your profile</strong><span>Review your details and resume.</span></div><BadgeCheck aria-hidden="true" /></li>
+            <li><Building2 aria-hidden="true" /><div><strong>Understand each opportunity</strong><span>See published requirements and eligibility.</span></div><ArrowRight aria-hidden="true" /></li>
+            <li><ShieldCheck aria-hidden="true" /><div><strong>Track your application</strong><span>Follow decisions and respond to requests.</span></div><ArrowRight aria-hidden="true" /></li>
+          </ul><p>One clear action. Your evidence stays in view.</p></aside>
         </section>
 
         <section className={styles.journey} id="how-it-works" aria-labelledby="journey-title" data-reveal-group><header data-reveal-item><p>How it works</p><h2 id="journey-title">Prepare, understand, apply, and track.</h2></header><ol>{journey.map(([number, title, description]) => <li key={number} data-reveal-item><span>{number}</span><h3>{title}</h3><p>{description}</p></li>)}</ol></section>

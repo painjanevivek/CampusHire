@@ -24,19 +24,19 @@
 .snapshot {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 1.125rem;
+  border-radius: 8px;
   background: var(--surface);
 }
 
 .primary {
   position: relative;
-  min-height: 25rem;
+  min-height: 20rem;
   overflow: hidden;
   display: grid;
   align-content: start;
-  padding: clamp(1.75rem, 4vw, 3rem);
-  background: var(--ink);
-  color: var(--on-primary);
+  padding: 24px;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .primary::before {
@@ -51,16 +51,16 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  color: #a8c0ff;
+  color: var(--brand-blue-dark);
 }
 
 .primaryLabel svg { width: 1.75rem; height: 1.75rem; }
 .primaryLabel p,
 .snapshot header p { margin: 0; font-size: 0.72rem; font-weight: var(--font-weight-label); letter-spacing: 0.09em; text-transform: uppercase; }
-.primary > div:nth-child(2) { margin-top: clamp(2rem, 6vw, 4.5rem); }
-.primary h2 { margin: 0; font-size: clamp(3.75rem, 8vw, 6.5rem); line-height: 0.9; letter-spacing: -0.06em; }
-.primary h2 + span { display: block; max-width: 30ch; margin-top: 0.75rem; color: #d6deee; }
-.reviewDetail { margin: 1.25rem 0 0; color: #b8c3d8; }
+.primary > div:nth-child(2) { margin-top: 24px; }
+.primary h2 { margin: 0; font-size: 3rem; line-height: 1.1; letter-spacing: -.04em; }
+.primary h2 + span { display: block; max-width: 40ch; margin-top: 0.75rem; color: var(--ink-muted); }
+.reviewDetail { margin: 1rem 0 0; color: var(--ink-muted); }
 
 .primary > a {
   width: fit-content;
@@ -70,8 +70,8 @@
   margin-top: auto;
   border-radius: var(--radius-pill);
   padding: 0 1rem;
-  background: var(--surface);
-  color: var(--ink);
+  background: var(--brand-blue);
+  color: var(--on-primary);
   font-weight: var(--font-weight-label);
   text-decoration: none;
 }

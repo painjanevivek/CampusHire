@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, FileLock2 } from "lucide-react";
+import { ArrowRight, BadgeCheck, Building2, CalendarDays, ChevronDown, CircleCheck, CircleMinus, CircleX, Clock3, FileLock2, FileText, History, ShieldCheck } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
 import { cachedApiRequest } from "@/lib/api/client";
@@ -14,6 +14,18 @@ const formatDate = (value: string, timeZone: string) => new Intl.DateTimeFormat(
   timeStyle: "short",
   timeZone,
 }).format(new Date(value));
+
+const statusLabel = (status: string) => {
+  const label = status.replaceAll("_", " ");
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
+
+function StatusIcon({ status }: { status: string }) {
+  const Icon = status === "shortlisted" ? BadgeCheck : status === "offered" ? CircleCheck
+    : status === "interview" ? CalendarDays : status === "rejected" ? CircleX
+    : status === "withdrawn" ? CircleMinus : Clock3;
+  return <Icon size={15} aria-hidden="true" />;
+}
 
 export function StudentApplications() {
   const [items, setItems] = useState<PlacementApplication[]>([]);
@@ -39,14 +51,45 @@ export function StudentApplications() {
 
   return (
     <main id="main-content" className={styles.page} data-navigation-ready={!loading && !error}>
-      <header><div><p>Applications</p><h1>Your decision record.</h1><span>Every submission keeps its selected resume, eligibility result, and policy version.</span></div><strong>{items.length}</strong></header>
+      <header className={styles.header}>
+        <div><p className={styles.eyebrow}>Applications</p><h1>Your applications.</h1><span>Every submission keeps its selected resume, eligibility result, and policy version.</span></div>
+        {!loading && !error && <span className={styles.count}><FileLock2 size={17} aria-hidden="true" />{items.length} {items.length === 1 ? "application" : "applications"}</span>}
+      </header>
       {error ? <Alert tone="warning">{error} <button type="button" onClick={() => void load(true)}>Retry</button></Alert> : null}
-      {loading ? <p role="status">Loading application history…</p> : !items.length ? (
+      {loading && <p role="status" className={styles.loading}>Loading application history…</p>}
+      {!loading && !error && !items.length ? (
         <section className={styles.empty}><FileLock2 aria-hidden="true" /><h2>No applications yet</h2><p>Review an eligible institution-published role, select a clean resume version, and confirm your submission.</p><Link href="/opportunities">Explore opportunities <ArrowRight size={17} aria-hidden="true" /></Link></section>
-      ) : <ol className={styles.list}>{items.map((item) => {
-        const role = item.role_snapshot as { title?: string; company_name?: string; deadline?: string };
-        return <li key={item.id}><div><p>{role.company_name ?? "Published opportunity"}</p><h2><Link href={`/applications/${item.id}`}>{role.title ?? "Placement application"}</Link></h2><span>Submitted {formatDate(item.created_at, item.institution_timezone)} · {item.institution_timezone}</span><details><summary>View status history</summary><ol>{item.history.map((event) => <li key={event.id}><strong>{event.to_status.replaceAll("_", " ")}</strong><span>{formatDate(event.created_at, item.institution_timezone)}{event.reason ? ` · ${event.reason}` : ""}</span></li>)}</ol></details></div><div><strong data-status={item.status}>{item.status.replaceAll("_", " ")}</strong><small>Resume v{String(item.resume_snapshot.version_number ?? "—")} · Rule v{String(item.rule_snapshot.version ?? "—")}</small><Link href={`/applications/${item.id}`}>Open application</Link></div></li>;
-      })}</ol>}
+      ) : items.length > 0 ? <ol className={styles.list} aria-label="Your applications" aria-busy={loading}>{items.map((item) => {
+        const role = item.role_snapshot as { title?: string; company_name?: string };
+        const title = role.title ?? "Placement application";
+        const company = role.company_name ?? "Published opportunity";
+        return <li key={item.id}>
+          <article className={styles.card} aria-label={`${title} at ${company}`}>
+            <div className={styles.cardHeading}>
+              <div className={styles.company}><span className={styles.companyIcon}><Building2 size={20} aria-hidden="true" /></span><span>{company}</span></div>
+              <span className={styles.status} data-status={item.status}><StatusIcon status={item.status} />{statusLabel(item.status)}</span>
+            </div>
+            <h2><Link href={`/applications/${item.id}`}>{title}</Link></h2>
+            <p className={styles.submitted}><CalendarDays size={15} aria-hidden="true" /><span>Submitted <time dateTime={item.created_at}>{formatDate(item.created_at, item.institution_timezone)}</time><small>{item.institution_timezone}</small></span></p>
+            <div className={styles.versions} aria-label="Saved submission versions">
+              <span><FileText size={15} aria-hidden="true" />Resume v{String(item.resume_snapshot.version_number ?? "—")}</span>
+              <span><ShieldCheck size={15} aria-hidden="true" />Rule v{String(item.rule_snapshot.version ?? "—")}</span>
+            </div>
+            {item.next_step && <p className={styles.guidance} data-action={item.next_actor === "student"}>{item.next_step}</p>}
+            <div className={styles.cardFooter}>
+              <details className={styles.history}>
+                <summary><History size={16} aria-hidden="true" /><span>View status history</span><ChevronDown size={15} aria-hidden="true" /></summary>
+                {item.history.length ? <ol>{item.history.map((event) => <li key={event.id}>
+                  <span className={styles.eventStatus}>{statusLabel(event.to_status)}</span>
+                  <time dateTime={event.created_at}>{formatDate(event.created_at, item.institution_timezone)}</time>
+                  {event.reason && <p>{event.reason}</p>}
+                </li>)}</ol> : <p>No status updates recorded yet.</p>}
+              </details>
+              <Link className={styles.openApplication} href={`/applications/${item.id}`} aria-label={`Open application for ${title} at ${company}`}>Open application<ArrowRight size={16} aria-hidden="true" /></Link>
+            </div>
+          </article>
+        </li>;
+      })}</ol> : null}
     </main>
   );
 }
