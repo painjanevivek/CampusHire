@@ -419,12 +419,23 @@ def inspect_keyboard_traversal(page: Page) -> dict[str, Any]:
     expected = page.evaluate(
         """
         (selector) => [...document.querySelectorAll(selector)]
-          .filter((element) => {
+          .filter((element, _index, candidates) => {
             if (!(element instanceof HTMLElement)) return false;
             const style = getComputedStyle(element);
             const rect = element.getBoundingClientRect();
-            const closedDetails = element.closest("details:not([open])");
-            if (closedDetails && element !== closedDetails.querySelector(":scope > summary")) return false;
+            const closedAncestors = [...document.querySelectorAll("details:not([open])")]
+              .filter((details) => details.contains(element));
+            if (closedAncestors.some((details) => element !== details.querySelector(":scope > summary"))) return false;
+            if (element instanceof HTMLInputElement && element.type === "radio" && element.name) {
+              const group = candidates.filter((candidate) =>
+                candidate instanceof HTMLInputElement &&
+                candidate.type === "radio" &&
+                candidate.name === element.name &&
+                candidate.form === element.form
+              );
+              const nativeTabStop = group.find((candidate) => candidate.checked) || group[0];
+              if (element !== nativeTabStop) return false;
+            }
             return !element.closest("[inert]") &&
               element.getAttribute("aria-hidden") !== "true" &&
               style.display !== "none" && style.visibility !== "hidden" &&
@@ -485,6 +496,21 @@ def inspect_page(
     page.wait_for_timeout(900)
     final_path = urlsplit(page.url).path
     expected_path_reached = final_path == route
+    # Run semantic and target-geometry checks before revealing the transient skip-link overlay.
+    violations = page.evaluate(
+        """
+        async () => {
+          const result = await axe.run(document, {
+            runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] },
+          });
+          return result.violations.map((item) => ({
+            id: item.id,
+            impact: item.impact,
+            targets: item.nodes.map((node) => node.target),
+          }));
+        }
+        """
+    )
     keyboard_mode = prepare_keyboard_environment(page, browser_name)
     page.evaluate("() => document.activeElement instanceof HTMLElement && document.activeElement.blur()")
     page.locator("body").press("Home")
@@ -501,20 +527,6 @@ def inspect_page(
             label: `${element.tagName.toLowerCase()}#${element.id || ""}.${element.className || ""}`,
             visible: outlineVisible || shadowVisible,
           };
-        }
-        """
-    )
-    violations = page.evaluate(
-        """
-        async () => {
-          const result = await axe.run(document, {
-            runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] },
-          });
-          return result.violations.map((item) => ({
-            id: item.id,
-            impact: item.impact,
-            targets: item.nodes.map((node) => node.target),
-          }));
         }
         """
     )

@@ -7,17 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
-
-type Invitation = { email: string; role: string; expires_at: string };
+import type { InvitationResponse } from "@/lib/api/generated/types.gen";
+import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
 
 export function InvitationActivationForm({ token }: { token: string }) {
   const router = useRouter();
-  const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [invitation, setInvitation] = useState<InvitationResponse | null>(null);
   const [status, setStatus] = useState<"checking" | "ready" | "submitting" | "unavailable">("checking");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    apiRequest<Invitation>(`/auth/invitations/${encodeURIComponent(token)}`)
+    apiRequest<InvitationResponse>(`/auth/invitations/${encodeURIComponent(token)}`)
       .then((result) => { setInvitation(result); setStatus("ready"); })
       .catch(() => setStatus("unavailable"));
   }, [token]);
@@ -36,7 +36,11 @@ export function InvitationActivationForm({ token }: { token: string }) {
           privacy_version: "2026-08-28",
         }),
       });
-      router.push(invitation?.role === "tnp_admin" ? "/admin/mfa/setup" : "/onboarding");
+      router.push(
+        invitation?.role === "tnp_admin" || invitation?.role === "tnp_owner"
+          ? adminMfaSetupPath(invitation.role)
+          : "/onboarding",
+      );
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
       setStatus("ready");

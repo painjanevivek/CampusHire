@@ -1,18 +1,17 @@
+import Link from "next/link";
+
 import { AuthShell } from "@/components/layout/auth-shell";
-import { ButtonLink } from "@/components/ui/button";
+import { SignUpForm } from "@/features/auth/sign-up-form";
 
 export default function SignUpPage() {
   return (
     <AuthShell
-      eyebrow="Institution enrollment"
-      title="CampusHire accounts begin with an invitation."
-      description="Your college placement office verifies its roster and sends a one-time activation link to your registered email. Public account creation is not available."
-      footer={<>Already activated? <a href="/sign-in">Sign in</a></>}
+      eyebrow="Verified registration"
+      title="Choose how you use CampusHire."
+      description="Student identities are matched to a college invitation, roster, or verified domain. T&P workspaces require institutional verification and operator approval."
+      footer={<>Already activated? <Link href="/sign-in">Sign in</Link></>}
     >
-      <div className="authForm">
-        <p>Ask your placement office to confirm the email and enrollment ID on its CampusHire roster.</p>
-        <ButtonLink href="/">See how CampusHire works</ButtonLink>
-      </div>
+      <SignUpForm />
     </AuthShell>
   );
 }

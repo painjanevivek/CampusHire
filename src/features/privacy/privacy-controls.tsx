@@ -31,7 +31,7 @@ export function PrivacyControls() {
         <div>
           <p>Your choices</p>
           <h2>Optional details stay optional.</h2>
-          <span>GitHub, portfolio, phone, and your first resume upload stay optional unless a published role clearly requires one. Ask your placement cell about corrections, exports, how long data is kept, or appeals.</span>
+          <span>GitHub, portfolio, phone, and generated resume versions stay optional unless a published role clearly requires a resume. Ask your placement cell about corrections, exports, how long data is kept, or appeals.</span>
         </div>
         <Link href="/profile">Review profile details</Link>
       </section>

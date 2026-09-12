@@ -222,7 +222,7 @@ export function ResumeBuilder() {
   }
 
   if (!version) {
-    return <main id="main-content" className={styles.page}><div className={styles.empty}><FileDown aria-hidden="true" /><h1>No resume is ready for review</h1><p>Upload a PDF and wait for its safety check and extraction to finish.</p><Link href="/resume"><ArrowLeft size={16} aria-hidden="true" /> Return to resumes</Link></div></main>;
+    return <main id="main-content" className={styles.page}><div className={styles.empty}><FileDown aria-hidden="true" /><h1>No resume is ready for review</h1><p>Create a version from reviewed profile evidence in Resume Studio.</p><Link href="/resume"><ArrowLeft size={16} aria-hidden="true" /> Return to resumes</Link></div></main>;
   }
 
   const previewName = displayValue(resolvedValue(version, "full_name")) || "Your name";

@@ -57,6 +57,16 @@ export type AdminApplicationPage = {
 };
 
 /**
+ * AdminIdentityStep
+ */
+export type AdminIdentityStep = {
+    /**
+     * Administrator Name
+     */
+    administrator_name: string;
+};
+
+/**
  * ApplicationAppealCreate
  */
 export type ApplicationAppealCreate = {
@@ -675,16 +685,6 @@ export type BodyUploadPhotoApiV1ProfilePhotoPut = {
 };
 
 /**
- * Body_upload_resume_api_v1_resumes_post
- */
-export type BodyUploadResumeApiV1ResumesPost = {
-    /**
-     * File
-     */
-    file: Blob | File;
-};
-
-/**
  * BounceEventCreate
  */
 export type BounceEventCreate = {
@@ -813,6 +813,108 @@ export type BulkApplicationStatusRequest = {
 };
 
 /**
+ * CampusEntry
+ */
+export type CampusEntry = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Programs
+     */
+    programs: Array<CampusProgram>;
+};
+
+/**
+ * CampusProgram
+ */
+export type CampusProgram = {
+    /**
+     * Branches
+     */
+    branches: Array<string>;
+    /**
+     * Graduating Batches
+     */
+    graduating_batches: Array<number>;
+    /**
+     * Name
+     */
+    name: string;
+};
+
+/**
+ * CareerPreferenceStep
+ */
+export type CareerPreferenceStep = {
+    /**
+     * Industries
+     */
+    industries?: Array<string>;
+    /**
+     * Job Types
+     */
+    job_types?: Array<'full_time' | 'internship' | 'contract'>;
+    /**
+     * Locations
+     */
+    locations?: Array<string>;
+    /**
+     * Target Roles
+     */
+    target_roles: Array<string>;
+    /**
+     * Work Modes
+     */
+    work_modes?: Array<'onsite' | 'hybrid' | 'remote'>;
+};
+
+/**
+ * CertificationEntry
+ */
+export type CertificationEntry = {
+    /**
+     * Credential Url
+     */
+    credential_url?: string | null;
+    /**
+     * Expires On
+     */
+    expires_on?: string | null;
+    /**
+     * Issued On
+     */
+    issued_on?: string | null;
+    /**
+     * Issuer
+     */
+    issuer: string;
+    /**
+     * Name
+     */
+    name: string;
+};
+
+/**
+ * Citation
+ */
+export type Citation = {
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Source Id
+     */
+    source_id: string;
+    /**
+     * Source Type
+     */
+    source_type: string;
+};
+
+/**
  * CommunicationPreferencesResponse
  */
 export type CommunicationPreferencesResponse = {
@@ -916,6 +1018,134 @@ export type CompanyUpdate = {
      * Website Url
      */
     website_url?: string | null;
+};
+
+/**
+ * ConversationCreate
+ */
+export type ConversationCreate = {
+    /**
+     * Title
+     */
+    title?: string;
+};
+
+/**
+ * ConversationResponse
+ */
+export type ConversationResponse = {
+    /**
+     * Audience
+     */
+    audience: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Messages
+     */
+    messages?: Array<MessageResponse>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * CopilotDraft
+ */
+export type CopilotDraft = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Source Ids
+     */
+    source_ids?: Array<string>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * CopilotProposalDecision
+ */
+export type CopilotProposalDecision = {
+    /**
+     * Decision
+     */
+    decision: 'approve' | 'reject';
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * CopilotProposalEdit
+ */
+export type CopilotProposalEdit = {
+    content: CopilotDraft;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * CopilotProposalResponse
+ */
+export type CopilotProposalResponse = {
+    /**
+     * Capability
+     */
+    capability: string;
+    content: CopilotDraft;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Evidence References
+     */
+    evidence_references: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Model Version
+     */
+    model_version: string;
+    /**
+     * Prompt Version
+     */
+    prompt_version: string;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Status
+     */
+    status: string;
 };
 
 /**
@@ -1402,6 +1632,48 @@ export type DriveUpdate = {
 };
 
 /**
+ * EducationEntry
+ */
+export type EducationEntry = {
+    /**
+     * Active Backlogs
+     */
+    active_backlogs?: number;
+    /**
+     * Branch
+     */
+    branch: string;
+    /**
+     * Degree
+     */
+    degree: string;
+    /**
+     * Graduation Year
+     */
+    graduation_year: number;
+    /**
+     * Institution
+     */
+    institution: string;
+    /**
+     * Qualification Level
+     */
+    qualification_level: 'degree' | 'class_10' | 'class_12' | 'diploma';
+    /**
+     * Score
+     */
+    score: number;
+    /**
+     * Score Scale
+     */
+    score_scale: 'cgpa_10' | 'percentage';
+    /**
+     * Start Year
+     */
+    start_year?: number | null;
+};
+
+/**
  * EducationItem
  */
 export type EducationItem = {
@@ -1592,6 +1864,58 @@ export type EmailDeliveryResponse = {
 };
 
 /**
+ * EvidenceReference
+ */
+export type EvidenceReference = {
+    /**
+     * Evidence Id
+     */
+    evidence_id: string;
+    /**
+     * Facts
+     */
+    facts: string;
+    /**
+     * Kind
+     */
+    kind: string;
+    /**
+     * Label
+     */
+    label: string;
+};
+
+/**
+ * ExperienceEntry
+ */
+export type ExperienceEntry = {
+    /**
+     * End Date
+     */
+    end_date?: string | null;
+    /**
+     * Is Current
+     */
+    is_current?: boolean;
+    /**
+     * Organization
+     */
+    organization: string;
+    /**
+     * Responsibilities
+     */
+    responsibilities?: Array<string>;
+    /**
+     * Start Date
+     */
+    start_date: string;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
  * ExtractionCreate
  */
 export type ExtractionCreate = {
@@ -1734,6 +2058,20 @@ export type FunnelResponse = {
 };
 
 /**
+ * GroundedClaim
+ */
+export type GroundedClaim = {
+    /**
+     * Evidence Ids
+     */
+    evidence_ids: Array<string>;
+    /**
+     * Text
+     */
+    text: string;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -1800,6 +2138,84 @@ export type IdentityUpdate = {
 };
 
 /**
+ * InstitutionIdentityStep
+ */
+export type InstitutionIdentityStep = {
+    /**
+     * Domain
+     */
+    domain: string;
+    /**
+     * Official Name
+     */
+    official_name: string;
+};
+
+/**
+ * InstitutionOnboardingResponse
+ */
+export type InstitutionOnboardingResponse = {
+    /**
+     * Activated At
+     */
+    activated_at: string | null;
+    /**
+     * Completed Steps
+     */
+    completed_steps: Array<number>;
+    /**
+     * Current Step
+     */
+    current_step: number;
+    /**
+     * Institution Active
+     */
+    institution_active: boolean;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Step Data
+     */
+    step_data: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * InstitutionOnboardingUpdate
+ */
+export type InstitutionOnboardingUpdate = {
+    administrator?: AdminIdentityStep | null;
+    /**
+     * Campuses
+     */
+    campuses?: Array<CampusEntry> | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    institution?: InstitutionIdentityStep | null;
+    placement_cycle?: PlacementCycleStep | null;
+    policies?: PolicyPermissionStep | null;
+    review?: InstitutionReviewStep | null;
+    roster?: RosterInvitationStep | null;
+    /**
+     * Step
+     */
+    step: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+};
+
+/**
  * InstitutionProvisionRequest
  */
 export type InstitutionProvisionRequest = {
@@ -1837,6 +2253,124 @@ export type InstitutionProvisionResponse = {
      * Institution Id
      */
     institution_id: string;
+};
+
+/**
+ * InstitutionRegistrationDecision
+ */
+export type InstitutionRegistrationDecision = {
+    /**
+     * Decision
+     */
+    decision: 'approve' | 'reject';
+    /**
+     * Reason
+     */
+    reason?: string | null;
+};
+
+/**
+ * InstitutionRegistrationRequestCreate
+ */
+export type InstitutionRegistrationRequestCreate = {
+    /**
+     * Domain
+     */
+    domain: string;
+    /**
+     * Institution Code
+     */
+    institution_code: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Institutional Email
+     */
+    institutional_email: string;
+};
+
+/**
+ * InstitutionRegistrationResponse
+ */
+export type InstitutionRegistrationResponse = {
+    /**
+     * Admin Email
+     */
+    admin_email: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Domain
+     */
+    domain: string;
+    /**
+     * Duplicate Detected
+     */
+    duplicate_detected: boolean;
+    /**
+     * Email Verified At
+     */
+    email_verified_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Code
+     */
+    institution_code: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Reviewed At
+     */
+    reviewed_at: string | null;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * InstitutionRegistrationStartResponse
+ */
+export type InstitutionRegistrationStartResponse = {
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Request Id
+     */
+    request_id: string;
+    /**
+     * Status
+     */
+    status: 'verification_pending';
+};
+
+/**
+ * InstitutionReviewStep
+ */
+export type InstitutionReviewStep = {
+    /**
+     * Activate Institution
+     */
+    activate_institution: true;
+    /**
+     * Invite Team Emails
+     */
+    invite_team_emails?: Array<string>;
 };
 
 /**
@@ -2058,6 +2592,40 @@ export type MembershipStatusUpdate = {
      * Status
      */
     status: string;
+};
+
+/**
+ * MessageResponse
+ */
+export type MessageResponse = {
+    /**
+     * Citations
+     */
+    citations: Array<Citation>;
+    /**
+     * Content
+     */
+    content: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Missing Evidence
+     */
+    missing_evidence: Array<string>;
+    /**
+     * Proposal Id
+     */
+    proposal_id: string | null;
+    /**
+     * Role
+     */
+    role: string;
 };
 
 /**
@@ -2473,6 +3041,50 @@ export type PasswordResetRequest = {
 };
 
 /**
+ * PlacementCycleStep
+ */
+export type PlacementCycleStep = {
+    /**
+     * Ends On
+     */
+    ends_on: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Participating Cohorts
+     */
+    participating_cohorts: Array<string>;
+    /**
+     * Starts On
+     */
+    starts_on: string;
+};
+
+/**
+ * PlacementParticipationStep
+ */
+export type PlacementParticipationStep = {
+    /**
+     * Communication Channels
+     */
+    communication_channels: Array<'email' | 'in_app'>;
+    /**
+     * Placement Cycle
+     */
+    placement_cycle: string;
+    /**
+     * Privacy Accepted
+     */
+    privacy_accepted: true;
+    /**
+     * Visibility
+     */
+    visibility: 'placement_team' | 'participating_recruiters';
+};
+
+/**
  * PolicyAnswer
  */
 export type PolicyAnswer = {
@@ -2514,6 +3126,24 @@ export type PolicyCreate = {
      * Title
      */
     title: string;
+};
+
+/**
+ * PolicyPermissionStep
+ */
+export type PolicyPermissionStep = {
+    /**
+     * Approval Roles
+     */
+    approval_roles?: Array<'tnp_owner' | 'tnp_admin' | 'tnp_reviewer'>;
+    /**
+     * Eligibility Template Names
+     */
+    eligibility_template_names?: Array<string>;
+    /**
+     * Policy Names
+     */
+    policy_names?: Array<string>;
 };
 
 /**
@@ -2869,6 +3499,134 @@ export type ProfileUpdate = {
 };
 
 /**
+ * ProjectEntry
+ */
+export type ProjectEntry = {
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Outcomes
+     */
+    outcomes?: Array<string>;
+    /**
+     * Project Url
+     */
+    project_url?: string | null;
+    /**
+     * Technologies
+     */
+    technologies?: Array<string>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * ProjectsSkillsStep
+ */
+export type ProjectsSkillsStep = {
+    /**
+     * Certifications
+     */
+    certifications?: Array<CertificationEntry>;
+    /**
+     * Projects
+     */
+    projects?: Array<ProjectEntry>;
+    /**
+     * Skills
+     */
+    skills?: Array<string>;
+};
+
+/**
+ * ProposalDecisionRequest
+ */
+export type ProposalDecisionRequest = {
+    /**
+     * Decision
+     */
+    decision: 'accept' | 'reject';
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * ProposalEditRequest
+ */
+export type ProposalEditRequest = {
+    content: ResumeDraft;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * ProposalResponse
+ */
+export type ProposalResponse = {
+    /**
+     * Accepted At
+     */
+    accepted_at: string | null;
+    /**
+     * Capability
+     */
+    capability: string;
+    content: ResumeDraft;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Evidence Digest
+     */
+    evidence_digest: string;
+    /**
+     * Evidence References
+     */
+    evidence_references: Array<EvidenceReference>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Model Version
+     */
+    model_version: string;
+    /**
+     * Prompt Version
+     */
+    prompt_version: string;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
+    /**
+     * Purpose Role Id
+     */
+    purpose_role_id: string | null;
+    /**
+     * Rejected At
+     */
+    rejected_at: string | null;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
  * PublishPreview
  */
 export type PublishPreview = {
@@ -2991,6 +3749,34 @@ export type ReadinessItem = {
 };
 
 /**
+ * RegistrationStartResponse
+ */
+export type RegistrationStartResponse = {
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Next Path
+     */
+    next_path?: string | null;
+    /**
+     * Status
+     */
+    status: 'verification_sent' | 'continue_activation';
+};
+
+/**
+ * RegistrationTokenRequest
+ */
+export type RegistrationTokenRequest = {
+    /**
+     * Token
+     */
+    token: string;
+};
+
+/**
  * ReportResponse
  */
 export type ReportResponse = {
@@ -3102,6 +3888,39 @@ export type ResumeContent = {
      * Summary
      */
     summary?: string;
+};
+
+/**
+ * ResumeDraft
+ */
+export type ResumeDraft = {
+    /**
+     * Education
+     */
+    education?: Array<GroundedClaim>;
+    /**
+     * Experience Bullets
+     */
+    experience_bullets?: Array<GroundedClaim>;
+    professional_summary?: GroundedClaim | null;
+    /**
+     * Project Bullets
+     */
+    project_bullets?: Array<GroundedClaim>;
+    /**
+     * Skills
+     */
+    skills?: Array<GroundedClaim>;
+};
+
+/**
+ * ResumeEvidenceResponse
+ */
+export type ResumeEvidenceResponse = {
+    /**
+     * Evidence
+     */
+    evidence: Array<EvidenceReference>;
 };
 
 /**
@@ -3273,6 +4092,20 @@ export type ResumeJobResponse = {
 };
 
 /**
+ * ResumeProposalCreate
+ */
+export type ResumeProposalCreate = {
+    /**
+     * Purpose Role Id
+     */
+    purpose_role_id?: string | null;
+    /**
+     * Selected Evidence Ids
+     */
+    selected_evidence_ids?: Array<string>;
+};
+
+/**
  * ResumeSuggestionResponse
  */
 export type ResumeSuggestionResponse = {
@@ -3307,33 +4140,13 @@ export type ResumeSuggestionResponse = {
 };
 
 /**
- * ResumeUploadResponse
+ * ResumeVersionMaterializeRequest
  */
-export type ResumeUploadResponse = {
+export type ResumeVersionMaterializeRequest = {
     /**
-     * Duplicate
+     * Parent Version Id
      */
-    duplicate: boolean;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Job Id
-     */
-    job_id: string | null;
-    /**
-     * Scan Status
-     */
-    scan_status: string;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Version Number
-     */
-    version_number: number | null;
+    parent_version_id?: string | null;
 };
 
 /**
@@ -3419,6 +4232,16 @@ export type ResumeVersionResponse = {
      * Version Number
      */
     version_number: number | null;
+};
+
+/**
+ * ReviewStep
+ */
+export type ReviewStep = {
+    /**
+     * Confirmed
+     */
+    confirmed: true;
 };
 
 /**
@@ -3800,6 +4623,20 @@ export type RosterImportSummary = {
 };
 
 /**
+ * RosterInvitationStep
+ */
+export type RosterInvitationStep = {
+    /**
+     * Invitation Mode
+     */
+    invitation_mode: 'roster_only' | 'roster_and_verified_domain';
+    /**
+     * Roster Import Id
+     */
+    roster_import_id?: string | null;
+};
+
+/**
  * RosterRowResponse
  */
 export type RosterRowResponse = {
@@ -4120,9 +4957,9 @@ export type SignupRequest = {
      */
     email: string;
     /**
-     * Password
+     * Invitation Code
      */
-    password: string;
+    invitation_code?: string | null;
 };
 
 /**
@@ -4185,6 +5022,155 @@ export type StatusEventResponse = {
      * To Status
      */
     to_status: string;
+};
+
+/**
+ * StudentIdentityStep
+ */
+export type StudentIdentityStep = {
+    /**
+     * Department
+     */
+    department: string;
+    /**
+     * Full Name
+     */
+    full_name: string;
+    /**
+     * Graduation Year
+     */
+    graduation_year: number;
+    /**
+     * Prn
+     */
+    prn: string;
+};
+
+/**
+ * StudentMessageCreate
+ */
+export type StudentMessageCreate = {
+    /**
+     * Intent
+     */
+    intent: 'explain_eligibility' | 'explain_role_match' | 'improve_profile_or_resume' | 'preparation_roadmap';
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Role Id
+     */
+    role_id?: string | null;
+};
+
+/**
+ * StudentOnboardingResponse
+ */
+export type StudentOnboardingResponse = {
+    /**
+     * Career Preferences
+     */
+    career_preferences: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Certifications
+     */
+    certifications: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Completed
+     */
+    completed: boolean;
+    /**
+     * Completed At
+     */
+    completed_at: string | null;
+    /**
+     * Current Step
+     */
+    current_step: number;
+    /**
+     * Education
+     */
+    education: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Experience
+     */
+    experience: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Identity
+     */
+    identity: {
+        [key: string]: unknown;
+    };
+    /**
+     * Institution Id
+     */
+    institution_id: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name: string | null;
+    /**
+     * Placement Participation
+     */
+    placement_participation: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Profile Id
+     */
+    profile_id: string;
+    /**
+     * Projects
+     */
+    projects: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Skills
+     */
+    skills: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+/**
+ * StudentOnboardingUpdate
+ */
+export type StudentOnboardingUpdate = {
+    career_preferences?: CareerPreferenceStep | null;
+    /**
+     * Education
+     */
+    education?: Array<EducationEntry> | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Experience
+     */
+    experience?: Array<ExperienceEntry> | null;
+    identity?: StudentIdentityStep | null;
+    placement_participation?: PlacementParticipationStep | null;
+    projects_skills?: ProjectsSkillsStep | null;
+    review?: ReviewStep | null;
+    /**
+     * Step
+     */
+    step: 1 | 2 | 3 | 4 | 5 | 6 | 7;
 };
 
 /**
@@ -4282,6 +5268,20 @@ export type TailoredResumeRequest = {
      * Role Id
      */
     role_id: string;
+};
+
+/**
+ * TnpMessageCreate
+ */
+export type TnpMessageCreate = {
+    /**
+     * Intent
+     */
+    intent: 'draft_role_description' | 'extract_requirements' | 'draft_eligibility_rules' | 'detect_contradictions' | 'draft_announcement' | 'summarize_placement_funnel';
+    /**
+     * Message
+     */
+    message: string;
 };
 
 /**
@@ -4816,6 +5816,56 @@ export type CreateNotificationApiV1AdminNotificationsPostResponses = {
 };
 
 export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
+
+export type ReadInstitutionOnboardingApiV1AdminOnboardingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/onboarding';
+};
+
+export type ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInstitutionOnboardingApiV1AdminOnboardingGetError = ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors[keyof ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors];
+
+export type ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type ReadInstitutionOnboardingApiV1AdminOnboardingGetResponse = ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses[keyof ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses];
+
+export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutData = {
+    body: InstitutionOnboardingUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/onboarding/step';
+};
+
+export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutError = SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors[keyof SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors];
+
+export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponse = SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses[keyof SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses];
 
 export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
     body?: never;
@@ -6038,6 +7088,573 @@ export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetId
 
 export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponse = PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses[keyof PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses];
 
+export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/resume-studio/evidence';
+};
+
+export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetError = ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetErrors[keyof ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetErrors];
+
+export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeEvidenceResponse;
+};
+
+export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetResponse = ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetResponses[keyof ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetResponses];
+
+export type ListResumeProposalsApiV1AiResumeStudioProposalsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals';
+};
+
+export type ListResumeProposalsApiV1AiResumeStudioProposalsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListResumeProposalsApiV1AiResumeStudioProposalsGetError = ListResumeProposalsApiV1AiResumeStudioProposalsGetErrors[keyof ListResumeProposalsApiV1AiResumeStudioProposalsGetErrors];
+
+export type ListResumeProposalsApiV1AiResumeStudioProposalsGetResponses = {
+    /**
+     * Response List Resume Proposals Api V1 Ai Resume Studio Proposals Get
+     *
+     * Successful Response
+     */
+    200: Array<ProposalResponse>;
+};
+
+export type ListResumeProposalsApiV1AiResumeStudioProposalsGetResponse = ListResumeProposalsApiV1AiResumeStudioProposalsGetResponses[keyof ListResumeProposalsApiV1AiResumeStudioProposalsGetResponses];
+
+export type GenerateResumeProposalApiV1AiResumeStudioProposalsPostData = {
+    body: ResumeProposalCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals';
+};
+
+export type GenerateResumeProposalApiV1AiResumeStudioProposalsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GenerateResumeProposalApiV1AiResumeStudioProposalsPostError = GenerateResumeProposalApiV1AiResumeStudioProposalsPostErrors[keyof GenerateResumeProposalApiV1AiResumeStudioProposalsPostErrors];
+
+export type GenerateResumeProposalApiV1AiResumeStudioProposalsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ProposalResponse;
+};
+
+export type GenerateResumeProposalApiV1AiResumeStudioProposalsPostResponse = GenerateResumeProposalApiV1AiResumeStudioProposalsPostResponses[keyof GenerateResumeProposalApiV1AiResumeStudioProposalsPostResponses];
+
+export type GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals/{proposal_id}';
+};
+
+export type GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetError = GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetErrors[keyof GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetErrors];
+
+export type GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProposalResponse;
+};
+
+export type GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetResponse = GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetResponses[keyof GetResumeProposalApiV1AiResumeStudioProposalsProposalIdGetResponses];
+
+export type UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutData = {
+    body: ProposalEditRequest;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals/{proposal_id}';
+};
+
+export type UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutError = UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutErrors[keyof UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutErrors];
+
+export type UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProposalResponse;
+};
+
+export type UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutResponse = UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutResponses[keyof UpdateResumeProposalApiV1AiResumeStudioProposalsProposalIdPutResponses];
+
+export type ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostData = {
+    body: ProposalDecisionRequest;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals/{proposal_id}/decision';
+};
+
+export type ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostError = ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostErrors[keyof ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostErrors];
+
+export type ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProposalResponse;
+};
+
+export type ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostResponse = ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostResponses[keyof ReviewResumeProposalApiV1AiResumeStudioProposalsProposalIdDecisionPostResponses];
+
+export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostData = {
+    body: ResumeVersionMaterializeRequest;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/resume-studio/proposals/{proposal_id}/versions';
+};
+
+export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostError = CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostErrors[keyof CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostErrors];
+
+export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ResumeVersionResponse;
+};
+
+export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponse = CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses[keyof CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses];
+
+export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/conversations';
+};
+
+export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetError = ListStudentConversationsApiV1AiStudentCopilotConversationsGetErrors[keyof ListStudentConversationsApiV1AiStudentCopilotConversationsGetErrors];
+
+export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetResponses = {
+    /**
+     * Response List Student Conversations Api V1 Ai Student Copilot Conversations Get
+     *
+     * Successful Response
+     */
+    200: Array<ConversationResponse>;
+};
+
+export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetResponse = ListStudentConversationsApiV1AiStudentCopilotConversationsGetResponses[keyof ListStudentConversationsApiV1AiStudentCopilotConversationsGetResponses];
+
+export type CreateStudentConversationApiV1AiStudentCopilotConversationsPostData = {
+    body: ConversationCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/conversations';
+};
+
+export type CreateStudentConversationApiV1AiStudentCopilotConversationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateStudentConversationApiV1AiStudentCopilotConversationsPostError = CreateStudentConversationApiV1AiStudentCopilotConversationsPostErrors[keyof CreateStudentConversationApiV1AiStudentCopilotConversationsPostErrors];
+
+export type CreateStudentConversationApiV1AiStudentCopilotConversationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ConversationResponse;
+};
+
+export type CreateStudentConversationApiV1AiStudentCopilotConversationsPostResponse = CreateStudentConversationApiV1AiStudentCopilotConversationsPostResponses[keyof CreateStudentConversationApiV1AiStudentCopilotConversationsPostResponses];
+
+export type RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/conversations/{conversation_id}';
+};
+
+export type RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteError = RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteErrors[keyof RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteErrors];
+
+export type RemoveStudentConversationApiV1AiStudentCopilotConversationsConversationIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/conversations/{conversation_id}';
+};
+
+export type ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetError = ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetErrors[keyof ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetErrors];
+
+export type ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConversationResponse;
+};
+
+export type ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetResponse = ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetResponses[keyof ReadStudentConversationApiV1AiStudentCopilotConversationsConversationIdGetResponses];
+
+export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostData = {
+    body: StudentMessageCreate;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/conversations/{conversation_id}/messages';
+};
+
+export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostError = SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostErrors[keyof SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostErrors];
+
+export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConversationResponse;
+};
+
+export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponse = SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses[keyof SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses];
+
+export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/conversations';
+};
+
+export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetError = ListTnpConversationsApiV1AiTnpCopilotConversationsGetErrors[keyof ListTnpConversationsApiV1AiTnpCopilotConversationsGetErrors];
+
+export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetResponses = {
+    /**
+     * Response List Tnp Conversations Api V1 Ai Tnp Copilot Conversations Get
+     *
+     * Successful Response
+     */
+    200: Array<ConversationResponse>;
+};
+
+export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetResponse = ListTnpConversationsApiV1AiTnpCopilotConversationsGetResponses[keyof ListTnpConversationsApiV1AiTnpCopilotConversationsGetResponses];
+
+export type CreateTnpConversationApiV1AiTnpCopilotConversationsPostData = {
+    body: ConversationCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/conversations';
+};
+
+export type CreateTnpConversationApiV1AiTnpCopilotConversationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateTnpConversationApiV1AiTnpCopilotConversationsPostError = CreateTnpConversationApiV1AiTnpCopilotConversationsPostErrors[keyof CreateTnpConversationApiV1AiTnpCopilotConversationsPostErrors];
+
+export type CreateTnpConversationApiV1AiTnpCopilotConversationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ConversationResponse;
+};
+
+export type CreateTnpConversationApiV1AiTnpCopilotConversationsPostResponse = CreateTnpConversationApiV1AiTnpCopilotConversationsPostResponses[keyof CreateTnpConversationApiV1AiTnpCopilotConversationsPostResponses];
+
+export type RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/conversations/{conversation_id}';
+};
+
+export type RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteError = RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteErrors[keyof RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteErrors];
+
+export type RemoveTnpConversationApiV1AiTnpCopilotConversationsConversationIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/conversations/{conversation_id}';
+};
+
+export type ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetError = ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetErrors[keyof ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetErrors];
+
+export type ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConversationResponse;
+};
+
+export type ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetResponse = ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetResponses[keyof ReadTnpConversationApiV1AiTnpCopilotConversationsConversationIdGetResponses];
+
+export type SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostData = {
+    body: TnpMessageCreate;
+    path: {
+        /**
+         * Conversation Id
+         */
+        conversation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/conversations/{conversation_id}/messages';
+};
+
+export type SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostError = SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostErrors[keyof SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostErrors];
+
+export type SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConversationResponse;
+};
+
+export type SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostResponse = SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostResponses[keyof SendTnpMessageApiV1AiTnpCopilotConversationsConversationIdMessagesPostResponses];
+
+export type GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/proposals/{proposal_id}';
+};
+
+export type GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetError = GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetErrors[keyof GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetErrors];
+
+export type GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CopilotProposalResponse;
+};
+
+export type GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetResponse = GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetResponses[keyof GetTnpProposalApiV1AiTnpCopilotProposalsProposalIdGetResponses];
+
+export type UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutData = {
+    body: CopilotProposalEdit;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/proposals/{proposal_id}';
+};
+
+export type UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutError = UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutErrors[keyof UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutErrors];
+
+export type UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: CopilotProposalResponse;
+};
+
+export type UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutResponse = UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutResponses[keyof UpdateTnpProposalApiV1AiTnpCopilotProposalsProposalIdPutResponses];
+
+export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostData = {
+    body: CopilotProposalDecision;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/proposals/{proposal_id}/decision';
+};
+
+export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostError = ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostErrors[keyof ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostErrors];
+
+export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CopilotProposalResponse;
+};
+
+export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponse = ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses[keyof ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses];
+
 export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteData = {
     body?: never;
     path: {
@@ -6573,6 +8190,56 @@ export type DemoSignInApiV1AuthDemoSignInPostResponses = {
 
 export type DemoSignInApiV1AuthDemoSignInPostResponse = DemoSignInApiV1AuthDemoSignInPostResponses[keyof DemoSignInApiV1AuthDemoSignInPostResponses];
 
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostData = {
+    body: InstitutionRegistrationRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/institution-registrations';
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostError = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors];
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: InstitutionRegistrationStartResponse;
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponse = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses];
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostData = {
+    body: RegistrationTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/institution-registrations/verify';
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostError = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors];
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionRegistrationResponse;
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponse = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses];
+
 export type ValidateInvitationApiV1AuthInvitationsTokenGetData = {
     body?: never;
     path: {
@@ -6969,7 +8636,7 @@ export type SignupApiV1AuthSignupPostResponses = {
     /**
      * Successful Response
      */
-    201: UserResponse;
+    202: RegistrationStartResponse;
 };
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
@@ -7548,6 +9215,56 @@ export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = 
 
 export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
 
+export type ReadStudentOnboardingApiV1OnboardingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/onboarding';
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetError = ReadStudentOnboardingApiV1OnboardingGetErrors[keyof ReadStudentOnboardingApiV1OnboardingGetErrors];
+
+export type ReadStudentOnboardingApiV1OnboardingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentOnboardingResponse;
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetResponse = ReadStudentOnboardingApiV1OnboardingGetResponses[keyof ReadStudentOnboardingApiV1OnboardingGetResponses];
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutData = {
+    body: StudentOnboardingUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/onboarding/step';
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutError = SaveStudentOnboardingStepApiV1OnboardingStepPutErrors[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutErrors];
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentOnboardingResponse;
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponse = SaveStudentOnboardingStepApiV1OnboardingStepPutResponses[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutResponses];
+
 export type ReceiveEmailBounceApiV1OperatorEmailBouncePostData = {
     body: BounceEventCreate;
     headers?: {
@@ -7578,6 +9295,75 @@ export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses = {
 };
 
 export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponse = ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses];
+
+export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Operator-Key
+         */
+        'x-operator-key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/operator/institution-registration-requests';
+};
+
+export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetError = ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors[keyof ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors];
+
+export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses = {
+    /**
+     * Response List Registration Requests Api V1 Operator Institution Registration Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<InstitutionRegistrationResponse>;
+};
+
+export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponse = ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses[keyof ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses];
+
+export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostData = {
+    body: InstitutionRegistrationDecision;
+    headers?: {
+        /**
+         * X-Operator-Key
+         */
+        'x-operator-key'?: string | null;
+    };
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/operator/institution-registration-requests/{request_id}/decision';
+};
+
+export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostError = ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors[keyof ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors];
+
+export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionRegistrationResponse;
+};
+
+export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponse = ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses[keyof ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses];
 
 export type CreateInstitutionApiV1OperatorInstitutionsPostData = {
     body: InstitutionProvisionRequest;
@@ -8248,31 +10034,6 @@ export type ListResumesApiV1ResumesGetResponses = {
 };
 
 export type ListResumesApiV1ResumesGetResponse = ListResumesApiV1ResumesGetResponses[keyof ListResumesApiV1ResumesGetResponses];
-
-export type UploadResumeApiV1ResumesPostData = {
-    body: BodyUploadResumeApiV1ResumesPost;
-    path?: never;
-    query?: never;
-    url: '/api/v1/resumes';
-};
-
-export type UploadResumeApiV1ResumesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UploadResumeApiV1ResumesPostError = UploadResumeApiV1ResumesPostErrors[keyof UploadResumeApiV1ResumesPostErrors];
-
-export type UploadResumeApiV1ResumesPostResponses = {
-    /**
-     * Successful Response
-     */
-    202: ResumeUploadResponse;
-};
-
-export type UploadResumeApiV1ResumesPostResponse = UploadResumeApiV1ResumesPostResponses[keyof UploadResumeApiV1ResumesPostResponses];
 
 export type GenerateResumeVersionApiV1ResumesGeneratePostData = {
     body: ResumeContent;

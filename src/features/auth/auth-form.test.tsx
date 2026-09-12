@@ -51,6 +51,18 @@ describe("AuthForm", () => {
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
   });
 
+  it("preserves institution onboarding as the owner destination through MFA setup", async () => {
+    csrfRequestMock.mockResolvedValue({
+      user: { id: "owner-1", email: "owner@example.edu", role: "tnp_owner" },
+      next_step: "mfa_setup",
+    });
+    render(<AuthForm redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("College email"), { target: { value: "owner@example.edu" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup?next=%2Fadmin%2Fonboarding"));
+  });
+
   it("opens the configured student demo through the backend without browser credentials", async () => {
     csrfRequestMock.mockResolvedValue({
       user: { id: "student-1", email: "student+demo@example.com", role: "student" },

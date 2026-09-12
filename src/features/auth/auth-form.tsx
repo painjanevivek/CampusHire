@@ -2,10 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
 import { ApiError, csrfRequest } from "@/lib/api/client";
+import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
 import type { DemoSignInRequest, SignInResponse } from "@/lib/api/generated/types.gen";
 
 type DemoRole = DemoSignInRequest["role"];
@@ -30,7 +32,7 @@ export function AuthForm({
         body: JSON.stringify(body),
       });
       setStatus("complete");
-      if (result.next_step === "mfa_setup") return router.push("/admin/mfa/setup");
+      if (result.next_step === "mfa_setup") return router.push(adminMfaSetupPath(result.user.role));
       if (result.next_step === "mfa_challenge") return router.push("/admin/mfa/challenge");
       router.push(redirectTo ?? "/dashboard");
     } catch (cause) {
@@ -92,7 +94,8 @@ export function AuthForm({
           </p>
         </>
       ) : null}
-      <a className="textLink" href="/forgot-password">Forgot password?</a>
+      <Link className="textLink" href="/sign-up">Sign up</Link>
+      <Link className="textLink" href="/forgot-password">Forgot password?</Link>
     </form>
   );
 }

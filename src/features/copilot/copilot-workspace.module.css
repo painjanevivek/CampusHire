@@ -1,0 +1,27 @@
+.page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 80px; display: grid; gap: 20px; }
+.page > header { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.page > header p, .proposal > p { margin: 0; color: var(--brand-blue); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.page h1 { margin: 5px 0 8px; font-size: clamp(2.2rem, 6vw, 4rem); }
+.page header span, .empty p { color: var(--ink-muted); }
+.page button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 16px; color: var(--on-primary); background: var(--brand-blue); border: 0; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.page > header button { color: var(--ink-muted); background: transparent; border: 1px solid var(--line); }
+.empty { min-height: 360px; display: grid; place-items: center; align-content: center; gap: 12px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.empty > svg { width: 42px; height: 42px; color: var(--brand-blue); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .55fr); gap: 20px; }
+.chat, .proposal { min-width: 0; display: grid; align-content: start; gap: 14px; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.chat article { max-width: 88%; padding: 14px; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; }
+.chat article[data-role="user"] { justify-self: end; background: var(--brand-soft); }
+.chat article p { white-space: pre-wrap; }
+.chat article ul { padding-left: 18px; color: var(--ink-muted); font-size: .82rem; }
+.chat article a { display: inline-flex; gap: 6px; align-items: center; }
+.chat form { display: grid; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.chat label, .proposal { font-weight: 700; }
+.chat label { display: grid; gap: 6px; }
+.chat input, .chat select, .chat textarea, .proposal textarea { width: 100%; padding: 11px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.proposal small { color: var(--ink-muted); }
+.proposal > div { display: flex; justify-content: flex-end; gap: 8px; }
+.proposal .reject { color: var(--status-warning); background: transparent; border: 1px solid currentColor; }
+.spinner { justify-self: center; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 840px) { .layout { grid-template-columns: 1fr; } .page > header { align-items: start; flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

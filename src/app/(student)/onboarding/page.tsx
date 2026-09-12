@@ -1,5 +1,5 @@
-import { OnboardingWizard } from "@/features/onboarding/onboarding-wizard";
+import { StudentOnboardingWizard } from "@/features/onboarding/student-onboarding-wizard";
 
 export default function OnboardingPage() {
-  return <OnboardingWizard />;
+  return <StudentOnboardingWizard />;
 }

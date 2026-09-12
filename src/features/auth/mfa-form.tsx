@@ -7,18 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
 import { ApiError, csrfRequest } from "@/lib/api/client";
+import type { MfaConfirmResponse, MfaSetupResponse } from "@/lib/api/generated/types.gen";
 
-type Setup = { secret: string; provisioning_uri: string };
-
-export function MfaForm({ mode }: { mode: "setup" | "challenge" }) {
+export function MfaForm({
+  mode,
+  nextPath = "/admin/dashboard",
+}: {
+  mode: "setup" | "challenge";
+  nextPath?: string;
+}) {
   const router = useRouter();
-  const [setup, setSetup] = useState<Setup | null>(null);
+  const [setup, setSetup] = useState<MfaSetupResponse | null>(null);
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   useEffect(() => {
     if (mode === "setup") {
-      csrfRequest<Setup>("/auth/mfa/setup", { method: "POST" }).then(setSetup).catch((cause) => {
+      csrfRequest<MfaSetupResponse>("/auth/mfa/setup", { method: "POST" }).then(setSetup).catch((cause) => {
         setError(cause instanceof ApiError ? cause.message : "Could not start authenticator setup.");
       });
     }
@@ -29,14 +34,14 @@ export function MfaForm({ mode }: { mode: "setup" | "challenge" }) {
     setError("");
     const code = new FormData(event.currentTarget).get("code");
     try {
-      const result = await csrfRequest<{ recovery_codes: string[] } | void>(mode === "setup" ? "/auth/mfa/confirm" : "/auth/mfa/challenge", {
+      const result = await csrfRequest<MfaConfirmResponse | void>(mode === "setup" ? "/auth/mfa/confirm" : "/auth/mfa/challenge", {
         method: "POST",
         body: JSON.stringify({ code }),
       });
       if (mode === "setup" && result && "recovery_codes" in result) {
         setRecoveryCodes(result.recovery_codes);
       } else {
-        router.push("/admin/dashboard");
+        router.push(nextPath);
       }
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check the code and try again.");
@@ -45,7 +50,7 @@ export function MfaForm({ mode }: { mode: "setup" | "challenge" }) {
     }
   }
   if (recoveryCodes.length) {
-    return <div className="authForm"><Alert tone="success">Authenticator enabled. Save these recovery codes now; they will not be shown again.</Alert><ul className="recoveryGrid">{recoveryCodes.map((code) => <li key={code}><code>{code}</code></li>)}</ul><Button onClick={() => router.push("/admin/dashboard")}>Continue to administration</Button></div>;
+    return <div className="authForm"><Alert tone="success">Authenticator enabled. Save these recovery codes now; they will not be shown again.</Alert><ul className="recoveryGrid">{recoveryCodes.map((code) => <li key={code}><code>{code}</code></li>)}</ul><Button onClick={() => router.push(nextPath)}>Continue to administration</Button></div>;
   }
   return (
     <form className="authForm" onSubmit={submit}>

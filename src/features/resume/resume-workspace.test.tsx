@@ -15,7 +15,7 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 const version = {
   id: "resume-1",
   version_number: 1,
-  source: "upload",
+  source: "generated",
   original_name: "asha-resume.pdf",
   status: "queued",
   scan_status: "quarantined",
@@ -42,37 +42,23 @@ describe("ResumeWorkspace", () => {
 
   it("uses the shared student page language", () => {
     render(<ResumeWorkspace />);
-    expect(screen.getByRole("heading", { name: "Resume" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Resume Studio" })).toBeInTheDocument();
   });
 
-  it("preserves the selected filename when upload fails", async () => {
-    csrfRequestMock.mockRejectedValueOnce(new Error("offline"));
+  it("removes public resume upload controls", async () => {
     render(<ResumeWorkspace />);
 
     await screen.findByText("No resume versions yet");
-
-    const file = new File(["resume"], "asha-resume.pdf", { type: "application/pdf" });
-    fireEvent.change(screen.getByLabelText("Resume PDF"), { target: { files: [file] } });
-    fireEvent.click(screen.getByRole("button", { name: "Upload resume" }));
-
-    expect(await screen.findByRole("alert")).toHaveTextContent("could not be accepted");
-    expect(screen.getByText("asha-resume.pdf")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /upload resume/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Resume PDF")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open AI Resume Studio" })).toHaveAttribute("href", "/resume/studio");
   });
 
-  it("announces a successful immutable resume version", async () => {
-    csrfRequestMock.mockResolvedValueOnce({ id: "resume-1", status: "queued", duplicate: false });
-    apiRequestMock.mockResolvedValueOnce([]).mockResolvedValueOnce(version);
+  it("offers deterministic manual resume creation when AI is unavailable", async () => {
     render(<ResumeWorkspace />);
 
     await screen.findByText("No resume versions yet");
-
-    const file = new File(["resume"], "asha-resume.pdf", { type: "application/pdf" });
-    fireEvent.change(screen.getByLabelText("Resume PDF"), { target: { files: [file] } });
-    fireEvent.click(screen.getByRole("button", { name: "Upload resume" }));
-
-    expect(await screen.findByRole("status")).toHaveTextContent("stored in quarantine");
-    expect(screen.getByText("Queued for safety checks")).toBeInTheDocument();
-    expect(screen.getByText("Stored privately and waiting for the malware scanner.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Use the manual resume builder" })).toHaveAttribute("href", "/resume/builder");
   });
 
   it("compares evidence and explains application-locked deletion", async () => {

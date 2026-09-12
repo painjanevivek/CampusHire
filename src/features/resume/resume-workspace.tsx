@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -16,12 +16,11 @@ import {
   ShieldAlert,
   ShieldCheck,
   Trash2,
-  Upload,
 } from "lucide-react";
 
 import { Alert } from "@/components/ui/feedback";
 import { apiPath, apiRequest, cachedApiRequest, csrfRequest } from "@/lib/api/client";
-import type { ResumePipelineStage, ResumeUpload, ResumeVersion } from "./types";
+import type { ResumePipelineStage, ResumeVersion } from "./types";
 import styles from "./resume-workspace.module.css";
 
 const statusCopy: Record<ResumeVersion["status"], string> = {
@@ -61,7 +60,7 @@ const pipelineCopy: Record<ResumePipelineStage, string> = {
   parser_retry: "Extraction will retry; the private original remains unchanged.",
   review: "Extraction is complete and waiting for your decisions.",
   generated: "A reviewed CampusHire PDF was generated.",
-  ready: "The reviewed upload is ready for authorized use.",
+  ready: "The reviewed CampusHire resume is ready for authorized use.",
   failed: "Processing stopped safely. No unreviewed detail was accepted.",
   cancelled: "Processing was cancelled; the file was not accepted for use.",
 };
@@ -83,9 +82,8 @@ function isResumeVersion(value: unknown): value is ResumeVersion {
 }
 
 export function ResumeWorkspace() {
-  const [file, setFile] = useState<File | null>(null);
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
-  const [state, setState] = useState<"loading" | "idle" | "uploading" | "complete" | "error">("loading");
+  const [state, setState] = useState<"loading" | "idle" | "complete" | "error">("loading");
   const [message, setMessage] = useState("");
   const [compareIds, setCompareIds] = useState<[string, string]>(["", ""]);
   const [pollCycle, setPollCycle] = useState(0);
@@ -137,31 +135,6 @@ export function ResumeWorkspace() {
     return () => { active = false; window.clearTimeout(timeout); };
   }, [pendingIds, pollCycle, pollFailures]);
 
-  async function upload(event: FormEvent) {
-    event.preventDefault();
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024 || file.type !== "application/pdf") {
-      setState("error");
-      setMessage("Choose a PDF no larger than 5 MB.");
-      return;
-    }
-    setState("uploading");
-    setMessage("");
-    const body = new FormData();
-    body.append("file", file);
-    try {
-      const uploaded = await csrfRequest<ResumeUpload>("/resumes", { method: "POST", body });
-      const version = await apiRequest<ResumeVersion>(`/resumes/${uploaded.id}`, { cache: "no-store" });
-      if (!isResumeVersion(version)) throw new Error("Invalid resume detail response");
-      setVersions((current) => mergeVersion(current, version));
-      setState("complete");
-      setMessage(uploaded.duplicate ? "That exact PDF already exists, so its existing version was kept." : "Resume stored in quarantine. Safety checks and extraction are now running.");
-    } catch {
-      setState("error");
-      setMessage("The PDF could not be accepted. Check its type and size, then retry.");
-    }
-  }
-
   async function retry(version: ResumeVersion) {
     try {
       const retried = await csrfRequest<ResumeVersion>(`/resumes/${version.id}/retry`, { method: "POST" });
@@ -194,45 +167,30 @@ export function ResumeWorkspace() {
       <header className={styles.hero}>
         <div>
           <p className={styles.eyebrow}>Student documents</p>
-          <h1>Resume</h1>
-          <p>Every upload becomes a separate version. Details found in your resume are not used until you review them.</p>
+          <h1>Resume Studio</h1>
+          <p>Create versioned CampusHire PDFs from evidence you reviewed in your profile.</p>
         </div>
         <Link href={nextReview ? `/resume/builder?version=${nextReview.id}` : "/resume/builder"} className={styles.builderLink}>Open review workspace <ArrowRight size={17} aria-hidden="true" /></Link>
       </header>
 
       <div className={styles.grid}>
-        <form className={styles.uploadCard} onSubmit={upload}>
+        <section className={styles.uploadCard}>
           <div className={styles.cardLabel}><FileText size={18} aria-hidden="true" /> New version</div>
-          <h2>Upload your latest PDF</h2>
-          <p>The original is stored outside the public web root and cannot be downloaded until its scan is clean.</p>
-          <label className={styles.filePicker}>
-            <Upload size={24} aria-hidden="true" />
-            <span><strong>{file?.name ?? "Choose a PDF"}</strong><small>PDF · up to 5 MB · maximum 3 pages</small></span>
-            <input
-              aria-label="Resume PDF"
-              type="file"
-              accept="application/pdf,.pdf"
-              onChange={(event) => {
-                setFile(event.target.files?.[0] ?? null);
-                setState("idle");
-                setMessage("");
-              }}
-            />
-          </label>
-          <button className={styles.primaryAction} disabled={!file || state === "uploading" || state === "loading"}>
-            {state === "uploading" ? <><LoaderCircle className={styles.spinner} size={17} aria-hidden="true" /> Securing PDF…</> : "Upload resume"}
-          </button>
+          <h2>Build from reviewed evidence</h2>
+          <p>Select profile evidence, generate an optional AI draft, inspect every supporting source, edit it, and explicitly accept it before a PDF is created.</p>
+          <Link className={styles.primaryAction} href="/resume/studio">Open AI Resume Studio</Link>
+          <Link href="/resume/builder">Use the manual resume builder</Link>
           {message && <Alert tone={state === "complete" ? "success" : "error"}>{state === "complete" && <FileCheck2 size={18} aria-hidden="true" />}{message}</Alert>}
-        </form>
+        </section>
 
         <aside className={styles.processCard} aria-labelledby="resume-process-title">
           <div className={styles.status}><span /> Resume review / your approval required</div>
           <ShieldCheck size={26} aria-hidden="true" />
           <h2 id="resume-process-title">Nothing changes silently</h2>
           <ol>
-            <li><span>01</span><div><strong>Store safely and scan</strong><p>Private storage, file limits, and malware checks</p></div></li>
-            <li><span>02</span><div><strong>Structured extraction</strong><p>Proposed contact, education, skills, and projects</p></div></li>
-            <li><span>03</span><div><strong>Your decision</strong><p>Accept, edit, or reject every proposed change</p></div></li>
+            <li><span>01</span><div><strong>Select evidence</strong><p>Choose reviewed education, skills, projects, and experience</p></div></li>
+            <li><span>02</span><div><strong>Generate and validate</strong><p>Every claim must map back to selected profile evidence</p></div></li>
+            <li><span>03</span><div><strong>Your decision</strong><p>Edit, reject, or explicitly accept before creating a PDF</p></div></li>
           </ol>
         </aside>
       </div>
@@ -249,7 +207,7 @@ export function ResumeWorkspace() {
           <article className={styles.versionCard} key={version.id}>
             <div className={styles.versionIcon} data-state={version.status}>{version.status === "failed" ? <ShieldAlert aria-hidden="true" /> : version.status === "completed" ? <CheckCircle2 aria-hidden="true" /> : <Clock3 aria-hidden="true" />}</div>
             <div className={styles.versionMain}>
-              <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Uploaded PDF"}</span></div>
+              <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Read-only legacy PDF"}</span></div>
               <p>{statusCopy[version.status]}</p>
               <p className={styles.pipelineNow}>{pipelineCopy[version.processing_stage]}</p>
               {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No resume details were accepted."}</small>}

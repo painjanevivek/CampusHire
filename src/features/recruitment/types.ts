@@ -56,6 +56,7 @@ export type ResumeChoice = {
   original_name: string;
   status: string;
   scan_status: string;
+  source: "generated" | "upload";
   parent_version_id?: string | null;
   purpose_role_id?: string | null;
 };

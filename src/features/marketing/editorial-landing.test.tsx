@@ -16,7 +16,8 @@ describe("EditorialLanding", () => {
   it("keeps one profile action and separates eligibility from match", () => {
     render(<EditorialLanding />);
 
-    expect(screen.getAllByRole("link", { name: "How invitations work" })).toHaveLength(1);
+    expect(screen.getAllByRole("link", { name: "Student and institution verification" })).toHaveLength(1);
+    expect(screen.getAllByRole("link", { name: "Sign up" })).toHaveLength(2);
     expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
     expect(screen.getByText("A match score never decides whether you can apply.")).toBeInTheDocument();

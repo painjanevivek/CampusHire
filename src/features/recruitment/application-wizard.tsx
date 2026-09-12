@@ -15,7 +15,6 @@ import {
   LoaderCircle,
   LockKeyhole,
   ShieldCheck,
-  Upload,
   UserRound,
 } from "lucide-react";
 import {
@@ -23,7 +22,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
 } from "react";
 
 import { Alert } from "@/components/ui/feedback";
@@ -32,7 +30,7 @@ import {
   clearIdempotencyKey,
   getOrCreateIdempotencyKey,
 } from "@/lib/idempotency";
-import type { ResumeUpload, ResumeVersion } from "@/features/resume/types";
+import type { ResumeVersion } from "@/features/resume/types";
 import type {
   ApplicationDraft,
   ApplicationProfile,
@@ -61,7 +59,7 @@ const stepMeta = [
 ];
 
 type SaveState = "idle" | "saving" | "saved" | "error" | "conflict";
-type ResumeMode = "existing" | "tailor" | "upload";
+type ResumeMode = "existing" | "tailor";
 
 const emptyProfileFields = {
   full_name: "",
@@ -113,8 +111,6 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
   const [tailorContent, setTailorContent] = useState<ResumeContent | null>(null);
   const [tailorSource, setTailorSource] = useState("");
   const [tailoring, setTailoring] = useState(false);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [processingResumeId, setProcessingResumeId] = useState("");
   const [profileFields, setProfileFields] = useState(emptyProfileFields);
   const [profileDirty, setProfileDirty] = useState(false);
   const [answers, setAnswers] = useState<Record<string, DisclosureAnswer>>({});
@@ -130,7 +126,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
   const selectableResumes = useMemo(
     () =>
       resumes.filter(
-        (item) => item.status === "completed" && item.scan_status === "clean",
+        (item) => item.status === "completed" && item.scan_status === "clean" && item.source === "generated",
       ),
     [resumes],
   );
@@ -176,7 +172,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
         setReview(loadedReview);
       }
       const resumeId = loadedDraft.resume?.id ?? loadedResumes.find(
-        (item) => item.status === "completed" && item.scan_status === "clean",
+        (item) => item.status === "completed" && item.scan_status === "clean" && item.source === "generated",
       )?.id ?? "";
       setSelectedResume(resumeId);
       setTailorSource(resumeId);
@@ -296,42 +292,6 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
     return () => window.clearTimeout(pending);
   }, [answers, answersDirty, persistDisclosures, step]);
 
-  useEffect(() => {
-    if (!processingResumeId) return;
-    let active = true;
-    const pending = window.setTimeout(async () => {
-      try {
-        const version = await apiRequest<ResumeVersion>(
-          `/resumes/${processingResumeId}`,
-          { cache: "no-store" },
-        );
-        if (!active) return;
-        setResumes((current) => [
-          version,
-          ...current.filter((item) => item.id !== version.id),
-        ]);
-        if (version.status === "completed" && version.scan_status === "clean") {
-          setProcessingResumeId("");
-          setSelectedResume(version.id);
-          setResumeDirty(true);
-          setMessage("Your uploaded PDF passed safety checks and is ready for this application.");
-        } else if (["failed", "cancelled"].includes(version.status)) {
-          setProcessingResumeId("");
-          setMessage("The uploaded PDF could not be prepared. Choose another PDF or resume version.");
-          setSaveState("error");
-        } else {
-          setProcessingResumeId(version.id);
-        }
-      } catch {
-        if (active) setProcessingResumeId((current) => current);
-      }
-    }, 1500);
-    return () => {
-      active = false;
-      window.clearTimeout(pending);
-    };
-  }, [processingResumeId]);
-
   function chooseResume(id: string) {
     setSelectedResume(id);
     setResumeDirty(true);
@@ -386,41 +346,6 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
     }
   }
 
-  async function uploadResume() {
-    if (!uploadFile) return;
-    if (uploadFile.type !== "application/pdf" || uploadFile.size > 5 * 1024 * 1024) {
-      setSaveState("error");
-      setMessage("Choose a PDF no larger than 5 MB.");
-      return;
-    }
-    setBusy(true);
-    setMessage("");
-    const body = new FormData();
-    body.append("file", uploadFile);
-    try {
-      const uploaded = await csrfRequest<ResumeUpload>("/resumes", {
-        method: "POST",
-        body,
-      });
-      const version = await apiRequest<ResumeVersion>(`/resumes/${uploaded.id}`, {
-        cache: "no-store",
-      });
-      setResumes((current) => [version, ...current.filter((item) => item.id !== version.id)]);
-      if (version.status === "completed" && version.scan_status === "clean") {
-        chooseResume(version.id);
-        setMessage("Your PDF is clean, completed, and selected for this application.");
-      } else {
-        setProcessingResumeId(version.id);
-        setMessage("Your PDF is quarantined while safety checks and parsing finish.");
-      }
-    } catch {
-      setSaveState("error");
-      setMessage("The PDF could not be uploaded. No application changes were made.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   function updateProfileField(field: keyof typeof profileFields, value: string) {
     setProfileFields((current) => ({ ...current, [field]: value }));
     setProfileDirty(true);
@@ -453,7 +378,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
 
   async function continueFromResume() {
     if (!selectedResume) {
-      setMessage("Select, tailor, or upload a completed clean resume before continuing.");
+      setMessage("Select a reviewed CampusHire-generated resume before continuing.");
       setSaveState("error");
       return;
     }
@@ -671,9 +596,8 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
               </div>
               <div className={styles.modeGrid} role="radiogroup" aria-label="Resume method">
                 {([
-                  ["existing", FileCheck2, "Use existing", "Choose a completed, clean PDF."],
+                  ["existing", FileCheck2, "Use generated version", "Choose a reviewed CampusHire PDF."],
                   ["tailor", FilePenLine, "Tailor a copy", "Edit reviewed content without changing the source."],
-                  ["upload", Upload, "Upload PDF", "Run a new PDF through the secure pipeline."],
                 ] as const).map(([value, Icon, title, detail]) => (
                   <label key={value} className={resumeMode === value ? styles.selectedMode : styles.modeCard}>
                     <input
@@ -739,16 +663,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
                 </div>
               ) : null}
 
-              {resumeMode === "upload" ? (
-                <div className={styles.uploadPanel}>
-                  <Upload aria-hidden="true" />
-                  <div><strong>Upload a new PDF</strong><span>PDF only · 5 MB maximum · malware scan and isolated parsing</span></div>
-                  <input type="file" accept="application/pdf,.pdf" aria-label="Choose resume PDF" onChange={(event: ChangeEvent<HTMLInputElement>) => setUploadFile(event.target.files?.[0] ?? null)} />
-                  <button type="button" className={styles.secondaryButton} onClick={() => void uploadResume()} disabled={!uploadFile || busy || Boolean(processingResumeId)}>
-                    {processingResumeId ? "Safety checks running…" : "Upload and process"}
-                  </button>
-                </div>
-              ) : null}
+              <Alert tone="info">Need a new version? Use Resume Studio to build it from reviewed profile evidence, then return here.</Alert>
             </>
           ) : null}
 

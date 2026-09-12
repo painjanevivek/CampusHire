@@ -18,7 +18,7 @@ const documents: Record<DocumentKey, { title: string; introduction: string; summ
   security: { title: "Security at CampusHire", introduction: "Several security checks protect each institution, verified records, active sign-ins, and sensitive placement actions.", summary: "Security and account messages cannot be turned off. CampusHire never asks you to send a password or one-time code to support.", sections: [
     { title: "Identity and sign-ins", body: "Passwords are strongly protected, administrator access requires MFA, every sign-in can be ended, and sensitive bulk actions require a recent identity check." },
     { title: "Keeping institutions separate", body: "CampusHire gets your institution from your secure signed-in session. A value sent by the browser cannot give access to another institution." },
-    { title: "Files and AI limits", body: "Uploads are checked for file type, size, and malware. AI suggestions stay separate from official eligibility and application decisions." },
+    { title: "Files and AI limits", body: "Generated resume files remain private and access-controlled. AI suggestions stay separate from official eligibility and application decisions." },
     { title: "Report a concern", body: "Choose Security in the Help center. Share the page and what you saw, but never send passwords, student records, or attack details that contain personal information." },
   ]},
   "acceptable-use": { title: "Acceptable use", introduction: "Clear rules protect students, institutions, and placement records.", summary: "Do not use CampusHire to mislead people, discriminate, copy private records, disrupt the service, or bypass security controls.", sections: [

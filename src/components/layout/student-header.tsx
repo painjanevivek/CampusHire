@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BriefcaseBusiness, ClipboardList, Home, ListChecks, Menu, X } from "lucide-react";
+import { Bot, BriefcaseBusiness, ClipboardList, Home, ListChecks, Menu, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ProfileMenu } from "./profile-menu";
@@ -11,15 +11,16 @@ import { ProfileMenu } from "./profile-menu";
 import styles from "./student-header.module.css";
 
 type WorkspaceSection =
-  "Home" | "Opportunities" | "Applications" | "Preparation";
+  "Home" | "Opportunities" | "Applications" | "Preparation" | "Copilot";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
   { href: "/dashboard", label: "Home" },
   { href: "/opportunities", label: "Opportunities" },
   { href: "/applications", label: "Applications" },
   { href: "/preparation", label: "Preparation" },
+  { href: "/copilot", label: "Copilot" },
 ];
-const navigationIcons = { Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks };
+const navigationIcons = { Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks, Copilot: Bot };
 
 export function StudentHeader() {
   const pathname = usePathname();

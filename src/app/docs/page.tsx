@@ -144,7 +144,7 @@ export default function DocsPage() {
               <h2 id="privacy-title">Your information stays inside clear limits.</h2>
               <ul className={styles.safetyList}>
                 <li><LockKeyhole aria-hidden="true" /><div><strong>Private college spaces</strong><span>Students see only roles shared with their verified college.</span></div></li>
-                <li><ShieldCheck aria-hidden="true" /><div><strong>Protected files</strong><span>Uploads are checked for file type, size, and malware before use.</span></div></li>
+                <li><ShieldCheck aria-hidden="true" /><div><strong>Protected files</strong><span>Generated resume PDFs are private, versioned, and checked for access before use.</span></div></li>
                 <li><UserCheck aria-hidden="true" /><div><strong>You review AI suggestions</strong><span>CampusHire cannot add resume claims without student approval.</span></div></li>
               </ul>
               <Link className={styles.textLink} href="/privacy">Read about privacy and AI <ArrowRight size={16} aria-hidden="true" /></Link>

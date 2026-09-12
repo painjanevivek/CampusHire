@@ -34,6 +34,7 @@ const resume = {
   scan_status: "clean",
   created_at: "2026-09-03T10:00:00Z",
   parent_version_id: null,
+  source: "generated",
 };
 
 const form = {
@@ -128,9 +129,6 @@ describe("ApplicationWizard", () => {
       if (path === "/resumes") return Promise.resolve([resume]);
       if (path === "/profile") return Promise.resolve(profile);
       if (path.endsWith("/editable-content")) return Promise.resolve(editableContent);
-      if (path === "/resumes/upload-1") {
-        return Promise.resolve({ ...resume, id: "upload-1", original_name: "role-upload.pdf" });
-      }
       if (path.endsWith("/review")) {
         return Promise.resolve({
           draft: draftAt("review", 4, { disclosure_completed: true }),
@@ -168,16 +166,6 @@ describe("ApplicationWizard", () => {
           version_number: 3,
           original_name: "campushire-resume-v3.pdf",
           parent_version_id: "resume-1",
-        });
-      }
-      if (path === "/resumes") {
-        return Promise.resolve({
-          id: "upload-1",
-          version_number: 3,
-          status: "queued",
-          scan_status: "quarantined",
-          duplicate: false,
-          job_id: "job-1",
         });
       }
       throw new Error(`Unexpected CSRF request: ${path}`);
@@ -239,23 +227,12 @@ describe("ApplicationWizard", () => {
     );
   });
 
-  it("accepts only a processed clean PDF from the upload path", async () => {
+  it("uses only reviewed CampusHire-generated resume versions", async () => {
     render(<ApplicationWizard roleId="role-1" />);
     await screen.findByRole("heading", { name: "Choose the resume for this role" });
-    fireEvent.click(screen.getByRole("radio", { name: /Upload PDF/ }));
-    const file = new File(["%PDF-1.7"], "role-upload.pdf", {
-      type: "application/pdf",
-    });
-    fireEvent.change(screen.getByLabelText("Choose resume PDF"), {
-      target: { files: [file] },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Upload and process" }));
-
-    expect(await screen.findByText(/clean, completed, and selected/i)).toBeInTheDocument();
-    expect(csrfRequestMock).toHaveBeenCalledWith(
-      "/resumes",
-      expect.objectContaining({ method: "POST", body: expect.any(FormData) }),
-    );
+    expect(screen.getByRole("radio", { name: /Use generated version/ })).toBeChecked();
+    expect(screen.queryByRole("radio", { name: /Upload PDF/ })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Choose resume PDF")).not.toBeInTheDocument();
   });
 
   it("restores the exact review packet when a saved draft resumes on the review step", async () => {
