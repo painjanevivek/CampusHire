@@ -19,15 +19,16 @@ export function EditorialLanding() {
       <header className={styles.header} data-landing-header><div className={styles.headerInner}>
         <div className={styles.brandGroup}><Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark /><strong>CampusHire</strong></Link><Link className={styles.docsLink} href="/docs">Docs</Link></div>
         <nav aria-label="Primary navigation"><a href="#how-it-works">How it works</a><a href="#preview">Product preview</a><a href="#trust">Trust</a><a href="#faq">FAQ</a></nav>
-        <div className={styles.headerActions}><Link href="/sign-up">Sign up</Link><Link href="/sign-in">Student sign in</Link><Link href="/admin/sign-in">T&amp;P access</Link></div>
+        <nav className={styles.headerActions} aria-label="Account access"><Link href="/sign-in">Sign In</Link><Link href="/sign-up">Sign Up</Link><Link href="/admin/sign-in">T&amp;P Access</Link></nav>
       </div></header>
 
       <main id="main-content">
         <section className={styles.hero} aria-labelledby="landing-title" data-landing-hero>
-          <div data-hero-copy><p className={styles.eyebrow}>Your campus placement workspace</p><h1 id="landing-title">Your next step, clearly in view.</h1><p>Prepare. Apply. Track.</p><p>CampusHire connects students and placement teams in one place, with clear requirements and a next step you can act on.</p>
-            <div className={styles.heroActions}><Link href="/sign-up">Sign up <ArrowRight size={18} aria-hidden="true" /></Link><Link href="/sign-in">Student access</Link><Link href="/admin/sign-in">T&amp;P access</Link></div>
-            <small><LockKeyhole size={15} aria-hidden="true" /> Opportunities stay private to verified members of participating colleges.</small>
-            <Link className={styles.invitationLink} href="/sign-up">Student and institution verification</Link>
+          <div className={styles.heroCopy} data-hero-copy><p className={styles.eyebrow}>Your campus placement workspace</p><h1 id="landing-title">Your next step, clearly in view.</h1><p className={styles.heroSequence}>Prepare. Apply. Track.</p><p className={styles.heroDescription}>CampusHire connects students and placement teams in one place, with clear requirements and a next step you can act on.</p>
+            <div className={styles.heroAssurance}>
+              <small><LockKeyhole size={15} aria-hidden="true" /> Opportunities stay private to verified members of participating colleges.</small>
+              <Link className={styles.invitationLink} href="/sign-up">Student and institution verification</Link>
+            </div>
           </div>
           <aside className={styles.heroPreview} aria-label="Illustrative workspace preview" data-hero-card><header><strong>Your placement workspace</strong><span>Illustrative preview</span></header><ul>
             <li><UserCheck aria-hidden="true" /><div><strong>Prepare your profile</strong><span>Review your details and resume.</span></div><BadgeCheck aria-hidden="true" /></li>

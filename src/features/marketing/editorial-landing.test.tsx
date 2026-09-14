@@ -13,11 +13,24 @@ describe("EditorialLanding", () => {
     expect(screen.getAllByRole("link", { name: "Docs" })[0]).toHaveAttribute("href", "/docs");
   });
 
-  it("keeps one profile action and separates eligibility from match", () => {
+  it("orders header access before registration and keeps the hero free of account buttons", () => {
     render(<EditorialLanding />);
 
     expect(screen.getAllByRole("link", { name: "Student and institution verification" })).toHaveLength(1);
-    expect(screen.getAllByRole("link", { name: "Sign up" })).toHaveLength(2);
+    const headerActions = screen.getByLabelText("Account access");
+    const headerLinks = Array.from(headerActions.querySelectorAll("a"));
+    expect(headerLinks.map((link) => link.textContent)).toEqual(["Sign In", "Sign Up", "T&P Access"]);
+    expect(headerLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/sign-in",
+      "/sign-up",
+      "/admin/sign-in",
+    ]);
+    expect(document.querySelector("[data-hero-actions]")).not.toBeInTheDocument();
+  });
+
+  it("separates eligibility from match", () => {
+    render(<EditorialLanding />);
+
     expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
     expect(screen.getByText("A match score never decides whether you can apply.")).toBeInTheDocument();
