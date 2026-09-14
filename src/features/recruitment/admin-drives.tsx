@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import {
   BadgeCheck,
   CalendarClock,
@@ -509,15 +510,22 @@ export function AdminDrives() {
             decision basis.
           </span>
         </div>
-        <button
-          type="button"
-          className={styles.primary}
-          disabled={!companies.length}
-          onClick={() => setPanel("drive")}
-        >
-          <Plus aria-hidden="true" />
-          Create drive
-        </button>
+        <div className={styles.headerActions}>
+          {activeDrive ? (
+            <Link className={styles.primary} href={`/admin/copilot?drive=${activeDrive.id}`}>
+              <FileSearch aria-hidden="true" /> Prepare drive for review
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            className={styles.primary}
+            disabled={!companies.length}
+            onClick={() => setPanel("drive")}
+          >
+            <Plus aria-hidden="true" />
+            Create drive
+          </button>
+        </div>
       </header>
       {error && (
         <Alert tone="error">

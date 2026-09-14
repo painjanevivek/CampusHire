@@ -374,6 +374,11 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
               The submitted snapshot cannot be changed by later profile edits.
             </Alert>
           ) : null}
+          <nav className={styles.aiActions} aria-label="Opportunity preparation actions">
+            <Link href={`/preparation?role=${roleId}`}>Explain requirements</Link>
+            <Link href={`/copilot?role=${roleId}`}>Prepare for this role</Link>
+            <Link href={`/resume/studio?role=${roleId}`}>Tailor my resume</Link>
+          </nav>
           {!opportunity.application_status ? (
             <label className={styles.resumeSelect}>
               <span>

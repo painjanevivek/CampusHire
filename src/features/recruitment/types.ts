@@ -234,6 +234,7 @@ export type Drive = DriveEditableFields & {
   role_count: number;
   pending_changes: Partial<DriveEditableFields>;
   has_pending_changes: boolean;
+  revision: number;
 };
 
 export type PlacementRole = Omit<

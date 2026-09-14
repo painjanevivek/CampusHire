@@ -54,7 +54,17 @@ export function InvitationActivationForm({ token }: { token: string }) {
     <form className="authForm" onSubmit={submit}>
       {error ? <Alert tone="error">{error}</Alert> : null}
       <Alert tone="success"><strong>Verified invitation</strong><br />{invitation?.email}</Alert>
-      <Input id="password" name="password" type="password" label="Create password" autoComplete="new-password" minLength={12} maxLength={128} required hint="Use 12 or more characters. Passphrases work well." />
+      <Input
+        id="password"
+        name="password"
+        type="password"
+        label={invitation?.student_signup_ready ? "Confirm password" : "Create password"}
+        autoComplete={invitation?.student_signup_ready ? "current-password" : "new-password"}
+        minLength={12}
+        maxLength={128}
+        required
+        hint={invitation?.student_signup_ready ? "Enter the password used during sign-up." : "Use 12 or more characters. Passphrases work well."}
+      />
       <label><input name="accept" type="checkbox" required /> I accept the current Terms and Privacy Notice.</label>
       <Button type="submit" disabled={status === "submitting"}>{status === "submitting" ? "Activating…" : "Activate account"}</Button>
     </form>

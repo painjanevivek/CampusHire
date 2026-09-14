@@ -67,6 +67,97 @@ export type AdminIdentityStep = {
 };
 
 /**
+ * AgentEventResponse
+ */
+export type AgentEventResponse = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Event Type
+     */
+    event_type: string;
+    /**
+     * Metadata
+     */
+    metadata: {
+        [key: string]: unknown;
+    };
+    /**
+     * Sequence
+     */
+    sequence: number;
+    /**
+     * Summary
+     */
+    summary: string;
+};
+
+/**
+ * AgentRunResponse
+ */
+export type AgentRunResponse = {
+    /**
+     * Artifact
+     */
+    artifact: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Audience
+     */
+    audience: 'student' | 'tnp';
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    limits: RunLimits;
+    /**
+     * Required Action
+     */
+    required_action: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Safe Error
+     */
+    safe_error: string | null;
+    /**
+     * Source Fingerprint
+     */
+    source_fingerprint: string | null;
+    /**
+     * Status
+     */
+    status: 'queued' | 'running' | 'awaiting_input' | 'awaiting_review' | 'completed' | 'failed' | 'cancelled' | 'expired';
+    /**
+     * Target Id
+     */
+    target_id: string;
+    /**
+     * Target Kind
+     */
+    target_kind: 'role' | 'drive';
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Workflow
+     */
+    workflow: 'prepare_opportunity' | 'prepare_drive';
+};
+
+/**
  * ApplicationAppealCreate
  */
 export type ApplicationAppealCreate = {
@@ -592,6 +683,112 @@ export type ApplicationWithdrawal = {
      * Reason
      */
     reason: string;
+};
+
+/**
+ * ArtifactApply
+ */
+export type ArtifactApply = {
+    /**
+     * Expected Drive Revision
+     */
+    expected_drive_revision: number;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Fields
+     */
+    fields: Array<'title' | 'description' | 'location' | 'work_mode' | 'opens_at' | 'deadline_at'>;
+};
+
+/**
+ * ArtifactDecision
+ */
+export type ArtifactDecision = {
+    /**
+     * Decision
+     */
+    decision: 'accept' | 'reject';
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * ArtifactEdit
+ */
+export type ArtifactEdit = {
+    /**
+     * Content
+     */
+    content: {
+        [key: string]: unknown;
+    };
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * ArtifactResponse
+ */
+export type ArtifactResponse = {
+    /**
+     * Content
+     */
+    content: {
+        [key: string]: unknown;
+    };
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Evidence References
+     */
+    evidence_references: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Kind
+     */
+    kind: 'preparation_plan' | 'drive_preparation';
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Run Id
+     */
+    run_id: string;
+    /**
+     * Source Fingerprint
+     */
+    source_fingerprint: string;
+    /**
+     * Source Target Revision
+     */
+    source_target_revision?: number | null;
+    /**
+     * Status
+     */
+    status: 'draft' | 'accepted' | 'rejected' | 'applied';
+    /**
+     * Target Id
+     */
+    target_id: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
 };
 
 /**
@@ -1576,6 +1773,10 @@ export type DriveResponse = {
      */
     published_at: string | null;
     /**
+     * Revision
+     */
+    revision?: number;
+    /**
      * Role Count
      */
     role_count?: number;
@@ -1864,6 +2065,24 @@ export type EmailDeliveryResponse = {
 };
 
 /**
+ * EscoSkill
+ */
+export type EscoSkill = {
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Preferred Label
+     */
+    preferred_label: string;
+    /**
+     * Uri
+     */
+    uri: string;
+};
+
+/**
  * EvidenceReference
  */
 export type EvidenceReference = {
@@ -2107,6 +2326,10 @@ export type IdentityUpdate = {
      * Country Code
      */
     country_code?: string | null;
+    /**
+     * Date Of Birth
+     */
+    date_of_birth?: string | null;
     /**
      * Department
      */
@@ -2437,6 +2660,10 @@ export type InvitationResponse = {
      * Role
      */
     role: string;
+    /**
+     * Student Signup Ready
+     */
+    student_signup_ready?: boolean;
 };
 
 /**
@@ -3237,6 +3464,46 @@ export type PolicySectionInput = {
 };
 
 /**
+ * PracticeConsentResponse
+ */
+export type PracticeConsentResponse = {
+    /**
+     * Consent Version
+     */
+    consent_version: string;
+    /**
+     * Granted At
+     */
+    granted_at: string | null;
+    /**
+     * Opted In
+     */
+    opted_in: boolean;
+    /**
+     * Purpose
+     */
+    purpose: 'practice_aggregates';
+    /**
+     * Revoked At
+     */
+    revoked_at: string | null;
+};
+
+/**
+ * PracticeConsentUpdate
+ */
+export type PracticeConsentUpdate = {
+    /**
+     * Consent Version
+     */
+    consent_version: string;
+    /**
+     * Opted In
+     */
+    opted_in: boolean;
+};
+
+/**
  * PreferencesUpdate
  */
 export type PreferencesUpdate = {
@@ -3361,6 +3628,10 @@ export type ProfileResponse = {
      */
     country_code: string | null;
     /**
+     * Date Of Birth
+     */
+    date_of_birth: string | null;
+    /**
      * Department
      */
     department: string | null;
@@ -3448,6 +3719,10 @@ export type ProfileUpdate = {
      * Country Code
      */
     country_code?: string | null;
+    /**
+     * Date Of Birth
+     */
+    date_of_birth?: string | null;
     /**
      * Department
      */
@@ -4774,6 +5049,64 @@ export type RuleSetResponse = {
 };
 
 /**
+ * RunCancel
+ */
+export type RunCancel = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
+ * RunLimits
+ */
+export type RunLimits = {
+    /**
+     * Active Seconds Remaining
+     */
+    active_seconds_remaining: number;
+    /**
+     * Actual Cost Microunits
+     */
+    actual_cost_microunits: number;
+    /**
+     * Correction Attempts Remaining
+     */
+    correction_attempts_remaining: number;
+    /**
+     * Model Calls Remaining
+     */
+    model_calls_remaining: number;
+    /**
+     * Reserved Cost Microunits
+     */
+    reserved_cost_microunits: number;
+    /**
+     * Tool Calls Remaining
+     */
+    tool_calls_remaining: number;
+};
+
+/**
+ * RunResume
+ */
+export type RunResume = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Interrupt Id
+     */
+    interrupt_id: string;
+    /**
+     * Response
+     */
+    response: string;
+};
+
+/**
  * SaveResponse
  */
 export type SaveResponse = {
@@ -4953,6 +5286,10 @@ export type SignInResponse = {
  */
 export type SignupRequest = {
     /**
+     * Dob
+     */
+    dob: string;
+    /**
      * Email
      */
     email: string;
@@ -4960,6 +5297,22 @@ export type SignupRequest = {
      * Invitation Code
      */
     invitation_code?: string | null;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Re Enter Password
+     */
+    re_enter_password: string;
+    /**
+     * Surname
+     */
+    surname: string;
 };
 
 /**
@@ -4992,6 +5345,98 @@ export type SkillsUpdate = {
      * Skills
      */
     skills: Array<SkillItem>;
+};
+
+/**
+ * SourceReview
+ */
+export type SourceReview = {
+    /**
+     * Decision
+     */
+    decision: 'approve' | 'reject';
+    /**
+     * Expected Version
+     */
+    expected_version: number;
+};
+
+/**
+ * SourceVersionCreate
+ */
+export type SourceVersionCreate = {
+    /**
+     * Canonical Url
+     */
+    canonical_url: string;
+    /**
+     * Permitted Use
+     */
+    permitted_use: string;
+    /**
+     * Source Type
+     */
+    source_type: 'nptel' | 'swayam' | 'official_career_page' | 'faculty_resource';
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
+ * SourceVersionResponse
+ */
+export type SourceVersionResponse = {
+    /**
+     * Access Scope
+     */
+    access_scope: string;
+    /**
+     * Active
+     */
+    active: boolean;
+    /**
+     * Canonical Url
+     */
+    canonical_url: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Last Verified At
+     */
+    last_verified_at: string | null;
+    /**
+     * Metadata
+     */
+    metadata: {
+        [key: string]: unknown;
+    };
+    /**
+     * Permitted Use
+     */
+    permitted_use: string;
+    /**
+     * Review Status
+     */
+    review_status: string;
+    /**
+     * Safe Error
+     */
+    safe_error: string | null;
+    /**
+     * Source Type
+     */
+    source_type: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Version
+     */
+    version: number;
 };
 
 /**
@@ -5174,6 +5619,32 @@ export type StudentOnboardingUpdate = {
 };
 
 /**
+ * StudentRunCreate
+ */
+export type StudentRunCreate = {
+    /**
+     * Available Minutes Per Week
+     */
+    available_minutes_per_week: number;
+    /**
+     * Existing Plan Id
+     */
+    existing_plan_id?: string | null;
+    /**
+     * Goal
+     */
+    goal: string;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Target Date
+     */
+    target_date: string;
+};
+
+/**
  * SuggestionBatchItem
  */
 export type SuggestionBatchItem = {
@@ -5282,6 +5753,28 @@ export type TnpMessageCreate = {
      * Message
      */
     message: string;
+};
+
+/**
+ * TnpRunCreate
+ */
+export type TnpRunCreate = {
+    /**
+     * Drive Id
+     */
+    drive_id: string;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Recruiter Brief
+     */
+    recruiter_brief?: string | null;
+    /**
+     * Source Version Ids
+     */
+    source_version_ids?: Array<string>;
 };
 
 /**
@@ -7285,6 +7778,96 @@ export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersio
 
 export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponse = CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses[keyof CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses];
 
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetError = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors];
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponse = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses];
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutData = {
+    body: ArtifactEdit;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutError = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors];
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponse = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses];
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostData = {
+    body: ArtifactDecision;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}/decision';
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostError = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors];
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponse = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses];
+
 export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetData = {
     body?: never;
     path?: never;
@@ -7424,6 +8007,396 @@ export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMe
 };
 
 export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponse = SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses[keyof SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses];
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/practice-consent';
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetError = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors];
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PracticeConsentResponse;
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponse = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses];
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutData = {
+    body: PracticeConsentUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/practice-consent';
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutError = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors];
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: PracticeConsentResponse;
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponse = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses];
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Target Id
+         */
+        target_id?: string | null;
+    };
+    url: '/api/v1/ai/student-copilot/runs';
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetError = GetStudentRunsApiV1AiStudentCopilotRunsGetErrors[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetErrors];
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponses = {
+    /**
+     * Response Get Student Runs Api V1 Ai Student Copilot Runs Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentRunResponse>;
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponse = GetStudentRunsApiV1AiStudentCopilotRunsGetResponses[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetResponses];
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostData = {
+    body: StudentRunCreate;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs';
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostError = StartStudentRunApiV1AiStudentCopilotRunsPostErrors[keyof StartStudentRunApiV1AiStudentCopilotRunsPostErrors];
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: AgentRunResponse;
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostResponse = StartStudentRunApiV1AiStudentCopilotRunsPostResponses[keyof StartStudentRunApiV1AiStudentCopilotRunsPostResponses];
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}';
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteError = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors];
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponse = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses];
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}';
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetError = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors];
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponse = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses];
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostData = {
+    body: RunCancel;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/cancel';
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostError = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors];
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponse = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses];
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: {
+        /**
+         * After
+         */
+        after?: number;
+    };
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/events';
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetError = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors];
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses = {
+    /**
+     * Response Get Student Run Events Api V1 Ai Student Copilot Runs  Run Id  Events Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentEventResponse>;
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponse = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses];
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostData = {
+    body: RunResume;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/resume';
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostError = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors];
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponse = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses];
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetError = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors];
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponse = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses];
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutData = {
+    body: ArtifactEdit;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutError = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors];
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponse = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses];
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostData = {
+    body: ArtifactApply;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/apply';
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostError = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors];
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponse = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses];
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostData = {
+    body: ArtifactDecision;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/decision';
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostError = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors];
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponse = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses];
 
 export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetData = {
     body?: never;
@@ -7654,6 +8627,310 @@ export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostRes
 };
 
 export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponse = ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses[keyof ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses];
+
+export type GetTnpRunsApiV1AiTnpCopilotRunsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Target Id
+         */
+        target_id?: string | null;
+    };
+    url: '/api/v1/ai/tnp-copilot/runs';
+};
+
+export type GetTnpRunsApiV1AiTnpCopilotRunsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpRunsApiV1AiTnpCopilotRunsGetError = GetTnpRunsApiV1AiTnpCopilotRunsGetErrors[keyof GetTnpRunsApiV1AiTnpCopilotRunsGetErrors];
+
+export type GetTnpRunsApiV1AiTnpCopilotRunsGetResponses = {
+    /**
+     * Response Get Tnp Runs Api V1 Ai Tnp Copilot Runs Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentRunResponse>;
+};
+
+export type GetTnpRunsApiV1AiTnpCopilotRunsGetResponse = GetTnpRunsApiV1AiTnpCopilotRunsGetResponses[keyof GetTnpRunsApiV1AiTnpCopilotRunsGetResponses];
+
+export type StartTnpRunApiV1AiTnpCopilotRunsPostData = {
+    body: TnpRunCreate;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/runs';
+};
+
+export type StartTnpRunApiV1AiTnpCopilotRunsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartTnpRunApiV1AiTnpCopilotRunsPostError = StartTnpRunApiV1AiTnpCopilotRunsPostErrors[keyof StartTnpRunApiV1AiTnpCopilotRunsPostErrors];
+
+export type StartTnpRunApiV1AiTnpCopilotRunsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: AgentRunResponse;
+};
+
+export type StartTnpRunApiV1AiTnpCopilotRunsPostResponse = StartTnpRunApiV1AiTnpCopilotRunsPostResponses[keyof StartTnpRunApiV1AiTnpCopilotRunsPostResponses];
+
+export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/runs/{run_id}';
+};
+
+export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetError = GetTnpRunApiV1AiTnpCopilotRunsRunIdGetErrors[keyof GetTnpRunApiV1AiTnpCopilotRunsRunIdGetErrors];
+
+export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponse = GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses[keyof GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses];
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostData = {
+    body: RunCancel;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/runs/{run_id}/cancel';
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostError = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors];
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponse = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses];
+
+export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: {
+        /**
+         * After
+         */
+        after?: number;
+    };
+    url: '/api/v1/ai/tnp-copilot/runs/{run_id}/events';
+};
+
+export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetError = GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetErrors[keyof GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetErrors];
+
+export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetResponses = {
+    /**
+     * Response Get Tnp Run Events Api V1 Ai Tnp Copilot Runs  Run Id  Events Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentEventResponse>;
+};
+
+export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetResponse = GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetResponses[keyof GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetResponses];
+
+export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostData = {
+    body: RunResume;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/runs/{run_id}/resume';
+};
+
+export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostError = ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostErrors[keyof ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostErrors];
+
+export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponse = ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses[keyof ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses];
+
+export type GetSourcesApiV1AiTnpCopilotSourcesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/sources';
+};
+
+export type GetSourcesApiV1AiTnpCopilotSourcesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSourcesApiV1AiTnpCopilotSourcesGetError = GetSourcesApiV1AiTnpCopilotSourcesGetErrors[keyof GetSourcesApiV1AiTnpCopilotSourcesGetErrors];
+
+export type GetSourcesApiV1AiTnpCopilotSourcesGetResponses = {
+    /**
+     * Response Get Sources Api V1 Ai Tnp Copilot Sources Get
+     *
+     * Successful Response
+     */
+    200: Array<SourceVersionResponse>;
+};
+
+export type GetSourcesApiV1AiTnpCopilotSourcesGetResponse = GetSourcesApiV1AiTnpCopilotSourcesGetResponses[keyof GetSourcesApiV1AiTnpCopilotSourcesGetResponses];
+
+export type CreateSourceApiV1AiTnpCopilotSourcesPostData = {
+    body: SourceVersionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/sources';
+};
+
+export type CreateSourceApiV1AiTnpCopilotSourcesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateSourceApiV1AiTnpCopilotSourcesPostError = CreateSourceApiV1AiTnpCopilotSourcesPostErrors[keyof CreateSourceApiV1AiTnpCopilotSourcesPostErrors];
+
+export type CreateSourceApiV1AiTnpCopilotSourcesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SourceVersionResponse;
+};
+
+export type CreateSourceApiV1AiTnpCopilotSourcesPostResponse = CreateSourceApiV1AiTnpCopilotSourcesPostResponses[keyof CreateSourceApiV1AiTnpCopilotSourcesPostResponses];
+
+export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Term
+         */
+        term: string;
+    };
+    url: '/api/v1/ai/tnp-copilot/sources/esco';
+};
+
+export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetError = SearchEscoApiV1AiTnpCopilotSourcesEscoGetErrors[keyof SearchEscoApiV1AiTnpCopilotSourcesEscoGetErrors];
+
+export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses = {
+    /**
+     * Response Search Esco Api V1 Ai Tnp Copilot Sources Esco Get
+     *
+     * Successful Response
+     */
+    200: Array<EscoSkill>;
+};
+
+export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponse = SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses[keyof SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses];
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostData = {
+    body: SourceReview;
+    path: {
+        /**
+         * Source Id
+         */
+        source_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/sources/{source_id}/review';
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostError = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors];
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SourceVersionResponse;
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponse = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses];
 
 export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteData = {
     body?: never;

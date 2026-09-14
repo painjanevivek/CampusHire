@@ -9,6 +9,8 @@ type AuthShellProps = {
   children: ReactNode;
   footer: ReactNode;
   context?: "student" | "admin";
+  aside?: ReactNode;
+  asideLabel?: string;
 };
 
 const principles = {
@@ -24,7 +26,16 @@ const principles = {
   },
 } as const;
 
-export function AuthShell({ eyebrow, title, description, children, footer, context = "student" }: AuthShellProps) {
+export function AuthShell({
+  eyebrow,
+  title,
+  description,
+  children,
+  footer,
+  context = "student",
+  aside,
+  asideLabel = "CampusHire principles",
+}: AuthShellProps) {
   const promise = principles[context];
 
   return (
@@ -48,10 +59,14 @@ export function AuthShell({ eyebrow, title, description, children, footer, conte
           <p className="authFooter">{footer}</p>
         </section>
 
-        <aside className="authPromise" aria-label="CampusHire principles">
-          <p className="pathLabel">{promise.label}</p>
-          <blockquote>{promise.statement}</blockquote>
-          <p>{promise.detail}</p>
+        <aside className="authPromise" aria-label={asideLabel}>
+          {aside ?? (
+            <>
+              <p className="pathLabel">{promise.label}</p>
+              <blockquote>{promise.statement}</blockquote>
+              <p>{promise.detail}</p>
+            </>
+          )}
         </aside>
       </main>
     </div>
