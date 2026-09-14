@@ -11,6 +11,7 @@ type AuthShellProps = {
   context?: "student" | "admin";
   aside?: ReactNode;
   asideLabel?: string;
+  centered?: boolean;
 };
 
 const principles = {
@@ -35,6 +36,7 @@ export function AuthShell({
   context = "student",
   aside,
   asideLabel = "CampusHire principles",
+  centered = false,
 }: AuthShellProps) {
   const promise = principles[context];
 
@@ -48,7 +50,7 @@ export function AuthShell({
         <Link className="authJobsLink" href="/#how-it-works">How it works</Link>
       </header>
 
-      <main id="main-content" className="authPage">
+      <main id="main-content" className={`authPage${centered ? " authPage--centered" : ""}`}>
         <section className="authPanel" aria-labelledby="auth-title">
           <div>
             <p className="eyebrow">{eyebrow}</p>
@@ -59,15 +61,17 @@ export function AuthShell({
           <p className="authFooter">{footer}</p>
         </section>
 
-        <aside className="authPromise" aria-label={asideLabel}>
-          {aside ?? (
-            <>
-              <p className="pathLabel">{promise.label}</p>
-              <blockquote>{promise.statement}</blockquote>
-              <p>{promise.detail}</p>
-            </>
-          )}
-        </aside>
+        {centered ? null : (
+          <aside className="authPromise" aria-label={asideLabel}>
+            {aside ?? (
+              <>
+                <p className="pathLabel">{promise.label}</p>
+                <blockquote>{promise.statement}</blockquote>
+                <p>{promise.detail}</p>
+              </>
+            )}
+          </aside>
+        )}
       </main>
     </div>
   );

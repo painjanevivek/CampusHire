@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import SignUpPage from "./page";
@@ -8,14 +8,14 @@ vi.mock("@/features/auth/sign-up-form", () => ({
 }));
 
 describe("SignUpPage", () => {
-  it("places the seven follow-up information steps after the student form", () => {
+  it("centers the student form without the written follow-up panel", () => {
     render(<SignUpPage />);
 
     const form = screen.getByRole("form", { name: "Student sign-up form" });
-    const journey = screen.getByRole("complementary", {
-      name: "Information collected after sign-up",
-    });
-    expect(form.compareDocumentPosition(journey) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(within(journey).getAllByRole("listitem")).toHaveLength(7);
+    expect(form).toBeInTheDocument();
+    expect(screen.getByRole("main")).toHaveClass("authPage--centered");
+    expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
+    expect(screen.queryByText("What comes next")).not.toBeInTheDocument();
+    expect(screen.queryByText(/verify your email/i)).not.toBeInTheDocument();
   });
 });

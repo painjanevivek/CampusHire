@@ -134,11 +134,15 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .authJobsLink { color: var(--brand-blue); font-weight: var(--font-weight-label); text-decoration: none; }
 .authJobsLink:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
 .authPage { width: min(calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)), var(--layout-auth-max)); display: grid; grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr); align-content: start; gap: clamp(2.5rem, 6vw, 5.5rem); margin: 0 auto; padding: clamp(2rem, 5vh, 3.5rem) 0; }
+.authPage--centered { grid-template-columns: minmax(0, 32rem); justify-content: center; }
 .authPanel { display: grid; gap: 1.35rem; padding: clamp(1.5rem, 4vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
 .authPanel h1 { max-width: 22ch; margin-bottom: 0.75rem; font-size: clamp(1.75rem, 3vw, 2.125rem); line-height: 1.2; letter-spacing: -.035em; }
 .authPanel .lede { font-size: .9375rem; margin-bottom: .5rem; }
 .authForm { display: grid; gap: 1rem; }
 .studentSignUpForm { gap: 1.1rem; }
+.signUpConsent { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: .6rem; margin: 0; color: var(--ink-muted); font-size: .78rem; line-height: 1.55; }
+.signUpConsent input { width: 1rem; height: 1rem; margin: .2rem 0 0; accent-color: var(--brand-blue); }
+.signUpConsent a { color: var(--brand-blue-dark); }
 .signUpFieldPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .roleChoice { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .roleChoice label { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: .65rem; padding: .9rem; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
@@ -159,15 +163,6 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .authPromise::before { position: absolute; inset: 2rem auto 2rem -2px; width: 3px; border-radius: 999px; background: var(--brand-blue); content: ""; }
 .authPromise blockquote { margin: 0 0 1.5rem; max-width: 26ch; font-size: clamp(1.35rem, 2.5vw, 1.9rem); font-weight: var(--font-weight-medium); line-height: 1.25; letter-spacing: -0.035em; }
 .authPromise > p:last-child { color: var(--ink-muted); }
-.signUpJourney { display: grid; gap: 1rem; }
-.signUpJourney h2 { max-width: 18ch; margin: 0; font-size: clamp(1.55rem, 2.5vw, 2rem); line-height: 1.15; letter-spacing: -0.035em; }
-.signUpJourneyIntro { max-width: 34rem; margin: 0; color: var(--ink-muted); }
-.signUpJourney ol { display: grid; margin: .5rem 0 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
-.signUpJourney li { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: .8rem; padding: .85rem 0; border-bottom: 1px solid var(--line); }
-.signUpJourney li > span { color: var(--brand-blue); font-family: var(--font-mono), monospace; font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .08em; }
-.signUpJourney li div { display: grid; gap: .1rem; }
-.signUpJourney li strong { line-height: 1.3; }
-.signUpJourney li small { color: var(--ink-muted); line-height: 1.45; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 .listingPage { max-width: 78rem; min-height: 100svh; margin: auto; padding: clamp(2rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem); }
 .listingPage > header { max-width: 50rem; margin-bottom: 2rem; }

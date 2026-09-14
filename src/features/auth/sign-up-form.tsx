@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
@@ -9,8 +11,8 @@ import { ApiError, csrfRequest } from "@/lib/api/client";
 import type { RegistrationStartResponse } from "@/lib/api/generated/types.gen";
 
 export function SignUpForm() {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -22,7 +24,6 @@ export function SignUpForm() {
     const repeatedPassword = String(data.get("re_enter_password") ?? "");
 
     setError("");
-    setMessage("");
     setPasswordError("");
 
     if (!form.checkValidity()) {
@@ -45,14 +46,15 @@ export function SignUpForm() {
           email: data.get("email"),
           password,
           re_enter_password: repeatedPassword,
+          terms_version: "2026-08-28",
+          privacy_version: "2026-08-28",
         }),
       });
       if (result.next_path) {
-        window.location.assign(result.next_path);
+        router.push(result.next_path);
         return;
       }
-      setMessage(result.message);
-      form.reset();
+      setError(result.message);
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Registration could not be started.");
     } finally {
@@ -63,7 +65,6 @@ export function SignUpForm() {
   return (
     <form className="authForm studentSignUpForm" onSubmit={submit}>
       {error ? <Alert tone="error">{error}</Alert> : null}
-      {message ? <Alert tone="success">{message}</Alert> : null}
 
       <div className="signUpFieldPair">
         <Input
@@ -114,6 +115,10 @@ export function SignUpForm() {
         />
       </div>
 
+      <label className="signUpConsent">
+        <input name="accept" type="checkbox" required />
+        <span>I accept the <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Notice</Link>.</span>
+      </label>
       <Button type="submit" disabled={busy} aria-busy={busy}>
         Sign Up
       </Button>

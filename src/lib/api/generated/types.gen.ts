@@ -4038,7 +4038,7 @@ export type RegistrationStartResponse = {
     /**
      * Status
      */
-    status: 'verification_sent' | 'continue_activation';
+    status: 'registered' | 'registration_unavailable';
 };
 
 /**
@@ -5306,6 +5306,10 @@ export type SignupRequest = {
      */
     password: string;
     /**
+     * Privacy Version
+     */
+    privacy_version: string;
+    /**
      * Re Enter Password
      */
     re_enter_password: string;
@@ -5313,6 +5317,10 @@ export type SignupRequest = {
      * Surname
      */
     surname: string;
+    /**
+     * Terms Version
+     */
+    terms_version: string;
 };
 
 /**
@@ -9913,7 +9921,7 @@ export type SignupApiV1AuthSignupPostResponses = {
     /**
      * Successful Response
      */
-    202: RegistrationStartResponse;
+    201: RegistrationStartResponse;
 };
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
