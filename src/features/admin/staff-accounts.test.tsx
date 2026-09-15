@@ -77,4 +77,25 @@ describe("StaffAccounts", () => {
     expect(await screen.findByText("Admin access required")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Create T&P account" })).not.toBeInTheDocument();
   });
+
+  it("keeps a single professional account action menu open", async () => {
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/auth/me") return Promise.resolve({ id: "owner-1", institution_id: "institution-1", role: "tnp_owner" });
+      if (path.includes("role=tnp_admin")) return Promise.resolve({ items: [
+        { id: "membership-1", username: "placement.one", role: "tnp_admin", status: "active" },
+        { id: "membership-2", username: "placement.two", role: "tnp_admin", status: "active" },
+      ], page: 1, page_size: 100, total: 2 });
+      if (path.includes("/memberships?role=")) return Promise.resolve({ items: [], page: 1, page_size: 100, total: 0 });
+      return Promise.reject(new Error(`Unexpected path ${path}`));
+    });
+
+    render(<StaffAccounts />);
+    const actions = await screen.findAllByRole("button", { name: "Action" });
+    fireEvent.click(actions[0]);
+    expect(screen.getByRole("form", { name: "Actions for placement.one" })).toBeInTheDocument();
+
+    fireEvent.click(actions[1]);
+    expect(screen.queryByRole("form", { name: "Actions for placement.one" })).not.toBeInTheDocument();
+    expect(screen.getByRole("form", { name: "Actions for placement.two" })).toBeInTheDocument();
+  });
 });

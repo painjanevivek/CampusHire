@@ -1,5 +1,5 @@
-import { AdminStudents } from "@/features/admin/admin-students";
+import { redirect } from "next/navigation";
 
 export default function StudentsPage() {
-  return <AdminStudents />;
+  redirect("/admin/institutions");
 }

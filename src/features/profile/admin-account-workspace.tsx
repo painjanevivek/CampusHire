@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { BellRing, Building2, KeyRound, RotateCcwKey, ShieldCheck, UserRoundCog } from "lucide-react";
+import { BellRing, Building2, KeyRound, ShieldCheck, UserRoundCog } from "lucide-react";
 
 import type { SessionUser } from "@/lib/auth/server-session";
 import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
-import { MfaResetControl } from "./mfa-reset-control";
+import { MfaStatusControl } from "./mfa-status-control";
 import { SessionManagement } from "./session-management";
 import styles from "./profile-workspace.module.css";
 
 const roleLabels: Record<string, string> = {
+  platform_admin: "Platform Admin",
   tnp_owner: "T&P owner",
   tnp_admin: "T&P administrator",
   tnp_reviewer: "T&P reviewer",
@@ -18,6 +19,7 @@ const roleLabels: Record<string, string> = {
 };
 
 export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
+  const isPlatformAdmin = user.role === "platform_admin";
   const roleLabel = roleLabels[user.role] ?? user.role.replaceAll("_", " ");
   const membershipLabel = user.membership_status
     ? user.membership_status[0].toUpperCase() + user.membership_status.slice(1)
@@ -27,17 +29,17 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
         <p>Profile and account</p>
-        <h1>Your T&P access, clearly assigned.</h1>
-        <span>Review the institution and role connected to this account, then open security or communication controls when needed.</span>
+        <h1>{isPlatformAdmin ? "Your platform authority, clearly assigned." : "Your T&P access, clearly assigned."}</h1>
+        <span>{isPlatformAdmin ? "Review the singleton platform assignment, then open security or communication controls when needed." : "Review the institution and role connected to this account, then open security or communication controls when needed."}</span>
       </header>
 
       <section className={`${styles.overview} ${styles.adminOverview}`} aria-labelledby="admin-account-title">
         <article className={styles.identityCard}>
           <div className={styles.identityIcon}><UserRoundCog aria-hidden="true" /></div>
-          <div className={styles.identityStatus}><ShieldCheck aria-hidden="true" /> Institution-assigned access</div>
+          <div className={styles.identityStatus}><ShieldCheck aria-hidden="true" /> {isPlatformAdmin ? "Platform-assigned authority" : "Institution-assigned access"}</div>
           <h2 id="admin-account-title">{user.email}</h2>
           <p>{roleLabel}</p>
-          <span className={styles.assignedNote}>Role and institution changes require an authorised institutional administrator.</span>
+          <span className={styles.assignedNote}>{isPlatformAdmin ? "Authority transfers require an explicit, audited operational action." : "Role and institution changes require the CampusHire Platform Admin."}</span>
         </article>
 
         <article className={styles.accountRecord}>
@@ -45,8 +47,8 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
           <dl>
             <div><dt>Email</dt><dd>{user.email}</dd></div>
             <div><dt>Access</dt><dd>{roleLabel}</dd></div>
-            <div><dt>Membership</dt><dd><span className={styles.activeRecord}>{membershipLabel}</span></dd></div>
-            <div><dt>Institution ID</dt><dd className={styles.identifier}>{user.institution_id ?? "Not assigned"}</dd></div>
+            <div><dt>Membership</dt><dd><span className={styles.activeRecord}>{isPlatformAdmin ? "Platform-wide" : membershipLabel}</span></dd></div>
+            <div><dt>Institution</dt><dd className={styles.identifier}>{user.institution_id ?? "No institutional membership"}</dd></div>
           </dl>
         </article>
       </section>
@@ -62,21 +64,20 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
             icon={KeyRound}
             eyebrow="Security"
             title="Active sessions"
-            description="Review administrator sessions and end access on devices you no longer use."
+            description="Review active sessions and end access on devices you no longer use."
             status="On demand"
           >
-            <SessionManagement destination="/admin/sign-in" />
+            <SessionManagement destination={isPlatformAdmin ? "/admin/sign-in" : "/tnp/sign-in"} />
           </AccountDisclosure>
 
           <AccountDisclosure
-            icon={RotateCcwKey}
+            icon={ShieldCheck}
             eyebrow="Security"
-            title="Reset authenticator"
-            description="Replace a lost or changing authenticator after verifying both account factors."
-            status="Reverification required"
-            tone="danger"
+            title="Authenticator sign-in"
+            description={`MFA is optional until you enable it. Once enrolled, it is required on every future ${isPlatformAdmin ? "Platform Admin" : "T&P"} sign-in.`}
+            status="Account setting"
           >
-            <MfaResetControl />
+            <MfaStatusControl />
           </AccountDisclosure>
 
           <AccountDisclosure

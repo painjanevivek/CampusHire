@@ -22,7 +22,7 @@ describe("AuthForm", () => {
 
   it("honors the separate administrator destination", async () => {
     csrfRequestMock.mockResolvedValue({
-      user: { id: "admin-1", email: "admin@example.edu", role: "tnp_owner" },
+      user: { id: "admin-1", email: "admin@example.edu", role: "platform_admin", workspace: "admin" },
       next_step: "complete",
     });
     render(<AuthForm workspace="admin" redirectTo="/admin/dashboard" />);
@@ -42,26 +42,26 @@ describe("AuthForm", () => {
 
   it("routes an administrator into mandatory MFA setup", async () => {
     csrfRequestMock.mockResolvedValue({
-      user: { id: "admin-1", email: "admin@example.edu", role: "tnp_admin" },
+      user: { id: "admin-1", email: "admin@example.edu", role: "tnp_admin", workspace: "tnp" },
       next_step: "mfa_setup",
     });
-    render(<AuthForm workspace="tnp" redirectTo="/admin/dashboard" />);
+    render(<AuthForm workspace="tnp" redirectTo="/tnp/dashboard" />);
     fireEvent.change(screen.getByLabelText("Username"), { target: { value: "tnp" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/tnp/mfa/setup"));
   });
 
-  it("preserves institution onboarding as the owner destination through MFA setup", async () => {
+  it("routes the singleton Platform Admin into the platform MFA setup", async () => {
     csrfRequestMock.mockResolvedValue({
-      user: { id: "owner-1", email: "owner@example.edu", role: "tnp_owner" },
+      user: { id: "owner-1", email: "owner@example.edu", role: "platform_admin", workspace: "admin" },
       next_step: "mfa_setup",
     });
     render(<AuthForm workspace="admin" redirectTo="/admin/dashboard" />);
     fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup?next=%2Fadmin%2Fonboarding"));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
   });
 
   it("routes a newly provisioned officer through personal terms acceptance", async () => {

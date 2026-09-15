@@ -43,5 +43,5 @@ const documents: Record<DocumentKey, { title: string; introduction: string; summ
 
 export function LegalContent({ document }: { document: DocumentKey }) {
   const content = documents[document];
-  return <ContentPage eyebrow="CampusHire policy" {...content} />;
+  return <ContentPage eyebrow="CampusHire policy" {...content} showGuidanceNav={false} />;
 }

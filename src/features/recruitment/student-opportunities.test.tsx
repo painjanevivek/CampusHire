@@ -69,6 +69,20 @@ describe("StudentOpportunities", () => {
     expect(screen.getByRole("button", { name: "Remove Software Engineer from saved roles" })).toBeInTheDocument();
   });
 
+  it("shows contextual review actions for one selection and the comparison tray for two", async () => {
+    const secondOpportunity = { ...opportunity, id: "role-2", title: "Frontend Engineer" };
+    apiRequestMock.mockResolvedValue({ items: [opportunity, secondOpportunity], page: 1, page_size: 20, total: 2 });
+    render(<StudentOpportunities />);
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Compare Software Engineer" }));
+    expect(screen.getByRole("link", { name: "Review role details" })).toHaveAttribute("href", "/opportunities/role-1");
+    expect(screen.getByRole("link", { name: "Check eligibility score" })).toHaveAttribute("href", "/opportunities/role-1#eligibility");
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "Compare Frontend Engineer" }));
+    expect(screen.getByRole("complementary", { name: "Comparison tray" })).toHaveTextContent("2 roles selected");
+    expect(screen.getByRole("link", { name: "Compare roles" })).toHaveAttribute("href", "/opportunities/compare?roles=role-1,role-2");
+  });
+
   it("does not misreport a request failure as an empty opportunity list", async () => {
     apiRequestMock.mockRejectedValueOnce(new Error("API unavailable"));
 

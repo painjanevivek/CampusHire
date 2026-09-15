@@ -13,7 +13,7 @@ export function GuidedPublishing({ drive, step, onStep, onEdit, onPublish, busy 
   drive: Drive; step: number; onStep: (step: number) => void; onEdit: (panel: "edit-drive" | "role" | "rules") => void;
   onPublish: () => void; busy: boolean;
 }) {
-  const resource = useResource<Preview>(`/admin/recruitment/drives/${drive.id}/publication-preview`);
+  const resource = useResource<Preview>(`/tnp/recruitment/drives/${drive.id}/publication-preview`);
   const preview = resource.data;
   return <section className={styles.panel} data-primary="true" aria-label="Guided drive publishing">
     <nav className={styles.tabs} aria-label="Publishing steps">{steps.map((label, index) => <button key={label} onClick={() => onStep(index + 1)} aria-current={step === index + 1 ? "page" : undefined}>{index + 1}. {label} · {preview?.completed_steps?.includes(index + 1) ? "Ready" : "Review"}</button>)}</nav>

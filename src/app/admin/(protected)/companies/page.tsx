@@ -1,6 +1,5 @@
-import { AdminCompanies } from "@/features/recruitment/admin-companies";
+import { redirect } from "next/navigation";
 
 export default function CompaniesPage() {
-  return <AdminCompanies />;
+  redirect("/admin/institutions");
 }
-

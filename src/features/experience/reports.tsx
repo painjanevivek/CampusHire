@@ -12,8 +12,8 @@ import styles from "./experience.module.css";
 type Report = { start_at: string; end_at: string; timezone: string; metrics: Array<{ key: string; label: string; value: number | null; sample_size: number; explanation: string; href: string }> };
 export function Reports() {
   const [query, setQuery] = useState("");
-  const report = useResource<Report>(`/admin/recruitment/reports${query ? `?${query}` : ""}`);
-  const drives = useResource<Drive[]>("/admin/recruitment/drives");
+  const report = useResource<Report>(`/tnp/recruitment/reports${query ? `?${query}` : ""}`);
+  const drives = useResource<Drive[]>("/tnp/recruitment/drives");
   function filter(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const data = new FormData(event.currentTarget); const params = new URLSearchParams();
     for (const key of ["start_at", "end_at"]) if (data.get(key)) params.set(key, new Date(String(data.get(key))).toISOString());
@@ -27,7 +27,7 @@ export function Reports() {
     {report.loading && <p role="status">Calculating authoritative summaries…</p>}
     {report.data && <section aria-label="Operational report" aria-busy={report.loading} className={styles.stack}>
       <p>{new Date(report.data.start_at).toLocaleString(undefined, { timeZone: report.data.timezone })} to {new Date(report.data.end_at).toLocaleString(undefined, { timeZone: report.data.timezone })} ({report.data.timezone}; end exclusive)</p>
-      <div className={styles.metrics}>{report.data.metrics.map(metric => <article key={metric.key} className={styles.panel}><h2>{metric.label}</h2><div className={styles.metric}>{metric.value === null ? "No data" : metric.value.toLocaleString()}</div><p>{metric.explanation}</p><p>Sample: {metric.sample_size}</p><Link className={styles.button} href={safeInternalHref(metric.href, "/admin/applications")}>View source records</Link></article>)}</div>
+      <div className={styles.metrics}>{report.data.metrics.map(metric => <article key={metric.key} className={styles.panel}><h2>{metric.label}</h2><div className={styles.metric}>{metric.value === null ? "No data" : metric.value.toLocaleString()}</div><p>{metric.explanation}</p><p>Sample: {metric.sample_size}</p><Link className={styles.button} href={safeInternalHref(metric.href.replace(/^\/admin\//, "/tnp/"), "/tnp/applications")}>View source records</Link></article>)}</div>
     </section>}
   </PageContainer>;
 }

@@ -1,0 +1,22 @@
+.toggle {
+  width: var(--utility-control-size, 44px);
+  min-width: var(--utility-control-size, 44px);
+  height: var(--utility-control-size, 44px);
+  display: inline-grid;
+  place-items: center;
+  border: var(--utility-control-border, 1px solid var(--line));
+  border-radius: var(--utility-control-radius, 999px);
+  padding: 0;
+  background: var(--utility-control-background, transparent);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.toggle:hover {
+  border-color: var(--brand-blue);
+  background: var(--utility-control-hover-background, var(--brand-blue-soft));
+  color: var(--utility-control-hover-color, var(--brand-blue-dark));
+}
+
+.toggle svg { width: var(--utility-icon-size, 18px); height: var(--utility-icon-size, 18px); }

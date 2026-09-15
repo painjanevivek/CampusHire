@@ -59,4 +59,23 @@ describe("ConnectedStudentDashboard", () => {
       await screen.findByText(/could not be refreshed/i),
     ).toBeInTheDocument();
   });
+
+  it("keeps formal eligibility available when a legacy match-provider state is unavailable", async () => {
+    apiRequestMock.mockResolvedValueOnce({
+      student_name: "Asha",
+      readiness: { policy_version: "readiness-v1", completed_evidence: 4, total_evidence: 4, required_complete: true },
+      state: "ai-unavailable",
+      next_action: {
+        key: "browse", title: "Review opportunities", description: "Review published roles.", reason: "Formal rules are available.", href: "/opportunities", policy_version: "readiness-v1", source_facts: [], estimated_minutes: 5, unlocks: "Applications", completion_criteria: "Review one role.",
+      },
+      evidence: [],
+      opportunities: [{ company: "Northstar", role: "Engineer", location: "Bengaluru", eligibility: "Formally eligible", match: null, href: "/opportunities/role-1" }],
+      roadmap: null,
+      unread_notifications: 0,
+    });
+    render(<ConnectedStudentDashboard />);
+
+    expect(await screen.findByRole("article", { name: "Engineer at Northstar" })).toHaveTextContent("Eligible");
+    expect(screen.queryByText(/Match explanations are temporarily unavailable/)).not.toBeInTheDocument();
+  });
 });

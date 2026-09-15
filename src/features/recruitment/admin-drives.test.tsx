@@ -111,8 +111,8 @@ describe("AdminDrives draft management", () => {
     csrfRequestMock.mockReset();
     apiRequestMock.mockImplementation((path: string) => {
       if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
-      if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
-      if (path === "/admin/recruitment/drives") {
+      if (path === "/tnp/recruitment/companies") return Promise.resolve([company]);
+      if (path === "/tnp/recruitment/drives") {
         return Promise.resolve([draftDrive, publishedDrive]);
       }
       if (path.includes("/roles")) return Promise.resolve([]);
@@ -142,10 +142,10 @@ describe("AdminDrives draft management", () => {
       work_mode: "remote",
     };
     csrfRequestMock.mockImplementation((path: string, init: RequestInit) => {
-      if (path === "/admin/recruitment/drives/drive-draft" && init.method === "PATCH") {
+      if (path === "/tnp/recruitment/drives/drive-draft" && init.method === "PATCH") {
         return Promise.resolve(updatedDrive);
       }
-      if (path === "/admin/recruitment/drives/drive-draft" && init.method === "DELETE") {
+      if (path === "/tnp/recruitment/drives/drive-draft" && init.method === "DELETE") {
         return Promise.resolve(undefined);
       }
       return Promise.reject(new Error(`Unexpected request: ${init.method} ${path}`));
@@ -168,7 +168,7 @@ describe("AdminDrives draft management", () => {
 
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/recruitment/drives/drive-draft",
+        "/tnp/recruitment/drives/drive-draft",
         expect.objectContaining({
           method: "PATCH",
           body: expect.stringContaining("Updated graduate engineering draft"),
@@ -186,7 +186,7 @@ describe("AdminDrives draft management", () => {
     );
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/recruitment/drives/drive-draft",
+        "/tnp/recruitment/drives/drive-draft",
         { method: "DELETE" },
       ),
     );
@@ -201,10 +201,10 @@ describe("AdminDrives draft management", () => {
   it("locks approved policy versions into a new eligibility rule version", async () => {
     apiRequestMock.mockImplementation((path: string) => {
       if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
-      if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
-      if (path === "/admin/recruitment/drives") return Promise.resolve([draftDrive]);
+      if (path === "/tnp/recruitment/companies") return Promise.resolve([company]);
+      if (path === "/tnp/recruitment/drives") return Promise.resolve([draftDrive]);
       if (path === "/admin/intelligence/policies") return Promise.resolve([approvedPolicy]);
-      if (path === "/admin/recruitment/drives/drive-draft/roles") {
+      if (path === "/tnp/recruitment/drives/drive-draft/roles") {
         return Promise.resolve([draftRole]);
       }
       return Promise.resolve([]);
@@ -234,7 +234,7 @@ describe("AdminDrives draft management", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create draft version" }));
 
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
-      "/admin/recruitment/roles/role-1/rule-sets",
+      "/tnp/recruitment/roles/role-1/rule-sets",
       expect.objectContaining({
         method: "POST",
         body: expect.stringContaining(approvedPolicy.id),
@@ -250,23 +250,23 @@ describe("AdminDrives draft management", () => {
     };
     apiRequestMock.mockImplementation((path: string) => {
       if (path.endsWith("/publication-preview")) return Promise.resolve({ title: "Engineering", company_name: company.name, opens_at: publishedDrive.opens_at, deadline_at: publishedDrive.deadline_at, blockers: [], roles: [], pending_changes: {} });
-      if (path === "/admin/recruitment/companies") return Promise.resolve([company]);
-      if (path === "/admin/recruitment/drives") {
+      if (path === "/tnp/recruitment/companies") return Promise.resolve([company]);
+      if (path === "/tnp/recruitment/drives") {
         return Promise.resolve([draftDrive, publishedDrive]);
       }
-      if (path === "/admin/recruitment/drives/drive-published/roles") {
+      if (path === "/tnp/recruitment/drives/drive-published/roles") {
         return Promise.resolve([publishedRole]);
       }
-      if (path === "/admin/recruitment/roles/role-published/rule-sets") {
+      if (path === "/tnp/recruitment/roles/role-published/rule-sets") {
         return Promise.resolve([publishedRuleSet]);
       }
       return Promise.resolve([]);
     });
     csrfRequestMock.mockImplementation((path: string, init: RequestInit) => {
-      if (path === "/admin/recruitment/drives/drive-published" && init.method === "PATCH") {
+      if (path === "/tnp/recruitment/drives/drive-published" && init.method === "PATCH") {
         return Promise.resolve(stagedDrive);
       }
-      if (path === "/admin/recruitment/drives/drive-published/save" && init.method === "POST") {
+      if (path === "/tnp/recruitment/drives/drive-published/save" && init.method === "POST") {
         return Promise.resolve({
           ...stagedDrive,
           title: "Revised engineering drive",
@@ -303,7 +303,7 @@ describe("AdminDrives draft management", () => {
 
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/recruitment/drives/drive-published/save",
+        "/tnp/recruitment/drives/drive-published/save",
         { method: "POST" },
       ),
     );

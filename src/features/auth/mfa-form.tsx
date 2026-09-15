@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import QRCode from "qrcode";
 
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
@@ -18,6 +20,8 @@ export function MfaForm({
 }) {
   const router = useRouter();
   const [setup, setSetup] = useState<MfaSetupResponse | null>(null);
+  const [qrCode, setQrCode] = useState("");
+  const [qrError, setQrError] = useState(false);
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -28,6 +32,21 @@ export function MfaForm({
       });
     }
   }, [mode]);
+  useEffect(() => {
+    if (!setup?.provisioning_uri) return;
+    let active = true;
+    void QRCode.toDataURL(setup.provisioning_uri, {
+      width: 224,
+      margin: 2,
+      errorCorrectionLevel: "M",
+      color: { dark: "#111318", light: "#ffffff" },
+    }).then((dataUrl) => {
+      if (active) setQrCode(dataUrl);
+    }).catch(() => {
+      if (active) setQrError(true);
+    });
+    return () => { active = false; };
+  }, [setup]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
@@ -55,7 +74,17 @@ export function MfaForm({
   return (
     <form className="authForm" onSubmit={submit}>
       {error ? <Alert tone="error">{error}</Alert> : null}
-      {mode === "setup" ? <><p>Add the account in your authenticator with this manual key:</p><code>{setup?.secret ?? "Preparing secure key…"}</code></> : <p>Enter an authenticator code or an unused recovery code.</p>}
+      {mode === "setup" ? <div className="authQrSetup">
+        <div>
+          <p className="authStepLabel">Recommended</p>
+          <h2>Scan the QR code</h2>
+          <p>Open your authenticator app, choose <strong>Scan a QR code</strong>, then scan this code.</p>
+        </div>
+        <div className="authQrFrame" aria-live="polite">
+          {qrCode ? <Image src={qrCode} width={224} height={224} unoptimized alt="QR code for adding this CampusHire administrator account to an authenticator app" /> : <span>{qrError ? "QR code unavailable. Use the manual key below." : "Preparing QR code…"}</span>}
+        </div>
+        <details className="authManualKey"><summary>Use a manual setup key instead</summary><code>{setup?.secret ?? "Preparing secure key…"}</code></details>
+      </div> : <p>Enter an authenticator code or an unused recovery code.</p>}
       <Input id="code" name="code" label="Verification code" inputMode="numeric" autoComplete="one-time-code" minLength={6} maxLength={32} required />
       <Button type="submit" disabled={submitting || (mode === "setup" && !setup)}>{submitting ? "Verifying…" : "Verify code"}</Button>
     </form>

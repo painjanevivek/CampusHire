@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, csrfRequest } from "@/lib/api/client";
-import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
+import { staffMfaSetupPath } from "@/lib/auth/post-auth-route";
 import type { SignInRequest, SignInResponse } from "@/lib/api/generated/types.gen";
 
 type SignInWorkspace = NonNullable<SignInRequest["workspace"]>;
@@ -34,8 +34,8 @@ export function AuthForm({
       });
       setStatus("complete");
       if (result.next_step === "terms_acceptance") return router.push("/accept-terms");
-      if (result.next_step === "mfa_setup") return router.push(adminMfaSetupPath(result.user.role));
-      if (result.next_step === "mfa_challenge") return router.push("/admin/mfa/challenge");
+      if (result.next_step === "mfa_setup") return router.push(staffMfaSetupPath(result.user.workspace));
+      if (result.next_step === "mfa_challenge") return router.push(result.user.workspace === "tnp" ? "/tnp/mfa/challenge" : "/admin/mfa/challenge");
       router.push(redirectTo ?? "/dashboard");
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");

@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -21,7 +22,6 @@ export type DashboardState =
   | "incomplete"
   | "processing"
   | "manual-review"
-  | "ai-unavailable"
   | "error";
 
 export type StudentDashboardData = {
@@ -77,10 +77,6 @@ const stateMessages: Record<
   "manual-review": {
     title: "A reviewer is checking your information.",
     detail: "We will preserve your current eligibility until the review is complete.",
-  },
-  "ai-unavailable": {
-    title: "Check unavailable. Match explanations are temporarily unavailable.",
-    detail: "Formal eligibility remains visible and is not affected.",
   },
   error: {
     title: "We couldn’t load your readiness.",
@@ -217,14 +213,22 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
                   <BadgeCheck size={17} aria-hidden="true" />
                   <span>{opportunity.eligibility}</span>
                 </div>
-                <div className={styles.match}>
-                  <strong>
-                    {opportunity.match === null
-                      ? "Explanation pending"
-                      : `${opportunity.match}% match`}
-                  </strong>
-                  <span>Based on your reviewed details</span>
-                </div>
+                <details className={styles.match}>
+                  <summary>
+                    <span
+                      className={styles.matchRing}
+                      style={{ "--match-progress": `${opportunity.match ?? 0}%` } as CSSProperties}
+                      role="img"
+                      aria-label={opportunity.match === null ? "Role-fit score pending" : `Advisory role-fit score ${opportunity.match} percent`}
+                      data-pending={opportunity.match === null || undefined}
+                    >
+                      <span aria-hidden="true">{opportunity.match ?? "—"}</span>
+                    </span>
+                    <span className={styles.matchCopy}><strong>Role fit</strong><span>Why this role may fit</span></span>
+                  </summary>
+                  <p>{opportunity.match === null ? "Explanation pending." : `${opportunity.match}% advisory match based on your reviewed details.`}</p>
+                  <span>It does not change your formal eligibility.</span>
+                </details>
                 <Link
                   className={styles.viewRole}
                   href={opportunity.href}

@@ -100,7 +100,7 @@ export function InstitutionOnboardingWizard() {
   const load = useCallback(async () => {
     setStatus("loading");
     try {
-      const loaded = await apiRequest<State>("/admin/onboarding", { cache: "no-store" });
+      const loaded = await apiRequest<State>("/tnp/onboarding", { cache: "no-store" });
       const stored = window.sessionStorage.getItem(`campushire.admin-onboarding.${loaded.institution_id}`);
       const recovered = stored ? JSON.parse(stored) as { revision: number; step: number; draft: Draft } : null;
       const serverDraft = hydrateInstitutionOnboardingDraft(loaded);
@@ -129,7 +129,7 @@ export function InstitutionOnboardingWizard() {
     }
     saving.current = true; setStatus("saving"); setMessage("");
     try {
-      const saved = await csrfRequest<State>("/admin/onboarding/step", { method: "PUT", body: JSON.stringify({ expected_revision: data.revision, step, ...bodyFor(step, draft) }) });
+      const saved = await csrfRequest<State>("/tnp/onboarding/step", { method: "PUT", body: JSON.stringify({ expected_revision: data.revision, step, ...bodyFor(step, draft) }) });
       setData(saved); setDirty(false); setStatus("saved"); window.sessionStorage.removeItem(`campushire.admin-onboarding.${saved.institution_id}`); if (advance && step < 7) setStep(step + 1); else if (step === 7) setMessage("Institution activated. Policies and placement cycles remain drafts until separately published.");
     } catch (cause) { setStatus(cause instanceof ApiError && cause.status === 409 ? "conflict" : "error"); setMessage(cause instanceof ApiError ? cause.message : "The step could not be saved."); }
     finally { saving.current = false; }

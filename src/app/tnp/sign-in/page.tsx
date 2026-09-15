@@ -17,13 +17,13 @@ export default async function TnpSignInPage({
       backLabel="Back to home"
       eyebrow="Training & Placement workspace"
       title="Sign in to CampusHire."
-      description="Use the username and password issued by your institution Admin. Authenticator verification follows the password."
-      footer={<>Need access? Contact your institution Admin.</>}
+      description="Use the username and password issued for your institution. If you enabled an authenticator, verification follows the password."
+      footer={<>Need access? Ask your institution to contact the CampusHire Platform Admin.</>}
     >
       <AccountRoleSwitch current="tnp" />
       <AuthForm
         workspace="tnp"
-        redirectTo={safeReturnTo(returnTo, "/admin/dashboard", "/admin/")}
+        redirectTo={safeReturnTo(returnTo, "/tnp/dashboard", "/tnp/")}
       />
     </AuthShell>
   );

@@ -1,6 +1,5 @@
-import { AdminDrives } from "@/features/recruitment/admin-drives";
+import { redirect } from "next/navigation";
 
 export default function DrivesPage() {
-  return <AdminDrives />;
+  redirect("/admin/institutions");
 }
-

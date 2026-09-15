@@ -1,6 +1,5 @@
-import { AdminApplications } from "@/features/recruitment/admin-applications";
+import { redirect } from "next/navigation";
 
 export default function ApplicationsPage() {
-  return <AdminApplications />;
+  redirect("/admin/institutions");
 }
-

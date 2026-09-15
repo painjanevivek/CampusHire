@@ -30,7 +30,7 @@ export function clearCampusHireBrowserState() {
   }
 }
 
-export function SignOutButton({ destination, labeled = false }: { destination: "/sign-in" | "/admin/sign-in"; labeled?: boolean }) {
+export function SignOutButton({ destination, labeled = false }: { destination: "/sign-in" | "/admin/sign-in" | "/tnp/sign-in"; labeled?: boolean }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");

@@ -10,6 +10,9 @@
   max-width: 780px;
 }
 .page > .hero { margin-bottom: 0; }
+.profileTabs { display: flex; gap: 8px; padding-bottom: 2px; border-bottom: 1px solid var(--line); }
+.profileTabs button { min-height: 42px; border: 0; border-bottom: 2px solid transparent; padding: 0 12px; background: transparent; color: var(--ink-muted); font: inherit; font-size: .88rem; font-weight: var(--font-weight-emphasis); cursor: pointer; }
+.profileTabs button[aria-selected="true"] { border-bottom-color: var(--brand-blue); color: var(--brand-blue-dark); }
 
 .hero p,
 .settingsHeader p,
@@ -122,10 +125,27 @@
   font-weight: var(--font-weight-emphasis);
   text-decoration: none;
 }
+.savedRoles { display: grid; gap: 18px; border: 1px solid var(--line); border-radius: 18px; padding: 26px; background: var(--surface); }
+.savedRoles > header { display: flex; align-items: end; justify-content: space-between; gap: 18px; }
+.savedRoles header p { margin: 0 0 7px; color: var(--brand-blue-dark); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .1em; text-transform: uppercase; }
+.savedRoles h2 { margin: 0 0 5px; font-size: clamp(1.35rem, 3vw, 1.9rem); letter-spacing: -.04em; }
+.savedRoles header span { color: var(--ink-muted); font-size: .86rem; }
+.savedRoles > header > a { min-height: 42px; display: inline-flex; align-items: center; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--brand-blue-dark); font-size: .82rem; font-weight: var(--font-weight-emphasis); text-decoration: none; white-space: nowrap; }
+.savedRoleList { display: grid; border-top: 1px solid var(--line); }
+.savedRoleList article { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 13px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.savedRoleMark { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: var(--ink); color: var(--on-primary); font-weight: var(--font-weight-emphasis); }
+.savedRoleList p, .savedRoleList h3 { margin: 0; }
+.savedRoleList p, .savedRoleList span { color: var(--ink-muted); font-size: .77rem; }
+.savedRoleList h3 { margin: 2px 0 5px; font-size: .98rem; }
+.savedRoleList h3 a { color: var(--ink); text-decoration: none; }
+.savedRoleList span { display: inline-flex; align-items: center; gap: 4px; }
+.savedRoleList span svg { width: .9rem; }
+.savedRoleList button { min-height: 40px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; background: var(--surface); color: var(--brand-blue-dark); font: inherit; font-size: .8rem; font-weight: var(--font-weight-emphasis); cursor: pointer; }
+.savedRoleList button svg { width: 1rem; }
 
 .primaryAction {
   background: var(--brand-blue);
-  color: white;
+  color: var(--on-primary);
 }
 
 .primaryAction:hover {
@@ -640,6 +660,11 @@
     gap: 6px;
   }
 
+  .savedRoles { padding: 20px; }
+  .savedRoles > header { align-items: start; flex-direction: column; }
+  .savedRoleList article { grid-template-columns: 40px minmax(0, 1fr); }
+  .savedRoleList button { grid-column: 2; width: fit-content; }
+
   .disclosureTrigger {
     min-height: 98px;
     grid-template-columns: 42px minmax(0, 1fr) 20px;
@@ -682,6 +707,15 @@
     transition: none;
   }
 }
+
+.privacyRequests { display: grid; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.privacyRequests form { display: grid; gap: .8rem; }
+.privacyRequests label { display: grid; gap: .4rem; color: var(--ink-muted); }
+.privacyRequests select, .privacyRequests textarea { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .7rem; background: var(--canvas); color: var(--ink); }
+.privacyRequests ol { display: grid; gap: .7rem; margin: 0; padding: 0; list-style: none; }
+.privacyRequests li { padding: .9rem; border: 1px solid var(--line); background: var(--canvas); }
+.privacyRequests li > div { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.privacyRequests li p { margin: .55rem 0; }
 
 @media (forced-colors: active) {
   .identityCard::before,

@@ -18,7 +18,8 @@ function toDashboardData(response: DashboardApiResponse): StudentDashboardData {
     readiness: response.readiness,
     upcoming: response.upcoming?.map(item => ({ ...item, href: safeInternalHref(item.href) })),
     timezone: response.institution_timezone,
-    state: response.state,
+    // A relevance provider outage never makes the formal, rule-based eligibility check unavailable.
+    state: response.state === "ai-unavailable" ? "ready" : response.state,
     nextAction: {
       ...response.next_action,
       href: safeInternalHref(response.next_action.href),

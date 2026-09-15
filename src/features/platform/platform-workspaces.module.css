@@ -1,0 +1,67 @@
+.page { display: grid; gap: var(--layout-section-gap); width: 100%; }
+.priorityStrip, .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); background: var(--surface); }
+.priorityStrip article, .metrics article { display: grid; gap: .35rem; min-height: 8rem; padding: 1.25rem; border-right: 1px solid var(--line); }
+.priorityStrip article:last-child, .metrics article:last-child { border-right: 0; }
+.priorityStrip span, .metrics span, .priorityStrip small { color: var(--ink-muted); }
+.priorityStrip strong, .metrics strong { font-size: clamp(1.8rem, 3vw, 3rem); line-height: 1; }
+.dateValue { font-size: clamp(1rem, 1.6vw, 1.25rem) !important; line-height: 1.35 !important; }
+.quickActions, .panel, .inspector, .disclosure, .list, .registrationQueue { border: 1px solid var(--line); background: var(--surface); }
+.quickActions > div, .panel, .inspector, .disclosure { padding: 1.25rem; }
+.quickActions h2, .panel h2, .inspector h2 { margin: .25rem 0; }
+.quickActions nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.quickActions nav a { display: grid; grid-template-columns: auto 1fr auto; gap: .9rem; align-items: center; min-height: 6.5rem; padding: 1rem; border-right: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.quickActions nav a:last-child { border-right: 0; }
+.quickActions nav span { display: grid; gap: .25rem; }
+.quickActions nav small { color: var(--ink-muted); }
+.split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(19rem, .8fr); gap: 1rem; align-items: start; }
+.list { display: grid; }
+.list > article, .institutionRow { display: grid; grid-template-columns: minmax(13rem, 1fr) auto auto auto; gap: 1rem; align-items: center; padding: 1rem 1.15rem; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.list > article:last-child, .institutionRow:last-child { border-bottom: 0; }
+.list article > div:first-child, .institutionRow > div:first-child { display: grid; gap: .25rem; }
+.list small, .institutionRow small { color: var(--ink-muted); }
+.institutionRow[aria-current="true"] { background: var(--brand-blue-soft); box-shadow: inset 3px 0 var(--accent-blue); }
+.toolbar { display: flex; align-items: end; gap: .75rem; }
+.toolbar label, .institutionSelect, .form label, .inlineActions form label, .dangerDisclosure form label, .list form label { display: grid; gap: .4rem; color: var(--ink-muted); }
+.toolbar label { flex: 1; }
+.toolbar input, .institutionSelect select, .form input, .form select, .form textarea, .inlineActions input, .dangerDisclosure textarea, .list form input, .list form select { width: 100%; min-height: var(--control-min-size); padding: .7rem .8rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--canvas); color: var(--ink); }
+.form { display: grid; gap: .9rem; margin-top: 1rem; }
+.definitionList, .statusRows { display: grid; margin: 1rem 0; }
+.definitionList > div, .statusRows > div { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+.definitionList dt, .statusRows dt { color: var(--ink-muted); }
+.disclosure > summary, .dangerDisclosure > summary, .list details > summary { cursor: pointer; font-weight: 650; }
+.disclosure > summary { display: flex; align-items: center; justify-content: space-between; }
+.dangerDisclosure { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.dangerDisclosure > summary { color: var(--status-danger); }
+.inlineActions { display: flex; align-items: center; gap: .5rem; }
+.inlineActions details { position: relative; }
+.inlineActions details form, .list details form { display: grid; gap: .7rem; min-width: 18rem; margin-top: .75rem; padding: .85rem; border: 1px solid var(--line); background: var(--surface-muted); }
+.registrationQueue { display: grid; gap: 1rem; padding: 1.25rem; border-left: 3px solid var(--accent-blue); }
+.registrationQueue > header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+.registrationQueue h2, .registrationQueue p { margin: 0; }
+.registrationQueue header > div { display: grid; gap: .35rem; }
+.registrationQueue header > div > p:last-child, .queueEmpty { color: var(--ink-muted); }
+.queueEmpty { margin: 0; padding-top: .25rem; }
+.actionMenu { position: relative; justify-self: end; }
+.actionTrigger { min-height: var(--control-min-size); display: inline-flex; align-items: center; gap: .45rem; padding: 0 .8rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); font: inherit; font-weight: 650; cursor: pointer; }
+.actionTrigger:hover, .actionTrigger[aria-expanded="true"] { border-color: var(--accent-blue); background: var(--brand-blue-soft); }
+.actionTrigger svg { width: 1rem; transition: transform 140ms ease; }
+.actionTrigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+.actionPopover { position: absolute; z-index: 20; right: 0; top: calc(100% + .5rem); width: min(22rem, calc(100vw - 3rem)); display: grid; gap: .75rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: 0 14px 32px color-mix(in srgb, var(--ink) 16%, transparent); background: var(--surface); }
+.actionPopover > p { margin: 0; color: var(--ink-muted); font-size: .85rem; }
+.menuActions { display: flex; justify-content: end; gap: .5rem; padding-top: .25rem; }
+.healthGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.healthGrid article { padding: 1.15rem; border: 1px solid var(--line); background: var(--surface); }
+.healthGrid article[data-attention="true"] { box-shadow: inset 3px 0 var(--status-warning); }
+.healthGrid header { display: flex; align-items: center; gap: .65rem; }
+.healthGrid header h2 { flex: 1; margin: 0; text-transform: capitalize; }
+.healthGrid dl { display: grid; grid-template-columns: 1fr 1fr; margin: 1rem 0; }
+.healthGrid dl div { display: grid; gap: .25rem; }
+.healthGrid dd { margin: 0; font-size: 1.65rem; font-weight: 700; }
+.healthGrid p { color: var(--ink-muted); }
+.healthGrid p svg { width: 1rem; vertical-align: middle; }
+.checkbox { grid-template-columns: auto 1fr; align-items: center; }
+.checkbox input { width: 1rem; min-height: 1rem; }
+.panel pre { max-width: 100%; overflow: auto; padding: .9rem; background: var(--code-bg); color: var(--ink); }
+@media (max-width: 850px) { .priorityStrip, .metrics, .quickActions nav, .healthGrid, .split { grid-template-columns: 1fr; } .priorityStrip article, .metrics article, .quickActions nav a { border-right: 0; border-bottom: 1px solid var(--line); } .list > article, .institutionRow { grid-template-columns: 1fr auto; } }
+@media (max-width: 520px) { .toolbar { align-items: stretch; flex-direction: column; } .list > article, .institutionRow { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .institutionRow { transition: background-color 140ms ease; } }

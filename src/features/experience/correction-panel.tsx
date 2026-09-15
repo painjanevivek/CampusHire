@@ -19,7 +19,7 @@ export function CorrectionPanel({ applicationId, admin = false, closed = false, 
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
-  const path = `${admin ? "/admin/recruitment" : ""}/applications/${applicationId}/requests`;
+  const path = `${admin ? "/tnp/recruitment" : ""}/applications/${applicationId}/requests`;
   const load = useCallback(async () => {
     try { setItems(await apiRequest<CorrectionRequest[]>(path, { cache: "no-store" })); setError(""); }
     catch { setError("Information requests could not be loaded. Refresh to try again."); }

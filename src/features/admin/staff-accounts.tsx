@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { ChevronDown, Ellipsis } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Alert, Badge, RequestState } from "@/components/ui/feedback";
@@ -28,6 +29,7 @@ export function StaffAccounts() {
   const [state, setState] = useState<"loading" | "ready" | "forbidden" | "error">("loading");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [openActionId, setOpenActionId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -63,6 +65,25 @@ export function StaffAccounts() {
     const pending = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(pending);
   }, [load]);
+
+  useEffect(() => {
+    if (!openActionId) return;
+    const closeOutside = (event: PointerEvent) => {
+      const targetMenu = (event.target as Element | null)?.closest<HTMLElement>("[data-action-menu]");
+      if (targetMenu?.dataset.actionMenu !== openActionId) setOpenActionId(null);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpenActionId(null);
+      document.getElementById(`account-action-${openActionId}`)?.focus();
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [openActionId]);
 
   async function createAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,6 +126,7 @@ export function StaffAccounts() {
         method: "PATCH",
         body: JSON.stringify({ status: data.get("status"), reason: data.get("reason") }),
       });
+      setOpenActionId(null);
       await load();
       setMessage("T&P account access updated and recorded in Audit.");
     } catch (cause) {
@@ -139,7 +161,7 @@ export function StaffAccounts() {
           <p className="eyebrow">Account creation</p>
           <h2 id="create-account-title">Issue a T&amp;P officer account</h2>
           <p>Set a strong first password and share it privately. CampusHire never emails or returns the password.</p>
-          <p>The officer accepts the Terms and Privacy Notice personally, then sets up an authenticator at first sign-in.</p>
+          <p>The officer accepts the Terms and Privacy Notice personally. An authenticator can be enabled later from Account settings.</p>
         </div>
         <form className={styles.form} onSubmit={createAccount}>
           <label>Officer username<input name="username" type="text" minLength={3} maxLength={64} pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" autoComplete="off" required placeholder="placement.officer" /></label>
@@ -161,14 +183,23 @@ export function StaffAccounts() {
               <article key={account.id}>
                 <div><strong>{account.username ?? "Username unavailable"}</strong><small>{roleLabels[account.role as keyof typeof roleLabels] ?? account.role}</small></div>
                 <Badge tone={account.status === "active" ? "success" : "warning"}>{account.status}</Badge>
-                <details>
-                  <summary>Change access</summary>
-                  <form onSubmit={(event) => void changeStatus(event, account.id)}>
+                <div className={styles.actionMenu} data-action-menu={account.id}>
+                  <button
+                    id={`account-action-${account.id}`}
+                    className={styles.actionTrigger}
+                    type="button"
+                    aria-expanded={openActionId === account.id}
+                    aria-controls={`account-action-panel-${account.id}`}
+                    onClick={() => setOpenActionId((current) => current === account.id ? null : account.id)}
+                  >
+                    <Ellipsis aria-hidden="true" />Action<ChevronDown aria-hidden="true" />
+                  </button>
+                  {openActionId === account.id ? <form id={`account-action-panel-${account.id}`} aria-label={`Actions for ${account.username ?? "officer account"}`} onSubmit={(event) => void changeStatus(event, account.id)}>
                     <label>Status<select name="status" defaultValue={account.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option></select></label>
                     <label>Audit reason<input name="reason" minLength={10} maxLength={500} required placeholder="Reason for access change" /></label>
                     <Button type="submit" variant="quiet">Confirm change</Button>
-                  </form>
-                </details>
+                  </form> : null}
+                </div>
               </article>
             ))}
           </div>

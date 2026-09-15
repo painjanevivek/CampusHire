@@ -1,5 +1,5 @@
-import { StaffAccounts } from "@/features/admin/staff-accounts";
+import { PlatformAccounts } from "@/features/platform/platform-workspaces";
 
 export default function AdminAccountsPage() {
-  return <StaffAccounts />;
+  return <PlatformAccounts />;
 }

@@ -3,10 +3,10 @@
 .page > header { margin-bottom: 24px; }
 .page h1 { max-width: 18ch; margin-bottom: 6px; font-size: clamp(2.25rem, 3.5vw, 3.75rem); line-height: 1.02; text-wrap: balance; }
 .page header span, .page header p { color: var(--ink-muted); }
-.upload { min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 18px; background: var(--ink); color: white; font-weight: var(--font-weight-emphasis); cursor: pointer; }
+.upload { min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 18px; background: var(--primary); color: var(--on-primary); font-weight: var(--font-weight-emphasis); cursor: pointer; }
 .headerActions { display: flex; align-items: center; gap: 10px; }
 .headerActions > a { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; color: var(--ink); font-weight: var(--font-weight-emphasis); }
-.roster, .directory, .history, .invitationDisclosure { margin-top: 18px; border: 1px solid var(--line); border-radius: 18px; background: white; overflow: hidden; }
+.roster, .directory, .history, .invitationDisclosure { margin-top: 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); overflow: hidden; }
 .roster > header, .directory > header { padding: 18px; border-bottom: 1px solid var(--line); }
 .roster h2, .directory h2, .roster p { margin: 0; }
 .table { overflow-x: auto; }
@@ -18,7 +18,7 @@
 .table code { overflow-wrap: anywhere; font-size: .72rem; }
 .controls { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(130px, 1fr)) auto auto; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--surface-muted); }
 .controls label { display: grid; gap: 4px; color: var(--ink-muted); font-size: .74rem; font-weight: var(--font-weight-emphasis); }
-.controls input, .controls select, .controls button, .table details input, .table details select, .table details button, .pagination button { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 11px; background: white; color: var(--ink); }
+.controls input, .controls select, .controls button, .table details input, .table details select, .table details button, .pagination button { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 11px; background: var(--surface); color: var(--ink); }
 .controls button, .table details button, .pagination button { align-self: end; font-weight: var(--font-weight-emphasis); }
 .table details { margin-top: 6px; }
 .table details summary { min-height: 32px; display: flex; align-items: center; cursor: pointer; color: var(--accent-blue); font-size: .78rem; font-weight: var(--font-weight-emphasis); }

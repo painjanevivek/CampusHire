@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import type { InvitationResponse } from "@/lib/api/generated/types.gen";
-import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
+import { staffMfaSetupPath } from "@/lib/auth/post-auth-route";
 
 export function InvitationActivationForm({ token }: { token: string }) {
   const router = useRouter();
@@ -37,8 +37,11 @@ export function InvitationActivationForm({ token }: { token: string }) {
         }),
       });
       router.push(
-        invitation?.role === "tnp_admin" || invitation?.role === "tnp_owner"
-          ? adminMfaSetupPath(invitation.role)
+        invitation?.role.startsWith("tnp_")
+          ? staffMfaSetupPath(
+              "tnp",
+              invitation.role === "tnp_owner" ? "/tnp/onboarding" : "/tnp/dashboard",
+            )
           : "/onboarding",
       );
     } catch (cause) {

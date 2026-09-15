@@ -47,7 +47,7 @@ describe("InvitationActivationForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "Activate account" }));
 
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith(
-      "/admin/mfa/setup?next=%2Fadmin%2Fonboarding",
+      "/tnp/mfa/setup?next=%2Ftnp%2Fonboarding",
     ));
   });
 });

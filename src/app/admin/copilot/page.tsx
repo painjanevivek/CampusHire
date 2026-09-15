@@ -1,5 +1,8 @@
-import { CopilotWorkspace } from "@/features/copilot/copilot-workspace";
+import { redirect } from "next/navigation";
 
-export default function TnpCopilotPage() {
-  return <CopilotWorkspace audience="tnp" />;
+import { requireServerSession } from "@/lib/auth/server-session";
+
+export default async function LegacyAdminCopilotPage() {
+  await requireServerSession("admin");
+  redirect("/admin/settings");
 }

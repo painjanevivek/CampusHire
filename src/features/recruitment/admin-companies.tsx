@@ -20,7 +20,7 @@ export function AdminCompanies() {
     await Promise.resolve();
     setLoading(true);
     setError("");
-    try { setCompanies(await apiRequest<Company[]>("/admin/recruitment/companies", { cache: "no-store" })); }
+    try { setCompanies(await apiRequest<Company[]>("/tnp/recruitment/companies", { cache: "no-store" })); }
     catch { setError("Company records could not be loaded. No changes were made."); }
     finally { setLoading(false); }
   }, []);
@@ -35,7 +35,7 @@ export function AdminCompanies() {
     setError("");
     const data = new FormData(event.currentTarget);
     try {
-      const company = await csrfRequest<Company>("/admin/recruitment/companies", {
+      const company = await csrfRequest<Company>("/tnp/recruitment/companies", {
         method: "POST",
         body: JSON.stringify({ name: data.get("name"), website_url: data.get("website_url") || null, description: data.get("description") || null }),
       });

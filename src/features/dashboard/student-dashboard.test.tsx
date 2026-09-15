@@ -58,24 +58,19 @@ describe("StudentDashboard", () => {
       name: "AI Platform Intern at Northstar Labs",
     });
     expect(opportunity).toHaveTextContent("Eligible");
-    expect(opportunity).toHaveTextContent("92% match");
+    const matchDisclosure = screen.getByText("Why this role may fit").closest("details");
+    expect(matchDisclosure).not.toHaveAttribute("open");
+    expect(screen.getByRole("img", { name: "Advisory role-fit score 92 percent" })).toBeInTheDocument();
+    expect(matchDisclosure).toHaveTextContent("Role fit");
     expect(
       screen.getByText("Match is decision support, not hiring probability."),
     ).toBeInTheDocument();
-  });
-
-  it("does not turn unavailable match guidance into an eligibility decision", () => {
-    render(<StudentDashboard data={{ ...readyDashboard, state: "ai-unavailable" }} />);
-
-    expect(screen.getByRole("status")).toHaveTextContent("Check unavailable");
-    expect(screen.getByRole("article", { name: "AI Platform Intern at Northstar Labs" })).toHaveTextContent("Eligible");
   });
 
   it.each([
     ["incomplete", "Finish your profile to unlock eligibility checks."],
     ["processing", "We’re checking your profile details now."],
     ["manual-review", "A reviewer is checking your information."],
-    ["ai-unavailable", "Match explanations are temporarily unavailable."],
     ["error", "We couldn’t load your readiness."],
   ] as const)("explains the %s state", (state, message) => {
     render(<StudentDashboard data={{ ...readyDashboard, state }} />);

@@ -23,7 +23,7 @@ vi.mock("./communication-preferences", () => ({
 
 describe("AdminAccountWorkspace", () => {
   beforeEach(() => {
-    apiRequestMock.mockReset();
+    apiRequestMock.mockReset().mockResolvedValue({ enabled: false });
     csrfRequestMock.mockReset().mockResolvedValue(undefined);
     replaceMock.mockReset();
     refreshMock.mockReset();
@@ -47,7 +47,40 @@ describe("AdminAccountWorkspace", () => {
     expect(screen.getByText("Administrator email preference controls")).toBeInTheDocument();
   });
 
+  it("lets an administrator opt into MFA from account settings", async () => {
+    render(<AdminAccountWorkspace user={{
+      id: "owner-1",
+      email: "owner@college.edu",
+      role: "tnp_owner",
+      institution_id: "institution-1",
+      membership_status: "active",
+    }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Authenticator sign-in/ }));
+
+    expect(await screen.findByRole("link", { name: "Set up MFA" })).toHaveAttribute(
+      "href",
+      "/admin/mfa/setup?next=/admin/account",
+    );
+  });
+
+  it("shows enrolled MFA state without asking for setup again", async () => {
+    apiRequestMock.mockResolvedValue({ enabled: true });
+    render(<AdminAccountWorkspace user={{
+      id: "owner-1",
+      email: "owner@college.edu",
+      role: "tnp_owner",
+      institution_id: "institution-1",
+      membership_status: "active",
+    }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Authenticator sign-in/ }));
+    expect(await screen.findByText(/Authenticator enabled/)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Set up MFA" })).not.toBeInTheDocument();
+  });
+
   it("requires both factors before routing to immediate authenticator reenrollment", async () => {
+    apiRequestMock.mockResolvedValue({ enabled: true });
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<AdminAccountWorkspace user={{
       id: "owner-1",
@@ -58,8 +91,8 @@ describe("AdminAccountWorkspace", () => {
     }} />);
 
     expect(screen.getAllByText("T&P owner")).toHaveLength(2);
-    fireEvent.click(screen.getByRole("button", { name: /Reset authenticator/ }));
-    fireEvent.change(screen.getByLabelText("Current password"), { target: { value: "secure passphrase" } });
+    fireEvent.click(screen.getByRole("button", { name: /Authenticator sign-in/ }));
+    fireEvent.change(await screen.findByLabelText("Current password"), { target: { value: "secure passphrase" } });
     fireEvent.change(screen.getByLabelText("Authenticator or recovery code"), { target: { value: "123456" } });
     fireEvent.click(screen.getByRole("button", { name: "Reset authenticator" }));
 

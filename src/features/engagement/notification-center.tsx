@@ -14,10 +14,12 @@ export function NotificationCenter({
   navigate,
   open: controlledOpen,
   onOpenChange,
+  context = "student",
 }: {
   navigate?: (href: string) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  context?: "student" | "admin";
 }) {
   const router = useRouter();
   const [category, setCategory] = useState("needs_action");
@@ -57,13 +59,15 @@ export function NotificationCenter({
     if (!open) return;
     let active = true;
     const pending = window.setTimeout(() => void load(), 0);
-    void apiRequest<DashboardApiResponse>("/dashboard", { cache: "no-store" }).then(data => {
-      if (active) { setUpcoming([data.next_action, ...(data.upcoming ?? [])].filter(item => item?.deadline_at)); setTimezone(data.institution_timezone ?? "UTC"); }
-    }).catch(() => { if (active) setError("Upcoming deadlines could not be refreshed."); });
+    if (context === "student") {
+      void apiRequest<DashboardApiResponse>("/dashboard", { cache: "no-store" }).then(data => {
+        if (active) { setUpcoming([data.next_action, ...(data.upcoming ?? [])].filter(item => item?.deadline_at)); setTimezone(data.institution_timezone ?? "UTC"); }
+      }).catch(() => { if (active) setError("Upcoming deadlines could not be refreshed."); });
+    }
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); root.current?.querySelector<HTMLButtonElement>("button")?.focus(); } };
     window.addEventListener("keydown", escape);
     return () => { active = false; window.clearTimeout(pending); window.removeEventListener("keydown", escape); };
-  }, [open, load, setOpen]);
+  }, [context, open, load, setOpen]);
   useEffect(() => {
     function close(event: MouseEvent) {
       if (root.current && !root.current.contains(event.target as Node))
@@ -105,7 +109,7 @@ export function NotificationCenter({
       <button
         type="button"
         className={styles.trigger}
-        aria-label={`Open updates${page.unread_count ? `, ${page.unread_count} unread` : ""}`}
+        aria-label={`${context === "admin" ? "Open notifications" : "Open updates"}${page.unread_count ? `, ${page.unread_count} unread` : ""}`}
         aria-expanded={open}
         aria-controls="student-updates"
         onClick={() => setOpen((current) => !current)}
@@ -123,7 +127,7 @@ export function NotificationCenter({
         >
           <header>
             <div>
-              <p>Placement updates</p>
+              <p>{context === "admin" ? "Administrator notifications" : "Placement updates"}</p>
               <h2>
                 {page.unread_count
                   ? `${page.unread_count} unread`
@@ -145,7 +149,7 @@ export function NotificationCenter({
               appear here.
             </p>
           ) : null}
-          <nav aria-label="Update categories" className={styles.categories}>{[["needs_action", "Needs action"], ["upcoming", "Upcoming"], ["updates", "Updates"]].map(([value, label]) => <button key={value} aria-pressed={category === value} onClick={() => setCategory(value)}>{label}</button>)}</nav>
+          <nav aria-label="Update categories" className={styles.categories}>{[["needs_action", "Needs action"], ...(context === "student" ? [["upcoming", "Upcoming"]] : []), ["updates", "Updates"]].map(([value, label]) => <button key={value} aria-pressed={category === value} onClick={() => setCategory(value)}>{label}</button>)}</nav>
           <p className={styles.empty}>Reading an update does not complete its underlying task.</p>
           {category === "upcoming" && <div className={styles.items}>{upcoming.map(item => <Link key={item.key} href={safeInternalHref(item.href)} onClick={() => setOpen(false)}>{item.title}<p>{item.deadline_at && new Date(item.deadline_at).toLocaleString(undefined, { timeZone: timezone })} ({timezone})</p></Link>)}{!upcoming.length && <p>No known upcoming deadlines in your current action list.</p>}</div>}
           <div className={styles.items}>

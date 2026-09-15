@@ -1,5 +1,7 @@
 .page { width: min(100% - 40px, 1120px); margin: 0 auto; padding: 64px 0 96px; }
 .page > header { max-width: 850px; margin-bottom: 44px; }
+.backHomeLink { min-height: var(--control-min-size); width: fit-content; display: inline-flex; align-items: center; margin-bottom: clamp(1.5rem, 4vw, 3rem); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0 .85rem; color: var(--ink); font-weight: var(--font-weight-label); text-decoration: none; }
+.backHomeLink:hover { border-color: var(--brand-blue); color: var(--brand-blue-dark); }
 .page > header p, .choices p, .cookieNote p { margin: 0 0 7px; color: var(--brand-blue); font-size: .72rem; font-weight: var(--font-weight-emphasis); letter-spacing: .1em; text-transform: uppercase; }
 .page > header h1 { max-width: 13ch; margin-bottom: 14px; font-size: clamp(3rem, 7vw, 6rem); }
 .page > header span, .choices span, .cookieNote span { color: var(--ink-muted); }

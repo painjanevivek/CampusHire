@@ -1,5 +1,4 @@
-const INSTITUTION_ONBOARDING_MFA_PATH = "/admin/mfa/setup?next=%2Fadmin%2Fonboarding";
-
-export function adminMfaSetupPath(role: string): string {
-  return role === "tnp_owner" ? INSTITUTION_ONBOARDING_MFA_PATH : "/admin/mfa/setup";
+export function staffMfaSetupPath(workspace: "admin" | "tnp" | "student" | undefined, nextPath?: string): string {
+  const base = workspace === "tnp" ? "/tnp/mfa/setup" : "/admin/mfa/setup";
+  return nextPath ? `${base}?next=${encodeURIComponent(nextPath)}` : base;
 }

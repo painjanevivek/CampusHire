@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Building2, CircleAlert, ClipboardCheck, FileClock, RefreshCcw } from "lucide-react";
+import { ArrowRight, Building2, CircleAlert, ClipboardCheck, FileClock, RefreshCcw, UserPlus } from "lucide-react";
 
 import { ContentGrid, PageContainer, PageHeader } from "@/components/layout/page-layout";
 import { Alert, Badge } from "@/components/ui/feedback";
@@ -25,14 +25,21 @@ export function AdminOverview() {
     await Promise.resolve();
     setLoading(true); setError("");
     try {
-      const [companyData, driveData, applicationData, responseData, funnelData] = await Promise.all([
-        apiRequest<Company[]>("/admin/recruitment/companies", { cache: "no-store" }),
-        apiRequest<Drive[]>("/admin/recruitment/drives", { cache: "no-store" }),
-        apiRequest<{ total: number }>("/admin/recruitment/review-queue?review_pending=true&page_size=1", { cache: "no-store" }),
-        apiRequest<{ total: number }>("/admin/recruitment/review-queue?requests=awaiting_review&page_size=1", { cache: "no-store" }),
+      const results = await Promise.allSettled([
+        apiRequest<Company[]>("/tnp/recruitment/companies", { cache: "no-store" }),
+        apiRequest<Drive[]>("/tnp/recruitment/drives", { cache: "no-store" }),
+        apiRequest<{ total: number }>("/tnp/recruitment/review-queue?review_pending=true&page_size=1", { cache: "no-store" }),
+        apiRequest<{ total: number }>("/tnp/recruitment/review-queue?requests=awaiting_review&page_size=1", { cache: "no-store" }),
         apiRequest<Funnel>("/admin/analytics/funnel?window_days=30", { cache: "no-store" }),
       ]);
-      setCompanies(companyData); setDrives(driveData); setReviewCount(applicationData.total); setResponseCount(responseData.total); setFunnel(funnelData);
+      if (results[0].status === "fulfilled") setCompanies(results[0].value);
+      if (results[1].status === "fulfilled") setDrives(results[1].value);
+      if (results[2].status === "fulfilled") setReviewCount(results[2].value.total);
+      if (results[3].status === "fulfilled") setResponseCount(results[3].value.total);
+      if (results[4].status === "fulfilled") setFunnel(results[4].value);
+      if (results.some(result => result.status === "rejected")) {
+        setError("Some dashboard summaries are temporarily unavailable. Available sections remain current; use their links to retry the affected workspace.");
+      }
     } catch { setError("The operations summary could not be refreshed. Open each workspace to retry its data independently."); }
     finally { setLoading(false); }
   }, []);
@@ -57,6 +64,17 @@ export function AdminOverview() {
         )}
       />
       {error && <Alert tone="error">{error}</Alert>}
+      <section className={styles.quickActions} aria-labelledby="quick-actions-title">
+        <header>
+          <div><p>Quick actions</p><h2 id="quick-actions-title">Start common work</h2></div>
+          <span>Three direct paths; full controls stay in their workspaces.</span>
+        </header>
+        <nav aria-label="Dashboard quick actions">
+          <Link href="/tnp/applications?work_view=my_work"><ClipboardCheck aria-hidden="true" /><span><strong>Review applications</strong><small>Open your assigned work</small></span><ArrowRight aria-hidden="true" /></Link>
+          <Link href="/tnp/drives"><FileClock aria-hidden="true" /><span><strong>Manage drives</strong><small>Publish or update a drive</small></span><ArrowRight aria-hidden="true" /></Link>
+          <Link href="/tnp/students"><UserPlus aria-hidden="true" /><span><strong>Invite students</strong><small>Preview a verified roster</small></span><ArrowRight aria-hidden="true" /></Link>
+        </nav>
+      </section>
       <ContentGrid className={styles.summaryGrid} variant="focused" aria-label="Placement operations summary">
         <article className={styles.primary}>
           <div className={styles.primaryLabel}>
@@ -68,7 +86,7 @@ export function AdminOverview() {
             <span>applications waiting for a placement decision</span>
           </div>
           <p className={styles.reviewDetail}>{responseCount} applications with a student response to review</p>
-          <Link href="/admin/applications?review_pending=true">Open candidate review</Link>
+          <Link href="/tnp/applications?work_view=my_work">Open assigned review</Link>
         </article>
 
         <article className={styles.snapshot}>
@@ -79,11 +97,11 @@ export function AdminOverview() {
           <dl>
             <div className={styles.metricRow}>
                 <dt><FileClock aria-hidden="true" /><span>Published drives</span><small>{drives.length - publishedDrives} not currently live</small></dt>
-                <dd><span>{publishedDrives}</span><Link href="/admin/drives">Manage</Link></dd>
+                <dd><span>{publishedDrives}</span><Link href="/tnp/drives">Manage</Link></dd>
             </div>
             <div className={styles.metricRow}>
                 <dt><Building2 aria-hidden="true" /><span>Company records</span><small>Institution-scoped employers</small></dt>
-                <dd><span>{companies.length}</span><Link href="/admin/companies">Manage</Link></dd>
+                <dd><span>{companies.length}</span><Link href="/tnp/companies">Manage</Link></dd>
             </div>
             <div className={styles.metricRow}>
                 <dt><CircleAlert aria-hidden="true" /><span>Invitations accepted</span><small>Combined 30-day total</small></dt>

@@ -1,5 +1,5 @@
-import { AdminAudit } from "@/features/admin/admin-audit";
+import { PlatformAudit } from "@/features/platform/platform-workspaces";
 
 export default function AuditPage() {
-  return <AdminAudit />;
+  return <PlatformAudit />;
 }

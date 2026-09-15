@@ -4,6 +4,8 @@
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-family: var(--font-interface); font-weight: var(--font-weight-emphasis); text-decoration: none; letter-spacing: -.03em; }
 .brand > svg { width: 34px; height: 34px; flex: 0 0 auto; }
 .header nav { display: flex; gap: 20px; }
+.backHomeLink { min-height: var(--control-min-size); display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0 .85rem; color: var(--ink); font-weight: var(--font-weight-label); text-decoration: none; }
+.backHomeLink:hover { border-color: var(--brand-blue); color: var(--brand-blue-dark); }
 .header nav a, .footer a { color: var(--ink-muted); font-weight: var(--font-weight-medium); text-decoration: none; }
 .main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: clamp(54px, 9vw, 112px) 0; }
 .hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(230px, .6fr); gap: clamp(30px, 8vw, 100px); padding-bottom: 48px; border-bottom: 1px solid var(--line); }

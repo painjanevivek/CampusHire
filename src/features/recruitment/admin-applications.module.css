@@ -53,6 +53,11 @@
 .inspector section { min-width: 0; }
 .inspector pre { font-size: .7rem; max-width: 100%; }
 .inspector :global(.badge) { border-radius: 4px; font-family: inherit; }
+.responsibilityStrip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0; padding: 10px; border: 1px solid var(--line); background: var(--canvas); }
+.responsibilityStrip > div { display: grid; gap: 3px; min-width: 0; }
+.responsibilityStrip span { color: var(--ink-muted); font-size: .6875rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+.responsibilityStrip strong { overflow-wrap: anywhere; font-size: .75rem; line-height: 1.4; }
+.responsibilityStrip :global(.badge) { grid-column: 1 / -1; justify-self: start; }
 .guidance { margin: 12px 0; border-radius: 6px; padding: 12px; background: var(--brand-blue-soft); }
 .updated { font-size: .75rem; }
 .evidence { border-top: 1px solid var(--line); padding-top: 16px; }
@@ -83,4 +88,5 @@
   .filters label, .filters label:first-child { flex: 1 1 100%; max-width: none; }
   .filters button { flex: 1; }
   .inspector { padding: 14px; }
+  .responsibilityStrip { grid-template-columns: 1fr; }
 }

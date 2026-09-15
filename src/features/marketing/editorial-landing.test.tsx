@@ -41,6 +41,17 @@ describe("EditorialLanding", () => {
     expect(document.querySelectorAll("[data-reveal-group]")).toHaveLength(5);
   });
 
+  it("answers common access, evidence, privacy, and AI-boundary questions", () => {
+    render(<EditorialLanding />);
+
+    const faq = screen.getByRole("region", { name: "The important details, up front." });
+    expect(faq.querySelectorAll("details")).toHaveLength(7);
+    expect(screen.getByText("Who creates Training & Placement accounts?")).toBeInTheDocument();
+    expect(screen.getByText("Can AI submit or change my application?")).toBeInTheDocument();
+    expect(screen.getByText("What if my supporting evidence is missing?")).toBeInTheDocument();
+    expect(screen.getByText("Who can see my student information?")).toBeInTheDocument();
+  });
+
   it("places an accessible theme toggle before sign in and switches themes", () => {
     render(<EditorialLanding />);
 

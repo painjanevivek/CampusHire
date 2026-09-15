@@ -5,22 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bot, BriefcaseBusiness, ClipboardList, Home, ListChecks, Menu, X } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationCenter } from "@/features/engagement/notification-center";
 import { ProfileMenu } from "./profile-menu";
 
 import styles from "./student-header.module.css";
 
 type WorkspaceSection =
-  "Home" | "Opportunities" | "Applications" | "Preparation" | "Copilot";
+  "Dashboard" | "Opportunities" | "Applications" | "Preparation";
 
 const navigation: Array<{ href: string; label: WorkspaceSection }> = [
-  { href: "/dashboard", label: "Home" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/opportunities", label: "Opportunities" },
   { href: "/applications", label: "Applications" },
   { href: "/preparation", label: "Preparation" },
-  { href: "/copilot", label: "Copilot" },
 ];
-const navigationIcons = { Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks, Copilot: Bot };
+const navigationIcons = { Dashboard: Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks };
 
 export function StudentHeader() {
   const pathname = usePathname();
@@ -49,7 +49,7 @@ export function StudentHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link className={styles.brand} href="/" aria-label="CampusHire home">
+        <Link className={styles.brand} href="/dashboard" aria-label="CampusHire Student Dashboard">
           <BrandMark />
           <strong>CampusHire</strong>
         </Link>
@@ -92,6 +92,8 @@ export function StudentHeader() {
         </nav>
 
         <div className={styles.utilities}>
+          <Link href="/copilot" aria-label="Ask CampusHire Copilot"><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
+          <ThemeToggle />
           <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} />
           <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} />
         </div>

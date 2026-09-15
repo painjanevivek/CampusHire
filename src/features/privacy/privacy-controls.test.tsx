@@ -9,6 +9,7 @@ describe("PrivacyControls", () => {
 
     expect(screen.getByRole("heading", { name: "Your placement data has a defined purpose." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Essential cookies, without tracking." })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to home" })).toHaveAttribute("href", "/");
     expect(screen.queryByRole("button", { name: /delete eligible data/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/DELETE MY CAMPUSHIRE DATA/)).not.toBeInTheDocument();
   });

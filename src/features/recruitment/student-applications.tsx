@@ -71,6 +71,7 @@ export function StudentApplications() {
             </div>
             <h2><Link href={`/applications/${item.id}`}>{title}</Link></h2>
             <p className={styles.submitted}><CalendarDays size={15} aria-hidden="true" /><span>Submitted <time dateTime={item.created_at}>{formatDate(item.created_at, item.institution_timezone)}</time><small>{item.institution_timezone}</small></span></p>
+            <dl className={styles.responsibility} aria-label="Application responsibility and timing"><div><dt>Responsible team</dt><dd>{item.assignee_user_id ? "Assigned placement reviewer" : "Institution placement team"}</dd></div><div><dt>Expected review</dt><dd>{item.review_due_at ? formatDate(item.review_due_at, item.institution_timezone) : "To be scheduled"}</dd></div><div><dt>Next action</dt><dd>{item.next_actor === "student" ? "Action needed from you" : "Placement team review"}</dd></div></dl>
             <div className={styles.versions} aria-label="Saved submission versions">
               <span><FileText size={15} aria-hidden="true" />Resume v{String(item.resume_snapshot.version_number ?? "—")}</span>
               <span><ShieldCheck size={15} aria-hidden="true" />Rule v{String(item.rule_snapshot.version ?? "—")}</span>

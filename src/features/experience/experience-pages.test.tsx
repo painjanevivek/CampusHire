@@ -33,11 +33,11 @@ describe("Product experience pages", () => {
   });
 
   it("shows no data and preserves report drill-down meaning", () => {
-    mocks.resource.mockImplementation(path => ({ data: path === "/admin/recruitment/drives" ? [] : { start_at: "2026-08-01T00:00:00Z", end_at: "2026-09-01T00:00:00Z", timezone: "UTC", metrics: [{ key: "review", label: "First review turnaround", value: null, sample_size: 0, explanation: "No recorded first departures.", href: "/admin/applications?review_pending=true" }] }, refresh: mocks.refresh }));
+    mocks.resource.mockImplementation(path => ({ data: path === "/tnp/recruitment/drives" ? [] : { start_at: "2026-08-01T00:00:00Z", end_at: "2026-09-01T00:00:00Z", timezone: "UTC", metrics: [{ key: "review", label: "First review turnaround", value: null, sample_size: 0, explanation: "No recorded first departures.", href: "/admin/applications?review_pending=true" }] }, refresh: mocks.refresh }));
     render(<Reports />);
     expect(screen.getByText("No data")).toBeInTheDocument();
     expect(screen.getByText("Sample: 0")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "View source records" })).toHaveAttribute("href", "/admin/applications?review_pending=true");
+    expect(screen.getByRole("link", { name: "View source records" })).toHaveAttribute("href", "/tnp/applications?review_pending=true");
   });
 
   it("saves only supported filter preferences, never role data or pagination", async () => {

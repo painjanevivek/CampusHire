@@ -1,6 +1,5 @@
-import { AdminOverview } from "@/features/recruitment/admin-overview";
+import { PlatformDashboard } from "@/features/platform/platform-workspaces";
 
 export default function AdminDashboard() {
-  return <AdminOverview />;
+  return <PlatformDashboard />;
 }
-

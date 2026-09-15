@@ -82,10 +82,10 @@ export function AdminDrives() {
     setPolicyLoadUnavailable(false);
     try {
       const [companyItems, driveItems, policyItems] = await Promise.all([
-        apiRequest<Company[]>("/admin/recruitment/companies", {
+        apiRequest<Company[]>("/tnp/recruitment/companies", {
           cache: "no-store",
         }),
-        apiRequest<Drive[]>("/admin/recruitment/drives", { cache: "no-store" }),
+        apiRequest<Drive[]>("/tnp/recruitment/drives", { cache: "no-store" }),
         apiRequest<PolicyDocument[]>("/admin/intelligence/policies", {
           cache: "no-store",
         }).catch(() => {
@@ -119,7 +119,7 @@ export function AdminDrives() {
     }
     try {
       const items = await apiRequest<PlacementRole[]>(
-        `/admin/recruitment/drives/${driveId}/roles`,
+        `/tnp/recruitment/drives/${driveId}/roles`,
         { cache: "no-store" },
       );
       setRoles(items);
@@ -141,7 +141,7 @@ export function AdminDrives() {
     }
     try {
       const [sets, proposals] = await Promise.all([
-        apiRequest<RuleSet[]>(`/admin/recruitment/roles/${roleId}/rule-sets`, {
+        apiRequest<RuleSet[]>(`/tnp/recruitment/roles/${roleId}/rule-sets`, {
           cache: "no-store",
         }),
         apiRequest<ExtractionProposal[]>(
@@ -185,8 +185,8 @@ export function AdminDrives() {
     try {
       const saved = await csrfRequest<Drive>(
         editingDrive
-          ? `/admin/recruitment/drives/${editingDrive.id}`
-          : "/admin/recruitment/drives",
+          ? `/tnp/recruitment/drives/${editingDrive.id}`
+          : "/tnp/recruitment/drives",
         {
           method: editingDrive ? "PATCH" : "POST",
           body: JSON.stringify({
@@ -240,7 +240,7 @@ export function AdminDrives() {
     setError("");
     setNotice("");
     try {
-      await csrfRequest<void>(`/admin/recruitment/drives/${drive.id}`, {
+      await csrfRequest<void>(`/tnp/recruitment/drives/${drive.id}`, {
         method: "DELETE",
       });
       const remaining = drives.filter((item) => item.id !== drive.id);
@@ -275,8 +275,8 @@ export function AdminDrives() {
     try {
       const saved = await csrfRequest<PlacementRole>(
         editingRole
-          ? `/admin/recruitment/roles/${editingRole.id}`
-          : `/admin/recruitment/drives/${selectedDrive}/roles`,
+          ? `/tnp/recruitment/roles/${editingRole.id}`
+          : `/tnp/recruitment/drives/${selectedDrive}/roles`,
         {
           method: editingRole ? "PATCH" : "POST",
           body: JSON.stringify({
@@ -341,7 +341,7 @@ export function AdminDrives() {
             : rule.value,
       }));
       const created = await csrfRequest<RuleSet>(
-        `/admin/recruitment/roles/${selectedRole}/rule-sets`,
+        `/tnp/recruitment/roles/${selectedRole}/rule-sets`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -460,7 +460,7 @@ export function AdminDrives() {
     setError("");
     try {
       setEligibilityPreview(await csrfRequest<Eligibility>(
-        `/admin/recruitment/roles/${selectedRole}/eligibility-preview`,
+        `/tnp/recruitment/roles/${selectedRole}/eligibility-preview`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -541,7 +541,7 @@ export function AdminDrives() {
           if (!publishingOpen) goToStep(1);
           else { setPublishingOpen(false); const params = new URLSearchParams(window.location.search); params.delete("step"); window.history.replaceState(null, "", `?${params}`); }
         }}>{publishingOpen ? "Close publishing guide" : "Review & publish"}</button></div>
-        {publishingOpen && <div id="publication-workflow"><GuidedPublishing key={`${activeDrive.id}:${activeDrive.updated_at}:${roles.map(role => role.status).join("")}:${ruleSets.map(rule => rule.status).join("")}`} drive={activeDrive} step={step} onStep={goToStep} busy={busy} onEdit={value => value === "rules" ? openRuleEditor() : setPanel(value)} onPublish={() => void postAction(activeDrive.status === "published" ? `/admin/recruitment/drives/${activeDrive.id}/save` : `/admin/recruitment/drives/${activeDrive.id}/actions/publish`, "Drive publication saved. Existing application snapshots are unchanged.")} /></div>}
+        {publishingOpen && <div id="publication-workflow"><GuidedPublishing key={`${activeDrive.id}:${activeDrive.updated_at}:${roles.map(role => role.status).join("")}:${ruleSets.map(rule => rule.status).join("")}`} drive={activeDrive} step={step} onStep={goToStep} busy={busy} onEdit={value => value === "rules" ? openRuleEditor() : setPanel(value)} onPublish={() => void postAction(activeDrive.status === "published" ? `/tnp/recruitment/drives/${activeDrive.id}/save` : `/tnp/recruitment/drives/${activeDrive.id}/actions/publish`, "Drive publication saved. Existing application snapshots are unchanged.")} /></div>}
       </section>}
       {!companies.length && !loading ? (
         <Alert tone="warning">
@@ -827,7 +827,7 @@ export function AdminDrives() {
                   disabled={busy || activeDrive.status !== "published"}
                   onClick={() =>
                     void postAction(
-                      `/admin/recruitment/drives/${activeDrive.id}/actions/close`,
+                      `/tnp/recruitment/drives/${activeDrive.id}/actions/close`,
                       "Drive closed. New applications are no longer accepted.",
                     )
                   }
@@ -838,7 +838,7 @@ export function AdminDrives() {
                   type="button"
                   disabled={busy}
                   onClick={() => void postAction(
-                    `/admin/recruitment/drives/${activeDrive.id}/duplicate`,
+                    `/tnp/recruitment/drives/${activeDrive.id}/duplicate`,
                     "Drive duplicated as a draft with draft role and rule copies.",
                   )}
                 >
@@ -1033,7 +1033,7 @@ export function AdminDrives() {
                             }
                             onClick={() =>
                               void postAction(
-                                `/admin/recruitment/roles/${activeRole.id}/publish`,
+                                `/tnp/recruitment/roles/${activeRole.id}/publish`,
                                 "Role published and ready for its drive publication.",
                               )
                             }
@@ -1132,7 +1132,7 @@ export function AdminDrives() {
                                 disabled={busy}
                                 onClick={() =>
                                   void postAction(
-                                    `/admin/recruitment/roles/${activeRole.id}/rule-sets/${set.id}/publish`,
+                                    `/tnp/recruitment/roles/${activeRole.id}/rule-sets/${set.id}/publish`,
                                     `Eligibility version ${set.version} published. Previous versions stay locked.`,
                                   )
                                 }

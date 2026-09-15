@@ -34,5 +34,9 @@ describe("AdminOverview", () => {
     expect(within(summary).getByText("Published drives")).toBeInTheDocument();
     expect(within(summary).getByText("Company records")).toBeInTheDocument();
     expect(within(summary).getByText("Invitations accepted")).toBeInTheDocument();
+    const quickActions = screen.getByRole("navigation", { name: "Dashboard quick actions" });
+    expect(within(quickActions).getByRole("link", { name: /Review applications/ })).toHaveAttribute("href", "/tnp/applications?work_view=my_work");
+    expect(within(quickActions).getByRole("link", { name: /Manage drives/ })).toHaveAttribute("href", "/tnp/drives");
+    expect(within(quickActions).getByRole("link", { name: /Invite students/ })).toHaveAttribute("href", "/tnp/students");
   });
 });

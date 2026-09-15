@@ -245,7 +245,7 @@ describe("AgentRunWorkspace", () => {
       },
     ];
     apiRequestMock.mockImplementation((path: string) => {
-      if (path === "/admin/recruitment/drives") return Promise.resolve([drive]);
+      if (path === "/tnp/recruitment/drives") return Promise.resolve([drive]);
       if (path.endsWith("/sources")) return Promise.resolve(sources);
       if (path.includes("/runs?target_id=")) return Promise.resolve([]);
       if (path.includes("/events")) return Promise.resolve([]);

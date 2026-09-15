@@ -51,8 +51,6 @@ export default function DocsPage() {
           </div>
           <nav aria-label="Docs actions">
             <Link href="/help">Help</Link>
-            <Link href="/sign-in">Student sign in</Link>
-            <Link className={styles.adminLink} href="/admin/sign-in">T&amp;P access</Link>
           </nav>
         </div>
       </header>
@@ -117,7 +115,7 @@ export default function DocsPage() {
               <div className={styles.adminGrid}>
                 {adminTools.map(([title, description]) => <article key={title}><h3>{title}</h3><p>{description}</p></article>)}
               </div>
-              <Link className={styles.textLink} href="/admin/sign-in">Open T&amp;P sign in <ArrowRight size={16} aria-hidden="true" /></Link>
+              <Link className={styles.textLink} href="/tnp/sign-in">Open T&amp;P sign in <ArrowRight size={16} aria-hidden="true" /></Link>
             </section>
 
             <section id="decisions" aria-labelledby="decisions-title">

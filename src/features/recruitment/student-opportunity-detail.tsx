@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -189,7 +189,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             </ul>
           </section>
 
-          <section className={styles.rules}>
+          <section id="eligibility" className={styles.rules}>
             <div className={styles.sectionTitle}>
               <div>
                 <p>Based on published rules</p>
@@ -261,16 +261,11 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             <div>
               <strong>Skills match</strong>
               {match?.status === "available" ? (
-                <>
-                  <p>
-                    <b>{match.score}% match</b> · {match.scoring_version}
-                  </p>
-                  <ul>
-                    {match.explanation.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </>
+                <section className={styles.matchCard} aria-label="Why this role may fit">
+                  <header><span className={styles.matchScore} style={{ "--role-fit": match.score } as CSSProperties} aria-label={`${match.score} percent advisory role fit`}>{match.score}<small>%</small></span><div><strong>Why this role may fit</strong><p>{match.scoring_version}</p></div></header>
+                  <ul>{match.explanation.map((item) => <li key={item}>{item}</li>)}</ul>
+                  <p>This advisory score never changes formal eligibility.</p>
+                </section>
               ) : (
                 <p>
                   {match?.explanation[0] ??

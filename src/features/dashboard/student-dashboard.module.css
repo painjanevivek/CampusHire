@@ -53,8 +53,16 @@
 .opportunityIdentity h3 { font-size: 1rem; }
 .opportunityIdentity div > span { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-muted); font-size: .7rem; }
 .eligibility { display: inline-flex; align-items: center; gap: 5px; color: var(--verified); font-size: .76rem; font-weight: var(--font-weight-label); }
-.match { display: grid; gap: 2px; }
-.match strong { color: var(--brand-blue-dark); font-size: .84rem; }
+.match { display: grid; gap: 4px; }
+.match summary { display: flex; align-items: center; gap: .65rem; cursor: pointer; color: var(--brand-blue-dark); font-size: .78rem; font-weight: 700; list-style: none; }
+.match summary::-webkit-details-marker { display: none; }
+.match[open] summary { margin-bottom: 2px; }
+.match summary strong { color: var(--ink); font-size: .84rem; }
+.matchCopy { display: grid; gap: .1rem; }
+.matchCopy > span { color: var(--brand-blue-dark); font-size: .7rem; }
+.matchRing { --match-progress: 0%; width: 2.85rem; aspect-ratio: 1; display: grid; flex: 0 0 auto; place-items: center; border-radius: 50%; background: radial-gradient(circle, var(--surface) 57%, transparent 59%), conic-gradient(var(--brand-blue) var(--match-progress), var(--line) 0); color: var(--brand-blue-dark); font-size: .7rem; font-weight: var(--font-weight-emphasis); }
+.matchRing[data-pending="true"] { background: radial-gradient(circle, var(--surface) 57%, transparent 59%), conic-gradient(var(--guidance) 25%, var(--line) 0); color: var(--ink-muted); }
+.match p { margin: 0; color: var(--ink); font-size: .78rem; }
 .match span { color: var(--ink-muted); font-size: .65rem; }
 .viewRole { width: var(--control-min-size); height: var(--control-min-size); display: grid; place-items: center; border-radius: 10px; background: var(--brand-blue); color: var(--on-primary); }
 .emptyState { display: flex; align-items: center; gap: 16px; padding: 24px; border: 1px dashed var(--line); }

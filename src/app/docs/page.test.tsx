@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import DocsPage from "./page";
@@ -18,6 +18,15 @@ describe("DocsPage", () => {
 
     expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Open Help center" })).toHaveAttribute("href", "/help");
-    expect(screen.getByRole("link", { name: "Open T&P sign in" })).toHaveAttribute("href", "/admin/sign-in");
+    expect(screen.getByRole("link", { name: "Open T&P sign in" })).toHaveAttribute("href", "/tnp/sign-in");
+  });
+
+  it("keeps only Help in the Docs action navigation", () => {
+    render(<DocsPage />);
+
+    const actions = screen.getByRole("navigation", { name: "Docs actions" });
+    expect(within(actions).getByRole("link", { name: "Help" })).toHaveAttribute("href", "/help");
+    expect(within(actions).queryByRole("link", { name: "Student sign in" })).not.toBeInTheDocument();
+    expect(within(actions).queryByRole("link", { name: "T&P access" })).not.toBeInTheDocument();
   });
 });

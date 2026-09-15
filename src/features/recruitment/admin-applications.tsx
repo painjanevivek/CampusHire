@@ -10,7 +10,8 @@ import type { PlacementApplication } from "./types";
 import styles from "./admin-applications.module.css";
 import ui from "@/features/experience/experience.module.css";
 
-type QueueItem = { id: string; student_name: string; role_title: string; company_name: string; status: string; revision: number; open_requests: number; awaiting_review: number };
+type QueueItem = { id: string; student_name: string; role_title: string; company_name: string; status: string; revision: number; open_requests: number; awaiting_review: number; assignee_user_id?: string | null; review_due_at?: string | null; due_state?: string };
+type CurrentUser = { role: string };
 type Queue = { items: QueueItem[]; total: number; page: number };
 type Preview = { items: Array<{ application_id: string; revision: number; allowed: boolean; explanation: string; current_status: string; target_status: string }>; allowed_count: number; blocked_count: number };
 type BulkDraft = { application_ids: string[]; status: string; reason: string; expected_revisions: Record<string, number> };
@@ -36,18 +37,27 @@ export function AdminApplications() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const [role, setRole] = useState("");
   const queueRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const returnFocusId = useRef("");
   const detailId = selectedId;
   const selected = detail?.id === detailId ? detail : null;
   const latestSelected = useRef(selectedId);
+  const canBulk = role === "tnp_admin" || role === "tnp_owner";
   useEffect(() => { latestSelected.current = selectedId; }, [selectedId]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void apiRequest<CurrentUser>("/auth/me", { signal: controller.signal, cache: "no-store" })
+      .then((user) => { if (!controller.signal.aborted) setRole(user.role); })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, []);
 
   const changeQuery = useCallback((changes: Record<string, string | null>, replaceHistory = false) => {
     const next = new URLSearchParams(window.location.search);
     Object.entries(changes).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key));
-    (replaceHistory ? replace : push)(`/admin/applications${next.size ? `?${next}` : ""}`, { scroll: false });
+    (replaceHistory ? replace : push)(`/tnp/applications${next.size ? `?${next}` : ""}`, { scroll: false });
   }, [push, replace]);
 
   useEffect(() => {
@@ -68,7 +78,7 @@ export function AdminApplications() {
     const controller = new AbortController();
     const timer = setTimeout(() => {
       setLoading(true); setError(""); setChecked([]); setPreview(null); setDraft(null);
-      void apiRequest<Queue>(`/admin/recruitment/review-queue?${queryString}`, { signal: controller.signal, cache: "no-store" })
+      void apiRequest<Queue>(`/tnp/recruitment/review-queue?${queryString}`, { signal: controller.signal, cache: "no-store" })
         .then(data => {
           if (controller.signal.aborted) return;
           setQueue(data);
@@ -88,7 +98,7 @@ export function AdminApplications() {
     const controller = new AbortController();
     const timer = setTimeout(() => {
       setDetailLoading(true);
-      void apiRequest<PlacementApplication>(`/admin/recruitment/review-queue/${detailId}`, { signal: controller.signal, cache: "no-store" })
+      void apiRequest<PlacementApplication>(`/tnp/recruitment/review-queue/${detailId}`, { signal: controller.signal, cache: "no-store" })
         .then(value => { if (controller.signal.aborted) return; setDetail(value); if (selectedId) requestAnimationFrame(() => headingRef.current?.focus({ preventScroll: true })); })
         .catch(() => { if (!controller.signal.aborted) setError("Candidate details could not be refreshed. Refresh before making a decision."); })
         .finally(() => { if (!controller.signal.aborted) setDetailLoading(false); });
@@ -108,11 +118,23 @@ export function AdminApplications() {
     const data = new FormData(form);
     setBusy(true); setError(""); setNotice("");
     try {
-      await csrfRequest(`/admin/recruitment/applications/${selected.id}/${override ? "override" : "status"}`, {
+      await csrfRequest(`/tnp/recruitment/applications/${selected.id}/${override ? "override" : "status"}`, {
         method: "POST", body: JSON.stringify({ status: data.get("status"), reason: data.get("reason"),
           expected_revision: selected.revision, ...(override ? { policy_reference: data.get("policy_reference") } : {}) }),
       });
       form.reset(); setNotice(override ? "Authorized override recorded with its policy reference." : "Decision and constructive feedback recorded.");
+      setRefresh(value => value + 1);
+    } catch (cause) { fail(cause); } finally { setBusy(false); }
+  }
+  async function claim() {
+    if (!selected || selected.assignee_user_id) return;
+    setBusy(true); setError(""); setNotice("");
+    try {
+      await csrfRequest(`/tnp/recruitment/applications/${selected.id}/claim`, {
+        method: "POST",
+        body: JSON.stringify({ expected_revision: selected.assignment_revision ?? 0 }),
+      });
+      setNotice("Application assigned to you. The ownership history has been recorded.");
       setRefresh(value => value + 1);
     } catch (cause) { fail(cause); } finally { setBusy(false); }
   }
@@ -136,10 +158,10 @@ export function AdminApplications() {
         const data = new FormData(event.currentTarget);
         const next = { application_ids: checked, status: String(data.get("status")), reason: String(data.get("reason")),
           expected_revisions: Object.fromEntries(queue.items.filter(item => checked.includes(item.id)).map(item => [item.id, item.revision])) };
-        setPreview(await csrfRequest<Preview>("/admin/recruitment/applications/bulk/preview", { method: "POST", body: JSON.stringify(next) }));
+        setPreview(await csrfRequest<Preview>("/tnp/recruitment/applications/bulk/preview", { method: "POST", body: JSON.stringify(next) }));
         setDraft(next);
       } else if (preview && draft && !preview.blocked_count) {
-        const result = await csrfRequest<{ updated_count: number }>("/admin/recruitment/applications/bulk/status", {
+        const result = await csrfRequest<{ updated_count: number }>("/tnp/recruitment/applications/bulk/status", {
           method: "POST", body: JSON.stringify({ ...draft,
             expected_revisions: Object.fromEntries(preview.items.map(item => [item.application_id, item.revision])),
             confirmation: "APPLY BULK STATUS" }),
@@ -173,18 +195,20 @@ export function AdminApplications() {
       <button onClick={() => setRefresh(value => value + 1)} disabled={busy}><RefreshCw size={16} aria-hidden="true" />Refresh</button></header>
     {error && <Alert tone="error">{error}</Alert>}{notice && <p role="status">{notice}</p>}
     <nav className={styles.views} aria-label="Application views">
-      <button aria-current={!params.get("application_status") && !params.get("requests") ? "page" : undefined} onClick={() => changeQuery({ application_status: null, requests: null, page: null, selected: null })}>All applications</button>
-      <button aria-current={params.get("application_status") === "submitted" ? "page" : undefined} onClick={() => changeQuery({ application_status: "submitted", requests: null, page: null, selected: null })}>Submitted</button>
-      <button aria-current={params.get("requests") === "awaiting_review" ? "page" : undefined} onClick={() => changeQuery({ application_status: null, requests: "awaiting_review", page: null, selected: null })}>Responses to review</button>
+      <button aria-current={params.get("work_view") === "my_work" ? "page" : undefined} onClick={() => changeQuery({ work_view: "my_work", requests: null, page: null, selected: null })}>My work</button>
+      {canBulk ? <button aria-current={params.get("work_view") === "unassigned" ? "page" : undefined} onClick={() => changeQuery({ work_view: "unassigned", requests: null, page: null, selected: null })}>Unassigned</button> : null}
+      <button aria-current={params.get("requests") === "open" ? "page" : undefined} onClick={() => changeQuery({ work_view: null, requests: "open", page: null, selected: null })}>Awaiting student</button>
+      <button aria-current={params.get("requests") === "awaiting_review" ? "page" : undefined} onClick={() => changeQuery({ work_view: null, requests: "awaiting_review", page: null, selected: null })}>Responses received</button>
+      <button aria-current={params.get("work_view") === "overdue" ? "page" : undefined} onClick={() => changeQuery({ work_view: "overdue", requests: null, page: null, selected: null })}>Overdue</button>
     </nav>
     <form key={queryString} className={`${ui.toolbar} ${styles.filters}`} onSubmit={filters} aria-label="Candidate filters">
       <label>Candidate search<input name="q" defaultValue={params.get("q") ?? ""} placeholder="Name or email" /></label>
       <label>Status<select name="status" defaultValue={params.get("application_status") ?? ""}><option value="">All statuses</option>{statuses.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
       <label>Information requests<select name="requests" defaultValue={params.get("requests") ?? ""}><option value="">All requests</option><option value="open">Awaiting student</option><option value="overdue">Overdue</option><option value="awaiting_review">Response to review</option></select></label>
       <button className={ui.button}>Apply filters</button>
-      <button className={ui.button} type="button" onClick={() => router.push("/admin/applications")}>Clear filters</button>
+      <button className={ui.button} type="button" onClick={() => router.push("/tnp/applications?work_view=my_work")}>Clear filters</button>
     </form>
-    {checked.length > 0 && <section className={ui.panel} aria-label="Selection toolbar"><h2>{checked.length} selected on this page</h2>
+    {canBulk && checked.length > 0 && <section className={ui.panel} aria-label="Selection toolbar"><h2>{checked.length} selected on this page</h2>
       <form className={ui.form} onSubmit={event => void bulk(event)}>
         <label>Target status<select name="status">{statuses.filter(status => !["submitted", "withdrawn"].includes(status)).map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
         <label>Constructive feedback<textarea name="reason" minLength={10} maxLength={500} required /></label>
@@ -199,10 +223,10 @@ export function AdminApplications() {
         <div className={styles.sectionHeader}><h2>Candidate queue</h2><span>{queue.total} records</span>{loading && <span role="status">Refreshing…</span>}</div>
         {!loading && !queue.items.length && <p>No applications in this view.</p>}
         <div ref={queueRef} className={styles.tableWrap} tabIndex={0} role="region" aria-label="Scrollable application table"><table className={styles.table} aria-label="Applications">
-          <thead><tr><th scope="col"><label className={styles.rowCheck}><input type="checkbox" aria-label="Select this page" disabled={loading || !queue.items.length} checked={queue.items.length > 0 && checked.length === queue.items.length} onChange={event => { setChecked(event.target.checked ? queue.items.map(item => item.id) : []); setPreview(null); setDraft(null); }} /></label></th><th scope="col">Candidate</th><th scope="col">Role / company</th><th scope="col">Status</th><th scope="col">Next action</th></tr></thead>
+          <thead><tr>{canBulk ? <th scope="col"><label className={styles.rowCheck}><input type="checkbox" aria-label="Select this page" disabled={loading || !queue.items.length} checked={queue.items.length > 0 && checked.length === queue.items.length} onChange={event => { setChecked(event.target.checked ? queue.items.map(item => item.id) : []); setPreview(null); setDraft(null); }} /></label></th> : null}<th scope="col">Candidate</th><th scope="col">Role / company</th><th scope="col">Status</th><th scope="col">Next action</th></tr></thead>
           <tbody>{queue.items.map(item => <tr key={item.id} data-selected={item.id === detailId}>
-            <td><label className={styles.rowCheck}><input type="checkbox" aria-label={`Select ${item.student_name} for bulk review`} disabled={loading} checked={checked.includes(item.id)}
-              onChange={event => { setChecked(current => event.target.checked ? [...current, item.id] : current.filter(id => id !== item.id)); setPreview(null); setDraft(null); }} /></label></td>
+            {canBulk ? <td><label className={styles.rowCheck}><input type="checkbox" aria-label={`Select ${item.student_name} for bulk review`} disabled={loading} checked={checked.includes(item.id)}
+              onChange={event => { setChecked(current => event.target.checked ? [...current, item.id] : current.filter(id => id !== item.id)); setPreview(null); setDraft(null); }} /></label></td> : null}
             <td><button data-application-id={item.id} className={styles.candidateLink} aria-label={`Review ${item.student_name} for ${item.role_title} at ${item.company_name}`} aria-pressed={item.id === detailId} onClick={() => changeQuery({ selected: item.id })}>{item.student_name}</button></td>
             <td><span>{item.role_title}</span><small>{item.company_name}</small></td>
             <td><span className={styles.status} data-status={item.status}>{item.status.replaceAll("_", " ")}</span></td>
@@ -216,7 +240,7 @@ export function AdminApplications() {
         {detailLoading && <p role="status">Loading candidate evidence…</p>}
         {selected ? <div className={ui.stack}>
           <header><h2 tabIndex={-1} ref={headingRef}>{selected.student_name}</h2><p>{String(selected.role_snapshot.title)} · {String(selected.role_snapshot.company_name)}</p>
-            <Badge tone="neutral">{selected.status.replaceAll("_", " ")}</Badge><p className={styles.guidance}>{selectedRow?.awaiting_review ? "Student response received. Review the additional evidence." : selectedRow?.open_requests ? "Awaiting the student's response to an information request." : "Review the recorded application and its supporting evidence."}</p><p className={styles.updated}>Last change {new Date(selected.updated_at).toLocaleString(undefined, { timeZone: selected.institution_timezone })} ({selected.institution_timezone})</p>{!!selected.allowed_actions?.length && <a className={ui.primary} href="#review-decision">Go to review decision</a>}</header>
+            <Badge tone="neutral">{selected.status.replaceAll("_", " ")}</Badge><div className={styles.responsibilityStrip} aria-label="Case responsibility"><div><span>Owner</span><strong>{selected.assignee_user_id ? "Assigned reviewer" : "Unassigned queue"}</strong></div><div><span>Due</span><strong>{selected.review_due_at ? new Date(selected.review_due_at).toLocaleString(undefined, { timeZone: selected.institution_timezone }) : "Not scheduled"}</strong></div><div><span>Next action</span><strong>{selectedRow ? nextAction(selectedRow) : selected.next_step ?? "Review evidence"}</strong></div><Badge tone={selected.due_state === "overdue" ? "warning" : "neutral"}>{selected.due_state?.replaceAll("_", " ") ?? "Not assigned"}</Badge></div><p className={styles.guidance}>{selectedRow?.awaiting_review ? "Student response received. Review the additional evidence." : selectedRow?.open_requests ? "Awaiting the student's response to an information request." : "Review the recorded application and its supporting evidence."}</p><p className={styles.updated}>Last change {new Date(selected.updated_at).toLocaleString(undefined, { timeZone: selected.institution_timezone })} ({selected.institution_timezone})</p>{canBulk && !selected.assignee_user_id ? <button className={ui.primary} type="button" disabled={busy} onClick={() => void claim()}>Claim application</button> : !!selected.allowed_actions?.length ? <a className={ui.primary} href="#review-decision">Go to review decision</a> : null}</header>
           <section className={styles.evidence}><h3>Eligibility evidence</h3><p>{selected.eligibility_snapshot.status.replaceAll("_", " ")}</p>
             <ul>{selected.eligibility_snapshot.results.map(result => <li key={result.label}>{result.passed === true && <CheckCircle2 size={16} aria-hidden="true" />}<span>{result.label}: {result.reason}</span></li>)}</ul>
             <details><summary>Technical decision evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ rules: selected.rule_snapshot, decision: selected.decision_snapshot }, null, 2)}</pre></details>
@@ -225,17 +249,17 @@ export function AdminApplications() {
             <details><summary>Immutable resume and profile evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ resume: selected.resume_snapshot, profile: selected.profile_snapshot }, null, 2)}</pre></details></section>
           <CorrectionPanel key={selected.id} applicationId={selected.id} admin timezone={selected.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(selected.status)} onChange={() => setRefresh(value => value + 1)} />
           <details className={styles.evidence}><summary>Decision history</summary><ol className={ui.timeline}>{selected.history.map(item => <li key={item.id}><p>{item.to_status.replaceAll("_", " ")} · {new Date(item.created_at).toLocaleString()}</p><p>{item.reason ?? "No additional reason recorded"}</p><details><summary>Actor evidence</summary><code>{item.actor_user_id}</code></details></li>)}</ol></details>
-          {!!selected.allowed_actions?.length && <form id="review-decision" className={ui.form} key={`${selected.id}:${selected.revision}`} onSubmit={event => void review(event)}>
+          {!!selected.allowed_actions?.length && !!selected.assignee_user_id && <form id="review-decision" className={ui.form} key={`${selected.id}:${selected.revision}`} onSubmit={event => void review(event)}>
             <h3>Record review decision</h3><label>Next recorded stage<select name="status" defaultValue="" required><option value="" disabled>Choose a decision</option>{selected.allowed_actions.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
             <label>Decision explanation and useful next step<textarea name="reason" required minLength={10} maxLength={500} /></label><button className={ui.primary} disabled={busy || detailLoading}>Save decision</button>
           </form>}
           <details><summary>Publish student feedback</summary><form className={ui.form} onSubmit={event => void feedback(event)}>
             <label>Update title<input name="title" required minLength={3} maxLength={180} /></label><label>Constructive feedback<textarea name="body" required minLength={3} maxLength={2000} /></label><button className={ui.button} disabled={busy}>Publish update</button>
           </form></details>
-          <details><summary>Authorized override</summary><p>Only permitted officers may override. A policy reference and reason are required; the server validates your authority.</p>
+          {canBulk && <details><summary>Exceptional action: authorized override</summary><p>Only permitted officers may override. A policy reference and reason are required; the server validates your authority.</p>
             <form className={ui.form} onSubmit={event => void review(event, true)}><label>Override decision<select name="status"><option value="shortlisted">Shortlisted</option><option value="rejected">Rejected</option></select></label>
               <label>Reason<textarea name="reason" minLength={10} maxLength={500} required /></label><label>Policy reference<input name="policy_reference" minLength={3} maxLength={300} required /></label><button className={ui.button} disabled={busy || detailLoading}>Record override</button>
-            </form></details>
+            </form></details>}
         </div> : !detailLoading && <p>Select an application to review its evidence.</p>}
       </section>}
     </div>

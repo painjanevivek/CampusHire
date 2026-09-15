@@ -17,8 +17,12 @@
 .accountList article:last-child { border-bottom: 0; }
 .accountList article > div { display: grid; gap: .25rem; }
 .accountList small { color: var(--ink-muted); }
-.accountList details { position: relative; }
-.accountList summary { min-height: 2.75rem; display: flex; align-items: center; color: var(--brand-blue); cursor: pointer; font-weight: var(--font-weight-label); }
-.accountList details form { display: grid; gap: .75rem; position: absolute; right: 0; z-index: var(--layer-content); width: min(22rem, calc(100vw - 2rem)); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 1rem; background: var(--surface); box-shadow: var(--shadow-soft); }
-@media (max-width: 800px) { .page { width: min(calc(100% - 2 * var(--layout-gutter-tablet)), var(--layout-admin-max)); } .createPanel { grid-template-columns: 1fr; } .accountList article { grid-template-columns: 1fr auto; } .accountList details { grid-column: 1 / -1; } }
+.actionMenu { position: relative; }
+.actionTrigger { min-height: 2.75rem; display: inline-flex; align-items: center; gap: .45rem; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 0 .75rem; background: var(--surface); color: var(--ink); cursor: pointer; font-weight: var(--font-weight-label); }
+.actionTrigger:hover, .actionTrigger[aria-expanded="true"] { border-color: var(--brand-blue); background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
+.actionTrigger svg { width: 1rem; height: 1rem; }
+.actionTrigger svg:last-child { transition: transform 160ms ease; }
+.actionTrigger[aria-expanded="true"] svg:last-child { transform: rotate(180deg); }
+.actionMenu form { display: grid; gap: .75rem; position: absolute; right: 0; z-index: var(--layer-content); width: min(22rem, calc(100vw - 2rem)); margin-top: .4rem; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 1rem; background: var(--surface); box-shadow: var(--shadow-soft); }
+@media (max-width: 800px) { .page { width: min(calc(100% - 2 * var(--layout-gutter-tablet)), var(--layout-admin-max)); } .createPanel { grid-template-columns: 1fr; } .accountList article { grid-template-columns: 1fr auto; } .actionMenu { grid-column: 1 / -1; } .actionMenu form { right: auto; left: 0; } }
 @media (max-width: 560px) { .page { width: min(calc(100% - 2 * var(--layout-gutter-mobile)), var(--layout-admin-max)); } .passwords { grid-template-columns: 1fr; } }

@@ -159,7 +159,7 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
         );
       } else {
         const [driveItems, sourceItems] = await Promise.all([
-          apiRequest<Drive[]>("/admin/recruitment/drives", { cache: "no-store" }),
+          apiRequest<Drive[]>("/tnp/recruitment/drives", { cache: "no-store" }),
           apiRequest<SourceVersion[]>(`${base}/sources`, { cache: "no-store" }).catch(() => []),
         ]);
         setDrives(driveItems);

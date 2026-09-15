@@ -1,37 +1,54 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { AdminWorkspace } from "./admin-workspace";
+import { AdminWorkspace, TnpWorkspace } from "./admin-workspace";
+
+vi.mock("@/features/engagement/notification-center", () => ({
+  NotificationCenter: () => <button type="button">Open notifications</button>,
+}));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/admin/drives",
+  usePathname: () => "/admin/dashboard",
   useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }),
 }));
 
 describe("AdminWorkspace", () => {
-  it("keeps placement operations separate from student navigation", () => {
+  it("keeps platform oversight separate from placement operations", () => {
     const { container } = render(
       <AdminWorkspace>
         <main>Admin content</main>
       </AdminWorkspace>,
     );
 
-    expect(container.querySelector('[data-workspace="admin"]')).toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "Placement operations" }))
+    expect(container.querySelector('[data-workspace="platform"]')).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Platform administration" }))
       .toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Drives" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(screen.queryByRole("navigation", { name: "Student navigation" }))
-      .not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Operations" })).toHaveAttribute(
+    expect(screen.queryByRole("link", { name: "Applications" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Drives" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Administration" }));
+    expect(screen.getByRole("link", { name: "System Health" })).toHaveAttribute(
       "href",
-      "/admin/operations",
+      "/admin/system-health",
     );
-    expect(screen.queryByRole("button", { name: "Open notifications" }))
-      .not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open administrator profile and account" }))
+    expect(screen.getByRole("button", { name: "Open notifications" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Switch to light mode" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Dashboard" }))
+      .toHaveAttribute("href", "/admin/dashboard");
+    expect(screen.getByRole("link", { name: "Open profile and account security" }))
       .toHaveAttribute("href", "/admin/account");
+  });
+
+  it("shows operational navigation only in the T&P workspace", () => {
+    render(<TnpWorkspace role="tnp_admin"><main>T&amp;P content</main></TnpWorkspace>);
+    expect(screen.getByRole("navigation", { name: "Placement operations" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Placement operations" }));
+    expect(screen.getByRole("link", { name: "Drives" })).toHaveAttribute("href", "/tnp/drives");
+    expect(screen.queryByRole("link", { name: "T&P Accounts" })).not.toBeInTheDocument();
   });
 });

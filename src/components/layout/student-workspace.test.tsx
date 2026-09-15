@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentWorkspace } from "./student-workspace";
 
@@ -11,6 +11,10 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("StudentWorkspace", () => {
+  beforeEach(() => {
+    navigation.pathname = "/dashboard";
+  });
+
   it("keeps account actions in a profile menu and help in the footer", () => {
     const { container } = render(
       <StudentWorkspace>
@@ -21,9 +25,9 @@ describe("StudentWorkspace", () => {
     expect(container.querySelector('[data-workspace="student"]')).toBeInTheDocument();
     const navigation = screen.getByRole("navigation", { name: "Student navigation" });
     expect(navigation).toContainElement(
-      screen.getByRole("link", { name: "Home" }),
+      screen.getByRole("link", { name: "Dashboard" }),
     );
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute(
       "aria-current",
       "page",
     );
@@ -43,7 +47,7 @@ describe("StudentWorkspace", () => {
   });
 
   it.each([
-    ["Home", "/dashboard"],
+    ["Dashboard", "/dashboard"],
     ["Opportunities", "/opportunities"],
     ["Applications", "/applications"],
     ["Preparation", "/resume"],
@@ -57,7 +61,10 @@ describe("StudentWorkspace", () => {
     );
 
     expect(screen.getAllByRole("navigation", { name: "Student navigation" })).toHaveLength(1);
-    expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "CampusHire Student Dashboard" })).toHaveAttribute(
+      "href",
+      "/dashboard",
+    );
     expect(screen.queryByRole("complementary", { name: "Student workspace" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("link").filter((link) => link.hasAttribute("aria-current"))).toEqual([
       screen.getByRole("link", { name: active }),

@@ -16,6 +16,8 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 
 const application = {
   revision: 3,
+  assignment_revision: 1,
+  assignee_user_id: "officer-1",
   allowed_actions: ["shortlisted", "rejected"],
   id: "application-1",
   role_id: "role-1",
@@ -64,12 +66,12 @@ const application = {
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(navigation.query), useRouter: () => ({ push: navigation.push, replace: navigation.replace }) }));
 vi.mock("@/features/experience/correction-panel", () => ({ CorrectionPanel: () => null }));
 
-const row = { id: application.id, student_name: application.student_name, role_title: "Software Engineer", company_name: "Nexora Labs", status: "under_review", revision: 3, open_requests: 0, awaiting_review: 0 };
+const row = { id: application.id, student_name: application.student_name, role_title: "Software Engineer", company_name: "Nexora Labs", status: "under_review", revision: 3, open_requests: 0, awaiting_review: 0, assignee_user_id: "officer-1" };
 describe("AdminApplications", () => {
   beforeEach(() => {
     navigation.query = "selected=application-1"; window.history.replaceState(null, "", "/admin/applications?selected=application-1");
     navigation.push.mockReset(); navigation.replace.mockReset(); csrfRequestMock.mockReset();
-    apiRequestMock.mockReset().mockImplementation((path: string) => Promise.resolve(path.includes("/review-queue/") ? application : { items: [row], total: 51, page: 1 }));
+    apiRequestMock.mockReset().mockImplementation((path: string) => Promise.resolve(path === "/auth/me" ? { id: "officer-1", role: "tnp_admin" } : path.includes("/review-queue/") ? application : { items: [row], total: 51, page: 1 }));
   });
   it("starts with a compact table and does not fetch evidence until a row is opened", async () => {
     navigation.query = "";
@@ -79,10 +81,10 @@ describe("AdminApplications", () => {
     expect(within(table).getByRole("columnheader", { name: "Candidate" })).toBeInTheDocument();
     expect(within(table).getByRole("columnheader", { name: "Next action" })).toBeInTheDocument();
     await screen.findByRole("button", { name: /Review Asha Patil/ });
-    expect(apiRequestMock.mock.calls.some(([path]) => path === "/admin/recruitment/review-queue/application-1")).toBe(false);
+    expect(apiRequestMock.mock.calls.some(([path]) => path === "/tnp/recruitment/review-queue/application-1")).toBe(false);
     expect(screen.queryByRole("region", { name: "Candidate decision details" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Review Asha Patil/ }));
-    expect(navigation.push).toHaveBeenCalledWith("/admin/applications?selected=application-1", { scroll: false });
+    expect(navigation.push).toHaveBeenCalledWith("/tnp/applications?selected=application-1", { scroll: false });
   });
   it("selects only the loaded page and clears a pending bulk preview when selection changes", async () => {
     render(<AdminApplications />);
@@ -95,28 +97,28 @@ describe("AdminApplications", () => {
   });
   it("renders a bounded page for a 500-record queue without downloading candidate details", async () => {
     navigation.query = "";
-    apiRequestMock.mockResolvedValue({ items: Array.from({ length: 25 }, (_, index) => ({ ...row, id: `application-${index}`, student_name: `Student ${index + 1}` })), total: 500, page: 1 });
+    apiRequestMock.mockImplementation((path: string) => Promise.resolve(path === "/auth/me" ? { id: "officer-1", role: "tnp_admin" } : { items: Array.from({ length: 25 }, (_, index) => ({ ...row, id: `application-${index}`, student_name: `Student ${index + 1}` })), total: 500, page: 1 }));
     render(<AdminApplications />);
     const table = await screen.findByRole("table", { name: "Applications" });
     await screen.findByRole("button", { name: /Review Student 25 / });
     expect(within(table).getAllByRole("row")).toHaveLength(26);
     expect(screen.getByText("Page 1 of 20")).toBeInTheDocument();
-    expect(apiRequestMock).toHaveBeenCalledTimes(1);
+    expect(apiRequestMock).toHaveBeenCalledTimes(2);
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
   });
   it("fetches detail only for the selected candidate and sends reasoned revision-checked decisions", async () => {
     render(<AdminApplications />);
     expect(await screen.findByText(/Active backlogs/)).toBeInTheDocument();
-    expect(apiRequestMock).toHaveBeenCalledWith("/admin/recruitment/review-queue/application-1", expect.anything());
+    expect(apiRequestMock).toHaveBeenCalledWith("/tnp/recruitment/review-queue/application-1", expect.anything());
     fireEvent.change(screen.getByLabelText("Next recorded stage"), { target: { value: "shortlisted" } });
     fireEvent.change(screen.getByLabelText("Decision explanation and useful next step"), { target: { value: "Your reviewed project evidence meets the published requirements." } });
     csrfRequestMock.mockResolvedValue(application);
     fireEvent.click(screen.getByRole("button", { name: "Save decision" }));
-    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/admin/recruitment/applications/application-1/status", expect.objectContaining({ body: expect.stringContaining('"expected_revision":3') })));
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/tnp/recruitment/applications/application-1/status", expect.objectContaining({ body: expect.stringContaining('"expected_revision":3') })));
   });
   it("requires an explicit policy reference for overrides and retains feedback publishing", async () => {
     render(<AdminApplications />); await screen.findByText(/Active backlogs/);
-    fireEvent.click(screen.getByText("Authorized override"));
+    fireEvent.click(screen.getByText("Exceptional action: authorized override"));
     expect(screen.getByLabelText("Policy reference")).toBeRequired();
     fireEvent.change(screen.getByLabelText("Reason"), { target: { value: "Policy permits reviewed equivalent academic evidence." } });
     fireEvent.change(screen.getByLabelText("Policy reference"), { target: { value: "Policy section 4.2" } });
@@ -145,8 +147,8 @@ describe("AdminApplications", () => {
     window.history.replaceState(null, "", "/admin/applications?" + navigation.query);
     render(<AdminApplications />);
     await screen.findByText(/Active backlogs/);
-    expect(apiRequestMock).toHaveBeenCalledWith("/admin/recruitment/review-queue?application_status=under_review&page=2", expect.anything());
+    expect(apiRequestMock).toHaveBeenCalledWith("/tnp/recruitment/review-queue?application_status=under_review&page=2", expect.anything());
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
-    expect(navigation.push).toHaveBeenCalledWith("/admin/applications?application_status=under_review&page=3", { scroll: false });
+    expect(navigation.push).toHaveBeenCalledWith("/tnp/applications?application_status=under_review&page=3", { scroll: false });
   });
 });

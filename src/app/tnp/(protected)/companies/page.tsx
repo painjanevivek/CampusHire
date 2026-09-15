@@ -1,0 +1,5 @@
+import { AdminCompanies } from "@/features/recruitment/admin-companies";
+
+export default function TnpCompaniesPage() {
+  return <AdminCompanies />;
+}

@@ -1,6 +1,5 @@
-import { AdminOperations } from "@/features/operations/admin-operations";
+import { redirect } from "next/navigation";
 
 export default function OperationsPage() {
-  return <AdminOperations />;
+  redirect("/admin/system-health");
 }
-

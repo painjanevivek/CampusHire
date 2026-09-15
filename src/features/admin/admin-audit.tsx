@@ -133,7 +133,7 @@ export function AdminAudit() {
         <a className={styles.export} href={exportHref} download><Download aria-hidden="true" /> Export filtered CSV</a>
       </header>
 
-      <details className={styles.filters} open>
+      <details className={styles.filters}>
         <summary><Filter aria-hidden="true" /> Filter audit records</summary>
         <form onSubmit={apply}>
           <label>Action<input value={filters.action} onChange={(event) => setFilters({ ...filters, action: event.target.value })} placeholder="application.status_changed" /></label>

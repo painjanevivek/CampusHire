@@ -17,7 +17,6 @@ import {
 
 import { Alert, Badge, EmptyState } from "@/components/ui/feedback";
 import { SavedViews } from "@/features/experience/saved-views";
-import experience from "@/features/experience/experience.module.css";
 import { cachedApiRequest, csrfRequest } from "@/lib/api/client";
 import type { Opportunity, OpportunityPage } from "./types";
 import styles from "./student-opportunities.module.css";
@@ -95,7 +94,10 @@ export function StudentOpportunities() {
   }
 
   const items = data?.items ?? [];
-  const selected = items[0];
+  const selectedForReview = comparison.length === 1
+    ? items.find((item) => item.id === comparison[0]?.id) ?? null
+    : null;
+  const selected = selectedForReview ?? items[0];
 
   return (
     <main id="main-content" className={styles.page} data-navigation-ready={!loading && !!data && !error} onClickCapture={event => {
@@ -151,6 +153,10 @@ export function StudentOpportunities() {
           <div className={styles.list}>
             {items.map((opportunity) => (
               <article key={opportunity.id} className={styles.card}>
+                <label className={styles.compareControl} title={`Compare ${opportunity.title}`}>
+                  <input type="checkbox" checked={comparison.some(item => item.id === opportunity.id)} disabled={comparison.length >= 3 && !comparison.some(item => item.id === opportunity.id)} onChange={event => setComparison(current => event.target.checked ? [...current, { id: opportunity.id, title: opportunity.title }] : current.filter(item => item.id !== opportunity.id))} />
+                  <span className="srOnly">Compare {opportunity.title}</span>
+                </label>
                 <div className={styles.mark} aria-hidden="true">{opportunity.company_name.slice(0, 1)}</div>
                 <div className={styles.cardBody}>
                   <p>{opportunity.company_name}</p>
@@ -159,7 +165,6 @@ export function StudentOpportunities() {
                   <div className={styles.skills}>{opportunity.skills.slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div>
                 </div>
                 <div className={styles.cardActions}>
-                  <label className={experience.button}><input type="checkbox" checked={comparison.some(item => item.id === opportunity.id)} disabled={comparison.length >= 3 && !comparison.some(item => item.id === opportunity.id)} onChange={event => setComparison(current => event.target.checked ? [...current, { id: opportunity.id, title: opportunity.title }] : current.filter(item => item.id !== opportunity.id))} /> Compare {opportunity.title}</label>
                   <div className={styles.states}><Badge tone={tone(opportunity)}>{eligibilityCopy(opportunity)}</Badge>{opportunity.application_status ? <Badge tone={opportunity.application_status === "withdrawn" ? "neutral" : "success"}>Application · {opportunity.application_status.replaceAll("_", " ")}</Badge> : null}</div>
                   <button type="button" disabled={saving === opportunity.id} onClick={() => void toggleSave(opportunity)} aria-label={opportunity.saved ? `Remove ${opportunity.title} from saved roles` : `Save ${opportunity.title}`}>
                     {opportunity.saved ? <BookmarkCheck aria-hidden="true" /> : <Bookmark aria-hidden="true" />}
@@ -172,6 +177,16 @@ export function StudentOpportunities() {
         </section>
 
         <aside className={styles.explainer} aria-label="Opportunity decision guide">
+          {selectedForReview ? <>
+            <div className={styles.guideIcon}><ShieldCheck aria-hidden="true" /></div>
+            <p className={styles.selectionEyebrow}>Role selected</p>
+            <h2>{selectedForReview.title}</h2>
+            <p>Review this published role before selecting another one to compare.</p>
+            <div className={styles.reviewActions}>
+              <Link href={`/opportunities/${selectedForReview.id}`}><BriefcaseBusiness aria-hidden="true" />Review role details</Link>
+              <Link href={`/opportunities/${selectedForReview.id}#eligibility`}><ShieldCheck aria-hidden="true" />Check eligibility score</Link>
+            </div>
+          </> : <>
           <div className={styles.guideIcon}><ShieldCheck aria-hidden="true" /></div>
           <h2>{selected ? `Why ${selected.title} is shown` : "How decisions work"}</h2>
           <p>{selected?.eligibility.status === "eligible" ? "Your current profile meets every published rule." : selected?.eligibility.status === "needs_manual_review" ? "You can still view this role while a person reviews the missing information. You are not rejected automatically." : "Only active roles published by your institution appear here."}</p>
@@ -181,9 +196,10 @@ export function StudentOpportunities() {
             <div><dt>Application</dt><dd>Locks resume and decision versions</dd></div>
           </dl>
           <Link href={selected ? `/opportunities/${selected.id}` : "/resume"}><BriefcaseBusiness aria-hidden="true" />{selected ? "Review role details" : "Prepare your resume"}</Link>
+          </>}
         </aside>
       </div>
-      {!!comparison.length && <aside className={experience.tray} aria-label="Comparison tray"><span>{comparison.length} of 3 roles selected</span>{comparison.map(item => <button className={experience.button} key={item.id} onClick={() => setComparison(current => current.filter(role => role.id !== item.id))}>Remove {item.title}</button>)}{comparison.length >= 2 ? <Link className={experience.primary} href={`/opportunities/compare?roles=${comparison.map(item => item.id).join(",")}`}>Compare selected roles</Link> : <span>Select one more role</span>}</aside>}
+      {comparison.length >= 2 ? <aside className={styles.comparisonTray} aria-label="Comparison tray"><span>{comparison.length} roles selected</span><Link href={`/opportunities/compare?roles=${comparison.map(item => item.id).join(",")}`}>Compare roles</Link></aside> : null}
     </main>
   );
 }

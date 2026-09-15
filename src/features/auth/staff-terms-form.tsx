@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { ApiError, csrfRequest } from "@/lib/api/client";
 import type { SignInResponse } from "@/lib/api/generated/types.gen";
-import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
+import { staffMfaSetupPath } from "@/lib/auth/post-auth-route";
 
 const POLICY_VERSION = "2026-08-28";
 
@@ -30,10 +30,10 @@ export function StaffTermsForm() {
         }),
       });
       if (result.next_step === "mfa_challenge") {
-        router.push("/admin/mfa/challenge");
+        router.push(result.user.workspace === "tnp" ? "/tnp/mfa/challenge" : "/admin/mfa/challenge");
         return;
       }
-      router.push(adminMfaSetupPath(result.user.role));
+      router.push(staffMfaSetupPath(result.user.workspace));
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "The acceptance could not be recorded.");
       setSubmitting(false);

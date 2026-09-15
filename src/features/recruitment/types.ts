@@ -198,6 +198,10 @@ export type ApplicationOverride = {
 
 export type PlacementApplication = {
   revision?: number;
+  assignee_user_id?: string | null;
+  review_due_at?: string | null;
+  assignment_revision?: number;
+  due_state?: "unassigned" | "on_track" | "due_soon" | "overdue";
   next_actor?: string;
   next_step?: string;
   open_requests?: number;
@@ -238,6 +242,10 @@ export type PlacementApplication = {
     reason: string;
     supporting_evidence: string[];
     administrator_response: string | null;
+    assignee_user_id?: string | null;
+    due_at?: string | null;
+    escalation_state?: string;
+    revision?: number;
     created_at: string;
     updated_at: string;
     resolved_at: string | null;

@@ -93,6 +93,29 @@
   gap: 8px;
 }
 
+.utilities > a {
+  min-height: var(--utility-control-size);
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  border: var(--utility-control-border);
+  border-radius: 6px;
+  padding: 0 .75rem;
+  background: var(--utility-control-background);
+  color: var(--ink);
+  font-size: .875rem;
+  font-weight: var(--font-weight-emphasis);
+  text-decoration: none;
+}
+
+.utilities > a:hover {
+  border-color: var(--brand-blue);
+  background: var(--utility-control-hover-background);
+  color: var(--utility-control-hover-color);
+}
+
+.utilities > a svg { width: 18px; height: 18px; }
+
 .utilityControl,
 .menuButton {
   width: var(--utility-control-size, 44px);
@@ -153,6 +176,8 @@
   .helpControl { display: none; }
   .navigation .mobileHelp { display: flex; }
   .utilities { gap: 6px; }
+  .utilities > a { width: 44px; padding: 0; justify-content: center; }
+  .utilityLabel { display: none; }
 }
 
 @media (max-width: 420px) {

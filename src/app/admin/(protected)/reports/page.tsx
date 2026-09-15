@@ -1,2 +1,3 @@
-import { Reports } from "@/features/experience/reports";
-export default function ReportsPage() { return <Reports />; }
+import { PlatformReports } from "@/features/platform/platform-workspaces";
+
+export default function ReportsPage() { return <PlatformReports />; }

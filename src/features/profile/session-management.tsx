@@ -37,7 +37,7 @@ function deviceLabel(summary: string | null) {
   return browser && system ? `${browser} on ${system}` : browser ?? system ?? summary;
 }
 
-export function SessionManagement({ destination }: { destination: "/sign-in" | "/admin/sign-in" }) {
+export function SessionManagement({ destination }: { destination: "/sign-in" | "/admin/sign-in" | "/tnp/sign-in" }) {
   const router = useRouter();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");

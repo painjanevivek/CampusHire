@@ -15,9 +15,11 @@ import { Alert } from "@/components/ui/feedback";
 import { cachedApiRequest } from "@/lib/api/client";
 import { AccountDisclosure } from "./account-disclosure";
 import { CommunicationPreferences } from "./communication-preferences";
+import { PrivacyRequestTracker } from "@/features/privacy/privacy-request-tracker";
 import { SessionManagement } from "./session-management";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
 import { ProfilePhotoUpload } from "./profile-photo";
+import { SavedRoles } from "./saved-roles";
 import styles from "./profile-workspace.module.css";
 
 type Profile = {
@@ -35,6 +37,7 @@ type Profile = {
 export function ProfileWorkspace() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [message, setMessage] = useState("");
+  const [activeTab, setActiveTab] = useState<"profile" | "saved">("profile");
 
   const loadProfile = useCallback(async (force = false) => {
     try {
@@ -69,7 +72,12 @@ export function ProfileWorkspace() {
         </Alert>
       ) : null}
 
-      <section className={styles.overview} aria-labelledby="profile-overview-title">
+      <div className={styles.profileTabs} role="tablist" aria-label="Profile sections">
+        <button type="button" role="tab" aria-selected={activeTab === "profile"} onClick={() => setActiveTab("profile")}>Profile</button>
+        <button type="button" role="tab" aria-selected={activeTab === "saved"} onClick={() => setActiveTab("saved")}>Saved roles</button>
+      </div>
+
+      {activeTab === "profile" ? <><section className={styles.overview} aria-labelledby="profile-overview-title">
         <article className={styles.identityCard}>
           <ProfilePhotoUpload />
           <div className={styles.identityStatus}><ShieldCheck aria-hidden="true" /> Institution-linked profile</div>
@@ -136,11 +144,12 @@ export function ProfileWorkspace() {
             <div className={styles.governanceContent}>
               <p>AI suggestions never replace your verified profile, eligibility result, or an accountable placement decision.</p>
               <Link className={styles.secondaryAction} href="/privacy">Review privacy controls</Link>
+              <PrivacyRequestTracker />
             </div>
           </AccountDisclosure>
 
         </div>
-      </section>
+      </section></> : <SavedRoles />}
     </main>
   );
 }

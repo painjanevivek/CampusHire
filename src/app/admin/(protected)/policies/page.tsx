@@ -1,6 +1,5 @@
-import { AdminPolicies } from "@/features/recruitment/admin-policies";
+import { redirect } from "next/navigation";
 
 export default function PoliciesPage() {
-  return <AdminPolicies />;
+  redirect("/admin/settings");
 }
-

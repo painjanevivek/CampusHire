@@ -10,20 +10,34 @@ export type SessionUser = {
   role: string;
   institution_id?: string | null;
   membership_status?: string | null;
+  workspace?: "admin" | "tnp" | "student";
+  capabilities?: string[];
 };
 
-const ADMIN_ROLES = new Set(["tnp_owner", "tnp_admin", "tnp_reviewer", "tnp_auditor"]);
+const TNP_ROLES = new Set(["tnp_owner", "tnp_admin", "tnp_reviewer", "tnp_auditor"]);
 
 export function isAdministratorRole(role: string): boolean {
-  return ADMIN_ROLES.has(role);
+  return role === "platform_admin";
 }
 
-export async function requireServerSession(lane: "student" | "admin"): Promise<SessionUser> {
+export function isTnpRole(role: string): boolean {
+  return TNP_ROLES.has(role);
+}
+
+function fallbackWorkspace(user: SessionUser): "student" | "admin" | "tnp" {
+  if (user.workspace) return user.workspace;
+  if (isAdministratorRole(user.role)) return "admin";
+  if (isTnpRole(user.role)) return "tnp";
+  return "student";
+}
+
+export async function requireServerSession(lane: "student" | "admin" | "tnp"): Promise<SessionUser> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+  const laneHome = lane === "admin" ? "/admin/dashboard" : lane === "tnp" ? "/tnp/dashboard" : "/dashboard";
   const returnTo = safeReturnTo(
     requestHeaders.get("x-campushire-return-to"),
-    lane === "admin" ? "/admin/dashboard" : "/dashboard",
-    lane === "admin" ? "/admin/" : undefined,
+    laneHome,
+    lane === "student" ? undefined : `/${lane}/`,
   );
   const configuredApiBase =
     process.env.INTERNAL_API_URL
@@ -45,7 +59,7 @@ export async function requireServerSession(lane: "student" | "admin"): Promise<S
     redirect(`/offline?returnTo=${encodeURIComponent(returnTo)}`);
   }
   if (response.status === 401) {
-    const destination = lane === "admin" ? "/admin/sign-in" : "/sign-in";
+    const destination = lane === "student" ? "/sign-in" : `/${lane}/sign-in`;
     redirect(`${destination}?returnTo=${encodeURIComponent(returnTo)}`);
   }
   if (response.status === 403) {
@@ -55,7 +69,12 @@ export async function requireServerSession(lane: "student" | "admin"): Promise<S
   }
   if (!response.ok) redirect(`/offline?returnTo=${encodeURIComponent(returnTo)}`);
   const user = await response.json() as SessionUser;
-  const isAdmin = isAdministratorRole(user.role);
-  if ((lane === "admin") !== isAdmin) redirect("/unauthorized");
+  const workspace = fallbackWorkspace(user);
+  if (lane !== workspace) {
+    if (workspace === "tnp" && returnTo.startsWith("/admin/")) {
+      redirect(returnTo.replace(/^\/admin\//, "/tnp/"));
+    }
+    redirect(workspace === "admin" ? "/admin/dashboard" : workspace === "tnp" ? "/tnp/dashboard" : "/dashboard");
+  }
   return user;
 }

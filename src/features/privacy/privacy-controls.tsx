@@ -7,6 +7,7 @@ export function PrivacyControls() {
   return (
     <main id="main-content" className={styles.page}>
       <header>
+        <Link className={styles.backHomeLink} href="/">Back to home</Link>
         <p>Privacy and AI assistance</p>
         <h1>Your placement data has a defined purpose.</h1>
         <span>

@@ -220,9 +220,21 @@ export type ApplicationAppealResponse = {
      */
     administrator_response: string | null;
     /**
+     * Assignee User Id
+     */
+    assignee_user_id?: string | null;
+    /**
      * Created At
      */
     created_at: string;
+    /**
+     * Due At
+     */
+    due_at?: string | null;
+    /**
+     * Escalation State
+     */
+    escalation_state?: string;
     /**
      * Id
      */
@@ -239,6 +251,10 @@ export type ApplicationAppealResponse = {
      * Resolved At
      */
     resolved_at: string | null;
+    /**
+     * Revision
+     */
+    revision?: number;
     /**
      * Status
      */
@@ -450,6 +466,14 @@ export type ApplicationOverrideCreate = {
  */
 export type ApplicationQueueItem = {
     /**
+     * Assignee User Id
+     */
+    assignee_user_id?: string | null;
+    /**
+     * Assignment Revision
+     */
+    assignment_revision?: number;
+    /**
      * Awaiting Review
      */
     awaiting_review: number;
@@ -462,6 +486,10 @@ export type ApplicationQueueItem = {
      */
     created_at: string;
     /**
+     * Due State
+     */
+    due_state: 'unassigned' | 'on_track' | 'due_soon' | 'overdue' | 'complete';
+    /**
      * Id
      */
     id: string;
@@ -469,6 +497,10 @@ export type ApplicationQueueItem = {
      * Open Requests
      */
     open_requests: number;
+    /**
+     * Review Due At
+     */
+    review_due_at?: string | null;
     /**
      * Revision
      */
@@ -534,6 +566,14 @@ export type ApplicationResponse = {
         [key: string]: unknown;
     };
     /**
+     * Assignee User Id
+     */
+    assignee_user_id?: string | null;
+    /**
+     * Assignment Revision
+     */
+    assignment_revision?: number;
+    /**
      * Awaiting Review
      */
     awaiting_review?: number;
@@ -555,6 +595,10 @@ export type ApplicationResponse = {
      * Disclosure Status
      */
     disclosure_status: string;
+    /**
+     * Due State
+     */
+    due_state?: 'unassigned' | 'on_track' | 'due_soon' | 'overdue' | 'complete';
     /**
      * Eligibility Snapshot
      */
@@ -625,6 +669,10 @@ export type ApplicationResponse = {
      * Resume Version Id
      */
     resume_version_id: string;
+    /**
+     * Review Due At
+     */
+    review_due_at?: string | null;
     /**
      * Revision
      */
@@ -1104,6 +1152,72 @@ export type CareerPreferenceStep = {
      * Work Modes
      */
     work_modes?: Array<'onsite' | 'hybrid' | 'remote'>;
+};
+
+/**
+ * CaseAssignmentHistoryResponse
+ */
+export type CaseAssignmentHistoryResponse = {
+    /**
+     * Actor User Id
+     */
+    actor_user_id: string;
+    /**
+     * Case Id
+     */
+    case_id: string;
+    /**
+     * Case Type
+     */
+    case_type: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * From Assignee User Id
+     */
+    from_assignee_user_id: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * To Assignee User Id
+     */
+    to_assignee_user_id: string | null;
+};
+
+/**
+ * CaseAssignmentRequest
+ */
+export type CaseAssignmentRequest = {
+    /**
+     * Assignee User Id
+     */
+    assignee_user_id: string | null;
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * CaseClaimRequest
+ */
+export type CaseClaimRequest = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
 };
 
 /**
@@ -1670,7 +1784,7 @@ export type DemoSignInRequest = {
     /**
      * Role
      */
-    role: 'student' | 'tnp_admin';
+    role: 'student' | 'tnp_admin' | 'platform_admin';
 };
 
 /**
@@ -2699,6 +2813,24 @@ export type InstitutionReviewStep = {
 };
 
 /**
+ * InstitutionStatusChange
+ */
+export type InstitutionStatusChange = {
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at?: string | null;
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
  * InvitationAcceptRequest
  */
 export type InvitationAcceptRequest = {
@@ -2818,6 +2950,100 @@ export type InvitationSummary = {
      * Status
      */
     status: 'pending' | 'expired' | 'accepted' | 'revoked';
+};
+
+/**
+ * LegalHoldCreate
+ */
+export type LegalHoldCreate = {
+    /**
+     * Owner User Id
+     */
+    owner_user_id: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Review At
+     */
+    review_at: string;
+    /**
+     * Scope
+     */
+    scope: {
+        [key: string]: unknown;
+    };
+    /**
+     * User Id
+     */
+    user_id?: string | null;
+};
+
+/**
+ * LegalHoldRelease
+ */
+export type LegalHoldRelease = {
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at: string;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * LegalHoldResponse
+ */
+export type LegalHoldResponse = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string | null;
+    /**
+     * Owner User Id
+     */
+    owner_user_id: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Release Reason
+     */
+    release_reason: string | null;
+    /**
+     * Released At
+     */
+    released_at: string | null;
+    /**
+     * Review At
+     */
+    review_at: string;
+    /**
+     * Scope
+     */
+    scope: {
+        [key: string]: unknown;
+    };
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * User Id
+     */
+    user_id: string | null;
 };
 
 /**
@@ -3170,6 +3396,16 @@ export type MfaSetupResponse = {
      * Secret
      */
     secret: string;
+};
+
+/**
+ * MfaStatusResponse
+ */
+export type MfaStatusResponse = {
+    /**
+     * Enabled
+     */
+    enabled: boolean;
 };
 
 /**
@@ -3551,6 +3787,386 @@ export type PlacementParticipationStep = {
 };
 
 /**
+ * PlatformAdminAssignmentResponse
+ */
+export type PlatformAdminAssignmentResponse = {
+    /**
+     * Assigned At
+     */
+    assigned_at: string;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * User Id
+     */
+    user_id: string;
+};
+
+/**
+ * PlatformAdminTransferRequest
+ */
+export type PlatformAdminTransferRequest = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+};
+
+/**
+ * PlatformDashboardSummary
+ */
+export type PlatformDashboardSummary = {
+    /**
+     * Active Institutions
+     */
+    active_institutions: number;
+    /**
+     * Overdue Escalations
+     */
+    overdue_escalations: number;
+    /**
+     * Pending Institution Approvals
+     */
+    pending_institution_approvals: number;
+    /**
+     * Reporting Freshness At
+     */
+    reporting_freshness_at: string | null;
+    /**
+     * Tnp Accounts
+     */
+    tnp_accounts: number;
+    /**
+     * Unresolved Service Items
+     */
+    unresolved_service_items: number;
+};
+
+/**
+ * PlatformHealthSummary
+ */
+export type PlatformHealthSummary = {
+    /**
+     * Checked At
+     */
+    checked_at: string;
+    /**
+     * Queues
+     */
+    queues: Array<ServiceQueueStatus>;
+    /**
+     * Status
+     */
+    status: 'healthy' | 'degraded';
+};
+
+/**
+ * PlatformInstitutionDetail
+ */
+export type PlatformInstitutionDetail = {
+    /**
+     * Application Count
+     */
+    application_count: number;
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Domains
+     */
+    domains: Array<string>;
+    /**
+     * Drive Count
+     */
+    drive_count: number;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Staff Count
+     */
+    staff_count: number;
+    /**
+     * Student Count
+     */
+    student_count: number;
+    /**
+     * Timezone
+     */
+    timezone: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * PlatformInstitutionPage
+ */
+export type PlatformInstitutionPage = {
+    /**
+     * Items
+     */
+    items: Array<PlatformInstitutionSummary>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
+ * PlatformInstitutionSummary
+ */
+export type PlatformInstitutionSummary = {
+    /**
+     * Application Count
+     */
+    application_count: number;
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Is Active
+     */
+    is_active: boolean;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Staff Count
+     */
+    staff_count: number;
+    /**
+     * Student Count
+     */
+    student_count: number;
+    /**
+     * Timezone
+     */
+    timezone: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * PlatformReportSummary
+ */
+export type PlatformReportSummary = {
+    /**
+     * Application Count
+     */
+    application_count: number;
+    /**
+     * Applications By Status
+     */
+    applications_by_status: {
+        [key: string]: number;
+    };
+    /**
+     * Drive Count
+     */
+    drive_count: number;
+    /**
+     * Generated At
+     */
+    generated_at: string;
+    /**
+     * Institution Count
+     */
+    institution_count: number;
+    /**
+     * Provisional
+     */
+    provisional?: boolean;
+    /**
+     * Student Count
+     */
+    student_count: number;
+};
+
+/**
+ * PlatformSettingsResponse
+ */
+export type PlatformSettingsResponse = {
+    /**
+     * Ai Key Configured
+     */
+    ai_key_configured: boolean;
+    /**
+     * Ai Model
+     */
+    ai_model: string | null;
+    /**
+     * Ai Provider
+     */
+    ai_provider: string;
+    /**
+     * Email Configured
+     */
+    email_configured: boolean;
+    /**
+     * Feature Availability
+     */
+    feature_availability: {
+        [key: string]: unknown;
+    };
+    /**
+     * Platform Notice
+     */
+    platform_notice: {
+        [key: string]: unknown;
+    };
+    /**
+     * Service Targets
+     */
+    service_targets: {
+        [key: string]: unknown;
+    };
+    /**
+     * Storage Backend
+     */
+    storage_backend: string;
+};
+
+/**
+ * PlatformSettingsUpdate
+ */
+export type PlatformSettingsUpdate = {
+    /**
+     * Feature Availability
+     */
+    feature_availability?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Platform Notice
+     */
+    platform_notice?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Service Targets
+     */
+    service_targets?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+/**
+ * PlatformStaffAccount
+ */
+export type PlatformStaffAccount = {
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Requires Terms Acceptance
+     */
+    requires_terms_acceptance: boolean;
+    /**
+     * Role
+     */
+    role: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Username
+     */
+    username: string | null;
+};
+
+/**
+ * PlatformStaffAccountCreate
+ */
+export type PlatformStaffAccountCreate = {
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Role
+     */
+    role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
+    /**
+     * Username
+     */
+    username: string;
+};
+
+/**
+ * PlatformStaffStatusChange
+ */
+export type PlatformStaffStatusChange = {
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Role
+     */
+    role?: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor' | null;
+    /**
+     * Status
+     */
+    status: 'active' | 'suspended' | 'revoked';
+};
+
+/**
  * PolicyAnswer
  */
 export type PolicyAnswer = {
@@ -3830,6 +4446,96 @@ export type PreparationResponse = {
     suggestions: Array<{
         [key: string]: unknown;
     }>;
+};
+
+/**
+ * PrivacyRequestCreate
+ */
+export type PrivacyRequestCreate = {
+    /**
+     * Details
+     */
+    details?: string | null;
+    /**
+     * Request Type
+     */
+    request_type: 'export' | 'correction' | 'erasure' | 'consent_withdrawal' | 'grievance';
+};
+
+/**
+ * PrivacyRequestDecision
+ */
+export type PrivacyRequestDecision = {
+    /**
+     * Action
+     */
+    action: 'assign' | 'approve' | 'decline' | 'hold' | 'complete';
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at: string;
+    /**
+     * Owner User Id
+     */
+    owner_user_id?: string | null;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * PrivacyRequestResponse
+ */
+export type PrivacyRequestResponse = {
+    /**
+     * Completed At
+     */
+    completed_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Details
+     */
+    details: string | null;
+    /**
+     * Due At
+     */
+    due_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Owner User Id
+     */
+    owner_user_id: string | null;
+    /**
+     * Receipt Reference
+     */
+    receipt_reference: string | null;
+    /**
+     * Request Type
+     */
+    request_type: string;
+    /**
+     * Result Summary
+     */
+    result_summary: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * User Id
+     */
+    user_id: string | null;
 };
 
 /**
@@ -5448,6 +6154,28 @@ export type SemanticMatchResponse = {
 };
 
 /**
+ * ServiceQueueStatus
+ */
+export type ServiceQueueStatus = {
+    /**
+     * Failed
+     */
+    failed: number;
+    /**
+     * Oldest Outstanding At
+     */
+    oldest_outstanding_at: string | null;
+    /**
+     * Pending
+     */
+    pending: number;
+    /**
+     * Service
+     */
+    service: string;
+};
+
+/**
  * ServiceStatusResponse
  */
 export type ServiceStatusResponse = {
@@ -6107,6 +6835,10 @@ export type TnpRunCreate = {
  */
 export type UserResponse = {
     /**
+     * Capabilities
+     */
+    capabilities?: Array<string>;
+    /**
      * Email
      */
     email: string;
@@ -6134,12 +6866,16 @@ export type UserResponse = {
      * Username
      */
     username?: string | null;
+    /**
+     * Workspace
+     */
+    workspace?: 'admin' | 'tnp' | 'student';
 };
 
 /**
  * UserRole
  */
-export type UserRole = 'student' | 'tnp_owner' | 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
+export type UserRole = 'student' | 'platform_admin' | 'tnp_owner' | 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
 
 /**
  * ValidationError
@@ -6639,56 +7375,6 @@ export type CreateNotificationApiV1AdminNotificationsPostResponses = {
 
 export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
 
-export type ReadInstitutionOnboardingApiV1AdminOnboardingGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/onboarding';
-};
-
-export type ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadInstitutionOnboardingApiV1AdminOnboardingGetError = ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors[keyof ReadInstitutionOnboardingApiV1AdminOnboardingGetErrors];
-
-export type ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionOnboardingResponse;
-};
-
-export type ReadInstitutionOnboardingApiV1AdminOnboardingGetResponse = ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses[keyof ReadInstitutionOnboardingApiV1AdminOnboardingGetResponses];
-
-export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutData = {
-    body: InstitutionOnboardingUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/onboarding/step';
-};
-
-export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutError = SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors[keyof SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutErrors];
-
-export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionOnboardingResponse;
-};
-
-export type SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponse = SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses[keyof SaveInstitutionOnboardingStepApiV1AdminOnboardingStepPutResponses];
-
 export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
     body?: never;
     path?: never;
@@ -6808,860 +7494,6 @@ export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses = {
 
 export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponse = ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses];
 
-export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostData = {
-    body: ApplicationAppealResolution;
-    path: {
-        /**
-         * Appeal Id
-         */
-        appeal_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/application-appeals/{appeal_id}/resolution';
-};
-
-export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostError = ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors[keyof ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostErrors];
-
-export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationAppealResponse;
-};
-
-export type ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponse = ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses[keyof ResolveAppealApiV1AdminRecruitmentApplicationAppealsAppealIdResolutionPostResponses];
-
-export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Role Id
-         */
-        role_id?: string | null;
-        /**
-         * Application Status
-         */
-        application_status?: string | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/admin/recruitment/applications';
-};
-
-export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetError = ReadApplicationsApiV1AdminRecruitmentApplicationsGetErrors[keyof ReadApplicationsApiV1AdminRecruitmentApplicationsGetErrors];
-
-export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AdminApplicationPage;
-};
-
-export type ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponse = ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses[keyof ReadApplicationsApiV1AdminRecruitmentApplicationsGetResponses];
-
-export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostData = {
-    body: BulkApplicationStatusRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/bulk/preview';
-};
-
-export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostError = PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors[keyof PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostErrors];
-
-export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: BulkApplicationPreviewResponse;
-};
-
-export type PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponse = PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses[keyof PreviewBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkPreviewPostResponses];
-
-export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostData = {
-    body: BulkApplicationApplyRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/bulk/status';
-};
-
-export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostError = ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors[keyof ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostErrors];
-
-export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: BulkApplicationApplyResponse;
-};
-
-export type ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponse = ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses[keyof ApplyBulkApplicationChangeApiV1AdminRecruitmentApplicationsBulkStatusPostResponses];
-
-export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostData = {
-    body: ApplicationOverrideCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/override';
-};
-
-export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostError = OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostErrors[keyof OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostErrors];
-
-export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponse = OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponses[keyof OverrideApplicationDecisionApiV1AdminRecruitmentApplicationsApplicationIdOverridePostResponses];
-
-export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/requests';
-};
-
-export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetError = AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors[keyof AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetErrors];
-
-export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses = {
-    /**
-     * Response Admin Requests Api V1 Admin Recruitment Applications  Application Id  Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<CorrectionResponse>;
-};
-
-export type AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponse = AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses[keyof AdminRequestsApiV1AdminRecruitmentApplicationsApplicationIdRequestsGetResponses];
-
-export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostData = {
-    body: RequestCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/requests';
-};
-
-export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostError = CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors[keyof CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostErrors];
-
-export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: CorrectionResponse;
-};
-
-export type CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponse = CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses[keyof CreateRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsPostResponses];
-
-export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-        /**
-         * Request Id
-         */
-        request_id: string;
-        /**
-         * Event Id
-         */
-        event_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/requests/{request_id}/events/{event_id}/resume';
-};
-
-export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetError = SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors[keyof SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors];
-
-export type SupplementalResumeApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostData = {
-    body: RequestResolution;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/requests/{request_id}/resolve';
-};
-
-export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostError = ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors[keyof ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors];
-
-export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: CorrectionResponse;
-};
-
-export type ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponse = ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses[keyof ResolveRequestApiV1AdminRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses];
-
-export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostData = {
-    body: ApplicationStatusUpdate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/applications/{application_id}/status';
-};
-
-export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostError = ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostErrors[keyof ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostErrors];
-
-export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostResponse = ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostResponses[keyof ChangeApplicationStatusApiV1AdminRecruitmentApplicationsApplicationIdStatusPostResponses];
-
-export type ReadCompaniesApiV1AdminRecruitmentCompaniesGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/companies';
-};
-
-export type ReadCompaniesApiV1AdminRecruitmentCompaniesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadCompaniesApiV1AdminRecruitmentCompaniesGetError = ReadCompaniesApiV1AdminRecruitmentCompaniesGetErrors[keyof ReadCompaniesApiV1AdminRecruitmentCompaniesGetErrors];
-
-export type ReadCompaniesApiV1AdminRecruitmentCompaniesGetResponses = {
-    /**
-     * Response Read Companies Api V1 Admin Recruitment Companies Get
-     *
-     * Successful Response
-     */
-    200: Array<CompanyResponse>;
-};
-
-export type ReadCompaniesApiV1AdminRecruitmentCompaniesGetResponse = ReadCompaniesApiV1AdminRecruitmentCompaniesGetResponses[keyof ReadCompaniesApiV1AdminRecruitmentCompaniesGetResponses];
-
-export type AddCompanyApiV1AdminRecruitmentCompaniesPostData = {
-    body: CompanyCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/companies';
-};
-
-export type AddCompanyApiV1AdminRecruitmentCompaniesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddCompanyApiV1AdminRecruitmentCompaniesPostError = AddCompanyApiV1AdminRecruitmentCompaniesPostErrors[keyof AddCompanyApiV1AdminRecruitmentCompaniesPostErrors];
-
-export type AddCompanyApiV1AdminRecruitmentCompaniesPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: CompanyResponse;
-};
-
-export type AddCompanyApiV1AdminRecruitmentCompaniesPostResponse = AddCompanyApiV1AdminRecruitmentCompaniesPostResponses[keyof AddCompanyApiV1AdminRecruitmentCompaniesPostResponses];
-
-export type EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchData = {
-    body: CompanyUpdate;
-    path: {
-        /**
-         * Company Id
-         */
-        company_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/companies/{company_id}';
-};
-
-export type EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchError = EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchErrors[keyof EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchErrors];
-
-export type EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: CompanyResponse;
-};
-
-export type EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchResponse = EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchResponses[keyof EditCompanyApiV1AdminRecruitmentCompaniesCompanyIdPatchResponses];
-
-export type ReadDrivesApiV1AdminRecruitmentDrivesGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives';
-};
-
-export type ReadDrivesApiV1AdminRecruitmentDrivesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadDrivesApiV1AdminRecruitmentDrivesGetError = ReadDrivesApiV1AdminRecruitmentDrivesGetErrors[keyof ReadDrivesApiV1AdminRecruitmentDrivesGetErrors];
-
-export type ReadDrivesApiV1AdminRecruitmentDrivesGetResponses = {
-    /**
-     * Response Read Drives Api V1 Admin Recruitment Drives Get
-     *
-     * Successful Response
-     */
-    200: Array<DriveResponse>;
-};
-
-export type ReadDrivesApiV1AdminRecruitmentDrivesGetResponse = ReadDrivesApiV1AdminRecruitmentDrivesGetResponses[keyof ReadDrivesApiV1AdminRecruitmentDrivesGetResponses];
-
-export type AddDriveApiV1AdminRecruitmentDrivesPostData = {
-    body: DriveCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives';
-};
-
-export type AddDriveApiV1AdminRecruitmentDrivesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddDriveApiV1AdminRecruitmentDrivesPostError = AddDriveApiV1AdminRecruitmentDrivesPostErrors[keyof AddDriveApiV1AdminRecruitmentDrivesPostErrors];
-
-export type AddDriveApiV1AdminRecruitmentDrivesPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: DriveResponse;
-};
-
-export type AddDriveApiV1AdminRecruitmentDrivesPostResponse = AddDriveApiV1AdminRecruitmentDrivesPostResponses[keyof AddDriveApiV1AdminRecruitmentDrivesPostResponses];
-
-export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}';
-};
-
-export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteError = RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors[keyof RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteErrors];
-
-export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponse = RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses[keyof RemoveDriveApiV1AdminRecruitmentDrivesDriveIdDeleteResponses];
-
-export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchData = {
-    body: DriveUpdate;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}';
-};
-
-export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchError = EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchErrors[keyof EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchErrors];
-
-export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: DriveResponse;
-};
-
-export type EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchResponse = EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchResponses[keyof EditDriveApiV1AdminRecruitmentDrivesDriveIdPatchResponses];
-
-export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-        /**
-         * Action
-         */
-        action: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/actions/{action}';
-};
-
-export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostError = ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostErrors[keyof ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostErrors];
-
-export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: DriveResponse;
-};
-
-export type ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponse = ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponses[keyof ChangeDriveStateApiV1AdminRecruitmentDrivesDriveIdActionsActionPostResponses];
-
-export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/duplicate';
-};
-
-export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostError = DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors[keyof DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostErrors];
-
-export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: DriveResponse;
-};
-
-export type DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponse = DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses[keyof DuplicateAdminDriveApiV1AdminRecruitmentDrivesDriveIdDuplicatePostResponses];
-
-export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/publication-preview';
-};
-
-export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetError = PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors[keyof PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetErrors];
-
-export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PublishPreview;
-};
-
-export type PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponse = PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses[keyof PreviewPublicationApiV1AdminRecruitmentDrivesDriveIdPublicationPreviewGetResponses];
-
-export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/roles';
-};
-
-export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetError = ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetErrors[keyof ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetErrors];
-
-export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetResponses = {
-    /**
-     * Response Read Roles Api V1 Admin Recruitment Drives  Drive Id  Roles Get
-     *
-     * Successful Response
-     */
-    200: Array<RoleResponse>;
-};
-
-export type ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetResponse = ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetResponses[keyof ReadRolesApiV1AdminRecruitmentDrivesDriveIdRolesGetResponses];
-
-export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostData = {
-    body: RoleCreate;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/roles';
-};
-
-export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostError = AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostErrors[keyof AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostErrors];
-
-export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: RoleResponse;
-};
-
-export type AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponse = AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses[keyof AddRoleApiV1AdminRecruitmentDrivesDriveIdRolesPostResponses];
-
-export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/drives/{drive_id}/save';
-};
-
-export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostError = SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors[keyof SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostErrors];
-
-export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: DriveResponse;
-};
-
-export type SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1AdminRecruitmentDrivesDriveIdSavePostResponses];
-
-export type ReportApiV1AdminRecruitmentReportsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Drive Id
-         */
-        drive_id?: string | null;
-    };
-    url: '/api/v1/admin/recruitment/reports';
-};
-
-export type ReportApiV1AdminRecruitmentReportsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReportApiV1AdminRecruitmentReportsGetError = ReportApiV1AdminRecruitmentReportsGetErrors[keyof ReportApiV1AdminRecruitmentReportsGetErrors];
-
-export type ReportApiV1AdminRecruitmentReportsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReportResponse;
-};
-
-export type ReportApiV1AdminRecruitmentReportsGetResponse = ReportApiV1AdminRecruitmentReportsGetResponses[keyof ReportApiV1AdminRecruitmentReportsGetResponses];
-
-export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-        /**
-         * Application Status
-         */
-        application_status?: string | null;
-        /**
-         * Drive Id
-         */
-        drive_id?: string | null;
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Requests
-         */
-        requests?: string | null;
-        /**
-         * Q
-         */
-        q?: string | null;
-        /**
-         * Review Pending
-         */
-        review_pending?: boolean;
-    };
-    url: '/api/v1/admin/recruitment/review-queue';
-};
-
-export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetError = ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors[keyof ReviewQueueApiV1AdminRecruitmentReviewQueueGetErrors];
-
-export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationQueuePage;
-};
-
-export type ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponse = ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses[keyof ReviewQueueApiV1AdminRecruitmentReviewQueueGetResponses];
-
-export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/review-queue/{application_id}';
-};
-
-export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetError = ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors[keyof ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetErrors];
-
-export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponse = ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses[keyof ReviewDetailApiV1AdminRecruitmentReviewQueueApplicationIdGetResponses];
-
-export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchData = {
-    body: RoleUpdate;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}';
-};
-
-export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchError = EditRoleApiV1AdminRecruitmentRolesRoleIdPatchErrors[keyof EditRoleApiV1AdminRecruitmentRolesRoleIdPatchErrors];
-
-export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: RoleResponse;
-};
-
-export type EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponse = EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses[keyof EditRoleApiV1AdminRecruitmentRolesRoleIdPatchResponses];
-
 export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetData = {
     body?: never;
     path: {
@@ -7753,36 +7585,6 @@ export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicatio
 };
 
 export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponse = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses];
-
-export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostData = {
-    body: EligibilityPreviewRequest;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/eligibility-preview';
-};
-
-export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostError = PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors[keyof PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostErrors];
-
-export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: EligibilityResponse;
-};
-
-export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
 
 export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetData = {
     body?: never;
@@ -7918,132 +7720,6 @@ export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTerm
 };
 
 export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponse = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses];
-
-export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/publish';
-};
-
-export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostError = PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostErrors[keyof PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostErrors];
-
-export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: RoleResponse;
-};
-
-export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostResponse = PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostResponses[keyof PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostResponses];
-
-export type ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/rule-sets';
-};
-
-export type ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetError = ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetErrors[keyof ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetErrors];
-
-export type ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetResponses = {
-    /**
-     * Response Read Rule Sets Api V1 Admin Recruitment Roles  Role Id  Rule Sets Get
-     *
-     * Successful Response
-     */
-    200: Array<RuleSetResponse>;
-};
-
-export type ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetResponse = ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetResponses[keyof ReadRuleSetsApiV1AdminRecruitmentRolesRoleIdRuleSetsGetResponses];
-
-export type AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostData = {
-    body: RuleSetCreate;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/rule-sets';
-};
-
-export type AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostError = AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostErrors[keyof AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostErrors];
-
-export type AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: RuleSetResponse;
-};
-
-export type AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostResponse = AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostResponses[keyof AddRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsPostResponses];
-
-export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-        /**
-         * Rule Set Id
-         */
-        rule_set_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/rule-sets/{rule_set_id}/publish';
-};
-
-export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostError = PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors[keyof PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors];
-
-export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: RuleSetResponse;
-};
-
-export type PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponse = PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses[keyof PublishAdminRuleSetApiV1AdminRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses];
 
 export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetData = {
     body?: never;
@@ -10196,6 +9872,31 @@ export type SetupMfaApiV1AuthMfaSetupPostResponses = {
 
 export type SetupMfaApiV1AuthMfaSetupPostResponse = SetupMfaApiV1AuthMfaSetupPostResponses[keyof SetupMfaApiV1AuthMfaSetupPostResponses];
 
+export type ReadMfaStatusApiV1AuthMfaStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/status';
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetError = ReadMfaStatusApiV1AuthMfaStatusGetErrors[keyof ReadMfaStatusApiV1AuthMfaStatusGetErrors];
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaStatusResponse;
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetResponse = ReadMfaStatusApiV1AuthMfaStatusGetResponses[keyof ReadMfaStatusApiV1AuthMfaStatusGetResponses];
+
 export type RequestPasswordResetApiV1AuthPasswordResetRequestPostData = {
     body: PasswordResetRequest;
     path?: never;
@@ -11559,6 +11260,585 @@ export type UpdateViewApiV1OpportunityViewsViewIdPutResponses = {
 
 export type UpdateViewApiV1OpportunityViewsViewIdPutResponse = UpdateViewApiV1OpportunityViewsViewIdPutResponses[keyof UpdateViewApiV1OpportunityViewsViewIdPutResponses];
 
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/admin-assignment';
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetError = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors];
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformAdminAssignmentResponse;
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponse = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses];
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostData = {
+    body: PlatformAdminTransferRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/admin-assignment/transfer';
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostError = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors];
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformAdminAssignmentResponse;
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponse = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses];
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Institution Id
+         */
+        institution_id?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/audit/events';
+};
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetError = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors];
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AuditEventPage;
+};
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponse = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses];
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/dashboard';
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetError = ReadPlatformDashboardApiV1PlatformDashboardGetErrors[keyof ReadPlatformDashboardApiV1PlatformDashboardGetErrors];
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformDashboardSummary;
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetResponse = ReadPlatformDashboardApiV1PlatformDashboardGetResponses[keyof ReadPlatformDashboardApiV1PlatformDashboardGetResponses];
+
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/institution-registration-requests';
+};
+
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetError = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors];
+
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses = {
+    /**
+     * Response Read Platform Registration Requests Api V1 Platform Institution Registration Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<InstitutionRegistrationResponse>;
+};
+
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponse = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses];
+
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostData = {
+    body: InstitutionRegistrationDecision;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institution-registration-requests/{request_id}/decision';
+};
+
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostError = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors];
+
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionRegistrationResponse;
+};
+
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponse = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses];
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Is Active
+         */
+        is_active?: boolean | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/institutions';
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetError = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors];
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionPage;
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponse = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses];
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}';
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetError = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors];
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionDetail;
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponse = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses];
+
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/application-appeals/{appeal_id}/assignment';
+};
+
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostError = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors];
+
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponse = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses];
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: {
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/institutions/{institution_id}/applications';
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetError = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors];
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminApplicationPage;
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponse = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses];
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/assignment';
+};
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostError = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors];
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponse = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses];
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetError = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors];
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses = {
+    /**
+     * Response Read Platform Staff Accounts Api V1 Platform Institutions  Institution Id  Staff Accounts Get
+     *
+     * Successful Response
+     */
+    200: Array<PlatformStaffAccount>;
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponse = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses];
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostData = {
+    body: PlatformStaffAccountCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostError = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors];
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlatformStaffAccount;
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses];
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchData = {
+    body: PlatformStaffStatusChange;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Membership Id
+         */
+        membership_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts/{membership_id}';
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchError = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors];
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformStaffAccount;
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponse = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses];
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchData = {
+    body: InstitutionStatusChange;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/status';
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchError = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors];
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionDetail;
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponse = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses];
+
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/reports/summary';
+};
+
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetError = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors];
+
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformReportSummary;
+};
+
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponse = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses];
+
+export type ReadPlatformSettingsApiV1PlatformSettingsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/settings';
+};
+
+export type ReadPlatformSettingsApiV1PlatformSettingsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformSettingsApiV1PlatformSettingsGetError = ReadPlatformSettingsApiV1PlatformSettingsGetErrors[keyof ReadPlatformSettingsApiV1PlatformSettingsGetErrors];
+
+export type ReadPlatformSettingsApiV1PlatformSettingsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformSettingsResponse;
+};
+
+export type ReadPlatformSettingsApiV1PlatformSettingsGetResponse = ReadPlatformSettingsApiV1PlatformSettingsGetResponses[keyof ReadPlatformSettingsApiV1PlatformSettingsGetResponses];
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchData = {
+    body: PlatformSettingsUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/settings';
+};
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchError = SetPlatformSettingsApiV1PlatformSettingsPatchErrors[keyof SetPlatformSettingsApiV1PlatformSettingsPatchErrors];
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformSettingsResponse;
+};
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchResponse = SetPlatformSettingsApiV1PlatformSettingsPatchResponses[keyof SetPlatformSettingsApiV1PlatformSettingsPatchResponses];
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/system-health';
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetError = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors];
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformHealthSummary;
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponse = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses];
+
 export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostData = {
     body: DataDeletionCreate;
     path?: never;
@@ -11583,6 +11863,58 @@ export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses = {
 };
 
 export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponse = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses];
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/requests';
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetError = ReadOwnRequestsApiV1PrivacyRequestsGetErrors[keyof ReadOwnRequestsApiV1PrivacyRequestsGetErrors];
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetResponses = {
+    /**
+     * Response Read Own Requests Api V1 Privacy Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<PrivacyRequestResponse>;
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetResponse = ReadOwnRequestsApiV1PrivacyRequestsGetResponses[keyof ReadOwnRequestsApiV1PrivacyRequestsGetResponses];
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostData = {
+    body: PrivacyRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/requests';
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostError = SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors];
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PrivacyRequestResponse;
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponse = SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses];
 
 export type ReadProfileApiV1ProfileGetData = {
     body?: never;
@@ -12332,3 +12664,1332 @@ export type SubmitSupportRequestApiV1SupportRequestsPostResponses = {
 };
 
 export type SubmitSupportRequestApiV1SupportRequestsPostResponse = SubmitSupportRequestApiV1SupportRequestsPostResponses[keyof SubmitSupportRequestApiV1SupportRequestsPostResponses];
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/onboarding';
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetError = ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors];
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponse = ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses];
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutData = {
+    body: InstitutionOnboardingUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/onboarding/step';
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutError = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors];
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponse = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses];
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds';
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetError = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors];
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses = {
+    /**
+     * Response Read Legal Holds Api V1 Tnp Privacy Legal Holds Get
+     *
+     * Successful Response
+     */
+    200: Array<LegalHoldResponse>;
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponse = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses];
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostData = {
+    body: LegalHoldCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds';
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostError = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors];
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: LegalHoldResponse;
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponse = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses];
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchData = {
+    body: LegalHoldRelease;
+    path: {
+        /**
+         * Hold Id
+         */
+        hold_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds/{hold_id}/release';
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchError = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors];
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: LegalHoldResponse;
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponse = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses];
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/requests';
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetError = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors];
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses = {
+    /**
+     * Response Read Institution Requests Api V1 Tnp Privacy Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<PrivacyRequestResponse>;
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponse = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses];
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchData = {
+    body: PrivacyRequestDecision;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/privacy/requests/{request_id}';
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchError = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors];
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PrivacyRequestResponse;
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponse = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses];
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/assignment';
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostError = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors];
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponse = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses];
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostData = {
+    body: ApplicationAppealResolution;
+    path: {
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/resolution';
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostError = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors];
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponse = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses];
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Role Id
+         */
+        role_id?: string | null;
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Work View
+         */
+        work_view?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/tnp/recruitment/applications';
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetError = ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors];
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminApplicationPage;
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponse = ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses];
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostData = {
+    body: BulkApplicationStatusRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/bulk/preview';
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostError = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors];
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationPreviewResponse;
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponse = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses];
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostData = {
+    body: BulkApplicationApplyRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/bulk/status';
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostError = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors];
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationApplyResponse;
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponse = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses];
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment';
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostError = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors];
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponse = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses];
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment-history';
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetError = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors];
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses = {
+    /**
+     * Response Read Application Assignment History Api V1 Tnp Recruitment Applications  Application Id  Assignment History Get
+     *
+     * Successful Response
+     */
+    200: Array<CaseAssignmentHistoryResponse>;
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponse = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses];
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostData = {
+    body: CaseClaimRequest;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/claim';
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostError = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors];
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponse = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses];
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostData = {
+    body: ApplicationOverrideCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/override';
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostError = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors];
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponse = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses];
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetError = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors];
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses = {
+    /**
+     * Response Admin Requests Api V1 Tnp Recruitment Applications  Application Id  Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<CorrectionResponse>;
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponse = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses];
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostData = {
+    body: RequestCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostError = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors];
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponse = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses];
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+        /**
+         * Event Id
+         */
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/events/{event_id}/resume';
+};
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetError = SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors[keyof SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors];
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostData = {
+    body: RequestResolution;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/resolve';
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostError = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors];
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponse = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses];
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostData = {
+    body: ApplicationStatusUpdate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/status';
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostError = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors];
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponse = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses];
+
+export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/companies';
+};
+
+export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetError = ReadCompaniesApiV1TnpRecruitmentCompaniesGetErrors[keyof ReadCompaniesApiV1TnpRecruitmentCompaniesGetErrors];
+
+export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetResponses = {
+    /**
+     * Response Read Companies Api V1 Tnp Recruitment Companies Get
+     *
+     * Successful Response
+     */
+    200: Array<CompanyResponse>;
+};
+
+export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetResponse = ReadCompaniesApiV1TnpRecruitmentCompaniesGetResponses[keyof ReadCompaniesApiV1TnpRecruitmentCompaniesGetResponses];
+
+export type AddCompanyApiV1TnpRecruitmentCompaniesPostData = {
+    body: CompanyCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/companies';
+};
+
+export type AddCompanyApiV1TnpRecruitmentCompaniesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddCompanyApiV1TnpRecruitmentCompaniesPostError = AddCompanyApiV1TnpRecruitmentCompaniesPostErrors[keyof AddCompanyApiV1TnpRecruitmentCompaniesPostErrors];
+
+export type AddCompanyApiV1TnpRecruitmentCompaniesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: CompanyResponse;
+};
+
+export type AddCompanyApiV1TnpRecruitmentCompaniesPostResponse = AddCompanyApiV1TnpRecruitmentCompaniesPostResponses[keyof AddCompanyApiV1TnpRecruitmentCompaniesPostResponses];
+
+export type EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchData = {
+    body: CompanyUpdate;
+    path: {
+        /**
+         * Company Id
+         */
+        company_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/companies/{company_id}';
+};
+
+export type EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchError = EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchErrors[keyof EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchErrors];
+
+export type EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: CompanyResponse;
+};
+
+export type EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchResponse = EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchResponses[keyof EditCompanyApiV1TnpRecruitmentCompaniesCompanyIdPatchResponses];
+
+export type ReadDrivesApiV1TnpRecruitmentDrivesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives';
+};
+
+export type ReadDrivesApiV1TnpRecruitmentDrivesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadDrivesApiV1TnpRecruitmentDrivesGetError = ReadDrivesApiV1TnpRecruitmentDrivesGetErrors[keyof ReadDrivesApiV1TnpRecruitmentDrivesGetErrors];
+
+export type ReadDrivesApiV1TnpRecruitmentDrivesGetResponses = {
+    /**
+     * Response Read Drives Api V1 Tnp Recruitment Drives Get
+     *
+     * Successful Response
+     */
+    200: Array<DriveResponse>;
+};
+
+export type ReadDrivesApiV1TnpRecruitmentDrivesGetResponse = ReadDrivesApiV1TnpRecruitmentDrivesGetResponses[keyof ReadDrivesApiV1TnpRecruitmentDrivesGetResponses];
+
+export type AddDriveApiV1TnpRecruitmentDrivesPostData = {
+    body: DriveCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives';
+};
+
+export type AddDriveApiV1TnpRecruitmentDrivesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddDriveApiV1TnpRecruitmentDrivesPostError = AddDriveApiV1TnpRecruitmentDrivesPostErrors[keyof AddDriveApiV1TnpRecruitmentDrivesPostErrors];
+
+export type AddDriveApiV1TnpRecruitmentDrivesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: DriveResponse;
+};
+
+export type AddDriveApiV1TnpRecruitmentDrivesPostResponse = AddDriveApiV1TnpRecruitmentDrivesPostResponses[keyof AddDriveApiV1TnpRecruitmentDrivesPostResponses];
+
+export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}';
+};
+
+export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteError = RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteErrors[keyof RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteErrors];
+
+export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteResponse = RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteResponses[keyof RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteResponses];
+
+export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchData = {
+    body: DriveUpdate;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}';
+};
+
+export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchError = EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchErrors[keyof EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchErrors];
+
+export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponse = EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses[keyof EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses];
+
+export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+        /**
+         * Action
+         */
+        action: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/actions/{action}';
+};
+
+export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostError = ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostErrors[keyof ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostErrors];
+
+export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostResponse = ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostResponses[keyof ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostResponses];
+
+export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/duplicate';
+};
+
+export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostError = DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostErrors[keyof DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostErrors];
+
+export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponse = DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponses[keyof DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponses];
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/publication-preview';
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetError = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors];
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PublishPreview;
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponse = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses];
+
+export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/roles';
+};
+
+export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetError = ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetErrors[keyof ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetErrors];
+
+export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetResponses = {
+    /**
+     * Response Read Roles Api V1 Tnp Recruitment Drives  Drive Id  Roles Get
+     *
+     * Successful Response
+     */
+    200: Array<RoleResponse>;
+};
+
+export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetResponse = ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetResponses[keyof ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetResponses];
+
+export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostData = {
+    body: RoleCreate;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/roles';
+};
+
+export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostError = AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostErrors[keyof AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostErrors];
+
+export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: RoleResponse;
+};
+
+export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponse = AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses[keyof AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses];
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/save';
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostError = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors];
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses];
+
+export type ReportApiV1TnpRecruitmentReportsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+    };
+    url: '/api/v1/tnp/recruitment/reports';
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetError = ReportApiV1TnpRecruitmentReportsGetErrors[keyof ReportApiV1TnpRecruitmentReportsGetErrors];
+
+export type ReportApiV1TnpRecruitmentReportsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReportResponse;
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetResponse = ReportApiV1TnpRecruitmentReportsGetResponses[keyof ReportApiV1TnpRecruitmentReportsGetResponses];
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Requests
+         */
+        requests?: string | null;
+        /**
+         * Q
+         */
+        q?: string | null;
+        /**
+         * Review Pending
+         */
+        review_pending?: boolean;
+        /**
+         * Work View
+         */
+        work_view?: string | null;
+    };
+    url: '/api/v1/tnp/recruitment/review-queue';
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetError = ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors];
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationQueuePage;
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponse = ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses];
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/review-queue/{application_id}';
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetError = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors];
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponse = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses];
+
+export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchData = {
+    body: RoleUpdate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}';
+};
+
+export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchError = EditRoleApiV1TnpRecruitmentRolesRoleIdPatchErrors[keyof EditRoleApiV1TnpRecruitmentRolesRoleIdPatchErrors];
+
+export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoleResponse;
+};
+
+export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponse = EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses[keyof EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses];
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostData = {
+    body: EligibilityPreviewRequest;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/eligibility-preview';
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostError = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors];
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EligibilityResponse;
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
+
+export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/publish';
+};
+
+export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostError = PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostErrors[keyof PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostErrors];
+
+export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoleResponse;
+};
+
+export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostResponse = PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostResponses[keyof PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostResponses];
+
+export type ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/rule-sets';
+};
+
+export type ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetError = ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetErrors[keyof ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetErrors];
+
+export type ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetResponses = {
+    /**
+     * Response Read Rule Sets Api V1 Tnp Recruitment Roles  Role Id  Rule Sets Get
+     *
+     * Successful Response
+     */
+    200: Array<RuleSetResponse>;
+};
+
+export type ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetResponse = ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetResponses[keyof ReadRuleSetsApiV1TnpRecruitmentRolesRoleIdRuleSetsGetResponses];
+
+export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostData = {
+    body: RuleSetCreate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/rule-sets';
+};
+
+export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostError = AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostErrors[keyof AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostErrors];
+
+export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: RuleSetResponse;
+};
+
+export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponse = AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses[keyof AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses];
+
+export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+        /**
+         * Rule Set Id
+         */
+        rule_set_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/rule-sets/{rule_set_id}/publish';
+};
+
+export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostError = PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors[keyof PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostErrors];
+
+export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RuleSetResponse;
+};
+
+export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponse = PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses[keyof PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses];

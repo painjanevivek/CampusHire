@@ -1,5 +1,8 @@
-import { InstitutionOnboardingWizard } from "@/features/onboarding/institution-onboarding-wizard";
+import { redirect } from "next/navigation";
 
-export default function AdminOnboardingPage() {
-  return <InstitutionOnboardingWizard />;
+import { requireServerSession } from "@/lib/auth/server-session";
+
+export default async function LegacyAdminOnboardingPage() {
+  await requireServerSession("admin");
+  redirect("/admin/institutions?view=requests");
 }
