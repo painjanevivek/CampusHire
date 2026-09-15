@@ -1,4 +1,59 @@
-# Clearline implementation — design QA
+# Cloudlight landing width and theme control — design QA
+
+final result: passed
+
+Date: 2026-09-14. Scope: the existing CampusHire landing page container widths and the requested dark/light control only.
+
+## Visual truth and implementation
+
+- Source visual truth: `C:/Users/ASUS/AppData/Local/Temp/codex-clipboard-77b25400-c0c7-4253-947e-1af1d3c9326c.png` (1779 × 1150 px, full dark landing view).
+- Focused source truth: `C:/Users/ASUS/AppData/Local/Temp/codex-clipboard-fc3ddd55-cd27-4968-a760-3eba08009a7a.png` (252 × 90 px, account-action region).
+- Implementation: <http://127.0.0.1:3002/>. Browser-rendered dark and light captures were taken in Codex's in-app Browser; that capture surface did not expose an on-disk screenshot path.
+- Comparison viewport: 1779 × 1150 CSS px, `devicePixelRatio` 1. Source and implementation use the same viewport and no density normalization.
+- Additional responsive state: 390 × 844 CSS px, dark theme.
+
+## Comparison evidence
+
+- Full view: the source's nearly edge-to-edge rounded landing frame is retained. Final measured header, hero and following section frames are each 1712px wide at the 1779px viewport; the workspace preview is 1344px wide. No horizontal overflow was observed.
+- Focused header region: the required crescent control appears immediately before `Sign In`. Activating it changes the page to the light token set, changes the control to a sun, updates its accessible name to `Switch to dark mode`, and persists `campushire-theme=light`. Activating the sun restores dark mode.
+- Focused regions were limited to the shell geometry and account controls because the supplied screenshots did not request changes to lower-page typography, imagery, copy or content hierarchy.
+- Browser console check after the final interaction returned no warnings or errors.
+
+## Findings and comparison history
+
+1. **P2, fixed — desktop frames stopped too early.** The previous 87rem outer and 81rem section caps left excessive side space on typical 16-inch/Full-HD displays. Existing header, hero, journey, preview, trust, audience, FAQ and footer frames now share a 107rem cap with responsive gutters. Post-fix evidence measures 1712px at 1779px and 1712px at 1920px.
+2. **P2, fixed — workspace preview was undersized.** Its cap increased from 68rem to 84rem, matching the supplied wide hero composition while leaving the hero copy measure unchanged.
+3. **P2, fixed — requested theme control was absent.** Added one necessary client control using the already-installed Lucide moon and sun icons. It sits before `Sign In`, has 40px desktop and 35.2px mobile geometry, accessible action labels, system preference fallback and local persistence.
+
+No actionable P0/P1/P2 issue remains in the reviewed desktop, mobile, dark or light states.
+
+## Required fidelity surfaces
+
+- **Typography:** Existing Inter/Manrope/JetBrains Mono hierarchy and line wrapping are unchanged from the selected landing design.
+- **Spacing and layout:** Outer frames now use the available desktop width while retaining narrow responsive gutters; the 390px header keeps the brand, toggle, `Sign In` and `Sign Up` on one row.
+- **Colors and tokens:** Dark colors remain the default. The light mode uses semantic global tokens for canvas, surfaces, borders, text, focus, status and landing atmospherics rather than page-specific overrides.
+- **Image and icon fidelity:** Existing product screenshots and CampusHire brand mark are unchanged. Moon and sun come from the project's existing outline icon library; no custom SVG, emoji or CSS icon was introduced.
+- **Copy and content:** No landing copy, section, route or workflow was added or removed.
+
+## Verification
+
+- Focused landing tests: 4 passed, including placement/order, mode switching and persistence.
+- Full frontend test suite: 62 files and 213 tests passed.
+- Typecheck: passed.
+- Lint: passed.
+- Production build: passed.
+- Browser interactions: dark → light → dark, 1779 × 1150 desktop, 1920 × 1080 Full HD, and 390 × 844 mobile.
+
+## Implementation checklist
+
+- [x] Extend only the existing landing frames for 16-inch/typical desktop screens.
+- [x] Add the moon/sun control immediately before `Sign In`.
+- [x] Preserve the existing page structure and content.
+- [x] Verify desktop/mobile, both themes, accessibility labels, persistence and console health.
+
+---
+
+# Previous QA: Clearline implementation
 
 final result: passed
 

@@ -13,10 +13,10 @@ import { SignOutButton } from "./sign-out-button";
 const navigation = [
   { group: "Overview", items: [{ href: "/admin/dashboard", label: "Overview" }, { href: "/admin/copilot", label: "Copilot" }] },
   { group: "Recruitment", items: [{ href: "/admin/applications", label: "Applications" }, { href: "/admin/drives", label: "Drives" }, { href: "/admin/companies", label: "Companies" }] },
-  { group: "Institution", items: [{ href: "/admin/students", label: "Students" }, { href: "/admin/policies", label: "Policies" }] },
+  { group: "Institution", items: [{ href: "/admin/students", label: "Students" }, { href: "/admin/accounts", label: "Accounts" }, { href: "/admin/policies", label: "Policies" }] },
   { group: "Administration", items: [{ href: "/admin/reports", label: "Reports" }, { href: "/admin/operations", label: "Operations" }, { href: "/admin/audit", label: "Audit" }] },
 ] as const;
-const navigationIcons = { Overview: Home, Copilot: Bot, Applications: ClipboardList, Drives: FileClock, Companies: Building2, Students: Users, Policies: FileText, Reports: ChartNoAxesCombined, Operations: Settings2, Audit: ShieldCheck };
+const navigationIcons = { Overview: Home, Copilot: Bot, Applications: ClipboardList, Drives: FileClock, Companies: Building2, Students: Users, Accounts: UserRound, Policies: FileText, Reports: ChartNoAxesCombined, Operations: Settings2, Audit: ShieldCheck };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname();

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api/client";
@@ -61,7 +61,6 @@ const semanticMatch = {
 
 describe("StudentOpportunityDetail", () => {
   beforeEach(() => {
-    delete process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1;
     window.sessionStorage.clear();
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
@@ -99,78 +98,30 @@ describe("StudentOpportunityDetail", () => {
       .toBeInTheDocument();
     expect(screen.getByText("Why you are eligible")).toBeInTheDocument();
     expect(screen.getByText(/Skills matching is unavailable/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Review application" })).toBeEnabled();
-  });
-
-  it("reuses the same application key after an unknown outcome", async () => {
-    let applicationAttempts = 0;
-    csrfRequestMock.mockImplementation((path: string) => {
-      if (path.endsWith("/match")) return Promise.resolve(semanticMatch);
-      applicationAttempts += 1;
-      return applicationAttempts === 1
-        ? Promise.reject(new ApiError(0, "Timed out", "request_timeout", undefined, undefined, "timeout"))
-        : Promise.resolve({ id: "application-1", status: "submitted" });
-    });
-
-    render(<StudentOpportunityDetail roleId="role-1" />);
-    fireEvent.click(await screen.findByRole("button", { name: "Review application" }));
-    fireEvent.click(screen.getByRole("button", { name: "Submit application" }));
-    expect(await screen.findByText(/could not confirm the outcome/i)).toBeInTheDocument();
-
-    const firstRequest = csrfRequestMock.mock.calls.find((call) => call[0] === "/applications");
-    fireEvent.click(screen.getByRole("button", { name: "Retry safely" }));
-    expect((await screen.findAllByText(/Application submitted/)).length).toBeGreaterThan(0);
-    const applicationRequests = csrfRequestMock.mock.calls.filter((call) => call[0] === "/applications");
-
-    expect(applicationRequests).toHaveLength(2);
-    expect(applicationRequests[1][1].headers["Idempotency-Key"])
-      .toBe(firstRequest?.[1].headers["Idempotency-Key"]);
-  });
-
-  it("confirms and submits an immutable application snapshot", async () => {
-    render(<StudentOpportunityDetail roleId="role-1" />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: "Review application" }),
+    expect(screen.getByRole("link", { name: "Build application packet" })).toHaveAttribute(
+      "href",
+      "/opportunities/role-1/apply",
     );
-    expect(
-      screen.getByText(
-        "CampusHire will preserve this resume, profile facts, rule version, and eligibility explanation.",
-      ),
-    ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Submit application" }));
+  });
+
+  it("uses the packet wizard as the sole application path", async () => {
+    render(<StudentOpportunityDetail roleId="role-1" />);
+    const link = await screen.findByRole("link", { name: "Build application packet" });
+    expect(link).toHaveAttribute("href", "/opportunities/role-1/apply");
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
         "/opportunities/role-1/match",
         { method: "POST" },
       ),
     );
-    await waitFor(() =>
-      expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/applications",
-        expect.objectContaining({
-          method: "POST",
-          headers: expect.objectContaining({
-            "Idempotency-Key": expect.any(String),
-          }),
-        }),
-      ),
+    expect(csrfRequestMock).not.toHaveBeenCalledWith(
+      "/applications",
+      expect.anything(),
     );
-    expect(
-      (await screen.findAllByText(/Application submitted/)).length,
-    ).toBeGreaterThan(0);
     expect(screen.getByText("84% match")).toBeInTheDocument();
     expect(
       screen.getByText("This score never changes your rule-based eligibility."),
     ).toBeInTheDocument();
   });
 
-  it("routes eligible students into the packet wizard when the pilot flag is enabled", async () => {
-    process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1 = "true";
-    render(<StudentOpportunityDetail roleId="role-1" />);
-
-    const link = await screen.findByRole("link", { name: "Build application packet" });
-    expect(link).toHaveAttribute("href", "/opportunities/role-1/apply");
-    expect(screen.queryByRole("button", { name: "Review application" }))
-      .not.toBeInTheDocument();
-  });
 });

@@ -9,22 +9,15 @@ import {
   CalendarDays,
   CheckCircle2,
   CircleAlert,
-  FileCheck2,
   MapPin,
   Scale,
   ShieldQuestion,
 } from "lucide-react";
 
 import { Alert, Badge } from "@/components/ui/feedback";
-import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
-import {
-  clearIdempotencyKey,
-  getOrCreateIdempotencyKey,
-} from "@/lib/idempotency";
+import { apiRequest, csrfRequest } from "@/lib/api/client";
 import type {
   Opportunity,
-  PlacementApplication,
-  ResumeChoice,
   SemanticMatch,
 } from "./types";
 import styles from "./student-opportunity-detail.module.css";
@@ -36,23 +29,11 @@ function eligibilityHeading(status: Opportunity["eligibility"]["status"]): strin
   return "Why eligibility is unavailable";
 }
 
-function outcomeIsUnknown(error: unknown): boolean {
-  return error instanceof ApiError &&
-    ["offline", "timeout", "dependency", "server"].includes(error.kind);
-}
-
 export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
-  const wizardEnabled = process.env.NEXT_PUBLIC_APPLICATION_WIZARD_V1 === "true";
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
-  const [resumes, setResumes] = useState<ResumeChoice[]>([]);
   const [match, setMatch] = useState<SemanticMatch | null>(null);
-  const [selectedResume, setSelectedResume] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [confirming, setConfirming] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [submissionUncertain, setSubmissionUncertain] = useState(false);
 
   const load = useCallback(async () => {
     await Promise.resolve();
@@ -62,18 +43,10 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
       method: "POST",
     }).catch(() => null);
     try {
-      const [role, versions] = await Promise.all([
-        apiRequest<Opportunity>(`/opportunities/${roleId}`, {
-          cache: "no-store",
-        }),
-        apiRequest<ResumeChoice[]>("/resumes", { cache: "no-store" }),
-      ]);
-      const selectable = versions.filter(
-        (item) => item.status === "completed" && item.scan_status === "clean",
-      );
+      const role = await apiRequest<Opportunity>(`/opportunities/${roleId}`, {
+        cache: "no-store",
+      });
       setOpportunity(role);
-      setResumes(selectable);
-      setSelectedResume((current) => current || selectable[0]?.id || "");
       setLoading(false);
       setMatch(await relevance);
     } catch {
@@ -101,63 +74,6 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
       setOpportunity({ ...opportunity, saved: result.saved });
     } catch {
       setError("The saved-role state could not be changed. Try again.");
-    }
-  }
-
-  async function apply() {
-    if (!opportunity || !selectedResume) return;
-    const operationScope = `apply:${opportunity.id}:${selectedResume}`;
-    const idempotencyKey = getOrCreateIdempotencyKey(operationScope);
-    setSubmitting(true);
-    setError("");
-    try {
-      const application = await csrfRequest<PlacementApplication>(
-        "/applications",
-        {
-          method: "POST",
-          headers: { "Idempotency-Key": idempotencyKey },
-          body: JSON.stringify({
-            role_id: opportunity.id,
-            resume_version_id: selectedResume,
-          }),
-        },
-      );
-      setOpportunity({
-        ...opportunity,
-        application_id: application.id,
-        application_status: application.status,
-      });
-      setNotice(
-        "Application submitted. Your selected resume and eligibility result are now saved with this application.",
-      );
-      clearIdempotencyKey(operationScope);
-      setSubmissionUncertain(false);
-      setConfirming(false);
-    } catch (caught) {
-      if (
-        caught instanceof ApiError &&
-        (caught.code === "application_already_exists" ||
-          caught.message === "application_already_exists")
-      ) {
-        clearIdempotencyKey(operationScope);
-        setSubmissionUncertain(false);
-        setConfirming(false);
-        await load();
-        setNotice("Your application already exists. Its locked record is available in Applications.");
-      } else if (outcomeIsUnknown(caught)) {
-        setSubmissionUncertain(true);
-        setError(
-          "CampusHire could not confirm the outcome. Retry here to safely reuse the same request, or check Applications before leaving this page.",
-        );
-      } else {
-        clearIdempotencyKey(operationScope);
-        setSubmissionUncertain(false);
-        setError(
-          "The application was not accepted. Check the deadline, eligibility result, and selected resume, then try again.",
-        );
-      }
-    } finally {
-      setSubmitting(false);
     }
   }
 
@@ -195,7 +111,6 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
         <ArrowLeft aria-hidden="true" /> Back to opportunities
       </Link>
       {error && <Alert tone="error">{error}</Alert>}
-      {notice && <Alert tone="success">{notice}</Alert>}
 
       <div className={styles.layout}>
         <article className={styles.role}>
@@ -379,94 +294,15 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             <Link href={`/copilot?role=${roleId}`}>Prepare for this role</Link>
             <Link href={`/resume/studio?role=${roleId}`}>Tailor my resume</Link>
           </nav>
-          {!opportunity.application_status ? (
-            <label className={styles.resumeSelect}>
-              <span>
-                <FileCheck2 aria-hidden="true" /> Resume version
-              </span>
-              <select
-                value={selectedResume}
-                onChange={(event) => setSelectedResume(event.target.value)}
-                disabled={!canApply}
-              >
-                {resumes.length ? (
-                  resumes.map((resume) => (
-                    <option key={resume.id} value={resume.id}>
-                      Version {resume.version_number ?? "—"} ·{" "}
-                      {resume.original_name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No completed resume available</option>
-                )}
-              </select>
-            </label>
-          ) : null}
-          {!resumes.length && !opportunity.application_status ? (
-            <p className={styles.resumeHelp}>
-              Complete resume review before applying.{" "}
-              <Link href="/resume">Open resume</Link>
-            </p>
-          ) : null}
-          {canApply && !confirming ? (
-            wizardEnabled ? (
-              <Link className={styles.primary} href={`/opportunities/${roleId}/apply`}>
-                Build application packet
-              </Link>
-            ) : (
-              <button
-                className={styles.primary}
-                type="button"
-                disabled={!selectedResume}
-                onClick={() => setConfirming(true)}
-              >
-                Review application
-              </button>
-            )
+          {canApply ? (
+            <Link className={styles.primary} href={`/opportunities/${roleId}/apply`}>
+              Build application packet
+            </Link>
           ) : null}
           {!canApply && !opportunity.application_status ? (
             <button className={styles.primary} type="button" disabled>
               Application unavailable
             </button>
-          ) : null}
-          {confirming && !wizardEnabled ? (
-            <div
-              className={styles.confirm}
-              role="group"
-              aria-label="Confirm application"
-            >
-              <h2>Submit this version?</h2>
-              <p>
-                CampusHire will preserve this resume, profile facts, rule
-                version, and eligibility explanation.
-              </p>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setConfirming(false)}
-                  disabled={submissionUncertain}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void apply()}
-                  disabled={submitting}
-                >
-                  {submitting
-                    ? "Submitting…"
-                    : submissionUncertain
-                      ? "Retry safely"
-                      : "Submit application"}
-                </button>
-              </div>
-              {submissionUncertain ? (
-                <p>
-                  The selected resume is held for this retry. You can also{" "}
-                  <Link href="/applications">check Applications</Link>.
-                </p>
-              ) : null}
-            </div>
           ) : null}
           <p className={styles.policy}>
             Missing information is sent for manual review. It does not cause an

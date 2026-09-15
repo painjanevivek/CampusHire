@@ -22,18 +22,19 @@ describe("AuthForm", () => {
 
   it("honors the separate administrator destination", async () => {
     csrfRequestMock.mockResolvedValue({
-      user: { id: "admin-1", email: "admin@example.edu", role: "tnp_admin" },
+      user: { id: "admin-1", email: "admin@example.edu", role: "tnp_owner" },
       next_step: "complete",
     });
-    render(<AuthForm redirectTo="/admin/dashboard" />);
-    fireEvent.change(screen.getByLabelText("College email"), { target: { value: "admin@example.edu" } });
+    render(<AuthForm workspace="admin" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a long campus passphrase" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
     expect(csrfRequestMock).toHaveBeenCalledWith("/auth/sign-in", {
       method: "POST",
       body: JSON.stringify({
-        email: "admin@example.edu",
+        identifier: "admin",
         password: "a long campus passphrase",
+        workspace: "admin",
       }),
     });
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/dashboard"));
@@ -44,8 +45,8 @@ describe("AuthForm", () => {
       user: { id: "admin-1", email: "admin@example.edu", role: "tnp_admin" },
       next_step: "mfa_setup",
     });
-    render(<AuthForm redirectTo="/admin/dashboard" />);
-    fireEvent.change(screen.getByLabelText("College email"), { target: { value: "admin@example.edu" } });
+    render(<AuthForm workspace="tnp" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("Username"), { target: { value: "tnp" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
@@ -56,47 +57,37 @@ describe("AuthForm", () => {
       user: { id: "owner-1", email: "owner@example.edu", role: "tnp_owner" },
       next_step: "mfa_setup",
     });
-    render(<AuthForm redirectTo="/admin/dashboard" />);
-    fireEvent.change(screen.getByLabelText("College email"), { target: { value: "owner@example.edu" } });
+    render(<AuthForm workspace="admin" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup?next=%2Fadmin%2Fonboarding"));
   });
 
-  it("opens the configured student demo through the backend without browser credentials", async () => {
+  it("routes a newly provisioned officer through personal terms acceptance", async () => {
     csrfRequestMock.mockResolvedValue({
-      user: { id: "student-1", email: "student+demo@example.com", role: "student" },
-      next_step: "complete",
+      user: { id: "officer-1", email: "officer@example.edu", role: "tnp_reviewer" },
+      next_step: "terms_acceptance",
     });
-    render(<AuthForm demoRole="student" />);
-
-    fireEvent.click(screen.getByRole("button", { name: "Use demo student account" }));
-
-    expect(csrfRequestMock).toHaveBeenCalledWith("/auth/demo-sign-in", {
-      method: "POST",
-      body: JSON.stringify({ role: "student" }),
-    });
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/dashboard"));
+    render(<AuthForm workspace="tnp" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("Username"), { target: { value: "officer" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/accept-terms"));
   });
 
-  it("keeps mandatory MFA in the T&P demo flow", async () => {
-    csrfRequestMock.mockResolvedValue({
-      user: { id: "admin-1", email: "admin+demo@example.com", role: "tnp_admin" },
-      next_step: "mfa_setup",
-    });
-    render(<AuthForm demoRole="tnp_admin" redirectTo="/admin/dashboard" />);
-
-    fireEvent.click(screen.getByRole("button", { name: "Use demo T&P account" }));
-
-    expect(csrfRequestMock).toHaveBeenCalledWith("/auth/demo-sign-in", {
-      method: "POST",
-      body: JSON.stringify({ role: "tnp_admin" }),
-    });
-    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
-  });
-
-  it("does not render a demo action unless the server enables it", () => {
-    render(<AuthForm />);
+  it("never renders demo or public signup actions", () => {
+    render(<AuthForm workspace="student" />);
+    expect(screen.getByLabelText("College email")).toHaveAttribute("type", "email");
     expect(screen.queryByRole("button", { name: /demo/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Sign up" })).not.toBeInTheDocument();
+  });
+
+  it("uses a blank username field for staff workspaces", () => {
+    render(<AuthForm workspace="admin" />);
+
+    expect(screen.getByLabelText("Username")).toHaveValue("");
+    expect(screen.queryByLabelText("College email")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toHaveValue("");
   });
 });

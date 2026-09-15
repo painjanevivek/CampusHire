@@ -25,7 +25,7 @@ function completeForm(password = "a secure campus passphrase") {
   fireEvent.change(screen.getByLabelText("Re-enter password"), {
     target: { value: password },
   });
-  fireEvent.click(screen.getByRole("checkbox", { name: /terms/i }));
+  fireEvent.click(screen.getByRole("checkbox"));
 }
 
 describe("SignUpForm", () => {
@@ -44,7 +44,7 @@ describe("SignUpForm", () => {
     expect(screen.getByLabelText("Email")).toBeRequired();
     expect(screen.getByLabelText("Password")).toBeRequired();
     expect(screen.getByLabelText("Re-enter password")).toBeRequired();
-    expect(screen.getByRole("checkbox", { name: /terms/i })).toBeRequired();
+    expect(screen.getByRole("checkbox")).toBeRequired();
     expect(screen.getAllByLabelText(/password/i)).toHaveLength(2);
     expect(screen.getByRole("button", { name: "Sign Up" })).toBeInTheDocument();
     expect(screen.queryByText(/invitation code/i)).not.toBeInTheDocument();

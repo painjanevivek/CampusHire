@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 
 type AuthShellProps = {
@@ -9,23 +10,10 @@ type AuthShellProps = {
   children: ReactNode;
   footer: ReactNode;
   context?: "student" | "admin";
-  aside?: ReactNode;
-  asideLabel?: string;
-  centered?: boolean;
+  wide?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
-
-const principles = {
-  student: {
-    label: "Student-first by design",
-    statement: "Your profile helps explain your fit. It never gives AI permission to invent your story.",
-    detail: "Your eligibility comes from published college rules. Match guidance stays separate and every session can be ended without storing access tokens in the browser.",
-  },
-  admin: {
-    label: "Placement records stay accountable",
-    statement: "Review decisions remain human, traceable, and separate from AI-assisted guidance.",
-    detail: "T&P access is invitation-only, requires an authenticator after the password, and keeps student records scoped to the assigned institution.",
-  },
-} as const;
 
 export function AuthShell({
   eyebrow,
@@ -34,12 +22,10 @@ export function AuthShell({
   children,
   footer,
   context = "student",
-  aside,
-  asideLabel = "CampusHire principles",
-  centered = false,
+  wide = false,
+  backHref,
+  backLabel = "Back",
 }: AuthShellProps) {
-  const promise = principles[context];
-
   return (
     <div className="authShell" data-auth-context={context}>
       <header className="authHeader">
@@ -50,8 +36,17 @@ export function AuthShell({
         <Link className="authJobsLink" href="/#how-it-works">How it works</Link>
       </header>
 
-      <main id="main-content" className={`authPage${centered ? " authPage--centered" : ""}`}>
+      <main
+        id="main-content"
+        className={`authPage authPage--centered${wide ? " authPage--wide" : ""}`}
+      >
         <section className="authPanel" aria-labelledby="auth-title">
+          {backHref ? (
+            <Link className="authBackLink" href={backHref}>
+              <ArrowLeft size={16} aria-hidden="true" />
+              <span>{backLabel}</span>
+            </Link>
+          ) : null}
           <div>
             <p className="eyebrow">{eyebrow}</p>
             <h1 id="auth-title">{title}</h1>
@@ -60,18 +55,6 @@ export function AuthShell({
           {children}
           <p className="authFooter">{footer}</p>
         </section>
-
-        {centered ? null : (
-          <aside className="authPromise" aria-label={asideLabel}>
-            {aside ?? (
-              <>
-                <p className="pathLabel">{promise.label}</p>
-                <blockquote>{promise.statement}</blockquote>
-                <p>{promise.detail}</p>
-              </>
-            )}
-          </aside>
-        )}
       </main>
     </div>
   );

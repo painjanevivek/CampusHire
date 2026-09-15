@@ -84,6 +84,48 @@ export type ApplicationForm = {
 
 export type DisclosureAnswer = boolean | string | string[];
 
+export type CommitmentTerms = {
+  required: boolean;
+  duration_months?: number | null;
+  penalty_amount?: number | null;
+  currency?: string | null;
+  details?: string | null;
+};
+
+export type MaterialTerms = {
+  id: string;
+  role_id: string;
+  version: number;
+  status: string;
+  terms: {
+    compensation: {
+      currency: string;
+      period: "hourly" | "monthly" | "annual" | "one_time";
+      minimum_amount: number;
+      maximum_amount: number | null;
+      notes: string | null;
+    };
+    work_location: string;
+    work_mode: "on-site" | "hybrid" | "remote";
+    bond: CommitmentTerms;
+    probation: CommitmentTerms;
+    training: CommitmentTerms;
+    application_deadline: string;
+    required_documents: string[];
+    selection_stages: string[];
+    placement_restrictions: string[];
+    additional_terms: string | null;
+  };
+  content_digest: string;
+  created_by_user_id: string;
+  approved_by_user_id: string | null;
+  effective_at: string | null;
+  published_at: string | null;
+  superseded_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ApplicationDraft = {
   id: string;
   role_id: string;
@@ -97,6 +139,7 @@ export type ApplicationDraft = {
   profile_revision: number | null;
   resume: (ResumeChoice & { created_at: string }) | null;
   form: ApplicationForm | null;
+  material_terms: MaterialTerms | null;
   disclosure_answers: Record<string, DisclosureAnswer>;
   disclosure_completed: boolean;
   submitted_application_id: string | null;
@@ -175,6 +218,10 @@ export type PlacementApplication = {
   decision_snapshot: Record<string, unknown>;
   profile_snapshot: Record<string, unknown>;
   application_form_snapshot: Record<string, unknown>;
+  material_terms_snapshot: Record<string, unknown>;
+  acknowledgment_snapshot: Record<string, unknown>;
+  packet_digest: string | null;
+  evidence_provenance: string;
   disclosure_status: "not_configured" | "collected" | "declined";
   institution_timezone: string;
   created_at: string;

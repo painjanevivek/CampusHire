@@ -158,6 +158,24 @@ export type AgentRunResponse = {
 };
 
 /**
+ * ApplicationAcknowledgmentInput
+ */
+export type ApplicationAcknowledgmentInput = {
+    /**
+     * Confirmation
+     */
+    confirmation: 'I ACKNOWLEDGE THESE MATERIAL TERMS';
+    /**
+     * Content Digest
+     */
+    content_digest: string;
+    /**
+     * Material Terms Version Id
+     */
+    material_terms_version_id: string;
+};
+
+/**
  * ApplicationAppealCreate
  */
 export type ApplicationAppealCreate = {
@@ -309,6 +327,7 @@ export type ApplicationDraftResponse = {
      * Last Saved At
      */
     last_saved_at: string;
+    material_terms: MaterialTermsResponse | null;
     /**
      * Profile Revision
      */
@@ -495,6 +514,12 @@ export type ApplicationQueuePage = {
  */
 export type ApplicationResponse = {
     /**
+     * Acknowledgment Snapshot
+     */
+    acknowledgment_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
      * Allowed Actions
      */
     allowed_actions?: Array<string>;
@@ -537,6 +562,10 @@ export type ApplicationResponse = {
         [key: string]: unknown;
     };
     /**
+     * Evidence Provenance
+     */
+    evidence_provenance: string;
+    /**
      * Facts Snapshot
      */
     facts_snapshot: {
@@ -555,6 +584,12 @@ export type ApplicationResponse = {
      */
     institution_timezone: string;
     /**
+     * Material Terms Snapshot
+     */
+    material_terms_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
      * Next Actor
      */
     next_actor?: string;
@@ -570,6 +605,10 @@ export type ApplicationResponse = {
      * Overrides
      */
     overrides?: Array<OverrideResponse>;
+    /**
+     * Packet Digest
+     */
+    packet_digest: string | null;
     /**
      * Profile Snapshot
      */
@@ -1112,6 +1151,32 @@ export type Citation = {
 };
 
 /**
+ * CommitmentTerms
+ */
+export type CommitmentTerms = {
+    /**
+     * Currency
+     */
+    currency?: string | null;
+    /**
+     * Details
+     */
+    details?: string | null;
+    /**
+     * Duration Months
+     */
+    duration_months?: number | null;
+    /**
+     * Penalty Amount
+     */
+    penalty_amount?: number | null;
+    /**
+     * Required
+     */
+    required: boolean;
+};
+
+/**
  * CommunicationPreferencesResponse
  */
 export type CommunicationPreferencesResponse = {
@@ -1215,6 +1280,32 @@ export type CompanyUpdate = {
      * Website Url
      */
     website_url?: string | null;
+};
+
+/**
+ * CompensationTerms
+ */
+export type CompensationTerms = {
+    /**
+     * Currency
+     */
+    currency: string;
+    /**
+     * Maximum Amount
+     */
+    maximum_amount?: number | null;
+    /**
+     * Minimum Amount
+     */
+    minimum_amount: number;
+    /**
+     * Notes
+     */
+    notes?: string | null;
+    /**
+     * Period
+     */
+    period: 'hourly' | 'monthly' | 'annual' | 'one_time';
 };
 
 /**
@@ -1621,6 +1712,16 @@ export type DraftDisclosureUpdate = {
 };
 
 /**
+ * DraftMaterialTermsUpdate
+ */
+export type DraftMaterialTermsUpdate = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
+};
+
+/**
  * DraftProfileConfirmation
  */
 export type DraftProfileConfirmation = {
@@ -1678,6 +1779,7 @@ export type DraftResumeUpdate = {
  * DraftSubmitRequest
  */
 export type DraftSubmitRequest = {
+    acknowledgment?: ApplicationAcknowledgmentInput | null;
     /**
      * Confirmation
      */
@@ -2741,6 +2843,139 @@ export type LinksUpdate = {
 };
 
 /**
+ * MaterialTermChange
+ */
+export type MaterialTermChange = {
+    /**
+     * After
+     */
+    after: unknown | null;
+    /**
+     * Before
+     */
+    before: unknown | null;
+    /**
+     * Path
+     */
+    path: string;
+};
+
+/**
+ * MaterialTermsComparisonResponse
+ */
+export type MaterialTermsComparisonResponse = {
+    /**
+     * Changes
+     */
+    changes: Array<MaterialTermChange>;
+    /**
+     * From Version
+     */
+    from_version: number;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * To Version
+     */
+    to_version: number;
+};
+
+/**
+ * MaterialTermsResponse
+ */
+export type MaterialTermsResponse = {
+    /**
+     * Approved By User Id
+     */
+    approved_by_user_id: string | null;
+    /**
+     * Content Digest
+     */
+    content_digest: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Created By User Id
+     */
+    created_by_user_id: string;
+    /**
+     * Effective At
+     */
+    effective_at: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Superseded At
+     */
+    superseded_at: string | null;
+    terms: MaterialTermsUpdate;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
+ * MaterialTermsUpdate
+ */
+export type MaterialTermsUpdate = {
+    /**
+     * Additional Terms
+     */
+    additional_terms?: string | null;
+    /**
+     * Application Deadline
+     */
+    application_deadline: string;
+    bond: CommitmentTerms;
+    compensation: CompensationTerms;
+    /**
+     * Placement Restrictions
+     */
+    placement_restrictions?: Array<string>;
+    probation: CommitmentTerms;
+    /**
+     * Required Documents
+     */
+    required_documents?: Array<string>;
+    /**
+     * Selection Stages
+     */
+    selection_stages?: Array<string>;
+    training: CommitmentTerms;
+    /**
+     * Work Location
+     */
+    work_location: string;
+    /**
+     * Work Mode
+     */
+    work_mode: 'on-site' | 'hybrid' | 'remote';
+};
+
+/**
  * MembershipCreate
  */
 export type MembershipCreate = {
@@ -2805,6 +3040,10 @@ export type MembershipResponse = {
      * User Id
      */
     user_id: string;
+    /**
+     * Username
+     */
+    username?: string | null;
 };
 
 /**
@@ -5261,13 +5500,17 @@ export type SessionResponse = {
  */
 export type SignInRequest = {
     /**
-     * Email
+     * Identifier
      */
-    email: string;
+    identifier: string;
     /**
      * Password
      */
     password: string;
+    /**
+     * Workspace
+     */
+    workspace?: 'student' | 'tnp' | 'admin' | null;
 };
 
 /**
@@ -5445,6 +5688,66 @@ export type SourceVersionResponse = {
      * Version
      */
     version: number;
+};
+
+/**
+ * StaffAccountCreate
+ */
+export type StaffAccountCreate = {
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Role
+     */
+    role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
+    /**
+     * Username
+     */
+    username: string;
+};
+
+/**
+ * StaffAccountResponse
+ */
+export type StaffAccountResponse = {
+    /**
+     * Email
+     */
+    email?: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Requires Terms Acceptance
+     */
+    requires_terms_acceptance: boolean;
+    /**
+     * Role
+     */
+    role: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * User Id
+     */
+    user_id: string;
+    /**
+     * Username
+     */
+    username?: string | null;
 };
 
 /**
@@ -5750,6 +6053,20 @@ export type TailoredResumeRequest = {
 };
 
 /**
+ * TermsAcceptanceRequest
+ */
+export type TermsAcceptanceRequest = {
+    /**
+     * Privacy Version
+     */
+    privacy_version: string;
+    /**
+     * Terms Version
+     */
+    terms_version: string;
+};
+
+/**
  * TnpMessageCreate
  */
 export type TnpMessageCreate = {
@@ -5813,6 +6130,10 @@ export type UserResponse = {
      * Role
      */
     role: string;
+    /**
+     * Username
+     */
+    username?: string | null;
 };
 
 /**
@@ -7463,6 +7784,141 @@ export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPr
 
 export type PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1AdminRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
 
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetError = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors];
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses = {
+    /**
+     * Response Read Role Material Terms Api V1 Admin Recruitment Roles  Role Id  Material Terms Get
+     *
+     * Successful Response
+     */
+    200: MaterialTermsResponse | null;
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponse = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses];
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutData = {
+    body: MaterialTermsUpdate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutError = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors];
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsResponse;
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponse = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses];
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query: {
+        /**
+         * From Version
+         */
+        from_version: number;
+        /**
+         * To Version
+         */
+        to_version: number;
+    };
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/compare';
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetError = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors];
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsComparisonResponse;
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponse = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses];
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+        /**
+         * Terms Id
+         */
+        terms_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/{terms_id}/publish';
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostError = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors];
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsResponse;
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponse = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses];
+
 export type PublishAdminRoleApiV1AdminRecruitmentRolesRoleIdPublishPostData = {
     body?: never;
     path: {
@@ -9030,6 +9486,36 @@ export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosures
 
 export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponse = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses];
 
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutData = {
+    body: DraftMaterialTermsUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/material-terms';
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutError = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors];
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponse = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses];
+
 export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutData = {
     body: DraftProfileConfirmation;
     path: {
@@ -9926,6 +10412,31 @@ export type SignupApiV1AuthSignupPostResponses = {
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
 
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostData = {
+    body: TermsAcceptanceRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/terms/accept';
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostError = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors];
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SignInResponse;
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponse = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses];
+
 export type ReadPreferencesApiV1CommunicationsPreferencesGetData = {
     body?: never;
     path?: never;
@@ -10444,6 +10955,36 @@ export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterI
 };
 
 export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponse = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses];
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostData = {
+    body: StaffAccountCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/staff-accounts';
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostError = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors];
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: StaffAccountResponse;
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses];
 
 export type ReadNotificationsApiV1NotificationsGetData = {
     body?: never;

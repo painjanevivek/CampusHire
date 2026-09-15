@@ -6,32 +6,34 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/form-controls";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, csrfRequest } from "@/lib/api/client";
 import { adminMfaSetupPath } from "@/lib/auth/post-auth-route";
-import type { DemoSignInRequest, SignInResponse } from "@/lib/api/generated/types.gen";
+import type { SignInRequest, SignInResponse } from "@/lib/api/generated/types.gen";
 
-type DemoRole = DemoSignInRequest["role"];
+type SignInWorkspace = NonNullable<SignInRequest["workspace"]>;
 
 export function AuthForm({
   redirectTo,
-  demoRole,
+  workspace,
 }: {
   redirectTo?: string;
-  demoRole?: DemoRole;
+  workspace: SignInWorkspace;
 }) {
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "password" | "demo" | "complete">("idle");
+  const [status, setStatus] = useState<"idle" | "password" | "complete">("idle");
   const [error, setError] = useState("");
 
-  async function authenticate(path: string, body: Record<string, unknown>, action: "password" | "demo") {
+  async function authenticate(body: SignInRequest) {
     setError("");
-    setStatus(action);
+    setStatus("password");
     try {
-      const result = await csrfRequest<SignInResponse>(path, {
+      const result = await csrfRequest<SignInResponse>("/auth/sign-in", {
         method: "POST",
         body: JSON.stringify(body),
       });
       setStatus("complete");
+      if (result.next_step === "terms_acceptance") return router.push("/accept-terms");
       if (result.next_step === "mfa_setup") return router.push(adminMfaSetupPath(result.user.role));
       if (result.next_step === "mfa_challenge") return router.push("/admin/mfa/challenge");
       router.push(redirectTo ?? "/dashboard");
@@ -44,32 +46,36 @@ export function AuthForm({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    await authenticate(
-      "/auth/sign-in",
-      { email: data.get("email"), password: data.get("password") },
-      "password",
-    );
-  }
-
-  async function demoSignIn() {
-    if (!demoRole || status !== "idle") return;
-    await authenticate("/auth/demo-sign-in", { role: demoRole }, "demo");
+    await authenticate({
+      identifier: String(data.get("identifier") ?? ""),
+      password: String(data.get("password") ?? ""),
+      workspace,
+    });
   }
 
   if (status === "complete") {
     return <Alert tone="success"><strong>Signed in.</strong> Your secure session is ready.</Alert>;
   }
 
+  const isStudent = workspace === "student";
+
   return (
-    <form className="authForm" onSubmit={submit} noValidate>
+    <form className="authForm" onSubmit={submit} noValidate autoComplete="off">
       {error && <Alert tone="error">{error}</Alert>}
-      <Input id="email" name="email" type="email" label="College email" autoComplete="email" required placeholder="you@college.edu" />
       <Input
+        id="identifier"
+        name="identifier"
+        type={isStudent ? "email" : "text"}
+        label={isStudent ? "College email" : "Username"}
+        autoComplete={isStudent ? "email" : "username"}
+        required
+        placeholder={isStudent ? "you@college.edu" : "Enter your username"}
+      />
+      <PasswordInput
         id="password"
         name="password"
-        type="password"
         label="Password"
-        autoComplete="current-password"
+        autoComplete={isStudent ? "current-password" : "off"}
         minLength={1}
         maxLength={128}
         required
@@ -77,24 +83,6 @@ export function AuthForm({
       <Button type="submit" disabled={status !== "idle"}>
         {status === "password" ? "Checking securely…" : "Sign in"}
       </Button>
-      {demoRole ? (
-        <>
-          <div className="authDivider" aria-hidden="true"><span>or</span></div>
-          <Button type="button" variant="quiet" disabled={status !== "idle"} onClick={() => void demoSignIn()}>
-            {status === "demo"
-              ? "Opening demo…"
-              : demoRole === "student"
-                ? "Use demo student account"
-                : "Use demo T&P account"}
-          </Button>
-          <p className="demoNotice">
-            {demoRole === "tnp_admin"
-              ? "Testing only. Uses synthetic data and skips MFA only for this local demo."
-              : "Testing only. Uses synthetic student data."}
-          </p>
-        </>
-      ) : null}
-      <Link className="textLink" href="/sign-up">Sign up</Link>
       <Link className="textLink" href="/forgot-password">Forgot password?</Link>
     </form>
   );

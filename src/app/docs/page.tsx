@@ -108,7 +108,7 @@ export default function DocsPage() {
                   </li>
                 ))}
               </ol>
-              <Link className={styles.textLink} href="/sign-up">Learn how invitations work <ArrowRight size={16} aria-hidden="true" /></Link>
+              <Link className={styles.textLink} href="/sign-up?from=/docs">Learn how invitations work <ArrowRight size={16} aria-hidden="true" /></Link>
             </section>
 
             <section id="tp-teams" aria-labelledby="tp-title">

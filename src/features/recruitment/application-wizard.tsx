@@ -98,6 +98,37 @@ function outcomeIsUnknown(error: unknown): boolean {
   );
 }
 
+function formatCompensation(draft: ApplicationDraft): string {
+  const compensation = draft.material_terms?.terms.compensation;
+  if (!compensation) return "Not published";
+  const formatter = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: compensation.currency,
+    maximumFractionDigits: 0,
+  });
+  const amount = compensation.maximum_amount === null
+    ? formatter.format(compensation.minimum_amount)
+    : `${formatter.format(compensation.minimum_amount)}–${formatter.format(compensation.maximum_amount)}`;
+  const periods = {
+    hourly: "hourly",
+    monthly: "monthly",
+    annual: "annually",
+    one_time: "one time",
+  } as const;
+  return `${amount} ${periods[compensation.period]}`;
+}
+
+function formatCommitment(
+  label: string,
+  commitment: NonNullable<ApplicationDraft["material_terms"]>["terms"]["bond"],
+): string {
+  if (!commitment.required) return `No ${label.toLowerCase()}`;
+  const duration = commitment.duration_months
+    ? ` · ${commitment.duration_months} months`
+    : "";
+  return `${label} applies${duration}${commitment.details ? ` · ${commitment.details}` : ""}`;
+}
+
 export function ApplicationWizard({ roleId }: { roleId: string }) {
   const router = useRouter();
   const [draft, setDraft] = useState<ApplicationDraft | null>(null);
@@ -117,6 +148,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
   const [answersDirty, setAnswersDirty] = useState(false);
   const [review, setReview] = useState<ApplicationReview | null>(null);
   const [accuracyConfirmed, setAccuracyConfirmed] = useState(false);
+  const [termsAcknowledged, setTermsAcknowledged] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -170,6 +202,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
           { cache: "no-store" },
         );
         setReview(loadedReview);
+        setTermsAcknowledged(false);
       }
       const resumeId = loadedDraft.resume?.id ?? loadedResumes.find(
         (item) => item.status === "completed" && item.scan_status === "clean" && item.source === "generated",
@@ -449,6 +482,8 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
       );
       setReview(loadedReview);
       setDraft(loadedReview.draft);
+      setTermsAcknowledged(false);
+      setAccuracyConfirmed(false);
       setFurthestStep(3);
       setStep("review");
       setSaveState("saved");
@@ -460,7 +495,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
   }
 
   async function submitApplication() {
-    if (!draft || !accuracyConfirmed) return;
+    if (!draft || !accuracyConfirmed || (draft.material_terms && !termsAcknowledged)) return;
     const scope = `application-draft-submit:${draft.id}`;
     const idempotencyKey = getOrCreateIdempotencyKey(scope);
     setBusy(true);
@@ -474,6 +509,13 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
           body: JSON.stringify({
             expected_revision: draft.revision,
             confirmation: "I CONFIRM THIS APPLICATION IS ACCURATE",
+            acknowledgment: draft.material_terms
+              ? {
+                  material_terms_version_id: draft.material_terms.id,
+                  content_digest: draft.material_terms.content_digest,
+                  confirmation: "I ACKNOWLEDGE THESE MATERIAL TERMS",
+                }
+              : undefined,
           }),
         },
       );
@@ -481,7 +523,34 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
       setSubmissionUncertain(false);
       router.push(`/applications/${application.id}`);
     } catch (error) {
-      if (outcomeIsUnknown(error)) {
+      if (
+        error instanceof ApiError &&
+        (error.code.includes("application_material_terms_changed") ||
+          error.message.includes("application_material_terms_changed"))
+      ) {
+        clearIdempotencyKey(scope);
+        try {
+          const refreshedDraft = await csrfRequest<ApplicationDraft>(
+            `/application-drafts/${draft.id}/material-terms`,
+            {
+              method: "PUT",
+              body: JSON.stringify({ expected_revision: draft.revision }),
+            },
+          );
+          const refreshedReview = await apiRequest<ApplicationReview>(
+            `/application-drafts/${draft.id}/review`,
+            { cache: "no-store" },
+          );
+          setDraft(refreshedDraft);
+          setReview({ ...refreshedReview, draft: refreshedDraft });
+          setTermsAcknowledged(false);
+          setAccuracyConfirmed(false);
+          setSaveState("conflict");
+          setMessage("Material terms changed. Review the updated version and acknowledge it again.");
+        } catch (refreshError) {
+          showSaveError(refreshError);
+        }
+      } else if (outcomeIsUnknown(error)) {
         setSubmissionUncertain(true);
         setMessage(
           "CampusHire could not confirm the outcome. Retry safely with the same request, or check Applications before leaving.",
@@ -750,10 +819,35 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
                 <div className={styles.reviewStack}>
                   <article><FileText aria-hidden="true" /><div><span>Resume</span><strong>{review.draft.resume?.original_name}</strong><a href={apiPath(`/resumes/${review.draft.resume?.id}/download`)}>Preview PDF</a></div></article>
                   <article><UserRound aria-hidden="true" /><div><span>Profile snapshot</span><strong>{String(review.profile_snapshot.full_name ?? "")}</strong><p>{String(review.profile_snapshot.email ?? "")} · {String(review.profile_snapshot.phone ?? "")}</p><p>{String(review.profile_snapshot.department ?? "")} · {String(review.profile_snapshot.academic_year ?? "")} · {String(review.profile_snapshot.city ?? "")}, {String(review.profile_snapshot.country_code ?? "")}</p></div></article>
+                  {draft.material_terms ? (
+                    <article>
+                      <ShieldCheck aria-hidden="true" />
+                      <div>
+                        <span>Material terms · version {draft.material_terms.version}</span>
+                        <strong>{formatCompensation(draft)}</strong>
+                        <dl className={styles.termsGrid}>
+                          <div><dt>Work arrangement</dt><dd>{draft.material_terms.terms.work_mode} · {draft.material_terms.terms.work_location}</dd></div>
+                          <div><dt>Bond</dt><dd>{formatCommitment("Bond", draft.material_terms.terms.bond)}</dd></div>
+                          <div><dt>Probation</dt><dd>{formatCommitment("Probation", draft.material_terms.terms.probation)}</dd></div>
+                          <div><dt>Training</dt><dd>{formatCommitment("Training", draft.material_terms.terms.training)}</dd></div>
+                          <div><dt>Selection stages</dt><dd>{draft.material_terms.terms.selection_stages.join(" → ")}</dd></div>
+                          <div><dt>Required documents</dt><dd>{draft.material_terms.terms.required_documents.join(", ") || "None listed"}</dd></div>
+                          <div><dt>Placement restrictions</dt><dd>{draft.material_terms.terms.placement_restrictions.join("; ") || "None listed"}</dd></div>
+                          <div><dt>Application deadline</dt><dd>{new Date(draft.material_terms.terms.application_deadline).toLocaleString()}</dd></div>
+                        </dl>
+                        <small className={styles.digest}>Evidence digest {draft.material_terms.content_digest}</small>
+                      </div>
+                    </article>
+                  ) : (
+                    <Alert tone="warning">This legacy role has no versioned material terms. The packet will record that limitation explicitly.</Alert>
+                  )}
                   <article><LockKeyhole aria-hidden="true" /><div><span>Disclosure collection</span><strong>{draft.form ? (Object.keys(answers).length ? "Responses collected" : "No responses provided") : "Not configured"}</strong><p>Hiring reviewers see collection status only, never answers.</p></div></article>
                   <div className={styles.immutableNotice}><ShieldCheck aria-hidden="true" /><p>{review.immutable_notice}</p></div>
+                  {draft.material_terms ? (
+                    <label className={styles.confirmation}><input type="checkbox" checked={termsAcknowledged} onChange={(event) => setTermsAcknowledged(event.target.checked)} /><span><strong>I acknowledge material terms version {draft.material_terms.version}.</strong><small>I reviewed the compensation, location, commitments, stages, deadline, documents, and placement restrictions shown above.</small></span></label>
+                  ) : null}
                   <label className={styles.confirmation}><input type="checkbox" checked={accuracyConfirmed} onChange={(event) => setAccuracyConfirmed(event.target.checked)} /><span><strong>I confirm this application is accurate.</strong><small>I understand that the submitted packet is immutable.</small></span></label>
-                  <button type="button" className={styles.submitButton} disabled={!accuracyConfirmed || busy} onClick={() => void submitApplication()}>
+                  <button type="button" className={styles.submitButton} disabled={!accuracyConfirmed || Boolean(draft.material_terms && !termsAcknowledged) || busy} onClick={() => void submitApplication()}>
                     {busy ? "Submitting…" : submissionUncertain ? "Retry submission safely" : "Submit application"}
                     <ChevronRight aria-hidden="true" />
                   </button>
@@ -771,6 +865,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
             <div><dt>Resume</dt><dd>{draft.resume?.original_name ?? "Not selected"}</dd></div>
             <div><dt>Profile revision</dt><dd>{draft.profile_revision ? `Revision ${draft.profile_revision}` : "Not confirmed"}</dd></div>
             <div><dt>Disclosure form</dt><dd>{draft.form ? `Version ${draft.form.version}` : "Not configured"}</dd></div>
+            <div><dt>Material terms</dt><dd>{draft.material_terms ? `Version ${draft.material_terms.version}` : "Legacy role · not versioned"}</dd></div>
           </dl>
           <div className={styles.privateNote}><LockKeyhole aria-hidden="true" /><p>Disclosure answers remain encrypted and are never used for eligibility, matching, ranking, or hiring recommendations.</p></div>
         </aside>

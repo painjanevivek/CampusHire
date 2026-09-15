@@ -58,6 +58,40 @@ const form = {
   updated_at: "2026-09-01T10:00:00Z",
 };
 
+const materialTerms = {
+  id: "terms-1",
+  role_id: "role-1",
+  version: 1,
+  status: "published",
+  terms: {
+    compensation: {
+      currency: "INR",
+      period: "annual",
+      minimum_amount: 900000,
+      maximum_amount: 1200000,
+      notes: null,
+    },
+    work_location: "Pune",
+    work_mode: "hybrid",
+    bond: { required: false },
+    probation: { required: true, duration_months: 6 },
+    training: { required: false },
+    application_deadline: "2026-09-20T10:00:00Z",
+    required_documents: ["Resume"],
+    selection_stages: ["Online assessment", "Technical interview"],
+    placement_restrictions: ["Institution placement policy applies"],
+    additional_terms: null,
+  },
+  content_digest: "a".repeat(64),
+  created_by_user_id: "admin-1",
+  approved_by_user_id: "admin-1",
+  effective_at: "2026-09-01T10:00:00Z",
+  published_at: "2026-09-01T10:00:00Z",
+  superseded_at: null,
+  created_at: "2026-09-01T09:00:00Z",
+  updated_at: "2026-09-01T10:00:00Z",
+};
+
 const baseDraft = {
   id: "draft-1",
   role_id: "role-1",
@@ -71,6 +105,7 @@ const baseDraft = {
   profile_revision: null,
   resume: null,
   form,
+  material_terms: materialTerms,
   disclosure_answers: {},
   disclosure_completed: false,
   submitted_application_id: null,
@@ -195,7 +230,9 @@ describe("ApplicationWizard", () => {
 
     expect(await screen.findByRole("heading", { name: "Review the exact packet" }))
       .toBeInTheDocument();
+    expect(screen.getByText("₹9,00,000–₹12,00,000 annually")).toBeInTheDocument();
     expect(screen.getByText(/Hiring reviewers see collection status only/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: /I acknowledge material terms version 1/ }));
     fireEvent.click(screen.getByRole("checkbox", { name: /I confirm this application is accurate/ }));
     fireEvent.click(screen.getByRole("button", { name: "Submit application" }));
 
@@ -207,6 +244,14 @@ describe("ApplicationWizard", () => {
         body: expect.stringContaining("I CONFIRM THIS APPLICATION IS ACCURATE"),
       }),
     );
+    const submission = csrfRequestMock.mock.calls.find(([path]) => path.endsWith("/submit"));
+    expect(JSON.parse(String(submission?.[1]?.body))).toMatchObject({
+      acknowledgment: {
+        material_terms_version_id: "terms-1",
+        content_digest: "a".repeat(64),
+        confirmation: "I ACKNOWLEDGE THESE MATERIAL TERMS",
+      },
+    });
   });
 
   it("creates and selects an immutable tailored child while preserving its source", async () => {

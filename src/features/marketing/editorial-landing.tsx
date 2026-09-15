@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BadgeCheck, Building2, LockKeyhole, Scale, ShieldCheck, UserCheck } from "lucide-react";
+import { ArrowRight, BadgeCheck, Building2, Scale, ShieldCheck, UserCheck } from "lucide-react";
 
 import { BrandMark } from "@/components/brand-mark";
 import { LandingMotion } from "./landing-motion";
+import { ThemeToggle } from "./theme-toggle";
 import styles from "./editorial-landing.module.css";
 
 const journey = [
@@ -19,16 +20,12 @@ export function EditorialLanding() {
       <header className={styles.header} data-landing-header><div className={styles.headerInner}>
         <div className={styles.brandGroup}><Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark /><strong>CampusHire</strong></Link><Link className={styles.docsLink} href="/docs">Docs</Link></div>
         <nav aria-label="Primary navigation"><a href="#how-it-works">How it works</a><a href="#preview">Product preview</a><a href="#trust">Trust</a><a href="#faq">FAQ</a></nav>
-        <nav className={styles.headerActions} aria-label="Account access"><Link href="/sign-in">Sign In</Link><Link href="/sign-up">Sign Up</Link><Link href="/admin/sign-in">T&amp;P Access</Link></nav>
+        <nav className={styles.headerActions} aria-label="Account access"><ThemeToggle /><Link href="/sign-in">Sign In</Link><Link href="/sign-up?from=/">Sign Up</Link></nav>
       </div></header>
 
       <main id="main-content">
         <section className={styles.hero} aria-labelledby="landing-title" data-landing-hero>
           <div className={styles.heroCopy} data-hero-copy><p className={styles.eyebrow}>Your campus placement workspace</p><h1 id="landing-title">Your next step, clearly in view.</h1><p className={styles.heroSequence}>Prepare. Apply. Track.</p><p className={styles.heroDescription}>CampusHire connects students and placement teams in one place, with clear requirements and a next step you can act on.</p>
-            <div className={styles.heroAssurance}>
-              <small><LockKeyhole size={15} aria-hidden="true" /> Opportunities stay private to verified members of participating colleges.</small>
-              <Link className={styles.invitationLink} href="/sign-up">Student and institution verification</Link>
-            </div>
           </div>
           <aside className={styles.heroPreview} aria-label="Illustrative workspace preview" data-hero-card><header><strong>Your placement workspace</strong><span>Illustrative preview</span></header><ul>
             <li><UserCheck aria-hidden="true" /><div><strong>Prepare your profile</strong><span>Review your details and resume.</span></div><BadgeCheck aria-hidden="true" /></li>
@@ -52,7 +49,7 @@ export function EditorialLanding() {
 
         <section className={styles.audiences} data-reveal-group><article data-reveal-item><UserCheck aria-hidden="true" /><div><p>For students</p><h2>Less guessing. Better applications.</h2><span>See what is left, what it unlocks, and the exact details saved with every application.</span><Link href="/sign-in">Open student sign in</Link></div></article><article data-reveal-item><Building2 aria-hidden="true" /><div><p>For training &amp; placement</p><h2>Clear tools for every college.</h2><span>Build a drive through five publishing steps, preview its rules, then review candidates and track requests for missing information.</span><Link href="/admin/sign-in">Open T&amp;P sign in</Link></div></article></section>
 
-        <section className={styles.faq} id="faq" aria-labelledby="faq-title" data-reveal-group><p data-reveal-item>Common questions</p><h2 id="faq-title" data-reveal-item>The important details, up front.</h2><details data-reveal-item><summary>Can anyone browse campus opportunities?</summary><p>No. Roles are private to active, verified members of the college that published them.</p></details><details data-reveal-item><summary>Does AI decide whether I am eligible?</summary><p>No. Published rules decide eligibility. AI may suggest how well a role matches, but it never blocks core tasks.</p></details><details data-reveal-item><summary>What happens after my profile changes?</summary><p>A submitted application keeps the resume, profile details, eligibility result, and rule version used when you applied.</p></details></section>
+        <section className={styles.faq} id="faq" aria-labelledby="faq-title" data-reveal-group><header data-reveal-item><p>Common questions</p><h2 id="faq-title">The important details, up front.</h2></header><details open data-reveal-item><summary>Can anyone browse campus opportunities?</summary><p>No. Roles are private to active, verified members of the college that published them.</p></details><details data-reveal-item><summary>Does AI decide whether I am eligible?</summary><p>No. Published rules decide eligibility. AI may suggest how well a role matches, but it never blocks core tasks.</p></details><details data-reveal-item><summary>What happens after my profile changes?</summary><p>A submitted application keeps the resume, profile details, eligibility result, and rule version used when you applied.</p></details></section>
       </main>
 
       <footer className={styles.footer}><div><strong>CampusHire</strong><span>Student-first campus recruitment</span></div><nav aria-label="Footer"><Link href="/docs">Docs</Link><Link href="/privacy">Privacy and AI assistance</Link><Link href="/sign-in">Student sign in</Link><Link href="/admin/sign-in">T&amp;P access</Link></nav><p>AI can help. Published rules and responsible people make the official decisions.</p></footer>
