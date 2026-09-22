@@ -3,24 +3,31 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SignUpForm } from "./sign-up-form";
 
-const { csrfRequestMock, pushMock } = vi.hoisted(() => ({
+const institutionId = "00000000-0000-0000-0000-000000000001";
+
+const { apiRequestMock, csrfRequestMock, pushMock } = vi.hoisted(() => ({
+  apiRequestMock: vi.fn(),
   csrfRequestMock: vi.fn(),
   pushMock: vi.fn(),
 }));
 
 vi.mock("@/lib/api/client", async (importOriginal) => ({
   ...await importOriginal<typeof import("@/lib/api/client")>(),
+  apiRequest: apiRequestMock,
   csrfRequest: csrfRequestMock,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: pushMock }) }));
 
-function completeForm(password = "a secure campus passphrase") {
+async function completeForm(password = "a secure campus passphrase") {
+  await waitFor(() => expect(screen.getByRole("option", { name: "Test College" })).toBeInTheDocument());
+  fireEvent.change(screen.getByLabelText("College"), { target: { value: institutionId } });
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Asha" } });
   fireEvent.change(screen.getByLabelText("Surname"), { target: { value: "Patil" } });
   fireEvent.change(screen.getByLabelText("DOB"), { target: { value: "2004-05-16" } });
   fireEvent.change(screen.getByLabelText("Email"), {
     target: { value: "asha@student-campus.edu" },
   });
+  fireEvent.click(screen.getByRole("button", { name: /have an invitation code/i }));
   fireEvent.change(screen.getByLabelText("Invitation code (optional)"), {
     target: { value: "approved-roster-invitation-code" },
   });
@@ -33,18 +40,27 @@ function completeForm(password = "a secure campus passphrase") {
 
 describe("SignUpForm", () => {
   beforeEach(() => {
+    apiRequestMock.mockReset();
+    apiRequestMock.mockResolvedValue([{ id: institutionId, name: "Test College" }]);
     csrfRequestMock.mockReset();
     pushMock.mockReset();
   });
 
-  it("makes the invitation code optional while keeping student details required", () => {
+  it("keeps email and college required and progressively discloses the optional invitation code", async () => {
     render(<SignUpForm />);
 
-    expect(screen.getAllByRole("textbox")).toHaveLength(4);
+    await waitFor(() => expect(screen.getByRole("option", { name: "Test College" })).toBeInTheDocument());
+    expect(screen.getAllByRole("textbox")).toHaveLength(3);
     expect(screen.getByLabelText("Name")).toBeRequired();
     expect(screen.getByLabelText("Surname")).toBeRequired();
     expect(screen.getByLabelText("DOB")).toBeRequired();
     expect(screen.getByLabelText("Email")).toBeRequired();
+    expect(screen.getByLabelText("College")).toBeRequired();
+    const disclosure = screen.getByRole("button", { name: /have an invitation code/i });
+    expect(disclosure).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(disclosure);
+    expect(disclosure).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getAllByRole("textbox")).toHaveLength(4);
     expect(screen.getByLabelText("Invitation code (optional)")).not.toBeRequired();
     expect(screen.getByLabelText("Password")).toBeRequired();
     expect(screen.getByLabelText("Re-enter password")).toBeRequired();
@@ -62,7 +78,7 @@ describe("SignUpForm", () => {
       next_path: null,
     });
     render(<SignUpForm />);
-    completeForm();
+    await completeForm();
     fireEvent.change(screen.getByLabelText("Invitation code (optional)"), {
       target: { value: "" },
     });
@@ -85,7 +101,7 @@ describe("SignUpForm", () => {
       next_path: "/onboarding",
     });
     render(<SignUpForm />);
-    completeForm();
+    await completeForm();
 
     fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
 
@@ -97,6 +113,7 @@ describe("SignUpForm", () => {
           surname: "Patil",
           dob: "2004-05-16",
           email: "asha@student-campus.edu",
+          institution_id: institutionId,
           invitation_code: "approved-roster-invitation-code",
           password: "a secure campus passphrase",
           re_enter_password: "a secure campus passphrase",
@@ -109,9 +126,9 @@ describe("SignUpForm", () => {
     expect(screen.queryByText(/activation link/i)).not.toBeInTheDocument();
   });
 
-  it("does not submit when the passwords differ", () => {
+  it("does not submit when the passwords differ", async () => {
     render(<SignUpForm />);
-    completeForm();
+    await completeForm();
     fireEvent.change(screen.getByLabelText("Re-enter password"), {
       target: { value: "a different campus passphrase" },
     });

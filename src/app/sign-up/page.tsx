@@ -19,7 +19,6 @@ export default async function SignUpPage({
       backLabel={resolvedBackHref === "/" ? "Back to home" : "Go back"}
       eyebrow="Student registration"
       title="Create your CampusHire account."
-      description="Use your college email. If you have an invitation code from your placement office, you can activate your account now; otherwise, submit a request for review."
       footer={<>Already have an account? <Link href="/sign-in">Sign in</Link></>}
     >
       <SignUpForm />

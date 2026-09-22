@@ -6800,6 +6800,20 @@ export type SignInResponse = {
 };
 
 /**
+ * SignupInstitution
+ */
+export type SignupInstitution = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+};
+
+/**
  * SignupRequest
  */
 export type SignupRequest = {
@@ -6811,6 +6825,10 @@ export type SignupRequest = {
      * Email
      */
     email: string;
+    /**
+     * Institution Id
+     */
+    institution_id?: string | null;
     /**
      * Invitation Code
      */
@@ -10750,6 +10768,24 @@ export type SignupApiV1AuthSignupPostResponses = {
 };
 
 export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/signup/institutions';
+};
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses = {
+    /**
+     * Response Signup Institutions Api V1 Auth Signup Institutions Get
+     *
+     * Successful Response
+     */
+    200: Array<SignupInstitution>;
+};
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponse = SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses[keyof SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses];
 
 export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostData = {
     body: TermsAcceptanceRequest;
