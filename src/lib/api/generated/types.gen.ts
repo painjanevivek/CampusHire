@@ -280,20 +280,6 @@ export type ApplicationAppealResponse = {
 };
 
 /**
- * ApplicationCreate
- */
-export type ApplicationCreate = {
-    /**
-     * Resume Version Id
-     */
-    resume_version_id: string;
-    /**
-     * Role Id
-     */
-    role_id: string;
-};
-
-/**
  * ApplicationDisclosureResponse
  */
 export type ApplicationDisclosureResponse = {
@@ -9526,13 +9512,7 @@ export type ReadStudentApplicationsApiV1ApplicationsGetResponses = {
 export type ReadStudentApplicationsApiV1ApplicationsGetResponse = ReadStudentApplicationsApiV1ApplicationsGetResponses[keyof ReadStudentApplicationsApiV1ApplicationsGetResponses];
 
 export type SubmitApplicationApiV1ApplicationsPostData = {
-    body: ApplicationCreate;
-    headers: {
-        /**
-         * Idempotency-Key
-         */
-        'Idempotency-Key': string;
-    };
+    body?: never;
     path?: never;
     query?: never;
     url: '/api/v1/applications';
@@ -9540,21 +9520,16 @@ export type SubmitApplicationApiV1ApplicationsPostData = {
 
 export type SubmitApplicationApiV1ApplicationsPostErrors = {
     /**
+     * Direct submission is retired; use the versioned application packet.
+     */
+    410: unknown;
+    /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
 export type SubmitApplicationApiV1ApplicationsPostError = SubmitApplicationApiV1ApplicationsPostErrors[keyof SubmitApplicationApiV1ApplicationsPostErrors];
-
-export type SubmitApplicationApiV1ApplicationsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: ApplicationResponse;
-};
-
-export type SubmitApplicationApiV1ApplicationsPostResponse = SubmitApplicationApiV1ApplicationsPostResponses[keyof SubmitApplicationApiV1ApplicationsPostResponses];
 
 export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetData = {
     body?: never;
