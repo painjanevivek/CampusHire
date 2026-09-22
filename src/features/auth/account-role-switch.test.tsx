@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { AccountRoleSwitch } from "./account-role-switch";
@@ -35,5 +35,14 @@ describe("AccountRoleSwitch", () => {
     for (const link of within(navigation).getAllByRole("link")) {
       expect(link).toHaveAttribute("data-history-mode", "replace");
     }
+  });
+
+  it("lets the sign-in experience switch roles without following the link", () => {
+    const onRoleChange = vi.fn();
+    render(<AccountRoleSwitch current="student" onRoleChange={onRoleChange} />);
+
+    fireEvent.click(screen.getByRole("link", { name: /training & placement/i }));
+
+    expect(onRoleChange).toHaveBeenCalledWith("tnp");
   });
 });
