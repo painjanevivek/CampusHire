@@ -112,6 +112,58 @@ describe("AdminStudents", () => {
     expect(await screen.findByText("revoked")).toBeInTheDocument();
   });
 
+  it("shows manual activation codes once after a roster commit and lets the officer hide them", async () => {
+    csrfRequestMock.mockImplementation((path: string) => {
+      if (path.endsWith("/preview")) return Promise.resolve({
+        id: "roster-new", status: "previewed", valid_rows: 1, invalid_rows: 0,
+        invited_rows: 0, total_rows: 1,
+        rows: [{ row_number: 1, email: "asha@example.edu", status: "valid", errors: [] }],
+      });
+      if (path.endsWith("/commit")) return Promise.resolve({
+        id: "roster-new", status: "committed", valid_rows: 1, invalid_rows: 0,
+        invited_rows: 1, total_rows: 1,
+        rows: [{ row_number: 1, email: "asha@example.edu", status: "invited", errors: [] }],
+        handoffs: [{ email: "asha@example.edu", activation_code: "synthetic-one-time-code", expires_at: "2026-09-23T10:00:00Z" }],
+      });
+      return Promise.reject(new Error(`Unexpected path ${path}`));
+    });
+    render(<AdminStudents />);
+    await screen.findByText("asha@example.edu");
+    fireEvent.change(screen.getByLabelText("Preview CSV"), {
+      target: { files: [new File(["email\nasha@example.edu"], "students.csv", { type: "text/csv" })] },
+    });
+    expect(await screen.findByText("Roster preview")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Invite valid rows" }));
+    expect(await screen.findByText("synthetic-one-time-code")).toBeInTheDocument();
+    expect(screen.getByText(/institution-approved secure channel/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Done — hide codes" }));
+    expect(screen.queryByText("synthetic-one-time-code")).not.toBeInTheDocument();
+  });
+
+  it("issues an identity-checked one-time recovery code without showing a student password", async () => {
+    csrfRequestMock.mockResolvedValue({ reset_code: "synthetic-recovery-code", expires_in_minutes: 30 });
+    render(<AdminStudents />);
+    await screen.findByText("asha@example.edu");
+    fireEvent.click(screen.getByText("Recover account"));
+    fireEvent.change(screen.getByLabelText("Identity check method"), {
+      target: { value: "In-person ID check" },
+    });
+    fireEvent.change(screen.getByLabelText("Verification reference, not an ID number"), {
+      target: { value: "synthetic-helpdesk-123" },
+    });
+    fireEvent.change(screen.getByLabelText("Audit reason"), {
+      target: { value: "Student cannot access their account." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Issue one-time code" }));
+    expect(await screen.findByText("synthetic-recovery-code")).toBeInTheDocument();
+    expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/institutions/institution-1/students/student-1/manual-recovery",
+      expect.objectContaining({ method: "POST", body: expect.stringContaining("synthetic-helpdesk-123") }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Done — hide code" }));
+    expect(screen.queryByText("synthetic-recovery-code")).not.toBeInTheDocument();
+  });
+
   it("rechecks the account namespace before restoring a view", async () => {
     let currentUser = { id: "admin-1", institution_id: "institution-1" };
     apiRequestMock.mockImplementation((path: string) => {

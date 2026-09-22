@@ -24,6 +24,7 @@ export function InvitationQueue({ institutionId }: { institutionId: string }) {
   const [message, setMessage] = useState("");
   const [feedbackTone, setFeedbackTone] = useState<"success" | "error">("success");
   const [busyId, setBusyId] = useState("");
+  const [replacement, setReplacement] = useState<{ email: string; code: string } | null>(null);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -45,9 +46,10 @@ export function InvitationQueue({ institutionId }: { institutionId: string }) {
   }
 
   async function resend(invitation: Invitation) {
-    if (!window.confirm(`Send a replacement invitation to ${invitation.email}?`)) return;
+    if (!window.confirm(`Reissue the invitation for ${invitation.email}? The previous code will stop working.`)) return;
     setBusyId(invitation.id);
     setMessage("");
+    setReplacement(null);
     try {
       const result = await csrfRequest<InvitationAction>(
         `/institutions/${institutionId}/invitations/${invitation.id}/resend`,
@@ -61,6 +63,9 @@ export function InvitationQueue({ institutionId }: { institutionId: string }) {
       } : item));
       setFeedbackTone("success");
       setMessage(result.message);
+      if (result.activation_code) {
+        setReplacement({ email: invitation.email, code: result.activation_code });
+      }
     } catch (cause) {
       setFeedbackTone("error");
       setMessage(cause instanceof ApiError ? cause.message : "The invitation was not resent.");
@@ -100,11 +105,12 @@ export function InvitationQueue({ institutionId }: { institutionId: string }) {
   return (
     <details className={styles.invitationDisclosure} onToggle={disclose}>
       <summary>
-        <span><strong>Invitation queue</strong><small>Resend expired links or revoke records added in error.</small></span>
+        <span><strong>Invitation queue</strong><small>Reissue expired codes or revoke records added in error.</small></span>
         {state === "ready" ? <Badge>{actionable.length} need attention</Badge> : null}
       </summary>
       <div className={styles.invitationContent}>
         {message && state === "ready" ? <Alert tone={feedbackTone}>{message}</Alert> : null}
+        {replacement ? <div className={styles.replacementCode}><strong>Replacement code for {replacement.email}</strong><code>{replacement.code}</code><p>Shown only now. Use your institution-approved secure handoff channel; reissue again if lost.</p><button type="button" onClick={() => setReplacement(null)}>Done — hide code</button></div> : null}
         {state === "loading" ? <RequestState state="loading" title="Loading invitations">Checking the latest tenant-scoped invitation records.</RequestState> : null}
         {state === "error" ? <RequestState state="error" title="Invitations are unavailable" onRetry={() => void load()}>{message}</RequestState> : null}
         {state === "ready" && !invitations.length ? <RequestState state="empty" title="No invitations yet">Commit a validated roster to create student invitations.</RequestState> : null}
@@ -120,7 +126,7 @@ export function InvitationQueue({ institutionId }: { institutionId: string }) {
                 <Badge tone={invitation.status === "accepted" ? "success" : invitation.status === "pending" ? undefined : "warning"}>{invitation.status}</Badge>
                 {invitation.status === "pending" || invitation.status === "expired" ? (
                   <div className={styles.invitationActions}>
-                    <button type="button" disabled={busyId === invitation.id} onClick={() => void resend(invitation)}>Resend</button>
+                    <button type="button" disabled={busyId === invitation.id} onClick={() => void resend(invitation)}>Reissue</button>
                     <details>
                       <summary>Revoke</summary>
                       <form onSubmit={(event) => void revoke(event, invitation)}>

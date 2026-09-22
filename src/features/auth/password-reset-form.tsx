@@ -10,30 +10,32 @@ import { ApiError, csrfRequest } from "@/lib/api/client";
 export function PasswordResetForm({ token }: { token?: string }) {
   const [status, setStatus] = useState<"idle" | "submitting" | "complete">("idle");
   const [error, setError] = useState("");
+  const [completionMessage, setCompletionMessage] = useState("");
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
     setError("");
     const data = new FormData(event.currentTarget);
     try {
-      await csrfRequest(token ? `/auth/password-reset/${encodeURIComponent(token)}/confirm` : "/auth/password-reset/request", {
+      const result = await csrfRequest<{ message: string } | void>(token ? `/auth/password-reset/${encodeURIComponent(token)}/confirm` : "/auth/password-reset/request", {
         method: "POST",
         body: JSON.stringify(token ? { password: data.get("password") } : { email: data.get("email") }),
       });
+      setCompletionMessage(token ? "Password changed. You can sign in now." : result?.message ?? "Contact your placement office for account recovery.");
       setStatus("complete");
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
       setStatus("idle");
     }
   }
-  if (status === "complete") return <Alert tone="success">{token ? "Password changed. You can sign in now." : "If the account exists, reset instructions will be sent."}</Alert>;
+  if (status === "complete") return <Alert tone="success">{completionMessage}</Alert>;
   return (
     <form className="authForm" onSubmit={submit}>
       {error ? <Alert tone="error">{error}</Alert> : null}
       {token
         ? <Input id="password" name="password" type="password" label="New password" autoComplete="new-password" minLength={12} maxLength={128} required />
         : <Input id="email" name="email" type="email" label="Account email" autoComplete="email" required />}
-      <Button type="submit" disabled={status === "submitting"}>{status === "submitting" ? "Working securely…" : token ? "Change password" : "Send reset instructions"}</Button>
+      <Button type="submit" disabled={status === "submitting"}>{status === "submitting" ? "Working securely…" : token ? "Change password" : "Request account recovery"}</Button>
     </form>
   );
 }

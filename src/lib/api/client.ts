@@ -61,6 +61,7 @@ function isRequestTimeout(cause: unknown): boolean {
 }
 
 type ErrorBody = {
+  message?: string;
   detail?: string | {
     code?: string;
     message?: string;
@@ -115,7 +116,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
     const structuredDetail = typeof body.detail === "object" ? body.detail : undefined;
     throw new ApiError(
       response.status,
-      body.error?.message ?? structuredDetail?.message ??
+      body.error?.message ?? structuredDetail?.message ?? body.message ??
         (typeof body.detail === "string" ? body.detail : "CampusHire could not complete this request."),
       body.error?.code ?? structuredDetail?.code ?? "http_error",
       body.error?.correlation_id ?? response.headers.get("X-Request-ID") ?? undefined,

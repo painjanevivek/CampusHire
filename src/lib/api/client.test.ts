@@ -53,6 +53,18 @@ describe("API client", () => {
     );
   });
 
+  it("shows the backend's safe message from a top-level registration conflict", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      status: "registration_unavailable",
+      message: "Contact your placement office to verify your student access.",
+    }), { status: 409, headers: { "Content-Type": "application/json" } })));
+
+    await expect(apiRequest("/auth/signup")).rejects.toEqual(expect.objectContaining({
+      status: 409,
+      message: "Contact your placement office to verify your student access.",
+    }));
+  });
+
   it("refuses redirects for credentialed requests", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ ok: true }), {

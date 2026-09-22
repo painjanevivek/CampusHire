@@ -25,6 +25,9 @@
 .toolbar label { flex: 1; }
 .toolbar input, .institutionSelect select, .form input, .form select, .form textarea, .inlineActions input, .dangerDisclosure textarea, .list form input, .list form select { width: 100%; min-height: var(--control-min-size); padding: .7rem .8rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--canvas); color: var(--ink); }
 .form { display: grid; gap: .9rem; margin-top: 1rem; }
+.assignmentDisclosure { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.assignmentDisclosure summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 650; }
+.assignmentDisclosure p { margin: .5rem 0; color: var(--ink-muted); }
 .definitionList, .statusRows { display: grid; margin: 1rem 0; }
 .definitionList > div, .statusRows > div { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--line); }
 .definitionList dt, .statusRows dt { color: var(--ink-muted); }

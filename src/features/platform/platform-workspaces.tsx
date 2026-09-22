@@ -248,6 +248,8 @@ export function PlatformAccounts() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [openActionId, setOpenActionId] = useState<string | null>(null);
+  const [recoveryAccount, setRecoveryAccount] = useState<StaffAccount | null>(null);
+  const [recoveryHandoff, setRecoveryHandoff] = useState<{ username: string; code: string; minutes: number } | null>(null);
   const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
 
   useEffect(() => {
@@ -282,6 +284,27 @@ export function PlatformAccounts() {
     finally { setBusy(false); }
   }
 
+  async function assignExisting(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); if (!selected) return;
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setBusy(true); setMessage("");
+    try {
+      await csrfRequest(`/platform/institutions/${selected}/staff-assignments`, {
+        method: "POST",
+        body: JSON.stringify({
+          username: String(data.get("username") ?? "").trim(),
+          role: data.get("role"),
+          reason: data.get("reason"),
+        }),
+      });
+      form.reset(); accounts.refresh();
+      setMessage("Existing T&P account assigned to this institution. Its next sign-in can use this context.");
+    } catch (cause) {
+      setMessage(cause instanceof ApiError ? cause.message : "The existing account could not be assigned.");
+    } finally { setBusy(false); }
+  }
+
   async function changeStatus(event: FormEvent<HTMLFormElement>, account: StaffAccount) {
     event.preventDefault();
     const data = new FormData(event.currentTarget); setBusy(true); setMessage("");
@@ -292,17 +315,40 @@ export function PlatformAccounts() {
     finally { setBusy(false); }
   }
 
+  async function issueStaffRecovery(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); if (!recoveryAccount) return;
+    const data = new FormData(event.currentTarget);
+    setBusy(true); setMessage(""); setRecoveryHandoff(null);
+    try {
+      const result = await csrfRequest<{ reset_code: string; expires_in_minutes: number }>(
+        `/platform/staff-accounts/${recoveryAccount.user_id}/manual-recovery`,
+        { method: "POST", body: JSON.stringify({
+          identity_check_method: data.get("identity_check_method"),
+          identity_check_reference: data.get("identity_check_reference"),
+          reason: data.get("reason"),
+        }) },
+      );
+      setRecoveryHandoff({ username: recoveryAccount.username ?? "T&P account", code: result.reset_code, minutes: result.expires_in_minutes });
+      setRecoveryAccount(null);
+      setMessage("One-time staff recovery code issued after the recorded identity check.");
+    } catch (cause) {
+      setMessage(cause instanceof ApiError ? cause.message : "Staff recovery could not be issued.");
+    } finally { setBusy(false); }
+  }
+
   return <PageContainer context="admin" className={styles.page}>
     <PageHeader eyebrow="Access governance" title="T&amp;P Accounts" description="The Platform Admin issues institution-scoped Officer, Reviewer, and Auditor access. Roles do not inherit placement powers." />
     {message ? <Alert>{message}</Alert> : null}
-    <label className={styles.institutionSelect}>Institution<select value={selected} onChange={(event) => router.push(`/admin/accounts?institution=${event.target.value}`)}><option value="">Select an institution</option>{institutions.data?.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+    <label className={styles.institutionSelect}>Institution<select value={selected} onChange={(event) => { setRecoveryAccount(null); setRecoveryHandoff(null); router.push(`/admin/accounts?institution=${event.target.value}`); }}><option value="">Select an institution</option>{institutions.data?.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
     {selected ? <div className={styles.split}>
-      <section className={styles.panel}><p className="eyebrow">Provision access</p><h2>Create a T&amp;P account</h2><form className={styles.form} onSubmit={create}><label>Username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" required /></label><label>Role<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Initial password<input name="password" type="password" minLength={12} required /></label><label>Confirm password<input name="confirm_password" type="password" minLength={12} required /></label><label>Audit reason<textarea name="reason" minLength={10} required /></label><Button disabled={busy}>{busy ? "Creating…" : "Issue access"}</Button></form></section>
+      <section className={styles.panel}><p className="eyebrow">Provision access</p><h2>Create a T&amp;P account</h2><form className={styles.form} onSubmit={create}><label>Username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" required /></label><label>Role<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Initial password<input name="password" type="password" minLength={12} required /></label><label>Confirm password<input name="confirm_password" type="password" minLength={12} required /></label><label>Audit reason<textarea name="reason" minLength={10} required /></label><Button disabled={busy}>{busy ? "Creating…" : "Issue access"}</Button></form><details className={styles.assignmentDisclosure}><summary>Assign an existing T&amp;P account to this institution</summary><p>Use this when one officer is responsible for more than one institution. This does not create another login.</p><form className={styles.form} onSubmit={assignExisting}><label>Existing username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" autoComplete="off" required /></label><label>Role at this institution<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Audit reason<textarea name="reason" minLength={10} required /></label><Button disabled={busy}>{busy ? "Assigning…" : "Assign account"}</Button></form></details></section>
       <section className={styles.list} aria-label="T&P account directory">{accounts.loading ? <p role="status">Loading T&amp;P accounts…</p> : null}{accounts.data?.map((account) => <article key={account.id}><div><strong>{account.username ?? account.email}</strong><small>{roleLabels[account.role] ?? account.role}</small></div><Badge tone={account.status === "active" ? "success" : "warning"}>{account.status}</Badge><div className={styles.actionMenu} data-account-action-menu>
         <button type="button" className={styles.actionTrigger} aria-haspopup="dialog" aria-expanded={openActionId === account.id} aria-controls={`account-actions-${account.id}`} ref={(element) => { if (element) actionTriggerRefs.current.set(account.id, element); else actionTriggerRefs.current.delete(account.id); }} onClick={() => setOpenActionId((current) => current === account.id ? null : account.id)}>Actions <ChevronDown aria-hidden="true" /></button>
-        {openActionId === account.id ? <form id={`account-actions-${account.id}`} className={styles.actionPopover} role="dialog" aria-label={`Actions for ${account.username ?? account.email}`} onSubmit={(event) => void changeStatus(event, account)}><p>Update this institution-scoped account.</p><label>Role<select name="role" defaultValue={account.role}><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Status<select name="status" defaultValue={account.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option></select></label><label>Audit reason<input name="reason" minLength={10} required /></label><div className={styles.menuActions}><Button variant="quiet" type="button" onClick={() => setOpenActionId(null)}>Cancel</Button><Button disabled={busy}>{busy ? "Saving…" : "Save changes"}</Button></div></form> : null}
+        {openActionId === account.id ? <form id={`account-actions-${account.id}`} className={styles.actionPopover} role="dialog" aria-label={`Actions for ${account.username ?? account.email}`} onSubmit={(event) => void changeStatus(event, account)}><p>Update this institution-scoped account.</p><label>Role<select name="role" defaultValue={account.role}><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Status<select name="status" defaultValue={account.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option></select></label><label>Audit reason<input name="reason" minLength={10} required /></label><div className={styles.menuActions}><Button variant="quiet" type="button" onClick={() => setOpenActionId(null)}>Cancel</Button><Button disabled={busy}>{busy ? "Saving…" : "Save changes"}</Button></div><Button variant="quiet" type="button" onClick={() => { setRecoveryAccount(account); setOpenActionId(null); }}>Issue manual recovery code</Button></form> : null}
       </div></article>)}{accounts.data && !accounts.data.length ? <RequestState state="empty" title="No T&P accounts">Issue the first scoped account from the form.</RequestState> : null}</section>
     </div> : <RequestState state="empty" title="Choose an institution">T&amp;P access is always issued inside an institution boundary.</RequestState>}
+    {recoveryAccount ? <section className={styles.panel}><h2>Recover {recoveryAccount.username ?? "T&P account"}</h2><p>Verify the officer through your approved institutional process before issuing a code. Do not record full ID numbers here.</p><form className={styles.form} onSubmit={issueStaffRecovery}><label>Identity check method<input name="identity_check_method" minLength={5} maxLength={100} required /></label><label>Verification reference<input name="identity_check_reference" minLength={5} maxLength={120} required /></label><label>Recovery audit reason<textarea name="reason" minLength={10} maxLength={500} required /></label><div className={styles.inlineActions}><Button disabled={busy}>Issue one-time code</Button><Button type="button" variant="quiet" onClick={() => setRecoveryAccount(null)}>Cancel</Button></div></form></section> : null}
+    {recoveryHandoff ? <section className={styles.panel}><h2>One-time recovery code for {recoveryHandoff.username}</h2><p>Show this code only through an institution-approved secure handoff. The officer chooses their own replacement password. It expires in {recoveryHandoff.minutes} minutes.</p><code>{recoveryHandoff.code}</code><div><Button type="button" variant="quiet" onClick={() => setRecoveryHandoff(null)}>Done — hide code</Button></div></section> : null}
   </PageContainer>;
 }
 

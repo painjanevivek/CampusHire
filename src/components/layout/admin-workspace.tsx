@@ -29,6 +29,7 @@ import type { LucideIcon } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationCenter } from "@/features/engagement/notification-center";
+import { InstitutionSwitcher } from "./institution-switcher";
 import styles from "./admin-workspace.module.css";
 import { SignOutButton } from "./sign-out-button";
 
@@ -111,10 +112,12 @@ function WorkspaceShell({
   children,
   variant,
   role,
+  institutionId,
 }: {
   children: ReactNode;
   variant: WorkspaceVariant;
   role: string;
+  institutionId?: string | null;
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -160,6 +163,7 @@ function WorkspaceShell({
             <BrandMark />
             <strong>CampusHire</strong>
           </Link>
+          {variant === "tnp" ? <InstitutionSwitcher institutionId={institutionId} /> : null}
           <div className={styles.topUtilities} aria-label="Display and notification controls">
             <ThemeToggle />
             <NotificationCenter context="admin" />
@@ -244,6 +248,6 @@ export function AdminWorkspace({ children, role = "platform_admin" }: { children
   return <WorkspaceShell variant="platform" role={role}>{children}</WorkspaceShell>;
 }
 
-export function TnpWorkspace({ children, role }: { children: ReactNode; role: string }) {
-  return <WorkspaceShell variant="tnp" role={role}>{children}</WorkspaceShell>;
+export function TnpWorkspace({ children, role, institutionId }: { children: ReactNode; role: string; institutionId?: string | null }) {
+  return <WorkspaceShell variant="tnp" role={role} institutionId={institutionId}>{children}</WorkspaceShell>;
 }
