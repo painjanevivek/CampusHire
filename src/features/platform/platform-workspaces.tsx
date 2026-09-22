@@ -57,6 +57,12 @@ type RegistrationRequest = {
   duplicate_detected: boolean;
   created_at: string;
 };
+type InstitutionProvisionHandoff = {
+  institution_id: string;
+  admin_invitation_id: string;
+  admin_invitation_token: string;
+  expires_at: string;
+};
 type StaffAccount = {
   id: string;
   institution_id: string;
@@ -155,6 +161,29 @@ export function PlatformInstitutions() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [outcomeApplicationId, setOutcomeApplicationId] = useState("");
+  const [provisionHandoff, setProvisionHandoff] = useState<InstitutionProvisionHandoff | null>(null);
+
+  async function provision(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setBusy(true); setMessage(""); setProvisionHandoff(null);
+    try {
+      const handoff = await csrfRequest<InstitutionProvisionHandoff>("/platform/institutions", {
+        method: "POST",
+        body: JSON.stringify({
+          institution_code: String(data.get("institution_code") ?? "").trim(),
+          institution_name: String(data.get("institution_name") ?? "").trim(),
+          admin_email: String(data.get("admin_email") ?? "").trim(),
+        }),
+      });
+      setProvisionHandoff(handoff);
+      setMessage("Institution created. Transfer the one-time activation code through the approved authenticated channel.");
+      form.reset(); page.refresh();
+    } catch (cause) {
+      setMessage(cause instanceof ApiError ? cause.message : "The institution could not be created.");
+    } finally { setBusy(false); }
+  }
 
   async function decide(requestId: string, decision: "approve" | "reject", reason?: string) {
     setBusy(true); setMessage("");
@@ -209,6 +238,21 @@ export function PlatformInstitutions() {
           </div>
         </article>)}
       </div> : <p className={styles.queueEmpty}>No pending institution requests. New registrations will appear here for your decision.</p>}
+      <details className={styles.disclosure}>
+        <summary>Provision an institution after offline verification</summary>
+        <p>Use this only after the institution and administrator have been verified through the approved support procedure.</p>
+        <form onSubmit={provision}>
+          <label>Institution name<input name="institution_name" minLength={2} maxLength={200} required /></label>
+          <label>Institution code<input name="institution_code" pattern="[a-z0-9-]+" minLength={2} maxLength={64} required /></label>
+          <label>Initial T&amp;P administrator email<input name="admin_email" type="email" required /></label>
+          <Button disabled={busy}>{busy ? "Creating institution…" : "Create institution"}</Button>
+        </form>
+      </details>
+      {provisionHandoff ? <Alert>
+        <strong>One-time administrator activation code</strong>
+        <code>{provisionHandoff.admin_invitation_token}</code>
+        <span>Expires {new Date(provisionHandoff.expires_at).toLocaleString()}. It will not be shown again; revoke and reissue it if the handoff is lost.</span>
+      </Alert> : null}
     </section>
     <form className={styles.toolbar} action="/admin/institutions"><label>Search institutions<input name="q" defaultValue={query} placeholder="Name or code" /></label><Button>Search</Button></form>
     {page.loading ? <RequestState state="loading" title="Loading institutions">Reading platform-scoped summaries.</RequestState> : null}

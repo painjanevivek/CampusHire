@@ -11527,106 +11527,6 @@ export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses = {
 
 export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponse = ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses];
 
-export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetData = {
-    body?: never;
-    headers?: {
-        /**
-         * X-Operator-Key
-         */
-        'x-operator-key'?: string | null;
-    };
-    path?: never;
-    query?: never;
-    url: '/api/v1/operator/institution-registration-requests';
-};
-
-export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetError = ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors[keyof ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetErrors];
-
-export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses = {
-    /**
-     * Response List Registration Requests Api V1 Operator Institution Registration Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<InstitutionRegistrationResponse>;
-};
-
-export type ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponse = ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses[keyof ListRegistrationRequestsApiV1OperatorInstitutionRegistrationRequestsGetResponses];
-
-export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostData = {
-    body: InstitutionRegistrationDecision;
-    headers?: {
-        /**
-         * X-Operator-Key
-         */
-        'x-operator-key'?: string | null;
-    };
-    path: {
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/operator/institution-registration-requests/{request_id}/decision';
-};
-
-export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostError = ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors[keyof ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostErrors];
-
-export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionRegistrationResponse;
-};
-
-export type ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponse = ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses[keyof ReviewRegistrationRequestApiV1OperatorInstitutionRegistrationRequestsRequestIdDecisionPostResponses];
-
-export type CreateInstitutionApiV1OperatorInstitutionsPostData = {
-    body: InstitutionProvisionRequest;
-    headers?: {
-        /**
-         * X-Operator-Key
-         */
-        'x-operator-key'?: string | null;
-    };
-    path?: never;
-    query?: never;
-    url: '/api/v1/operator/institutions';
-};
-
-export type CreateInstitutionApiV1OperatorInstitutionsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateInstitutionApiV1OperatorInstitutionsPostError = CreateInstitutionApiV1OperatorInstitutionsPostErrors[keyof CreateInstitutionApiV1OperatorInstitutionsPostErrors];
-
-export type CreateInstitutionApiV1OperatorInstitutionsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: InstitutionProvisionResponse;
-};
-
-export type CreateInstitutionApiV1OperatorInstitutionsPostResponse = CreateInstitutionApiV1OperatorInstitutionsPostResponses[keyof CreateInstitutionApiV1OperatorInstitutionsPostResponses];
-
 export type ReadOpportunitiesApiV1OpportunitiesGetData = {
     body?: never;
     path?: never;
@@ -12175,6 +12075,31 @@ export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses = {
 };
 
 export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponse = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses];
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostData = {
+    body: InstitutionProvisionRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/institutions';
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostError = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors];
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: InstitutionProvisionResponse;
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponse = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses];
 
 export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetData = {
     body?: never;
