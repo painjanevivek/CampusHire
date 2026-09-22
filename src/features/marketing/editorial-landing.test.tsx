@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { EditorialLanding } from "./editorial-landing";
@@ -9,66 +9,67 @@ describe("EditorialLanding", () => {
     window.localStorage.clear();
   });
 
-  it("explains the placement journey without exposing private role search", () => {
+  it("leads with the accountable campus-placement proposition", () => {
     render(<EditorialLanding />);
+
+    expect(screen.getByRole("heading", { name: /campus placement, with the proof in view/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create your profile" })).toHaveAttribute("href", "/sign-up?from=/");
+    expect(screen.getByRole("link", { name: "See the placement record" })).toHaveAttribute("href", "#record");
     expect(screen.queryByRole("search")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /your next step, clearly in view/i })).toBeInTheDocument();
-    expect(screen.queryByText(/private to verified members/i)).not.toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "Product preview" })).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Docs" })[0]).toHaveAttribute("href", "/docs");
   });
 
-  it("presents the product as illustrative interface wireframes rather than screenshots", () => {
+  it("uses checked-in product evidence instead of fabricated interface previews", () => {
     render(<EditorialLanding />);
 
-    const preview = screen.getByRole("region", { name: "Product preview" });
-    expect(preview.querySelectorAll("img")).toHaveLength(0);
-    expect(screen.getByRole("img", { name: /student workspace wireframe/i })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /training and placement review wireframe/i })).toBeInTheDocument();
-    expect(preview).toHaveTextContent(/illustrative interface wireframes/i);
-    expect(preview).toHaveTextContent(/human review/i);
+    const preview = screen.getByRole("region", { name: "CampusHire product views" });
+    expect(within(preview).getByRole("img", { name: /student readiness workspace/i })).toHaveAttribute(
+      "src",
+      expect.stringContaining("student-priorities"),
+    );
+    expect(within(preview).getByRole("img", { name: /placement team application review/i })).toHaveAttribute(
+      "src",
+      expect.stringContaining("placement-review"),
+    );
+    expect(preview).toHaveTextContent(/synthetic demonstration data/i);
   });
 
-  it("orders header access before registration and keeps the hero free of account buttons", () => {
+  it("shows the full placement record in order", () => {
     render(<EditorialLanding />);
 
-    expect(screen.queryByRole("link", { name: "Student and institution verification" })).not.toBeInTheDocument();
-    const headerActions = screen.getByLabelText("Account access");
-    const headerLinks = Array.from(headerActions.querySelectorAll("a"));
-    expect(headerLinks.map((link) => link.textContent)).toEqual(["Sign In", "Sign Up"]);
-    expect(headerLinks.map((link) => link.getAttribute("href"))).toEqual([
-      "/sign-in",
-      "/sign-up?from=/",
+    const record = screen.getByRole("region", { name: "The placement record" });
+    const steps = within(record).getAllByRole("listitem");
+    expect(steps.map((step) => step.textContent)).toEqual([
+      expect.stringMatching(/profile evidence/i),
+      expect.stringMatching(/reviewed resume/i),
+      expect.stringMatching(/published eligibility/i),
+      expect.stringMatching(/application snapshot/i),
+      expect.stringMatching(/human decision/i),
     ]);
-    expect(document.querySelector("[data-hero-actions]")).not.toBeInTheDocument();
   });
 
-  it("separates eligibility from match", () => {
+  it("keeps eligibility, role match, and human authority separate", () => {
     render(<EditorialLanding />);
 
     expect(screen.getByRole("heading", { name: "Eligibility" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Role match" })).toBeInTheDocument();
     expect(screen.getByText("A match score never decides whether you can apply.")).toBeInTheDocument();
-    expect(document.querySelectorAll("[data-reveal-group]")).toHaveLength(5);
+    expect(screen.getByText(/official decisions stay with published rules and responsible people/i)).toBeInTheDocument();
   });
 
-  it("answers common access, evidence, privacy, and AI-boundary questions", () => {
+  it("routes students and placement teams to distinct entry points", () => {
     render(<EditorialLanding />);
 
-    const faq = screen.getByRole("region", { name: "The important details, up front." });
-    expect(faq.querySelectorAll("details")).toHaveLength(7);
-    expect(screen.getByText("Who creates Training & Placement accounts?")).toBeInTheDocument();
-    expect(screen.getByText("Can AI submit or change my application?")).toBeInTheDocument();
-    expect(screen.getByText("What if my supporting evidence is missing?")).toBeInTheDocument();
-    expect(screen.getByText("Who can see my student information?")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Start a student profile" })).toHaveAttribute("href", "/sign-up?from=/");
+    expect(screen.getByRole("link", { name: "Open student sign in" })).toHaveAttribute("href", "/sign-in");
+    expect(screen.getByRole("link", { name: "Open T&P sign in" })).toHaveAttribute("href", "/tnp/sign-in");
+    expect(screen.getByText(/accounts are issued by the institution/i)).toBeInTheDocument();
   });
 
   it("places an accessible theme toggle before sign in and switches themes", () => {
     render(<EditorialLanding />);
 
     const toggle = screen.getByRole("button", { name: "Switch to light mode" });
-    const signIn = screen.getByRole("link", { name: "Sign In" });
-
+    const signIn = screen.getByRole("link", { name: "Sign in" });
     expect(toggle.nextElementSibling).toBe(signIn);
     expect(document.documentElement).toHaveAttribute("data-theme", "dark");
 

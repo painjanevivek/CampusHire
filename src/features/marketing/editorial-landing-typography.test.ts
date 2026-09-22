@@ -10,18 +10,17 @@ const stylesheet = readFileSync(
 
 describe("EditorialLanding typography", () => {
   it("uses a bounded fluid scale for landing-page text", () => {
-    expect(stylesheet).toContain("--landing-text-xs: clamp(");
-    expect(stylesheet).toContain("--landing-text-sm: clamp(");
-    expect(stylesheet).toContain("--landing-text-base: clamp(");
-    expect(stylesheet).toContain("--landing-text-lg: clamp(");
-    expect(stylesheet).toContain("--landing-display-hero: clamp(");
-    expect(stylesheet).toContain("--landing-display-section: clamp(");
+    expect(stylesheet).toContain("--ch-text-sm: clamp(");
+    expect(stylesheet).toContain("--ch-text: clamp(");
+    expect(stylesheet).toContain("--ch-display: clamp(");
+    expect(stylesheet).toContain("--ch-section: clamp(");
+    expect(stylesheet).toMatch(/@media \(max-width: 780px\)\s*\{[\s\S]*--ch-display: clamp\(/);
   });
 
   it("applies the fluid scale to navigation, supporting copy, and headings", () => {
-    expect(stylesheet).toMatch(/\.header nav a\s*\{[^}]*font-size: var\(--landing-text-sm\)/s);
-    expect(stylesheet).toMatch(/\.heroDescription\s*\{[^}]*font-size: var\(--landing-text-lg\)/s);
-    expect(stylesheet).toMatch(/\.journey li p\s*\{[^}]*font-size: var\(--landing-text-base\)/s);
-    expect(stylesheet).toMatch(/\.hero h1\s*\{[^}]*font-size: var\(--landing-display-hero\)/s);
+    expect(stylesheet).toMatch(/\.headerActions a\s*\{[^}]*font-size: var\(--ch-text-sm\)/s);
+    expect(stylesheet).toMatch(/\.heroDescription\s*\{[^}]*font-size: clamp\(/s);
+    expect(stylesheet).toMatch(/\.journeySteps article > p\s*\{[^}]*font-size: var\(--ch-text\)/s);
+    expect(stylesheet).toMatch(/\.hero h1\s*\{[^}]*font-size: var\(--ch-display\)/s);
   });
 });
