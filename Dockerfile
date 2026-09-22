@@ -14,6 +14,14 @@ RUN npm run build
 
 FROM node:24-bookworm-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03 AS runner
 
+ARG VCS_REF=unknown
+ARG BUILD_CREATED=unknown
+ARG OPENAPI_SHA256=unknown
+LABEL org.opencontainers.image.source="https://github.com/painjanevivek/CampusHire" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.created="${BUILD_CREATED}" \
+      com.campushire.openapi-sha256="${OPENAPI_SHA256}"
+
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
