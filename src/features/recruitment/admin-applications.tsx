@@ -12,7 +12,7 @@ import styles from "./admin-applications.module.css";
 import ui from "@/features/experience/experience.module.css";
 
 type QueueItem = { id: string; student_name: string; role_title: string; company_name: string; status: string; revision: number; open_requests: number; awaiting_review: number; assignee_user_id?: string | null; review_due_at?: string | null; due_state?: string };
-type CurrentUser = { role: string };
+type CurrentUser = { id: string; role: string };
 type Queue = { items: QueueItem[]; total: number; page: number };
 type Preview = { items: Array<{ application_id: string; revision: number; allowed: boolean; explanation: string; current_status: string; target_status: string }>; allowed_count: number; blocked_count: number };
 type BulkDraft = { application_ids: string[]; status: string; reason: string; expected_revisions: Record<string, number> };
@@ -39,6 +39,7 @@ export function AdminApplications() {
   const [notice, setNotice] = useState("");
   const [refresh, setRefresh] = useState(0);
   const [role, setRole] = useState("");
+  const [currentUserId, setCurrentUserId] = useState("");
   const queueRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const returnFocusId = useRef("");
@@ -50,7 +51,7 @@ export function AdminApplications() {
   useEffect(() => {
     const controller = new AbortController();
     void apiRequest<CurrentUser>("/auth/me", { signal: controller.signal, cache: "no-store" })
-      .then((user) => { if (!controller.signal.aborted) setRole(user.role); })
+      .then((user) => { if (!controller.signal.aborted) { setRole(user.role); setCurrentUserId(user.id); } })
       .catch(() => undefined);
     return () => controller.abort();
   }, []);
@@ -136,6 +137,32 @@ export function AdminApplications() {
         body: JSON.stringify({ expected_revision: selected.assignment_revision ?? 0 }),
       });
       setNotice("Application assigned to you. The ownership history has been recorded.");
+      setRefresh(value => value + 1);
+    } catch (cause) { fail(cause); } finally { setBusy(false); }
+  }
+  async function assignAppeal(appealId: string, revision: number) {
+    if (!currentUserId) return;
+    setBusy(true); setError(""); setNotice("");
+    try {
+      await csrfRequest(`/tnp/recruitment/application-appeals/${appealId}/assignment`, {
+        method: "POST",
+        body: JSON.stringify({ assignee_user_id: currentUserId, expected_revision: revision, reason: "Assign to an independent reviewer for accountable resolution." }),
+      });
+      setNotice("Appeal assigned. Independence is checked again when it is resolved.");
+      setRefresh(value => value + 1);
+    } catch (cause) { fail(cause); } finally { setBusy(false); }
+  }
+  async function resolveAppeal(event: FormEvent<HTMLFormElement>, appealId: string) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setBusy(true); setError(""); setNotice("");
+    try {
+      await csrfRequest(`/tnp/recruitment/application-appeals/${appealId}/resolution`, {
+        method: "POST",
+        body: JSON.stringify({ status: data.get("status"), administrator_response: data.get("administrator_response"), expected_revision: Number(data.get("expected_revision")), resolution_effect: data.get("resolution_effect") }),
+      });
+      form.reset(); setNotice("Independent appeal resolution recorded and shared with the student.");
       setRefresh(value => value + 1);
     } catch (cause) { fail(cause); } finally { setBusy(false); }
   }
@@ -250,6 +277,7 @@ export function AdminApplications() {
             <details><summary>Immutable resume and profile evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ resume: selected.resume_snapshot, profile: selected.profile_snapshot }, null, 2)}</pre></details></section>
           <CorrectionPanel key={selected.id} applicationId={selected.id} admin timezone={selected.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(selected.status)} onChange={() => setRefresh(value => value + 1)} />
           <OutcomeTimeline applicationId={selected.id} endpoint={`/tnp/recruitment/applications/${selected.id}/outcomes`} timeZone={selected.institution_timezone} canRecord={canBulk} />
+          {selected.appeals?.length ? <section className={styles.evidence} aria-labelledby="appeal-review-title"><h3 id="appeal-review-title">Appeals and manual reviews</h3>{selected.appeals.map(appeal => <article key={appeal.id}><div><strong>{appeal.kind.replaceAll("_", " ")} · {appeal.status.replaceAll("_", " ")}</strong><Badge tone={appeal.independence_status === "conflicted" ? "warning" : "neutral"}>{appeal.independence_status?.replaceAll("_", " ") ?? "unassigned"}</Badge></div><p>{appeal.reason}</p><p>Due: {appeal.due_at ? new Date(appeal.due_at).toLocaleString(undefined, { timeZone: selected.institution_timezone }) : "Not scheduled"}</p>{appeal.supporting_evidence.length ? <ul>{appeal.supporting_evidence.map(item => <li key={item}>{item}</li>)}</ul> : null}{!["approved", "declined"].includes(appeal.status) && !appeal.assignee_user_id && canBulk ? <button className={ui.button} disabled={busy || !currentUserId} type="button" onClick={() => void assignAppeal(appeal.id, appeal.revision ?? 1)}>Assign appeal to me</button> : null}{!["approved", "declined"].includes(appeal.status) && appeal.assignee_user_id === currentUserId ? <form className={ui.form} onSubmit={event => void resolveAppeal(event, appeal.id)}><input name="expected_revision" type="hidden" value={appeal.revision ?? 1} /><label>Resolution<select name="status" defaultValue="approved"><option value="approved">Approve appeal</option><option value="declined">Decline appeal</option></select></label><label>Resolution effect<select name="resolution_effect" defaultValue="decision_changed"><option value="decision_changed">Decision changed</option><option value="decision_upheld">Decision upheld</option><option value="record_corrected">Record corrected</option><option value="no_change">No change required</option></select></label><label>Reasoned response<textarea name="administrator_response" minLength={10} maxLength={2000} required /></label><button className={ui.primary} disabled={busy}>Record appeal resolution</button></form> : null}{appeal.administrator_response ? <blockquote>{appeal.administrator_response}<footer>{appeal.resolution_effect?.replaceAll("_", " ")}</footer></blockquote> : null}</article>)}</section> : null}
           <details className={styles.evidence}><summary>Decision history</summary><ol className={ui.timeline}>{selected.history.map(item => <li key={item.id}><p>{item.to_status.replaceAll("_", " ")} · {new Date(item.created_at).toLocaleString()}</p><p>{item.reason ?? "No additional reason recorded"}</p><details><summary>Actor evidence</summary><code>{item.actor_user_id}</code></details></li>)}</ol></details>
           {!!selected.allowed_actions?.length && !!selected.assignee_user_id && <form id="review-decision" className={ui.form} key={`${selected.id}:${selected.revision}`} onSubmit={event => void review(event)}>
             <h3>Record review decision</h3><label>Next recorded stage<select name="status" defaultValue="" required><option value="" disabled>Choose a decision</option>{selected.allowed_actions.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>

@@ -151,4 +151,38 @@ describe("AdminApplications", () => {
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     expect(navigation.push).toHaveBeenCalledWith("/tnp/applications?application_status=under_review&page=3", { scroll: false });
   });
+  it("sends a revision-checked independent appeal resolution", async () => {
+    const appealApplication = {
+      ...application,
+      appeals: [{
+        id: "appeal-1",
+        kind: "appeal",
+        status: "under_review",
+        reason: "Please review the recorded decision and supporting transcript.",
+        supporting_evidence: ["Verified transcript"],
+        administrator_response: null,
+        assignee_user_id: "officer-1",
+        due_at: "2026-09-30T10:00:00Z",
+        escalation_state: "on_track",
+        revision: 4,
+        resolution_effect: null,
+        independence_status: "independent",
+        created_at: "2026-09-20T10:00:00Z",
+        updated_at: "2026-09-20T10:00:00Z",
+        resolved_at: null,
+      }],
+    };
+    apiRequestMock.mockImplementation((path: string) => Promise.resolve(path === "/auth/me" ? { id: "officer-1", role: "tnp_admin" } : path.includes("/review-queue/") ? appealApplication : { items: [row], total: 1, page: 1 }));
+    render(<AdminApplications />);
+    expect(await screen.findByText("Verified transcript")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Resolution effect"), { target: { value: "record_corrected" } });
+    fireEvent.change(screen.getByLabelText("Reasoned response"), { target: { value: "The independent review corrected the recorded decision." } });
+    csrfRequestMock.mockResolvedValue({});
+    fireEvent.click(screen.getByRole("button", { name: "Record appeal resolution" }));
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/tnp/recruitment/application-appeals/appeal-1/resolution",
+      expect.objectContaining({ body: expect.stringContaining('"expected_revision":4') }),
+    ));
+    expect(csrfRequestMock.mock.calls.at(-1)?.[1].body).toContain('"resolution_effect":"record_corrected"');
+  });
 });

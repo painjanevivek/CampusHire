@@ -17,6 +17,9 @@ type PrivacyRequest = {
   owner_user_id: string | null;
   due_at: string | null;
   result_summary: string | null;
+  resolution_effect: string | null;
+  processing_receipt: Record<string, unknown>;
+  cleanup_request_id: string | null;
   receipt_reference: string;
   created_at: string;
   completed_at: string | null;
@@ -58,7 +61,7 @@ export function PrivacyRequestTracker() {
       <div><strong>{request.request_type.replaceAll("_", " ")}</strong><Badge tone={request.status === "completed" ? "success" : request.status === "failed" || request.status === "held" ? "warning" : "neutral"}>{request.status.replaceAll("_", " ")}</Badge></div>
       <p>{request.owner_user_id ? "Assigned to the responsible team" : "Awaiting assignment"} · {request.due_at ? `target ${new Date(request.due_at).toLocaleDateString()}` : "no target recorded"}</p>
       {request.result_summary ? <p>{request.result_summary}</p> : null}
-      <details><summary>Receipt and request details</summary><p>{request.details}</p><code>{request.receipt_reference}</code></details>
+      <details><summary>Receipt and request details</summary><p>{request.details}</p><code>{request.receipt_reference}</code>{request.resolution_effect ? <p>Resolution: {request.resolution_effect.replaceAll("_", " ")}</p> : null}<dl>{Object.entries(request.processing_receipt ?? {}).map(([key, value]) => <div key={key}><dt>{key.replaceAll("_", " ")}</dt><dd>{String(value).replaceAll("_", " ")}</dd></div>)}</dl></details>
     </li>)}</ol> : requests.data ? <p>No privacy requests submitted.</p> : null}
   </div>;
 }

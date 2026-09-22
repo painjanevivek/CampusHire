@@ -236,6 +236,14 @@ export type ApplicationAppealResolution = {
      */
     administrator_response: string;
     /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Resolution Effect
+     */
+    resolution_effect: 'decision_upheld' | 'decision_changed' | 'record_corrected' | 'no_change';
+    /**
      * Status
      */
     status: 'approved' | 'declined';
@@ -270,6 +278,10 @@ export type ApplicationAppealResponse = {
      */
     id: string;
     /**
+     * Independence Status
+     */
+    independence_status?: 'unassigned' | 'independent' | 'conflicted';
+    /**
      * Kind
      */
     kind: string;
@@ -277,6 +289,10 @@ export type ApplicationAppealResponse = {
      * Reason
      */
     reason: string;
+    /**
+     * Resolution Effect
+     */
+    resolution_effect?: string | null;
     /**
      * Resolved At
      */
@@ -4914,12 +4930,20 @@ export type PrivacyRequestDecision = {
      * Reason
      */
     reason: string;
+    /**
+     * Resolution Effect
+     */
+    resolution_effect?: string | null;
 };
 
 /**
  * PrivacyRequestResponse
  */
 export type PrivacyRequestResponse = {
+    /**
+     * Cleanup Request Id
+     */
+    cleanup_request_id: string | null;
     /**
      * Completed At
      */
@@ -4945,6 +4969,12 @@ export type PrivacyRequestResponse = {
      */
     owner_user_id: string | null;
     /**
+     * Processing Receipt
+     */
+    processing_receipt: {
+        [key: string]: unknown;
+    };
+    /**
      * Receipt Reference
      */
     receipt_reference: string | null;
@@ -4952,6 +4982,10 @@ export type PrivacyRequestResponse = {
      * Request Type
      */
     request_type: string;
+    /**
+     * Resolution Effect
+     */
+    resolution_effect: string | null;
     /**
      * Result Summary
      */

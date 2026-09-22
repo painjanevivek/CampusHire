@@ -246,6 +246,8 @@ export type PlacementApplication = {
     due_at?: string | null;
     escalation_state?: string;
     revision?: number;
+    resolution_effect?: string | null;
+    independence_status?: "unassigned" | "independent" | "conflicted";
     created_at: string;
     updated_at: string;
     resolved_at: string | null;
