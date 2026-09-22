@@ -66,6 +66,10 @@ describe("StudentApplicationDetail", () => {
         reason: "Please review the verified academic record attached to this request.",
         supporting_evidence: ["Semester 6 transcript", "Reviewed resume version 2"],
         administrator_response: null,
+        assignee_user_id: "reviewer-1",
+        due_at: "2026-09-03T10:00:00Z",
+        escalation_state: "due_soon",
+        revision: 2,
         created_at: "2026-08-29T10:00:00Z",
         updated_at: "2026-08-29T10:00:00Z",
         resolved_at: null,
@@ -75,6 +79,21 @@ describe("StudentApplicationDetail", () => {
     render(<StudentApplicationDetail applicationId="application-1" />);
     expect(await screen.findByText("Semester 6 transcript")).toBeInTheDocument();
     expect(screen.getByText("Reviewed resume version 2")).toBeInTheDocument();
+    expect(screen.getByText("Assigned placement reviewer")).toBeInTheDocument();
+    expect(screen.getByText("Due soon")).toBeInTheDocument();
+    expect(screen.getByText(/Awaiting the placement review team/)).toBeInTheDocument();
+  });
+
+  it("does not present an offer as proof that the student joined", async () => {
+    apiRequestMock.mockResolvedValue({
+      ...application,
+      status: "offered",
+      can_withdraw: false,
+    });
+
+    render(<StudentApplicationDetail applicationId="application-1" />);
+    expect(await screen.findByText(/An offer has been recorded/)).toBeInTheDocument();
+    expect(screen.getByText(/does not mean you have joined/)).toBeInTheDocument();
   });
 
   it("removes terminal action controls after withdrawal", async () => {

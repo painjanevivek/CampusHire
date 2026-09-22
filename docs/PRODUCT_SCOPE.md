@@ -2,7 +2,7 @@
 
 ## Purpose
 
-CampusHire AI helps students become placement-ready and helps a college Training and Placement cell manage recruitment drives consistently. It is not an autonomous hiring authority.
+CampusHire helps students become placement-ready and helps a college Training and Placement cell manage recruitment drives consistently. It is not an autonomous hiring authority.
 
 ## MVP users
 

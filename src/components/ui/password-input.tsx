@@ -32,7 +32,7 @@ export function PasswordInput({ id, label, hint, error, ...props }: PasswordInpu
           aria-pressed={visible}
           onClick={() => setVisible((current) => !current)}
         >
-          {visible ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
+          {visible ? <Eye size={20} aria-hidden="true" /> : <EyeOff size={20} aria-hidden="true" />}
         </button>
       </div>
       {(error || hint) ? (

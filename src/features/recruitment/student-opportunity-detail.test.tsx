@@ -118,7 +118,7 @@ describe("StudentOpportunityDetail", () => {
       "/applications",
       expect.anything(),
     );
-    expect(screen.getByText("84% match")).toBeInTheDocument();
+    expect(screen.getByLabelText("84 percent advisory role fit")).toHaveTextContent("84%");
     expect(
       screen.getByText("This score never changes your rule-based eligibility."),
     ).toBeInTheDocument();

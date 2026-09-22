@@ -24,7 +24,7 @@ export function ContentPage({
     <div className={styles.shell}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire AI</Link>
+          <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire</Link>
           {showGuidanceNav ? <nav aria-label="Guidance"><Link href="/help">Help center</Link><Link href="/status">Service status</Link></nav> : <Link className={styles.backHomeLink} href="/">Back to home</Link>}
         </div>
       </header>

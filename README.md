@@ -2,7 +2,7 @@
   <img src="src/app/icon.svg" alt="CampusHire logo" width="80" height="80" />
 </p>
 
-<h1 align="center">CampusHire AI</h1>
+<h1 align="center">CampusHire</h1>
 
 <p align="center">
   A clearer path from student preparation to accountable campus recruitment.<br />

@@ -33,14 +33,14 @@ const monospace = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
-  title: { default: "CampusHire AI", template: "%s | CampusHire AI" },
+  title: { default: "CampusHire", template: "%s | CampusHire" },
   description: "Student-first campus recruitment and career readiness.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "CampusHire AI",
+    title: "CampusHire",
     description: "Accountable campus recruitment and career readiness.",
     type: "website",
-    siteName: "CampusHire AI",
+    siteName: "CampusHire",
   },
   icons: { icon: "/icon.svg" },
 };

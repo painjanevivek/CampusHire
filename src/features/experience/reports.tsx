@@ -22,6 +22,7 @@ export function Reports() {
   }
   return <PageContainer context="admin" className={styles.stack}>
     <PageHeader eyebrow="Institution reporting" title="Placement operations, from recorded facts." description="Default: applications submitted during the last 30 days. Every measure explains its calculation and links to the source records." />
+    <Alert tone="info"><p>Application stages and verified outcomes are different records.</p><p>An offered application must not be read as a confirmed joining; acceptance and joining require separate evidence.</p></Alert>
     <form className={styles.toolbar} onSubmit={filter}><label>From (your local time)<input name="start_at" type="datetime-local" /></label><label>Until, exclusive (your local time)<input name="end_at" type="datetime-local" /></label><label>Drive<select name="drive_id"><option value="">All drives</option>{drives.data?.map(drive => <option key={drive.id} value={drive.id}>{drive.title}</option>)}</select></label><button className={styles.button}>Apply report filters</button></form>
     {report.error && <Alert tone="error">{report.error} Choose a valid interval of up to 366 days. <button onClick={report.refresh}>Retry</button></Alert>}
     {report.loading && <p role="status">Calculating authoritative summaries…</p>}
