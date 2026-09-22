@@ -35,6 +35,16 @@ export type ActivationStage = {
 };
 
 /**
+ * ActiveMembershipRequest
+ */
+export type ActiveMembershipRequest = {
+    /**
+     * Membership Id
+     */
+    membership_id: string;
+};
+
+/**
  * AdminApplicationPage
  */
 export type AdminApplicationPage = {
@@ -2853,6 +2863,10 @@ export type InvitationAcceptRequest = {
  */
 export type InvitationActionResponse = {
     /**
+     * Activation Code
+     */
+    activation_code?: string | null;
+    /**
      * Expires At
      */
     expires_at: string;
@@ -2868,6 +2882,24 @@ export type InvitationActionResponse = {
      * Status
      */
     status: 'pending' | 'expired' | 'accepted' | 'revoked';
+};
+
+/**
+ * InvitationHandoffResponse
+ */
+export type InvitationHandoffResponse = {
+    /**
+     * Activation Code
+     */
+    activation_code: string;
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Expires At
+     */
+    expires_at: string;
 };
 
 /**
@@ -3069,6 +3101,38 @@ export type LinksUpdate = {
 };
 
 /**
+ * ManualRecoveryHandoff
+ */
+export type ManualRecoveryHandoff = {
+    /**
+     * Expires In Minutes
+     */
+    expires_in_minutes: number;
+    /**
+     * Reset Code
+     */
+    reset_code: string;
+};
+
+/**
+ * ManualRecoveryRequest
+ */
+export type ManualRecoveryRequest = {
+    /**
+     * Identity Check Method
+     */
+    identity_check_method: string;
+    /**
+     * Identity Check Reference
+     */
+    identity_check_reference: string;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
  * MaterialTermChange
  */
 export type MaterialTermChange = {
@@ -3199,6 +3263,28 @@ export type MaterialTermsUpdate = {
      * Work Mode
      */
     work_mode: 'on-site' | 'hybrid' | 'remote';
+};
+
+/**
+ * MembershipChoice
+ */
+export type MembershipChoice = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Role
+     */
+    role: string;
 };
 
 /**
@@ -4149,6 +4235,28 @@ export type PlatformStaffAccountCreate = {
 };
 
 /**
+ * PlatformStaffAssignmentCreate
+ */
+export type PlatformStaffAssignmentCreate = {
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Role
+     */
+    role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
+    /**
+     * User Id
+     */
+    user_id?: string | null;
+    /**
+     * Username
+     */
+    username?: string | null;
+};
+
+/**
  * PlatformStaffStatusChange
  */
 export type PlatformStaffStatusChange = {
@@ -4983,7 +5091,7 @@ export type RegistrationStartResponse = {
     /**
      * Status
      */
-    status: 'registered' | 'registration_unavailable';
+    status: 'registered' | 'approval_pending' | 'registration_unavailable';
 };
 
 /**
@@ -5073,6 +5181,14 @@ export type RequestResponseCreate = {
  */
 export type ResumeContent = {
     /**
+     * Achievements
+     */
+    achievements?: Array<string>;
+    /**
+     * Credentials
+     */
+    credentials?: Array<string>;
+    /**
      * Education
      */
     education?: Array<string>;
@@ -5080,6 +5196,10 @@ export type ResumeContent = {
      * Email
      */
     email: string;
+    /**
+     * Experience
+     */
+    experience?: Array<string>;
     /**
      * Full Name
      */
@@ -5760,6 +5880,48 @@ export type RoleUpdate = {
      * Work Mode
      */
     work_mode?: 'on-site' | 'hybrid' | 'remote' | null;
+};
+
+/**
+ * RosterCommitResponse
+ */
+export type RosterCommitResponse = {
+    /**
+     * Committed At
+     */
+    committed_at: string | null;
+    /**
+     * Handoffs
+     */
+    handoffs: Array<InvitationHandoffResponse>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
+    /**
+     * Rows
+     */
+    rows: Array<RosterRowResponse>;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Total Rows
+     */
+    total_rows: number;
+    /**
+     * Valid Rows
+     */
+    valid_rows: number;
 };
 
 /**
@@ -6506,6 +6668,24 @@ export type StatusEventResponse = {
      * To Status
      */
     to_status: string;
+};
+
+/**
+ * StudentAccessRequestSummary
+ */
+export type StudentAccessRequestSummary = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Id
+     */
+    id: string;
 };
 
 /**
@@ -9596,6 +9776,31 @@ export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPost
 
 export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponse = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses];
 
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostData = {
+    body: ActiveMembershipRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/active-membership';
+};
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostError = SelectActiveMembershipApiV1AuthActiveMembershipPostErrors[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostErrors];
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: UserResponse;
+};
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponse = SelectActiveMembershipApiV1AuthActiveMembershipPostResponses[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostResponses];
+
 export type CsrfApiV1AuthCsrfGetData = {
     body?: never;
     path?: never;
@@ -9771,6 +9976,33 @@ export type MeApiV1AuthMeGetResponses = {
 };
 
 export type MeApiV1AuthMeGetResponse = MeApiV1AuthMeGetResponses[keyof MeApiV1AuthMeGetResponses];
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/memberships';
+};
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetError = ReadActiveMembershipsApiV1AuthMembershipsGetErrors[keyof ReadActiveMembershipsApiV1AuthMembershipsGetErrors];
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetResponses = {
+    /**
+     * Response Read Active Memberships Api V1 Auth Memberships Get
+     *
+     * Successful Response
+     */
+    200: Array<MembershipChoice>;
+};
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetResponse = ReadActiveMembershipsApiV1AuthMembershipsGetResponses[keyof ReadActiveMembershipsApiV1AuthMembershipsGetResponses];
 
 export type ChallengeMfaApiV1AuthMfaChallengePostData = {
     body: MfaCodeRequest;
@@ -10652,7 +10884,7 @@ export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterI
     /**
      * Successful Response
      */
-    200: RosterImportResponse;
+    200: RosterCommitResponse;
 };
 
 export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponse = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses];
@@ -10686,6 +10918,72 @@ export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPost
 };
 
 export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses];
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/student-access-requests';
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetError = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors];
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses = {
+    /**
+     * Response Read Student Access Requests Api V1 Institutions  Institution Id  Student Access Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<StudentAccessRequestSummary>;
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponse = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses];
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostData = {
+    body: ManualRecoveryRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Student Id
+         */
+        student_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/students/{student_id}/manual-recovery';
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostError = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors];
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ManualRecoveryHandoff;
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponse = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses];
 
 export type ReadNotificationsApiV1NotificationsGetData = {
     body?: never;
@@ -11709,6 +12007,36 @@ export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaff
 
 export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponse = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses];
 
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostData = {
+    body: PlatformStaffAssignmentCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-assignments';
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostError = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors];
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlatformStaffAccount;
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponse = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses];
+
 export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchData = {
     body: InstitutionStatusChange;
     path: {
@@ -11813,6 +12141,36 @@ export type SetPlatformSettingsApiV1PlatformSettingsPatchResponses = {
 };
 
 export type SetPlatformSettingsApiV1PlatformSettingsPatchResponse = SetPlatformSettingsApiV1PlatformSettingsPatchResponses[keyof SetPlatformSettingsApiV1PlatformSettingsPatchResponses];
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostData = {
+    body: ManualRecoveryRequest;
+    path: {
+        /**
+         * User Id
+         */
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/staff-accounts/{user_id}/manual-recovery';
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostError = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors];
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ManualRecoveryHandoff;
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponse = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses];
 
 export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetData = {
     body?: never;
