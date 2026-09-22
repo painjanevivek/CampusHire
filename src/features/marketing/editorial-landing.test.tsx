@@ -18,6 +18,17 @@ describe("EditorialLanding", () => {
     expect(screen.getAllByRole("link", { name: "Docs" })[0]).toHaveAttribute("href", "/docs");
   });
 
+  it("presents the product as illustrative interface wireframes rather than screenshots", () => {
+    render(<EditorialLanding />);
+
+    const preview = screen.getByRole("region", { name: "Product preview" });
+    expect(preview.querySelectorAll("img")).toHaveLength(0);
+    expect(screen.getByRole("img", { name: /student workspace wireframe/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /training and placement review wireframe/i })).toBeInTheDocument();
+    expect(preview).toHaveTextContent(/illustrative interface wireframes/i);
+    expect(preview).toHaveTextContent(/human review/i);
+  });
+
   it("orders header access before registration and keeps the hero free of account buttons", () => {
     render(<EditorialLanding />);
 

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, BadgeCheck, Building2, Scale, ShieldCheck, UserCheck } from "lucide-react";
 
 import { BrandMark } from "@/components/brand-mark";
@@ -13,6 +12,82 @@ const journey = [
   ["03", "Apply", "Choose a reviewed resume and confirm the details saved with your application."],
   ["04", "Track", "Follow recorded decisions and respond to requests from your placement team."],
 ];
+
+function WireframeHeader({ workspace }: { workspace: string }) {
+  return (
+    <div className={styles.wireframeHeader}>
+      <span className={styles.wireframeMark}>C</span>
+      <strong>CampusHire</strong>
+      <span className={styles.wireframeHeaderRule} />
+      <span>{workspace}</span>
+      <span className={styles.wireframeConcept}>Interface wireframe</span>
+    </div>
+  );
+}
+
+function StudentWireframe() {
+  return (
+    <div className={styles.wireframe} role="img" aria-label="Illustrative student workspace wireframe showing a next action and reviewed evidence">
+      <WireframeHeader workspace="Student / Overview" />
+      <div className={styles.studentCanvas}>
+        <div className={styles.studentIntro}>
+          <span className={styles.wireframeEyebrow}>Your placement workspace</span>
+          <h3>One clear next step.</h3>
+          <p>Your application needs one response before the placement team can continue its review.</p>
+        </div>
+        <div className={styles.studentColumns}>
+          <div className={styles.studentAction}>
+            <div className={styles.wireframeSectionTop}><span>Next action</span><span className={styles.wireframeStatus}>Action needed</span></div>
+            <h4>Respond to your placement team</h4>
+            <p>Add the project detail requested for your application. Your original submission stays intact.</p>
+            <span className={styles.wireframeButton}>Review request <ArrowRight size={13} aria-hidden="true" /></span>
+            <div className={styles.studentActionFoot}><span>01 / 01 open request</span><span>About 5 minutes</span></div>
+          </div>
+          <div className={styles.studentEvidence}>
+            <div className={styles.wireframeSectionTop}><span>Reviewed evidence</span><BadgeCheck size={15} aria-hidden="true" /></div>
+            <strong>Ready for review</strong>
+            <p>Your saved details remain visible beside the action.</p>
+            <ul>
+              <li><span>Profile details</span><b>Complete</b></li>
+              <li><span>Reviewed resume</span><b>Available</b></li>
+              <li><span>Application record</span><b>Saved</b></li>
+            </ul>
+          </div>
+        </div>
+        <div className={styles.wireframeFooter}><span className={styles.wireframeFooterDot} /> Request received <span className={styles.wireframeFooterLine} /> Student response <span className={styles.wireframeFooterLine} /> Human review</div>
+      </div>
+    </div>
+  );
+}
+
+function PlacementWireframe() {
+  return (
+    <div className={styles.wireframe} role="img" aria-label="Illustrative training and placement review wireframe showing a candidate queue, eligibility evidence, and human review">
+      <WireframeHeader workspace="T&P / Applications" />
+      <div className={styles.placementCanvas}>
+        <div className={styles.placementRail}><span className={styles.placementRailActive}>Applications</span><span>Drives</span><span>Students</span><span>Reports</span></div>
+        <div className={styles.placementMain}>
+          <div className={styles.placementTitle}><div><span className={styles.wireframeEyebrow}>Accountable review</span><h3>Applications</h3><p>Evidence stays beside every decision.</p></div><span className={styles.wireframeStatus}>2 to review</span></div>
+          <div className={styles.placementColumns}>
+            <div className={styles.candidateQueue}>
+              <div className={styles.wireframeSectionTop}><span>Candidate queue</span><span>02 records</span></div>
+              <div className={styles.candidateSelected}><strong>Candidate 014</strong><span>Backend engineer</span><small>Awaiting student response</small></div>
+              <div className={styles.candidateRow}><strong>Candidate 021</strong><span>Graduate engineer</span><small>Ready for review</small></div>
+              <div className={styles.queueFooter}>Showing 1–2 of 2</div>
+            </div>
+            <div className={styles.reviewDetail}>
+              <div className={styles.wireframeSectionTop}><span>Review record / 014</span><span className={styles.reviewTag}>Human decision</span></div>
+              <h4>Candidate 014</h4>
+              <p>Backend engineer · Request for project detail sent</p>
+              <div className={styles.eligibilityCard}><strong>Eligibility evidence</strong><span>Published rules checked</span><ul><li>Degree requirement <b>Met</b></li><li>Minimum CGPA <b>Met</b></li><li>Reviewed resume <b>Available</b></li></ul></div>
+              <div className={styles.reviewBottom}><span>Clarification remains open</span><span className={styles.wireframeButton}>Open review <ArrowRight size={13} aria-hidden="true" /></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function EditorialLanding() {
   return (
@@ -36,9 +111,9 @@ export function EditorialLanding() {
 
         <section className={styles.journey} id="how-it-works" aria-labelledby="journey-title" data-reveal-group><header data-reveal-item><p>How it works</p><h2 id="journey-title">Prepare, understand, apply, and track.</h2></header><ol>{journey.map(([number, title, description]) => <li key={number} data-reveal-item><span>{number}</span><h3>{title}</h3><p>{description}</p></li>)}</ol></section>
 
-        <section className={styles.preview} id="preview" aria-label="Product preview" data-reveal-group><header data-reveal-item><p>Inside CampusHire</p><h2>One clear action. Evidence you can inspect.</h2><span>Captured from working interfaces using synthetic accounts. All names and records shown are illustrative; your college workspace stays private.</span></header><div className={styles.productScreens}>
-          <figure data-reveal-item><Image src="/product-evidence/student-priorities.png" width={1440} height={900} sizes="(max-width: 900px) 100vw, 60vw" alt="Synthetic student dashboard showing a next placement action and reviewed evidence" /><figcaption>Student workspace: find the next task and understand why it matters.</figcaption></figure>
-          <figure data-reveal-item><Image src="/product-evidence/placement-review.png" width={1440} height={900} sizes="(max-width: 900px) 100vw, 60vw" alt="Synthetic placement review workspace with candidate queue, recorded status, and eligibility evidence" /><figcaption>T&amp;P workspace: keep the candidate list in context while reviewing evidence and requesting clarification.</figcaption></figure>
+        <section className={styles.preview} id="preview" aria-label="Product preview" data-reveal-group><header data-reveal-item><p>Inside CampusHire</p><h2>One clear action. Evidence you can inspect.</h2><span>Illustrative interface wireframes, not screenshots or live student records. They show how each workspace keeps the next action and its evidence together.</span></header><div className={styles.productScreens}>
+          <figure data-reveal-item><StudentWireframe /><figcaption><strong>Student workspace</strong><span>Find the next task and understand why it matters.</span></figcaption></figure>
+          <figure data-reveal-item><PlacementWireframe /><figcaption><strong>T&amp;P workspace</strong><span>Keep the candidate queue, evidence, and human review in one view.</span></figcaption></figure>
         </div></section>
 
         <section className={styles.trust} id="trust" aria-labelledby="trust-title" data-reveal-group><header data-reveal-item><p>Clear by design</p><h2 id="trust-title">Your details come before scores.</h2></header><div className={styles.trustGrid}>
