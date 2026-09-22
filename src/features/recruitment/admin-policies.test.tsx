@@ -1,17 +1,12 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { apiRequest } from "@/lib/api/client";
 import { AdminPolicies } from "./admin-policies";
 
-const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
-  apiRequestMock: vi.fn(),
-  csrfRequestMock: vi.fn(),
-}));
-
-vi.mock("@/lib/api/client", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/lib/api/client")>()),
-  apiRequest: apiRequestMock,
-  csrfRequest: csrfRequestMock,
+vi.mock("@/lib/api/client", () => ({
+  apiRequest: vi.fn(),
+  csrfRequest: vi.fn(),
 }));
 
 const policy = {
@@ -19,45 +14,33 @@ const policy = {
   title: "Placement policy",
   version: 1,
   source_reference: "Registrar circular 2026-08",
-  sections: [
-    {
-      section: "Section 1",
-      page: 1,
-      text: "Missing information requires review.",
-    },
-  ],
+  sections: [{ section: "Eligibility", page: 1, text: "Reviewed rule" }],
   status: "draft",
+  created_by_user_id: "officer-1",
+  reviewed_by_user_id: null,
   review_reason: null,
   approved_at: null,
-  created_at: "2026-08-24T00:00:00Z",
-  updated_at: "2026-08-24T00:00:00Z",
 };
 
-describe("AdminPolicies", () => {
+describe("policy authority controls", () => {
   beforeEach(() => {
-    apiRequestMock.mockReset();
-    csrfRequestMock.mockReset();
-    apiRequestMock.mockResolvedValue([policy]);
-    vi.spyOn(window, "prompt").mockReturnValue(
-      "Verified against the signed registrar circular.",
-    );
+    vi.mocked(apiRequest).mockResolvedValue([policy]);
   });
 
-  it("keeps draft policy text out of search until a reviewer approves it", async () => {
-    csrfRequestMock.mockResolvedValue({ ...policy, status: "approved" });
-    render(<AdminPolicies />);
+  it("keeps policy mutation controls out of the Reviewer workspace", async () => {
+    render(<AdminPolicies role="tnp_reviewer" />);
+
     expect(await screen.findByText("Placement policy")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Find answer and source" }),
-    ).toBeDisabled();
-    fireEvent.click(screen.getByRole("button", { name: "Approve" }));
-    await waitFor(() =>
-      expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/admin/intelligence/policies/policy-1/review",
-        expect.objectContaining({
-          body: expect.stringContaining("registrar circular"),
-        }),
-      ),
-    );
+    expect(screen.queryByRole("button", { name: /add policy version/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Approve" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Reject" })).not.toBeInTheDocument();
+  });
+
+  it("keeps policy lifecycle controls available to full Officers", async () => {
+    render(<AdminPolicies role="tnp_admin" />);
+
+    expect(await screen.findByText("Placement policy")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /add policy version/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Approve" })).toBeInTheDocument();
   });
 });

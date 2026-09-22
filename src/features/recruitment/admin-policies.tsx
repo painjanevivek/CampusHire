@@ -27,7 +27,8 @@ function parseSections(value: string) {
     .filter((item) => item.text.length > 0);
 }
 
-export function AdminPolicies() {
+export function AdminPolicies({ role = "tnp_admin" }: { role?: string }) {
+  const canManage = role === "tnp_owner" || role === "tnp_admin";
   const [policies, setPolicies] = useState<PolicyDocument[]>([]);
   const [answer, setAnswer] = useState<PolicyAnswer | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -156,10 +157,12 @@ export function AdminPolicies() {
             decide eligibility.
           </span>
         </div>
-        <button type="button" onClick={() => setShowCreate(true)}>
-          <Plus aria-hidden="true" />
-          Add policy version
-        </button>
+        {canManage ? (
+          <button type="button" onClick={() => setShowCreate(true)}>
+            <Plus aria-hidden="true" />
+            Add policy version
+          </button>
+        ) : null}
       </header>
       <Alert>
         <ShieldCheck aria-hidden="true" />
@@ -176,7 +179,7 @@ export function AdminPolicies() {
       )}
       {notice && <Alert tone="success">{notice}</Alert>}
 
-      {showCreate && (
+      {canManage && showCreate && (
         <form className={styles.editor} onSubmit={create}>
           <div>
             <p>New source</p>
@@ -264,7 +267,7 @@ export function AdminPolicies() {
                 >
                   {policy.status}
                 </Badge>
-                <div className={styles.rowActions}>
+                {canManage ? <div className={styles.rowActions}>
                   {policy.status === "draft" ? (
                     <>
                       <button
@@ -289,7 +292,7 @@ export function AdminPolicies() {
                       Retire
                     </button>
                   ) : null}
-                </div>
+                </div> : null}
               </article>
             ))}
           </div>
