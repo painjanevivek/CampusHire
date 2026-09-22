@@ -18,7 +18,9 @@ describe("AuthShell", () => {
       </AuthShell>,
     );
 
-    expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveAttribute("href", "/");
+    const brand = screen.getByRole("link", { name: "CampusHire home" });
+    expect(brand).toHaveAttribute("href", "/");
+    expect(brand.closest("header")).toHaveAttribute("data-public-header");
     expect(screen.getByRole("link", { name: "How it works" })).toHaveAttribute("href", "/#how-it-works");
     expect(screen.getByRole("link", { name: "Back to home" })).toHaveAttribute("href", "/");
   });

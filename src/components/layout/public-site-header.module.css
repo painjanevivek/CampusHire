@@ -1,0 +1,82 @@
+.header {
+  position: relative;
+  z-index: var(--layer-navigation);
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--canvas) 92%, transparent);
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(1.1rem);
+}
+
+.inner {
+  width: min(calc(100% - 3rem), var(--layout-public-max));
+  min-height: 4.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 0 auto;
+}
+
+.withNavigation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 2rem;
+}
+
+.brand {
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand > svg {
+  width: 1.85rem;
+  height: 1.85rem;
+  flex: 0 0 auto;
+}
+
+.brand strong {
+  font-family: var(--font-interface), Inter, sans-serif;
+  font-size: 1rem;
+  font-weight: var(--font-weight-emphasis);
+  letter-spacing: -.035em;
+}
+
+.navigation {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1080px) {
+  .inner,
+  .withNavigation {
+    width: min(calc(100% - 1.25rem), var(--layout-public-max));
+    min-height: 4.2rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+  }
+
+  .navigation {
+    display: none;
+  }
+
+  .brand strong {
+    font-size: .9rem;
+  }
+}

@@ -6,8 +6,10 @@ describe("ContentPage", () => {
   it("renders navigable policy structure with a single main landmark", () => {
     render(<ContentPage eyebrow="Policy" title="Clear records" introduction="An introduction." summary="A summary." sections={[{ title: "Evidence", body: "Verified evidence remains authoritative." }]} />);
     expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
-    expect(screen.getByRole("link", { name: "CampusHire home" })).toHaveTextContent("CampusHire");
-    expect(screen.getByRole("link", { name: "CampusHire home" })).not.toHaveTextContent("CampusHire AI");
+    const brand = screen.getByRole("link", { name: "CampusHire home" });
+    expect(brand).toHaveTextContent("CampusHire");
+    expect(brand.closest("header")).toHaveAttribute("data-public-header");
+    expect(brand).not.toHaveTextContent("CampusHire AI");
     expect(screen.getByRole("heading", { level: 1, name: "Clear records" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy");
   });

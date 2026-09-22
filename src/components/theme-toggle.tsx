@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useSyncExternalStore } from "react";
 
 import styles from "./theme-toggle.module.css";
 
@@ -11,8 +11,12 @@ const storageKey = "campushire-theme";
 const themeListeners = new Set<() => void>();
 
 function getThemeSnapshot(): Theme {
-  const storedTheme = window.localStorage.getItem(storageKey);
-  if (storedTheme === "dark" || storedTheme === "light") return storedTheme;
+  try {
+    const storedTheme = window.localStorage.getItem(storageKey);
+    if (storedTheme === "dark" || storedTheme === "light") return storedTheme;
+  } catch {
+    // Use the system preference when browser storage is unavailable.
+  }
   return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
@@ -33,8 +37,22 @@ function subscribeToTheme(onStoreChange: () => void) {
 
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
-  window.localStorage.setItem(storageKey, theme);
+  try {
+    window.localStorage.setItem(storageKey, theme);
+  } catch {
+    // The active page still changes theme when browser storage is unavailable.
+  }
   themeListeners.forEach((listener) => listener());
+}
+
+export function ThemeSynchronizer() {
+  const theme = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, () => "dark");
+
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  return null;
 }
 
 export function ThemeToggle() {

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
+import { headers } from "next/headers";
 import {
   Instrument_Serif,
   Inter,
@@ -9,6 +11,7 @@ import {
 import "./globals.css";
 import { CookiePreferences } from "@/components/cookie-preferences";
 import { ServiceBanner } from "@/components/service-banner";
+import { ThemeSynchronizer } from "@/components/theme-toggle";
 
 const display = Instrument_Serif({
   subsets: ["latin"],
@@ -47,10 +50,18 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+const themeBootstrap = `(()=>{var r=document.documentElement,t=null;try{var s=localStorage.getItem("campushire-theme");if(s==="light"||s==="dark")t=s}catch(e){}if(!t){try{t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}catch(e){t="dark"}}r.dataset.theme=t})()`;
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className={`${display.variable} ${body.variable} ${interfaceFont.variable} ${monospace.variable}`}>
+        <Script id="campushire-theme-bootstrap" nonce={nonce} strategy="beforeInteractive">
+          {themeBootstrap}
+        </Script>
+        <ThemeSynchronizer />
         <a className="skipLink" href="#main-content">Skip to main content</a>
         <Suspense fallback={null}><ServiceBanner /></Suspense>
         {children}

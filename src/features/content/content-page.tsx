@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { BrandMark } from "@/components/brand-mark";
+import { PublicSiteHeader } from "@/components/layout/public-site-header";
 import styles from "./content-page.module.css";
 
 export type ContentSection = { title: string; body: ReactNode };
@@ -22,12 +22,16 @@ export function ContentPage({
 }) {
   return (
     <div className={styles.shell}>
-      <header className={styles.header}>
-        <div className={styles.headerInner}>
-          <Link className={styles.brand} href="/" aria-label="CampusHire home"><BrandMark />CampusHire</Link>
-          {showGuidanceNav ? <nav aria-label="Guidance"><Link href="/help">Help center</Link><Link href="/status">Service status</Link></nav> : <Link className={styles.backHomeLink} href="/">Back to home</Link>}
-        </div>
-      </header>
+      <PublicSiteHeader
+        actions={showGuidanceNav ? (
+          <nav className={styles.guidanceNav} aria-label="Guidance">
+            <Link href="/help">Help center</Link>
+            <Link href="/status">Service status</Link>
+          </nav>
+        ) : (
+          <Link className={styles.backHomeLink} href="/">Back to home</Link>
+        )}
+      />
       <main id="main-content" className={styles.main}>
         <div className={styles.hero}>
           <div><p className={styles.eyebrow}>{eyebrow}</p><h1>{title}</h1><p>{introduction}</p></div>

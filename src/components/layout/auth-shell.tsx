@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { BrandMark } from "@/components/brand-mark";
+import { PublicSiteHeader } from "./public-site-header";
 
 type AuthShellProps = {
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   footer: ReactNode;
   context?: "student" | "admin";
@@ -28,13 +28,7 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="authShell" data-auth-context={context}>
-      <header className="authHeader">
-        <Link className="brand" href="/" aria-label="CampusHire home">
-          <BrandMark className="brandMark" />
-          <span>CampusHire</span>
-        </Link>
-        <Link className="authJobsLink" href="/#how-it-works">How it works</Link>
-      </header>
+      <PublicSiteHeader actions={<Link className="authJobsLink" href="/#how-it-works">How it works</Link>} />
 
       <main
         id="main-content"
@@ -50,7 +44,7 @@ export function AuthShell({
           <div>
             <p className="eyebrow">{eyebrow}</p>
             <h1 id="auth-title">{title}</h1>
-            <p className="lede">{description}</p>
+            {description ? <p className="lede">{description}</p> : null}
           </div>
           {children}
           <p className="authFooter">{footer}</p>

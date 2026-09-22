@@ -12,6 +12,7 @@ import {
   UserRoundCheck,
 } from "lucide-react";
 
+import { PublicSiteHeader } from "@/components/layout/public-site-header";
 import { BrandMark } from "@/components/brand-mark";
 import { LandingMotion } from "./landing-motion";
 import { ThemeToggle } from "./theme-toggle";
@@ -116,25 +117,25 @@ function ProductFrame({
 export function EditorialLanding() {
   return (
     <LandingMotion className={styles.page}>
-      <header className={styles.header} data-landing-header>
-        <div className={styles.headerInner}>
-          <Link className={styles.brand} href="/" aria-label="CampusHire home">
-            <BrandMark />
-            <strong>CampusHire</strong>
-          </Link>
+      <PublicSiteHeader
+        sticky
+        landing
+        navigation={
           <nav className={styles.primaryNav} aria-label="Primary navigation">
             <a href="#record">How it works</a>
             <a href="#product">Workspaces</a>
             <a href="#boundaries">Eligibility &amp; AI</a>
             <Link href="/docs">Guide</Link>
           </nav>
+        }
+        actions={
           <nav className={styles.headerActions} aria-label="Account access">
             <ThemeToggle />
             <Link href="/sign-in">Sign in</Link>
             <Link className={styles.headerCta} href="/sign-up?from=/">Create profile</Link>
           </nav>
-        </div>
-      </header>
+        }
+      />
 
       <main id="main-content">
         <section className={styles.hero} aria-labelledby="landing-title" data-landing-hero>

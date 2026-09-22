@@ -43,6 +43,7 @@
   --layout-student-max: 80rem;
   --layout-marketing-max: 80rem;
   --layout-auth-max: 70rem;
+  --layout-public-max: 92rem;
   --layout-prose-max: 47.5rem;
   --layout-gutter-desktop: clamp(2rem, 3vw, 2.5rem);
   --layout-gutter-tablet: 1.5rem;
@@ -198,7 +199,6 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .toast { position: fixed; right: 1rem; bottom: 1rem; z-index: var(--layer-toast); display: flex; align-items: center; gap: 1rem; min-height: 3rem; border-radius: var(--radius-sm); padding: 0.65rem 0.75rem 0.65rem 1rem; background: var(--ink); color: var(--surface); box-shadow: var(--shadow-soft); }
 .toast button { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; font-size: 1.2rem; cursor: pointer; }
 .authShell { min-height: 100svh; background: var(--canvas); }
-.authHeader { width: min(calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)), var(--layout-auth-max)); min-height: 4.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 auto; background: var(--canvas); border-bottom: 1px solid var(--line); }
 .authJobsLink { color: var(--brand-blue); font-weight: var(--font-weight-label); text-decoration: none; }
 .authJobsLink:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
 .authPage { width: min(calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)), var(--layout-auth-max)); display: grid; grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr); align-content: start; gap: clamp(2.5rem, 6vw, 5.5rem); margin: 0 auto; padding: clamp(2rem, 5vh, 3.5rem) 0; }
@@ -232,6 +232,16 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .signUpConsent input { width: 1rem; height: 1rem; margin: .2rem 0 0; accent-color: var(--brand-blue); }
 .signUpConsent a { color: var(--brand-blue-dark); }
 .signUpFieldPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.signUpInvitation { display: grid; gap: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.signUpInvitationTrigger { min-height: var(--control-min-size); display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.signUpInvitationTrigger > span { display: grid; gap: .2rem; }
+.signUpInvitationTrigger small { color: var(--ink-muted); font-size: .8rem; line-height: 1.4; }
+.signUpInvitationTrigger svg { flex: 0 0 auto; width: 1.125rem; color: var(--ink-muted); transition: transform 220ms cubic-bezier(.22, 1, .36, 1); }
+.signUpInvitationTrigger svg.isOpen { transform: rotate(180deg); }
+.signUpInvitationPanel { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows 240ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease, visibility 0s linear 240ms; }
+.signUpInvitationPanel.isOpen { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
+.signUpInvitationInner { min-height: 0; overflow: hidden; padding: 0 1rem; border-top: 1px solid transparent; transition: padding 240ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease; }
+.signUpInvitationPanel.isOpen .signUpInvitationInner { padding: 1rem; border-color: var(--line); }
 .roleChoice { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .roleChoice label { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: .65rem; padding: .9rem; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
 .roleChoice label:has(input:checked) { border-color: var(--brand-blue); background: color-mix(in srgb, var(--brand-blue) 7%, transparent); }
@@ -311,7 +321,7 @@ dialog::backdrop { background: var(--modal-backdrop); }
   .pathPreview { margin-top: 1rem; }
   .featureGrid { grid-template-columns: 1fr; }
   .featureCard, .featureCard + .featureCard { padding: 1.5rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
-  .authHeader, .authPage { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-auth-max)); }
+  .authPage { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-auth-max)); }
   .authPage { min-height: auto; grid-template-columns: 1fr; padding: 2rem 0 3rem; }
   .accountRoleSwitch, .signUpFieldPair { grid-template-columns: 1fr; }
   .roleList article { grid-template-columns: 1fr; }
@@ -323,6 +333,7 @@ dialog::backdrop { background: var(--modal-backdrop); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .signUpInvitationTrigger svg, .signUpInvitationPanel, .signUpInvitationInner { transition-duration: 0.01ms; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

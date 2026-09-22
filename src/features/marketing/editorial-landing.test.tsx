@@ -12,6 +12,9 @@ describe("EditorialLanding", () => {
   it("leads with the accountable campus-placement proposition", () => {
     render(<EditorialLanding />);
 
+    const brand = screen.getByRole("link", { name: "CampusHire home" });
+    expect(brand.closest("header")).toHaveAttribute("data-public-header");
+    expect(brand.closest("header")).toHaveAttribute("data-landing-header");
     expect(screen.getByRole("heading", { name: /campus placement, with the proof in view/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Create your profile" })).toHaveAttribute("href", "/sign-up?from=/");
     expect(screen.getByRole("link", { name: "See the placement record" })).toHaveAttribute("href", "#record");
