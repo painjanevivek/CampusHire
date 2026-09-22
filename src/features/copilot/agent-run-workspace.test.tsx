@@ -220,6 +220,92 @@ describe("AgentRunWorkspace", () => {
     ));
   });
 
+  it("discloses frozen model and workflow provenance with the reviewed artifact", async () => {
+    const reviewedRun = {
+      id: "run-reviewed",
+      audience: "student",
+      workflow: "prepare_opportunity",
+      workflow_version: "campus-agent-v2",
+      source_projection_version: "student-projection-v3",
+      evaluation_run_id: "evaluation-20260923",
+      provider_name: "gemini",
+      model_version: "gemini-approved-release",
+      target_kind: "role",
+      target_id: "role-1",
+      status: "awaiting_review",
+      revision: 5,
+      source_fingerprint: "source-fingerprint",
+      required_action: { type: "artifact_review" },
+      safe_error: null,
+      limits,
+      artifact: {
+        id: "artifact-1",
+        run_id: "run-reviewed",
+        kind: "preparation_plan",
+        target_id: "role-1",
+        status: "draft",
+        revision: 1,
+        content: {
+          title: "Reviewed preparation plan",
+          summary: "A bounded evidence-backed preparation plan.",
+          eligibility: {
+            status: "eligible",
+            rule_version: "1",
+            reasons: [],
+            missing_evidence: [],
+          },
+          priorities: [],
+          unresolved_questions: [],
+          total_minutes: 60,
+          limitations: [],
+        },
+        evidence_references: [{
+          source_id: "role:role-1",
+          version: "1",
+          label: "Published role",
+          access_scope: "institution",
+        }],
+        source_fingerprint: "source-fingerprint",
+        source_target_revision: null,
+        provider_name: "gemini",
+        model_version: "gemini-approved-release",
+        workflow_version: "campus-agent-v2",
+        source_projection_version: "student-projection-v3",
+        evaluation_run_id: "evaluation-20260923",
+        created_at: "2026-09-23T10:00:00Z",
+        updated_at: "2026-09-23T10:00:00Z",
+      },
+      created_at: "2026-09-23T10:00:00Z",
+      updated_at: "2026-09-23T10:00:00Z",
+    };
+    apiRequestMock.mockImplementation((path: string) => {
+      if (path === "/opportunities?page_size=100") {
+        return Promise.resolve({ items: [opportunity], page: 1, page_size: 100, total: 1 });
+      }
+      if (path.endsWith("/practice-consent")) {
+        return Promise.resolve({
+          purpose: "practice_aggregates",
+          consent_version: "1",
+          opted_in: false,
+          granted_at: null,
+          revoked_at: null,
+        });
+      }
+      if (path.includes("/runs?target_id=")) return Promise.resolve([reviewedRun]);
+      if (path.includes("/events")) return Promise.resolve([]);
+      return Promise.reject(new Error(`Unexpected API path: ${path}`));
+    });
+
+    render(<AgentRunWorkspace audience="student" />);
+
+    const disclosure = await screen.findByText("Evidence and versions");
+    fireEvent.click(disclosure);
+    expect(screen.getByText("gemini-approved-release")).toBeInTheDocument();
+    expect(screen.getByText("campus-agent-v2")).toBeInTheDocument();
+    expect(screen.getByText("student-projection-v3")).toBeInTheDocument();
+    expect(screen.getByText("evaluation-20260923")).toBeInTheDocument();
+  });
+
   it("sends only fresh approved source evidence into a T&P drive run", async () => {
     const sources = [
       {

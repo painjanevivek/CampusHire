@@ -123,10 +123,22 @@ export type AgentRunResponse = {
      */
     created_at: string;
     /**
+     * Evaluation Run Id
+     */
+    evaluation_run_id: string | null;
+    /**
      * Id
      */
     id: string;
     limits: RunLimits;
+    /**
+     * Model Version
+     */
+    model_version: string;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
     /**
      * Required Action
      */
@@ -145,6 +157,10 @@ export type AgentRunResponse = {
      * Source Fingerprint
      */
     source_fingerprint: string | null;
+    /**
+     * Source Projection Version
+     */
+    source_projection_version: string;
     /**
      * Status
      */
@@ -165,6 +181,10 @@ export type AgentRunResponse = {
      * Workflow
      */
     workflow: 'prepare_opportunity' | 'prepare_drive';
+    /**
+     * Workflow Version
+     */
+    workflow_version: string;
 };
 
 /**
@@ -831,6 +851,10 @@ export type ArtifactResponse = {
      */
     created_at: string;
     /**
+     * Evaluation Run Id
+     */
+    evaluation_run_id: string | null;
+    /**
      * Evidence References
      */
     evidence_references: Array<{
@@ -845,6 +869,14 @@ export type ArtifactResponse = {
      */
     kind: 'preparation_plan' | 'drive_preparation';
     /**
+     * Model Version
+     */
+    model_version: string;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
+    /**
      * Revision
      */
     revision: number;
@@ -856,6 +888,10 @@ export type ArtifactResponse = {
      * Source Fingerprint
      */
     source_fingerprint: string;
+    /**
+     * Source Projection Version
+     */
+    source_projection_version: string;
     /**
      * Source Target Revision
      */
@@ -872,6 +908,10 @@ export type ArtifactResponse = {
      * Updated At
      */
     updated_at: string;
+    /**
+     * Workflow Version
+     */
+    workflow_version: string;
 };
 
 /**

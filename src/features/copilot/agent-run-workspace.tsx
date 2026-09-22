@@ -545,7 +545,37 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
           <aside className={styles.activity}>
             <h2>Activity</h2>
             <ol>{events.map((event) => <li key={event.sequence}><span><Clock3 aria-hidden="true" /></span><div><strong>{event.summary}</strong><small>{new Date(event.created_at).toLocaleString()}</small></div></li>)}</ol>
-            {artifact ? <details><summary>Evidence and versions</summary><ul>{artifact.evidence_references.map((reference) => <li key={reference.source_id}>{reference.label}<small>v{reference.version} · {reference.access_scope}</small></li>)}</ul></details> : null}
+            {artifact ? (
+              <details>
+                <summary>Evidence and versions</summary>
+                <ul>
+                  {artifact.evidence_references.map((reference) => (
+                    <li key={reference.source_id}>
+                      {reference.label}
+                      <small>v{reference.version} · {reference.access_scope}</small>
+                    </li>
+                  ))}
+                  <li>
+                    Model release
+                    <small>{artifact.provider_name} · <span>{artifact.model_version}</span></small>
+                  </li>
+                  <li>
+                    Workflow release
+                    <small><span>{artifact.workflow_version}</span></small>
+                  </li>
+                  <li>
+                    Source projection
+                    <small><span>{artifact.source_projection_version}</span></small>
+                  </li>
+                  {artifact.evaluation_run_id ? (
+                    <li>
+                      Evaluation run
+                      <small><span>{artifact.evaluation_run_id}</span></small>
+                    </li>
+                  ) : null}
+                </ul>
+              </details>
+            ) : null}
           </aside>
         </div>
       )}
