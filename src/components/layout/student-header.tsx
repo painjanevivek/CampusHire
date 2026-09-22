@@ -89,10 +89,13 @@ export function StudentHeader() {
               </Link>
             );
           })}
+          <Link className={styles.mobileCopilot} href="/copilot" onClick={() => setMenuOpen(false)}>
+            <Bot size={16} aria-hidden="true" />Ask Copilot
+          </Link>
         </nav>
 
         <div className={styles.utilities}>
-          <Link href="/copilot" aria-label="Ask CampusHire Copilot"><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
+          <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot"><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
           <ThemeToggle />
           <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} />
           <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} />

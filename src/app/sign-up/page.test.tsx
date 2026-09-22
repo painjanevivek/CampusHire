@@ -19,12 +19,13 @@ describe("SignUpPage", () => {
     expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
     expect(screen.queryByText("What comes next")).not.toBeInTheDocument();
     expect(screen.queryByText(/verify your email/i)).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/docs");
+    expect(screen.getByRole("link", { name: "Go back" })).toHaveAttribute("href", "/docs");
   });
 
-  it("falls back to student sign in when no referring page is supplied", async () => {
+  it("uses home as the fallback back target without duplicating the sign-in link", async () => {
     render(await SignUpPage({}));
 
-    expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/sign-in");
+    expect(screen.getByRole("link", { name: "Back to home" })).toHaveAttribute("href", "/");
+    expect(screen.getAllByRole("link", { name: "Sign in" })).toHaveLength(1);
   });
 });

@@ -225,6 +225,11 @@ function WorkspaceShell({
                 </div>
               );
             })}
+            <div className={styles.mobileUtilities} aria-label={`${workspaceLabel} mobile utilities`}>
+              <Link href="/help"><CircleHelp aria-hidden="true" />Help</Link>
+              <Link href={`${basePath}/account`}><UserRound aria-hidden="true" />Account</Link>
+              <SignOutButton destination={variant === "platform" ? "/admin/sign-in" : "/tnp/sign-in"} />
+            </div>
           </nav>
           <div className={styles.utilities} aria-label={`${workspaceLabel} utilities`}>
             <Link className={styles.helpControl} href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>

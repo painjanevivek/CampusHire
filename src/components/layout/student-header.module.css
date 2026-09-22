@@ -146,7 +146,8 @@
 }
 
 .menuButton { display: none; cursor: pointer; }
-.navigation .mobileHelp { display: none; }
+.navigation .mobileHelp,
+.navigation .mobileCopilot { display: none; }
 
 @media (max-width: 1120px) {
   .header { padding-top: 0; }
@@ -162,6 +163,7 @@
   }
   .navigationOpen { display: grid; }
   .navigation a { min-height: 48px; padding: 0 12px; border-radius: 8px; }
+  .navigation .mobileCopilot { display: flex; }
   .navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
   .utilities { margin-inline-start: 0; }
 }
@@ -174,6 +176,7 @@
   .inner { width: min(calc(100% - var(--layout-gutter-mobile) - var(--layout-gutter-mobile)), var(--layout-student-max)); gap: 8px; padding-inline: 0; }
   .brand strong { display: inline; font-size: .875rem; }
   .helpControl { display: none; }
+  .copilotControl { display: none !important; }
   .navigation .mobileHelp { display: flex; }
   .utilities { gap: 6px; }
   .utilities > a { width: 44px; padding: 0; justify-content: center; }
@@ -185,7 +188,7 @@
   .inner { gap: 6px; }
   .brand { gap: 6px; }
 }
-@media (max-width: 359px) { .brand strong { display: none; } }
+@media (max-width: 420px) { .brand strong { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .inner { backdrop-filter: none; }

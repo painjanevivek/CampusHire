@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Cloud, LoaderCircle } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input, Select } from "@/components/ui/form-controls";
+import { PageContainer } from "@/components/layout/page-layout";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import type { StudentOnboardingResponse } from "@/lib/api/generated/types.gen";
 import styles from "./onboarding-wizard.module.css";
@@ -144,7 +145,14 @@ export function StudentOnboardingWizard() {
 
   function change(key: string, value: string | boolean) { setDraft((current) => ({ ...current, [key]: value })); setDirty(true); setState("idle"); }
   function submit(event: FormEvent) { event.preventDefault(); void save(true); }
-  if (!data) return <main className={styles.page}><div className={styles.loadingState}><LoaderCircle aria-hidden="true" />{message || "Loading onboarding…"}</div></main>;
+  if (!data) return (
+    <PageContainer context="student" className={styles.page} aria-busy={state === "loading"}>
+      <div className={styles.loadingState} role="status" aria-live="polite">
+        <h1 className="srOnly">Student onboarding</h1>
+        <LoaderCircle aria-hidden="true" />{message || "Loading onboarding…"}
+      </div>
+    </PageContainer>
+  );
 
   return (
     <main id="main-content" className={styles.page}>

@@ -11,10 +11,12 @@ export default async function SignUpPage({
 }) {
   const { from } = searchParams ? await searchParams : {};
   const backHref = safeReturnTo(from, "/sign-in");
+  const resolvedBackHref = backHref === "/sign-in" ? "/" : backHref;
 
   return (
     <AuthShell
-      backHref={backHref}
+      backHref={resolvedBackHref}
+      backLabel={resolvedBackHref === "/" ? "Back to home" : "Go back"}
       eyebrow="Student registration"
       title="Create your CampusHire account."
       description="Use your college email. If you have an invitation code from your placement office, you can activate your account now; otherwise, submit a request for review."

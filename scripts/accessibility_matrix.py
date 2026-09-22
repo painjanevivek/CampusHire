@@ -10,11 +10,12 @@ from http.client import HTTPConnection
 from http.cookies import SimpleCookie
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import unquote, urljoin, urlsplit
 
 from playwright.sync_api import (
     Browser,
     BrowserContext,
+    Error as PlaywrightError,
     Page,
     sync_playwright,
 )
@@ -74,7 +75,7 @@ STUDENT_ROUTES = [
     "/roadmap",
     "/onboarding",
 ]
-ADMIN_ROUTES = ["/admin/operations", "/admin/applications", "/admin/drives"]
+TNP_ROUTES = ["/tnp/dashboard", "/tnp/applications", "/tnp/drives", "/tnp/policies"]
 PUBLIC_REFLOW_ROUTES = ["/", "/sign-in", "/sign-up", "/privacy"]
 
 
@@ -101,10 +102,10 @@ def authenticate_demo(
     *,
     base_url: str,
     sign_in_route: str,
-    button_name: str,
+    role: str,
     destination_prefix: str,
 ) -> str:
-    """Create a real demo session without persisting cookies or credentials to evidence."""
+    """Create a synthetic-only session without exposing public demo controls or secrets."""
     page = context.new_page()
     network_failures: list[str] = []
     console_errors: list[str] = []
@@ -159,12 +160,84 @@ def authenticate_demo(
     )
     if cookie_preference.count() == 1 and cookie_preference.is_visible():
         cookie_preference.click()
-    button = page.get_by_role("button", name=button_name, exact=True)
-    if button.count() != 1:
+    configured_api_url = os.environ.get(
+        "CAMPUSHIRE_TEST_API_URL", "http://127.0.0.1:8000"
+    ).rstrip("/")
+    api_base_url = (
+        configured_api_url
+        if urlsplit(configured_api_url).path.rstrip("/").endswith("/api/v1")
+        else f"{configured_api_url}/api/v1"
+    )
+    api_parts = urlsplit(api_base_url)
+    api_path = api_parts.path.rstrip("/")
+    local_frontend_origin = f"http://{urlsplit(base_url).netloc}"
+    cookies: dict[str, dict[str, Any]] = {}
+
+    def request_api(
+        method: str,
+        path: str,
+        *,
+        body: bytes | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> tuple[int, bytes]:
+        connection = HTTPConnection(api_parts.hostname, api_parts.port or 80, timeout=30)
+        request_headers = {"Accept": "application/json", "Origin": local_frontend_origin}
+        if headers:
+            request_headers.update(headers)
+        try:
+            connection.request(method, path, body=body, headers=request_headers)
+            response = connection.getresponse()
+            response_body = response.read()
+            for raw_cookie in (
+                value for name, value in response.getheaders() if name.lower() == "set-cookie"
+            ):
+                parsed_cookie = SimpleCookie()
+                parsed_cookie.load(raw_cookie)
+                for name, morsel in parsed_cookie.items():
+                    same_site = (morsel["samesite"] or "Lax").capitalize()
+                    cookies[name] = {
+                        "name": name,
+                        "value": morsel.value,
+                        "domain": morsel["domain"] or api_parts.hostname,
+                        "path": morsel["path"] or "/",
+                        "httpOnly": bool(morsel["httponly"]),
+                        "secure": True,
+                        "sameSite": same_site
+                        if same_site in {"Strict", "Lax", "None"}
+                        else "Lax",
+                    }
+            return response.status, response_body
+        finally:
+            connection.close()
+
+    csrf_status, _ = request_api("GET", f"{api_path}/auth/csrf")
+    csrf_cookie = cookies.get("campushire_csrf")
+    if csrf_status != 204 or csrf_cookie is None:
         raise RuntimeError(
-            f"Demo authentication control '{button_name}' is unavailable at {sign_in_route}."
+            f"Synthetic authentication failed at csrf with status {csrf_status}. "
+            "Enable and seed backend demo accounts only in local development."
         )
-    button.click()
+    cookie_header = "; ".join(
+        f"{name}={metadata['value']}" for name, metadata in cookies.items()
+    )
+    payload = json.dumps({"role": role}).encode("utf-8")
+    sign_in_status, _ = request_api(
+        "POST",
+        f"{api_path}/auth/demo-sign-in",
+        body=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Cookie": cookie_header,
+            "X-CSRF-Token": unquote(str(csrf_cookie["value"])),
+        },
+    )
+    if sign_in_status != 200:
+        raise RuntimeError(
+            f"Synthetic authentication failed at sign-in with status {sign_in_status}. "
+            "Enable and seed backend demo accounts only in local development."
+        )
+    context.add_cookies(list(cookies.values()))
+    page.goto(f"{base_url}{destination_prefix}", wait_until="networkidle", timeout=30_000)
     try:
         page.wait_for_url(
             lambda url: (
@@ -250,17 +323,15 @@ def configure_local_https_bridge(context: BrowserContext, base_url: str) -> list
             # actual HTTP frontend process. Present that origin only to the
             # loopback API, then expose the secure test origin to the browser.
             fetch_headers["origin"] = local_frontend_origin
-            cookie_scope_url = route.request.url.replace(
-                "http://", "https://", 1
+        cookie_scope_url = route.request.url.replace("http://", "https://", 1)
+        applicable_cookies = context.cookies(cookie_scope_url)
+        if applicable_cookies:
+            # WebKit does not reliably attach cookies to intercepted HTTPS
+            # requests. Forward only cookies its own jar marks applicable to
+            # the exact Frontend or API URL being bridged.
+            fetch_headers["cookie"] = "; ".join(
+                f"{item['name']}={item['value']}" for item in applicable_cookies
             )
-            applicable_cookies = context.cookies(cookie_scope_url)
-            if applicable_cookies:
-                # WebKit does not attach cookies to requests whose HTTPS URL
-                # is fulfilled by an interception handler. Forward only the
-                # cookies its own jar marks applicable to that exact API URL.
-                fetch_headers["cookie"] = "; ".join(
-                    f"{item['name']}={item['value']}" for item in applicable_cookies
-                )
         for excluded_header in (
             "host",
             "content-length",
@@ -386,9 +457,16 @@ def classify_console_errors(
             and "503" in message
         )
         is_expected_https_bridge_hmr_failure = (
-            "WebSocket connection to 'wss://127.0.0.1:" in message
+            "wss://127.0.0.1:" in message
             and "/_next/hmr?" in message
-            and "ERR_SSL_PROTOCOL_ERROR" in message
+            and any(
+                marker in message
+                for marker in (
+                    "ERR_SSL_PROTOCOL_ERROR",
+                    "can’t establish a connection",
+                    "WebSocket network error",
+                )
+            )
         )
         if is_expected_api_failure or is_expected_https_bridge_hmr_failure:
             expected += 1
@@ -441,10 +519,14 @@ def inspect_keyboard_traversal(page: Page) -> dict[str, Any]:
               style.display !== "none" && style.visibility !== "hidden" &&
               rect.width > 0 && rect.height > 0;
           })
-          .map((element, index, candidates) => ({
-            fingerprint: `${element.tagName.toLowerCase()}#${element.id || ""}@${[...document.querySelectorAll(selector)].indexOf(element)}`,
-            label: `${element.tagName.toLowerCase()}#${element.id || ""}[${element.getAttribute("aria-label") || element.textContent?.trim().slice(0, 40) || "unlabelled"}]`,
-          }))
+          .map((element, index) => {
+            const fingerprint = `matrix-${index}`;
+            element.setAttribute("data-accessibility-matrix-id", fingerprint);
+            return {
+              fingerprint,
+              label: `${element.tagName.toLowerCase()}#${element.id || ""}[${element.getAttribute("aria-label") || element.textContent?.trim().slice(0, 40) || "unlabelled"}]`,
+            };
+          })
         """,
         FOCUSABLE_SELECTOR,
     )
@@ -453,18 +535,22 @@ def inspect_keyboard_traversal(page: Page) -> dict[str, Any]:
         (selector) => {
           const element = document.activeElement;
           if (!(element instanceof HTMLElement) || element === document.body) return "";
-          const candidates = [...document.querySelectorAll(selector)];
-          return `${element.tagName.toLowerCase()}#${element.id || ""}@${candidates.indexOf(element)}`;
+          return element.getAttribute("data-accessibility-matrix-id") || "";
         }
     """
     initial = page.evaluate(fingerprint_script, FOCUSABLE_SELECTOR)
     if initial:
         reached.add(str(initial))
-    for _ in range(len(expected) + 1):
+    # Native controls such as date inputs may expose multiple shadow-DOM tab
+    # stops while appearing as one document element. Allow a bounded second
+    # pass so later controls are not reported as unreachable for that reason.
+    for _ in range(max(len(expected) * 2, 1)):
         page.keyboard.press("Tab")
         fingerprint = page.evaluate(fingerprint_script, FOCUSABLE_SELECTOR)
         if fingerprint:
             reached.add(str(fingerprint))
+        if len(reached) == len(expected):
+            break
     missing = [
         item["label"] for item in expected if item["fingerprint"] not in reached
     ]
@@ -497,8 +583,7 @@ def inspect_page(
     final_path = urlsplit(page.url).path
     expected_path_reached = final_path == route
     # Run semantic and target-geometry checks before revealing the transient skip-link overlay.
-    violations = page.evaluate(
-        """
+    axe_evaluation = """
         async () => {
           const result = await axe.run(document, {
             runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] },
@@ -510,7 +595,14 @@ def inspect_page(
           }));
         }
         """
-    )
+    try:
+        violations = page.evaluate(axe_evaluation)
+    except PlaywrightError as error:
+        if "Execution context was destroyed" not in str(error):
+            raise
+        page.wait_for_load_state("networkidle", timeout=30_000)
+        page.wait_for_timeout(250)
+        violations = page.evaluate(axe_evaluation)
     keyboard_mode = prepare_keyboard_environment(page, browser_name)
     page.evaluate("() => document.activeElement instanceof HTMLElement && document.activeElement.blur()")
     page.locator("body").press("Home")
@@ -536,7 +628,7 @@ def inspect_page(
           .map((element) => {
             const rect = element.getBoundingClientRect();
             return {
-              selector: `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ""}`,
+              selector: `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ""}${element.classList.length ? `.${[...element.classList].join(".")}` : ""}`,
               left: Math.round(rect.left),
               right: Math.round(rect.right),
               width: Math.round(rect.width),
@@ -592,7 +684,7 @@ def inspect_page(
         and bool(focus["visible"])
         and not unexpected_errors
     )
-    if route in {"/", "/dashboard", "/admin/operations"}:
+    if route in {"/", "/dashboard", "/onboarding", "/tnp/dashboard"}:
         page.screenshot(
             path=str(
                 screenshot_directory
@@ -716,7 +808,7 @@ def zoom_reflow_check(
     *,
     authenticated: bool,
     student_storage_state: dict[str, Any] | None = None,
-    admin_storage_state: dict[str, Any] | None = None,
+    tnp_storage_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     profiles = {
         "200_percent": {
@@ -764,22 +856,22 @@ def zoom_reflow_check(
             )
             student_context.close()
 
-            admin_context = browser.new_context(
-                viewport=profile["viewport"], storage_state=admin_storage_state
+            tnp_context = browser.new_context(
+                viewport=profile["viewport"], storage_state=tnp_storage_state
             )
-            configure_local_https_bridge(admin_context, base_url)
-            admin_results, admin_console = inspect_reflow_routes(
-                admin_context,
+            configure_local_https_bridge(tnp_context, base_url)
+            tnp_results, tnp_console = inspect_reflow_routes(
+                tnp_context,
                 base_url=base_url,
                 axe_source=axe_source,
-                routes=ADMIN_ROUTES,
+                routes=TNP_ROUTES,
                 degraded=False,
             )
-            routes.update({f"admin:{key}": value for key, value in admin_results.items()})
+            routes.update({f"tnp:{key}": value for key, value in tnp_results.items()})
             route_console.update(
-                {f"admin:{key}": value for key, value in admin_console.items()}
+                {f"tnp:{key}": value for key, value in tnp_console.items()}
             )
-            admin_context.close()
+            tnp_context.close()
 
         profile_results[profile_name] = {
             "emulated_display": profile["emulated_display"],
@@ -839,9 +931,9 @@ def forced_colors_check(
         routes[route]["unexpectedConsoleErrors"] = unexpected
     context.close()
     if authenticated:
-        for area, sign_in_route, button_name, destination_prefix, route in (
-            ("student", "/sign-in", "Use demo student account", "/dashboard", "/dashboard"),
-            ("admin", "/admin/sign-in", "Use demo T&P account", "/admin/", "/admin/operations"),
+        for area, sign_in_route, role, destination_prefix, route in (
+            ("student", "/sign-in", "student", "/dashboard", "/dashboard"),
+            ("tnp", "/tnp/sign-in", "tnp_admin", "/tnp/", "/tnp/dashboard"),
         ):
             protected_context = browser.new_context(
                 viewport={"width": 1440, "height": 900}, forced_colors="active"
@@ -851,7 +943,7 @@ def forced_colors_check(
                 protected_context,
                 base_url=base_url,
                 sign_in_route=sign_in_route,
-                button_name=button_name,
+                role=role,
                 destination_prefix=destination_prefix,
             )
             protected_page, protected_errors = prepare_page(protected_context, axe_source)
@@ -869,10 +961,11 @@ def forced_colors_check(
                 """
             )
             result["keyboardMode"] = keyboard_mode
-            result["unexpectedConsoleErrors"] = protected_errors
+            expected, unexpected = classify_console_errors(protected_errors, [])
+            result["unexpectedConsoleErrors"] = unexpected
             result["mockedApiRequests"] = 0
             result["localHttpsBridgeRequests"] = 0
-            result["expectedDegradedConsoleErrors"] = 0
+            result["expectedDegradedConsoleErrors"] = expected
             routes[f"{area}:{route}"] = result
             protected_context.close()
     return {
@@ -913,7 +1006,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             browser_type = getattr(playwright, browser_name)
             browser = browser_type.launch(headless=True)
             student_storage_state: dict[str, Any] | None = None
-            admin_storage_state: dict[str, Any] | None = None
+            tnp_storage_state: dict[str, Any] | None = None
             if authenticated:
                 # Authenticate once per engine and reuse the in-memory cookie
                 # state across viewports. This tests a real session without
@@ -925,23 +1018,23 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     student_seed_context,
                     base_url=base_url,
                     sign_in_route="/sign-in",
-                    button_name="Use demo student account",
+                    role="student",
                     destination_prefix="/dashboard",
                 )
                 student_storage_state = student_seed_context.storage_state()
                 student_seed_context.close()
 
-                admin_seed_context = browser.new_context()
-                configure_local_https_bridge(admin_seed_context, base_url)
+                tnp_seed_context = browser.new_context()
+                configure_local_https_bridge(tnp_seed_context, base_url)
                 authenticate_demo(
-                    admin_seed_context,
+                    tnp_seed_context,
                     base_url=base_url,
-                    sign_in_route="/admin/sign-in",
-                    button_name="Use demo T&P account",
-                    destination_prefix="/admin/",
+                    sign_in_route="/tnp/sign-in",
+                    role="tnp_admin",
+                    destination_prefix="/tnp/",
                 )
-                admin_storage_state = admin_seed_context.storage_state()
-                admin_seed_context.close()
+                tnp_storage_state = tnp_seed_context.storage_state()
+                tnp_seed_context.close()
             for viewport_name, viewport in VIEWPORTS.items():
                 context = browser.new_context(viewport=viewport)
                 local_https_bridge_requests = configure_local_https_bridge(
@@ -993,29 +1086,29 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         )
                     student_context.close()
 
-                    admin_context = browser.new_context(
-                        viewport=viewport, storage_state=admin_storage_state
+                    tnp_context = browser.new_context(
+                        viewport=viewport, storage_state=tnp_storage_state
                     )
-                    admin_bridge_requests = configure_local_https_bridge(
-                        admin_context, base_url
+                    tnp_bridge_requests = configure_local_https_bridge(
+                        tnp_context, base_url
                     )
-                    admin_page, admin_errors = prepare_page(admin_context, axe_source)
-                    for route in ADMIN_ROUTES:
+                    tnp_page, tnp_errors = prepare_page(tnp_context, axe_source)
+                    for route in TNP_ROUTES:
                         page_checks.append(
                             inspect_page(
-                                admin_page,
+                                tnp_page,
                                 base_url=base_url,
                                 route=route,
-                                area="admin-authenticated",
+                                area="tnp-authenticated",
                                 browser_name=browser_name,
                                 viewport_name=viewport_name,
                                 screenshot_directory=screenshot_directory,
-                                console_errors=admin_errors,
+                                console_errors=tnp_errors,
                                 mocked_api_requests=[],
-                                local_https_bridge_requests=admin_bridge_requests,
+                                local_https_bridge_requests=tnp_bridge_requests,
                             )
                         )
-                    admin_context.close()
+                    tnp_context.close()
             browser_results[browser_name] = {
                 "reduced_motion": reduced_motion_check(browser, base_url, axe_source),
                 "zoom_reflow": zoom_reflow_check(
@@ -1024,7 +1117,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     axe_source,
                     authenticated=authenticated,
                     student_storage_state=student_storage_state,
-                    admin_storage_state=admin_storage_state,
+                    tnp_storage_state=tnp_storage_state,
                 ),
                 "forced_colors": forced_colors_check(
                     browser,
@@ -1073,8 +1166,8 @@ def parse_args() -> argparse.Namespace:
         description="Run the CampusHire browser accessibility and reflow matrix."
     )
     parser.add_argument("--base-url", default="http://127.0.0.1:3199")
-    parser.add_argument("--output", default=".data/accessibility-matrix-phase8.json")
-    parser.add_argument("--screenshot-directory", default=".data/accessibility-phase8")
+    parser.add_argument("--output", default=".data/accessibility-matrix.json")
+    parser.add_argument("--screenshot-directory", default=".data/accessibility-matrix")
     parser.add_argument(
         "--authenticated",
         action="store_true",
