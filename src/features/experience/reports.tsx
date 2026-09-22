@@ -9,7 +9,7 @@ import { safeInternalHref } from "@/lib/navigation";
 import { useResource } from "./use-resource";
 import styles from "./experience.module.css";
 
-type Report = { start_at: string; end_at: string; timezone: string; metrics: Array<{ key: string; label: string; value: number | null; sample_size: number; explanation: string; href: string }> };
+type Report = { start_at: string; end_at: string; timezone: string; definition: { code: string; version: number | null; status: string; effective_at: string | null; frozen_at: string }; metrics: Array<{ key: string; label: string; value: number | null; sample_size: number; explanation: string; href: string }> };
 export function Reports() {
   const [query, setQuery] = useState("");
   const report = useResource<Report>(`/tnp/recruitment/reports${query ? `?${query}` : ""}`);
@@ -28,6 +28,7 @@ export function Reports() {
     {report.loading && <p role="status">Calculating authoritative summaries…</p>}
     {report.data && <section aria-label="Operational report" aria-busy={report.loading} className={styles.stack}>
       <p>{new Date(report.data.start_at).toLocaleString(undefined, { timeZone: report.data.timezone })} to {new Date(report.data.end_at).toLocaleString(undefined, { timeZone: report.data.timezone })} ({report.data.timezone}; end exclusive)</p>
+      <Alert tone={report.data.definition.status === "approved" ? "success" : "warning"}>Metric definition: {report.data.definition.code}{report.data.definition.version ? ` v${report.data.definition.version}` : " — not configured"}. Frozen {new Date(report.data.definition.frozen_at).toLocaleString()}.</Alert>
       <div className={styles.metrics}>{report.data.metrics.map(metric => <article key={metric.key} className={styles.panel}><h2>{metric.label}</h2><div className={styles.metric}>{metric.value === null ? "No data" : metric.value.toLocaleString()}</div><p>{metric.explanation}</p><p>Sample: {metric.sample_size}</p><Link className={styles.button} href={safeInternalHref(metric.href.replace(/^\/admin\//, "/tnp/"), "/tnp/applications")}>View source records</Link></article>)}</div>
     </section>}
   </PageContainer>;

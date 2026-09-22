@@ -12,6 +12,7 @@ import {
   getOrCreateIdempotencyKey,
 } from "@/lib/idempotency";
 import type { PlacementApplication } from "./types";
+import { OutcomeTimeline } from "./outcome-timeline";
 import styles from "./student-application-detail.module.css";
 
 const formatDate = (value: string, timeZone: string) => new Intl.DateTimeFormat(undefined, {
@@ -151,6 +152,7 @@ export function StudentApplicationDetail({ applicationId }: { applicationId: str
     <section className={styles.history} aria-label="Current application step"><h2>What happens next</h2><p>{application.next_step ?? `Recorded stage: ${application.status.replaceAll("_", " ")}.`}</p><p>Responsible party: {application.next_actor === "student" ? "You" : application.next_actor === "placement_team" ? "T&P" : "As recorded in the current stage"} · Last change {formatDate(application.updated_at, application.institution_timezone)}</p></section>
     {application.status === "offered" ? <Alert tone="info"><strong>An offer has been recorded.</strong> This is an application-stage result; it does not mean you have joined. Acceptance and joining require separate recorded outcomes.</Alert> : null}
     <CorrectionPanel key={application.id} applicationId={application.id} timezone={application.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(application.status)} onChange={() => void load()} />
+    <OutcomeTimeline applicationId={application.id} endpoint={`/applications/${application.id}/outcomes`} timeZone={application.institution_timezone} />
     <section className={styles.summary} aria-label="Locked application details">
       <article><FileLock2 aria-hidden="true" /><p>Locked resume</p><h2>Version {String(application.resume_snapshot.version_number ?? "—")}</h2><span>{String(application.resume_snapshot.original_name ?? "Reviewed resume")}</span></article>
       <article><Scale aria-hidden="true" /><p>Decision version</p><h2>Rule v{String(rule.version ?? "—")}</h2><span>{policyEvidence ? `${policyEvidence} · ` : ""}{String(application.decision_snapshot.eligibility_fingerprint ?? "").slice(0, 12)} · eligibility record</span></article>

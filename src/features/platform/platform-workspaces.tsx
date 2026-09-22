@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, Badge, RequestState } from "@/components/ui/feedback";
 import { useResource } from "@/features/experience/use-resource";
 import { ApiError, csrfRequest } from "@/lib/api/client";
+import { OutcomeTimeline } from "@/features/recruitment/outcome-timeline";
 import styles from "./platform-workspaces.module.css";
 
 type DashboardSummary = {
@@ -153,6 +154,7 @@ export function PlatformInstitutions() {
   const placementRecords = useResource<PlacementRecordPage>(selectedId ? `/platform/institutions/${selectedId}/applications?page=1&page_size=10` : null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [outcomeApplicationId, setOutcomeApplicationId] = useState("");
 
   async function decide(requestId: string, decision: "approve" | "reject", reason?: string) {
     setBusy(true); setMessage("");
@@ -228,7 +230,8 @@ export function PlatformInstitutions() {
           <details className={styles.disclosure}><summary>Read-only placement records <Badge tone="neutral">{placementRecords.data?.total ?? detail.data.application_count}</Badge></summary>
             {placementRecords.loading ? <p role="status">Loading placement records…</p> : null}
             {placementRecords.error ? <ResourceError message={placementRecords.error} retry={placementRecords.refresh} /> : null}
-            <div className={styles.list}>{placementRecords.data?.items.map((record) => <article key={record.id}><div><strong>{record.student_name}</strong><small>{String(record.role_snapshot.title ?? "Placement role")} · {String(record.role_snapshot.company_name ?? "Institution employer")}</small></div><Badge tone="neutral">{record.status.replaceAll("_", " ")}</Badge><details><summary>Evidence and responsibility</summary><dl className={styles.definitionList}><div><dt>Student</dt><dd>{record.student_email}</dd></div><div><dt>Owner</dt><dd>{record.assignee_user_id ? "Assigned institution reviewer" : "Unassigned institution queue"}</dd></div><div><dt>Review due</dt><dd>{record.review_due_at ? new Date(record.review_due_at).toLocaleString() : "Not scheduled"}</dd></div><div><dt>Last update</dt><dd>{new Date(record.updated_at).toLocaleString()}</dd></div></dl><pre>{JSON.stringify(record.eligibility_snapshot, null, 2)}</pre></details></article>)}</div>
+            <div className={styles.list}>{placementRecords.data?.items.map((record) => <article key={record.id}><div><strong>{record.student_name}</strong><small>{String(record.role_snapshot.title ?? "Placement role")} · {String(record.role_snapshot.company_name ?? "Institution employer")}</small></div><Badge tone="neutral">{record.status.replaceAll("_", " ")}</Badge><details><summary>Evidence and responsibility</summary><dl className={styles.definitionList}><div><dt>Student</dt><dd>{record.student_email}</dd></div><div><dt>Owner</dt><dd>{record.assignee_user_id ? "Assigned institution reviewer" : "Unassigned institution queue"}</dd></div><div><dt>Review due</dt><dd>{record.review_due_at ? new Date(record.review_due_at).toLocaleString() : "Not scheduled"}</dd></div><div><dt>Last update</dt><dd>{new Date(record.updated_at).toLocaleString()}</dd></div></dl><pre>{JSON.stringify(record.eligibility_snapshot, null, 2)}</pre><Button variant="quiet" type="button" onClick={() => setOutcomeApplicationId(record.id)}>Inspect outcome evidence</Button></details></article>)}</div>
+            {outcomeApplicationId ? <OutcomeTimeline applicationId={outcomeApplicationId} endpoint={`/platform/institutions/${detail.data.id}/applications/${outcomeApplicationId}/outcomes`} timeZone={detail.data.timezone} /> : null}
             {placementRecords.data && !placementRecords.data.items.length ? <p>No placement applications recorded.</p> : null}
             {(placementRecords.data?.total ?? 0) > 10 ? <p>Showing the ten most recent records. Use Platform Reports for aggregate investigation.</p> : null}
           </details>

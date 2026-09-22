@@ -3463,6 +3463,128 @@ export type Metric = {
 };
 
 /**
+ * MetricDefinitionApproval
+ */
+export type MetricDefinitionApproval = {
+    /**
+     * Expected Status
+     */
+    expected_status?: 'draft';
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * MetricDefinitionCreate
+ */
+export type MetricDefinitionCreate = {
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Denominator
+     */
+    denominator: {
+        [key: string]: unknown;
+    };
+    /**
+     * Effective At
+     */
+    effective_at: string;
+    /**
+     * Evidence Requirements
+     */
+    evidence_requirements: Array<string>;
+    /**
+     * Exclusions
+     */
+    exclusions?: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Filters
+     */
+    filters?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Notes
+     */
+    notes?: string | null;
+    /**
+     * Numerator
+     */
+    numerator: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * MetricDefinitionResponse
+ */
+export type MetricDefinitionResponse = {
+    /**
+     * Approved At
+     */
+    approved_at: string | null;
+    /**
+     * Approved By User Id
+     */
+    approved_by_user_id: string | null;
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Denominator
+     */
+    denominator: {
+        [key: string]: unknown;
+    };
+    /**
+     * Effective At
+     */
+    effective_at: string;
+    /**
+     * Evidence Requirements
+     */
+    evidence_requirements: Array<string>;
+    /**
+     * Exclusions
+     */
+    exclusions: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Filters
+     */
+    filters: {
+        [key: string]: unknown;
+    };
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Numerator
+     */
+    numerator: {
+        [key: string]: unknown;
+    };
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
  * MfaCodeRequest
  */
 export type MfaCodeRequest = {
@@ -3798,6 +3920,182 @@ export type OpportunityResponse = {
      * Work Mode
      */
     work_mode: string;
+};
+
+/**
+ * OutcomeEventCreate
+ */
+export type OutcomeEventCreate = {
+    /**
+     * Compensation Amount
+     */
+    compensation_amount?: number | string | null;
+    /**
+     * Compensation Currency
+     */
+    compensation_currency?: string | null;
+    /**
+     * Compensation Period
+     */
+    compensation_period?: 'hour' | 'month' | 'year' | 'total' | null;
+    /**
+     * Correction Reason
+     */
+    correction_reason?: string | null;
+    /**
+     * Event At
+     */
+    event_at: string;
+    /**
+     * Event Type
+     */
+    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
+    /**
+     * Evidence Reference
+     */
+    evidence_reference?: string | null;
+    /**
+     * Joining Date
+     */
+    joining_date?: string | null;
+    /**
+     * Joining Location
+     */
+    joining_location?: string | null;
+    /**
+     * Next Update Due At
+     */
+    next_update_due_at?: string | null;
+    /**
+     * Next Update Owner
+     */
+    next_update_owner?: string | null;
+    /**
+     * Outcome State
+     */
+    outcome_state: 'provisional' | 'verified';
+    /**
+     * Source Reference
+     */
+    source_reference?: string | null;
+    /**
+     * Source Type
+     */
+    source_type: string;
+    /**
+     * Stipend Amount
+     */
+    stipend_amount?: number | string | null;
+    /**
+     * Supersedes Event Id
+     */
+    supersedes_event_id?: string | null;
+};
+
+/**
+ * OutcomeEventResponse
+ */
+export type OutcomeEventResponse = {
+    /**
+     * Application Id
+     */
+    application_id: string;
+    /**
+     * Compensation Amount
+     */
+    compensation_amount: string | null;
+    /**
+     * Compensation Currency
+     */
+    compensation_currency: string | null;
+    /**
+     * Compensation Period
+     */
+    compensation_period: string | null;
+    /**
+     * Correction Reason
+     */
+    correction_reason: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Created By User Id
+     */
+    created_by_user_id: string;
+    /**
+     * Event At
+     */
+    event_at: string;
+    /**
+     * Event Type
+     */
+    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
+    /**
+     * Evidence Reference
+     */
+    evidence_reference: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Joining Date
+     */
+    joining_date: string | null;
+    /**
+     * Joining Location
+     */
+    joining_location: string | null;
+    /**
+     * Next Update Due At
+     */
+    next_update_due_at: string | null;
+    /**
+     * Next Update Owner
+     */
+    next_update_owner: string | null;
+    /**
+     * Outcome State
+     */
+    outcome_state: 'provisional' | 'verified';
+    /**
+     * Source Reference
+     */
+    source_reference: string | null;
+    /**
+     * Source Type
+     */
+    source_type: string;
+    /**
+     * Stipend Amount
+     */
+    stipend_amount: string | null;
+    /**
+     * Student User Id
+     */
+    student_user_id: string;
+    /**
+     * Superseded By Event Id
+     */
+    superseded_by_event_id?: string | null;
+    /**
+     * Supersedes Event Id
+     */
+    supersedes_event_id: string | null;
+    /**
+     * Verified At
+     */
+    verified_at: string | null;
+    /**
+     * Verified By User Id
+     */
+    verified_by_user_id: string | null;
 };
 
 /**
@@ -5131,9 +5429,36 @@ export type RegistrationTokenRequest = {
 };
 
 /**
+ * ReportDefinitionMetadata
+ */
+export type ReportDefinitionMetadata = {
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Effective At
+     */
+    effective_at?: string | null;
+    /**
+     * Frozen At
+     */
+    frozen_at: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Version
+     */
+    version?: number | null;
+};
+
+/**
  * ReportResponse
  */
 export type ReportResponse = {
+    definition: ReportDefinitionMetadata;
     /**
      * End At
      */
@@ -9695,6 +10020,38 @@ export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosur
 
 export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponse = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses];
 
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/outcomes';
+};
+
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetError = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors];
+
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses = {
+    /**
+     * Response Student Outcome Timeline Api V1 Applications  Application Id  Outcomes Get
+     *
+     * Successful Response
+     */
+    200: Array<OutcomeEventResponse>;
+};
+
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponse = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses];
+
 export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetData = {
     body?: never;
     path: {
@@ -11926,6 +12283,42 @@ export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApp
 
 export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponse = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses];
 
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/outcomes';
+};
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetError = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors];
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses = {
+    /**
+     * Response Platform Outcome Drillthrough Api V1 Platform Institutions  Institution Id  Applications  Application Id  Outcomes Get
+     *
+     * Successful Response
+     */
+    200: Array<OutcomeEventResponse>;
+};
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponse = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses];
+
 export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetData = {
     body?: never;
     path: {
@@ -12081,6 +12474,88 @@ export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdSt
 };
 
 export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponse = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses];
+
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/metric-definitions';
+};
+
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetError = MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors];
+
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses = {
+    /**
+     * Response Metric Definitions Api V1 Platform Metric Definitions Get
+     *
+     * Successful Response
+     */
+    200: Array<MetricDefinitionResponse>;
+};
+
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponse = MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses];
+
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostData = {
+    body: MetricDefinitionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/metric-definitions';
+};
+
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostError = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors];
+
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MetricDefinitionResponse;
+};
+
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponse = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses];
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostData = {
+    body: MetricDefinitionApproval;
+    path: {
+        /**
+         * Definition Id
+         */
+        definition_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/metric-definitions/{definition_id}/approve';
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostError = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors];
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MetricDefinitionResponse;
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponse = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses];
 
 export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetData = {
     body?: never;
@@ -13474,6 +13949,68 @@ export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPos
 };
 
 export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponse = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses];
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetError = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors];
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses = {
+    /**
+     * Response Tnp Outcome Timeline Api V1 Tnp Recruitment Applications  Application Id  Outcomes Get
+     *
+     * Successful Response
+     */
+    200: Array<OutcomeEventResponse>;
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponse = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses];
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostData = {
+    body: OutcomeEventCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostError = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors];
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OutcomeEventResponse;
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponse = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses];
 
 export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostData = {
     body: ApplicationOverrideCreate;

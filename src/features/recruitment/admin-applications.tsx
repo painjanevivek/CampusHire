@@ -7,6 +7,7 @@ import { Alert, Badge } from "@/components/ui/feedback";
 import { ApiError, apiRequest, csrfRequest } from "@/lib/api/client";
 import { CorrectionPanel } from "@/features/experience/correction-panel";
 import type { PlacementApplication } from "./types";
+import { OutcomeTimeline } from "./outcome-timeline";
 import styles from "./admin-applications.module.css";
 import ui from "@/features/experience/experience.module.css";
 
@@ -248,6 +249,7 @@ export function AdminApplications() {
           <section className={styles.evidence}><h3>Submitted resume</h3><p>{String(selected.resume_snapshot.original_name ?? "Reviewed resume")} · version {String(selected.resume_snapshot.version_number ?? "Not recorded")}</p>
             <details><summary>Immutable resume and profile evidence</summary><pre className={ui.tableWrap}>{JSON.stringify({ resume: selected.resume_snapshot, profile: selected.profile_snapshot }, null, 2)}</pre></details></section>
           <CorrectionPanel key={selected.id} applicationId={selected.id} admin timezone={selected.institution_timezone} closed={["offered", "rejected", "withdrawn"].includes(selected.status)} onChange={() => setRefresh(value => value + 1)} />
+          <OutcomeTimeline applicationId={selected.id} endpoint={`/tnp/recruitment/applications/${selected.id}/outcomes`} timeZone={selected.institution_timezone} canRecord={canBulk} />
           <details className={styles.evidence}><summary>Decision history</summary><ol className={ui.timeline}>{selected.history.map(item => <li key={item.id}><p>{item.to_status.replaceAll("_", " ")} · {new Date(item.created_at).toLocaleString()}</p><p>{item.reason ?? "No additional reason recorded"}</p><details><summary>Actor evidence</summary><code>{item.actor_user_id}</code></details></li>)}</ol></details>
           {!!selected.allowed_actions?.length && !!selected.assignee_user_id && <form id="review-decision" className={ui.form} key={`${selected.id}:${selected.revision}`} onSubmit={event => void review(event)}>
             <h3>Record review decision</h3><label>Next recorded stage<select name="status" defaultValue="" required><option value="" disabled>Choose a decision</option>{selected.allowed_actions.map(status => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
