@@ -144,8 +144,11 @@ button, input, select, textarea { font: inherit; }
 .skipLink { position: fixed; z-index: var(--layer-skip-link); top: 0.5rem; left: 0.5rem; transform: translateY(-180%); border-radius: var(--radius-sm); padding: 0.75rem 1rem; background: var(--ink); color: var(--surface); }
 .skipLink:focus { transform: translateY(0); }
 h1, h2, h3 { font-family: var(--font-body), Inter, system-ui, sans-serif; font-weight: var(--font-weight-heading); }
+h1 em, h2 em, h3 em { font-family: var(--font-display), Georgia, serif; font-weight: var(--font-weight-regular); }
 strong { font-weight: var(--font-weight-emphasis); }
 button, .button, nav, .brand { font-family: var(--font-interface), Inter, sans-serif; letter-spacing: -0.025em; }
+label, summary { font-family: var(--font-interface), Inter, sans-serif; }
+code, kbd, samp, pre { font-family: var(--font-mono), monospace; }
 .badge, .pathLabel { font-family: var(--font-mono), monospace; }
 
 .hero { min-height: 78svh; padding: 1.25rem clamp(1rem, 4vw, 5rem) 4rem; background: radial-gradient(circle at 85% 15%, var(--sage), transparent 32%), var(--canvas); }

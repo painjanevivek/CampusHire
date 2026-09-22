@@ -612,7 +612,7 @@
 }
 
 .identifier {
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 0.76rem !important;
 }
 

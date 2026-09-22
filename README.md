@@ -143,7 +143,7 @@ The browser does not hold provider secrets, directly query the database, or auth
 | --- | --- |
 | Application | Next.js 16 App Router, React 19, TypeScript |
 | UI | Shared layout components, CSS modules and semantic tokens, Lucide icons |
-| Typography | Inter for content, Montserrat for controls, JetBrains Mono for technical evidence |
+| Typography | Inter for content, Instrument Serif for editorial accents, Manrope for controls, JetBrains Mono for technical evidence |
 | API contract | Checked OpenAPI snapshot and @hey-api/openapi-ts generation |
 | Verification | Vitest, Testing Library, ESLint, TypeScript, browser/accessibility scripts |
 

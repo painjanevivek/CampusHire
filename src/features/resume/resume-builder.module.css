@@ -10,7 +10,7 @@
 .secondary { color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
 .grid { display: grid; grid-template-columns: minmax(500px, 1.08fr) minmax(380px, .92fr); gap: 24px; align-items: start; margin-top: 28px; }
 .paper { min-height: 820px; padding: clamp(34px, 5vw, 58px); color: #111; background: #fff; border: 1px solid #d8d8d8; border-radius: 12px; font-family: Georgia, "Times New Roman", serif; box-shadow: 0 16px 42px rgb(15 23 42 / .08); }
-.templateName { margin-bottom: 24px; color: #4b5563; font-family: var(--font-sans), sans-serif; font-size: .68rem; font-weight: var(--font-weight-label); letter-spacing: .11em; text-align: right; text-transform: uppercase; }
+.templateName { margin-bottom: 24px; color: #4b5563; font-family: var(--font-interface), Inter, sans-serif; font-size: .68rem; font-weight: var(--font-weight-label); letter-spacing: .11em; text-align: right; text-transform: uppercase; }
 .paperHeader { padding-bottom: 21px; text-align: center; }
 .paperHeader h2 { margin: 0; font-size: clamp(2rem, 4vw, 2.7rem); letter-spacing: .02em; line-height: 1.05; }
 .paperHeader p { max-width: 100%; margin: 10px auto 0; color: #222; font-size: .79rem; line-height: 1.55; overflow-wrap: anywhere; }
