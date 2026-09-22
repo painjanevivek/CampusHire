@@ -4,13 +4,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResumeBuilder } from "./resume-builder";
 import { ApiError } from "@/lib/api/client";
 
-const { apiRequestMock, csrfRequestMock } = vi.hoisted(() => ({
+const { apiRequestMock, csrfRequestMock, searchParamsMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),
   csrfRequestMock: vi.fn(),
+  searchParamsMock: { value: "version=resume-1" },
 }));
 
 vi.mock("next/navigation", () => ({
-  useSearchParams: () => new URLSearchParams("version=resume-1"),
+  useSearchParams: () => new URLSearchParams(searchParamsMock.value),
 }));
 
 vi.mock("@/lib/api/client", async (importOriginal) => ({
@@ -54,9 +55,59 @@ const version = {
 
 describe("ResumeBuilder", () => {
   beforeEach(() => {
+    searchParamsMock.value = "version=resume-1";
     apiRequestMock.mockReset();
     csrfRequestMock.mockReset();
     apiRequestMock.mockResolvedValue(version);
+  });
+
+  it("starts the manual builder from profile data and submits the classic template sections", async () => {
+    searchParamsMock.value = "mode=manual";
+    apiRequestMock.mockResolvedValue({
+      full_name: "Asha Patil",
+      account_email: "asha@example.edu",
+      phone: "+91 9999999999",
+      education: [{
+        degree: "B.Tech",
+        branch: "Computer Science",
+        institution: "Campus Institute",
+        graduation_year: 2027,
+      }],
+      skills: [{ name: "Python" }, { name: "FastAPI" }],
+      external_links: { github: "https://github.com/asha" },
+    });
+    csrfRequestMock.mockResolvedValue({
+      ...version,
+      id: "generated-1",
+      source: "generated",
+      status: "completed",
+      version_number: 1,
+      generator_version: "campushire-generator-v2",
+    });
+
+    render(<ResumeBuilder />);
+
+    expect(await screen.findByDisplayValue("Asha Patil")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "CampusHire Classic" })).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("textbox", { name: "Experience" }), {
+      target: { value: "Campus coding club — Volunteer · 2025–2026" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Research and certifications" }), {
+      target: { value: "AWS Foundations — Certificate of completion · 2026" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Generate versioned PDF" }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/resumes/generate",
+      expect.objectContaining({
+        method: "POST",
+        body: expect.stringContaining('"experience":["Campus coding club — Volunteer · 2025–2026"]'),
+      }),
+    ));
+    const request = JSON.parse(csrfRequestMock.mock.calls[0][1].body as string);
+    expect(request.credentials).toEqual(["AWS Foundations — Certificate of completion · 2026"]);
+    expect(request.education).toEqual(["B.Tech Computer Science — Campus Institute · 2027"]);
+    expect(request.skills).toEqual(["Python", "FastAPI"]);
   });
 
   it("preserves the page heading while resume data is loading", () => {

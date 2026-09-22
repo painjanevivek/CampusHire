@@ -179,7 +179,7 @@ export function ResumeWorkspace() {
           <h2>Build from reviewed evidence</h2>
           <p>Select profile evidence, generate an optional AI draft, inspect every supporting source, edit it, and explicitly accept it before a PDF is created.</p>
           <Link className={styles.primaryAction} href="/resume/studio">Open AI Resume Studio</Link>
-          <Link href="/resume/builder">Use the manual resume builder</Link>
+          <Link href="/resume/builder?mode=manual">Use the manual resume builder</Link>
           {message && <Alert tone={state === "complete" ? "success" : "error"}>{state === "complete" && <FileCheck2 size={18} aria-hidden="true" />}{message}</Alert>}
         </section>
 

@@ -24,6 +24,72 @@ type FieldDecision = {
   value: string | string[];
 };
 
+type ResumeDraft = {
+  fullName: string;
+  email: string;
+  phone: string;
+  githubUrl: string;
+  portfolioUrl: string;
+  summary: string;
+  skills: string;
+  projects: string;
+  education: string;
+  experience: string;
+  credentials: string;
+  achievements: string;
+};
+
+type ResumeProfile = {
+  full_name: string | null;
+  account_email: string | null;
+  phone: string | null;
+  education: Array<{
+    degree?: string;
+    branch?: string;
+    institution?: string;
+    graduation_year?: number;
+  }>;
+  skills: Array<{ name?: string }>;
+  external_links: Record<string, string>;
+};
+
+const emptyDraft: ResumeDraft = {
+  fullName: "",
+  email: "",
+  phone: "",
+  githubUrl: "",
+  portfolioUrl: "",
+  summary: "",
+  skills: "",
+  projects: "",
+  education: "",
+  experience: "",
+  credentials: "",
+  achievements: "",
+};
+
+function lines(value: string): string[] {
+  return value.split("\n").map((item) => item.trim()).filter(Boolean);
+}
+
+function profileDraft(profile: ResumeProfile): ResumeDraft {
+  return {
+    ...emptyDraft,
+    fullName: profile.full_name ?? "",
+    email: profile.account_email ?? "",
+    phone: profile.phone ?? "",
+    githubUrl: profile.external_links.github ?? "",
+    portfolioUrl: profile.external_links.portfolio ?? "",
+    skills: profile.skills.map((item) => item.name).filter(Boolean).join("\n"),
+    education: profile.education.map((item) => {
+      const qualification = [item.degree, item.branch].filter(Boolean).join(" ");
+      const institution = item.institution ? ` — ${item.institution}` : "";
+      const year = item.graduation_year ? ` · ${item.graduation_year}` : "";
+      return `${qualification}${institution}${year}`.trim();
+    }).filter(Boolean).join("\n"),
+  };
+}
+
 function displayValue(value: unknown): string {
   return Array.isArray(value) ? value.join(", ") : String(value ?? "");
 }
@@ -49,12 +115,13 @@ function resolvedValue(version: ResumeVersion, field: string): unknown {
 export function ResumeBuilder() {
   const searchParams = useSearchParams();
   const requestedVersion = searchParams.get("version");
+  const manualMode = searchParams.get("mode") === "manual";
   const [version, setVersion] = useState<ResumeVersion | null>(null);
   const [decisions, setDecisions] = useState<Record<string, FieldDecision>>({});
   const [editingSuggestion, setEditingSuggestion] = useState<string | null>(null);
   const [suggestionCopy, setSuggestionCopy] = useState<Record<string, string>>({});
   const [suggestionDecisions, setSuggestionDecisions] = useState<Record<string, { action: "accept" | "edit" | "reject"; edited_text?: string }>>({});
-  const [summary, setSummary] = useState("");
+  const [draft, setDraft] = useState<ResumeDraft>(emptyDraft);
   const [generated, setGenerated] = useState<ResumeVersion | null>(null);
   const [state, setState] = useState<"loading" | "idle" | "saving" | "error">("loading");
   const [message, setMessage] = useState("");
@@ -64,6 +131,25 @@ export function ResumeBuilder() {
     setDecisions(initialDecisions(selected));
     setSuggestionCopy(Object.fromEntries(selected.suggestions.map((item) => [item.id, item.proposed_text])));
     setSuggestionDecisions({});
+    const values = (field: string) => {
+      const value = resolvedValue(selected, field);
+      return Array.isArray(value) ? value.map(String) : value ? [String(value)] : [];
+    };
+    const links = values("links");
+    setDraft({
+      ...emptyDraft,
+      fullName: displayValue(resolvedValue(selected, "full_name")),
+      email: displayValue(resolvedValue(selected, "email")),
+      phone: displayValue(resolvedValue(selected, "phone")),
+      githubUrl: links.find((value) => value.includes("github.com")) ?? "",
+      portfolioUrl: links.find((value) => !value.includes("github.com")) ?? "",
+      skills: values("skills").join("\n"),
+      projects: values("projects").join("\n"),
+      education: values("education").join("\n"),
+      experience: values("experience").join("\n"),
+      credentials: values("credentials").join("\n"),
+      achievements: values("achievements").join("\n"),
+    });
   }, []);
 
   const reconcileConflict = useCallback(async (selected: ResumeVersion) => {
@@ -78,6 +164,15 @@ export function ResumeBuilder() {
     async function load() {
       setState("loading");
       try {
+        if (manualMode) {
+          const profile = await apiRequest<ResumeProfile>("/profile", { cache: "no-store" });
+          if (active) {
+            setVersion(null);
+            setDraft(profileDraft(profile));
+            setState("idle");
+          }
+          return;
+        }
         const selected = requestedVersion
           ? await apiRequest<ResumeVersion>(`/resumes/${requestedVersion}`, { cache: "no-store" })
           : (await apiRequest<ResumeVersion[]>("/resumes", { cache: "no-store" }))
@@ -87,13 +182,15 @@ export function ResumeBuilder() {
       } catch {
         if (active) {
           setState("error");
-          setMessage("The selected resume version could not be loaded.");
+          setMessage(manualMode
+            ? "Your profile could not be prefilled. You can still enter the resume details manually."
+            : "The selected resume version could not be loaded.");
         }
       }
     }
     void load();
     return () => { active = false; };
-  }, [requestedVersion, selectVersion]);
+  }, [manualMode, requestedVersion, selectVersion]);
 
   const proposedEntries = useMemo(
     () => Object.entries(version?.extracted_data.proposed ?? {}),
@@ -172,30 +269,27 @@ export function ResumeBuilder() {
   }
 
   async function generateVersion() {
-    if (!version) return;
-    const fullName = displayValue(resolvedValue(version, "full_name"));
-    const email = displayValue(resolvedValue(version, "email"));
-    if (!fullName || !email) {
-      setMessage("Accept or edit both the full name and email fields before generating a PDF.");
+    if (!draft.fullName.trim() || !draft.email.trim()) {
+      setMessage("Add both your full name and email before generating a PDF.");
       return;
     }
-    const strings = (field: string) => {
-      const value = resolvedValue(version, field);
-      return Array.isArray(value) ? value.map(String) : value ? [String(value)] : [];
-    };
     setState("saving");
     try {
       const created = await csrfRequest<ResumeVersion>("/resumes/generate", {
         method: "POST",
         body: JSON.stringify({
-          full_name: fullName,
-          email,
-          summary,
-          skills: strings("skills"),
-          projects: strings("projects"),
-          education: strings("education"),
-          github_url: strings("links").find((value) => value.includes("github.com")) ?? null,
-          portfolio_url: strings("links").find((value) => !value.includes("github.com")) ?? null,
+          full_name: draft.fullName.trim(),
+          email: draft.email.trim(),
+          phone: draft.phone.trim() || null,
+          github_url: draft.githubUrl.trim() || null,
+          portfolio_url: draft.portfolioUrl.trim() || null,
+          summary: draft.summary.trim(),
+          skills: lines(draft.skills),
+          projects: lines(draft.projects),
+          education: lines(draft.education),
+          experience: lines(draft.experience),
+          credentials: lines(draft.credentials),
+          achievements: lines(draft.achievements),
         }),
       });
       setGenerated(created);
@@ -221,21 +315,27 @@ export function ResumeBuilder() {
     );
   }
 
-  if (!version) {
+  if (!version && !manualMode) {
     return <main id="main-content" className={styles.page}><div className={styles.empty}><FileDown aria-hidden="true" /><h1>No resume is ready for review</h1><p>Create a version from reviewed profile evidence in Resume Studio.</p><Link href="/resume"><ArrowLeft size={16} aria-hidden="true" /> Return to resumes</Link></div></main>;
   }
 
-  const previewName = displayValue(resolvedValue(version, "full_name")) || "Your name";
-  const previewEmail = displayValue(resolvedValue(version, "email")) || "Email awaiting review";
-  const previewSkills = displayValue(resolvedValue(version, "skills"));
-  const previewProjects = displayValue(resolvedValue(version, "projects"));
-  const previewEducation = displayValue(resolvedValue(version, "education"));
+  const previewName = draft.fullName || "Your name";
+  const previewEmail = draft.email || "Email awaiting review";
+  const previewSkills = lines(draft.skills);
+  const previewProjects = lines(draft.projects);
+  const previewEducation = lines(draft.education);
+  const previewExperience = lines(draft.experience);
+  const previewCredentials = lines(draft.credentials);
+  const previewAchievements = lines(draft.achievements);
+  const updateDraft = (field: keyof ResumeDraft, value: string) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+  };
 
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.header}>
-        <div><p>Review before use / version {version.version_number}</p><h1>Resume review</h1><span>Check every detail and suggestion before creating a new PDF.</span></div>
-        {generated ? <a className={styles.download} href={apiPath(`/resumes/${generated.id}/download`)}><Download size={17} aria-hidden="true" /> Download version {generated.version_number}</a> : <button className={styles.download} type="button" onClick={() => void generateVersion()} disabled={version.status !== "completed" || state === "saving"}><FileDown size={17} aria-hidden="true" /> Generate versioned PDF</button>}
+        <div><p>{manualMode ? "CampusHire Classic / A4" : `Review before use / version ${version?.version_number}`}</p><h1>{manualMode ? "Build your resume" : "Resume review"}</h1><span>{manualMode ? "Fill the sections once, preview the structure, and create a private versioned PDF." : "Check every detail and suggestion before creating a new PDF."}</span></div>
+        {generated ? <a className={styles.download} href={apiPath(`/resumes/${generated.id}/download`)}><Download size={17} aria-hidden="true" /> Download version {generated.version_number}</a> : <button className={styles.download} type="button" onClick={() => void generateVersion()} disabled={Boolean(version && version.status !== "completed") || state === "saving"}><FileDown size={17} aria-hidden="true" /> Generate versioned PDF</button>}
       </header>
 
       {message && <Alert tone={state === "error" ? "error" : "success"}>{message}</Alert>}
@@ -243,14 +343,40 @@ export function ResumeBuilder() {
 
       <div className={styles.grid}>
         <section className={styles.paper} aria-label="Resume preview">
-          <div className={styles.paperHeader}><div><h2>{previewName}</h2><p>{previewEmail}</p></div><span>REVIEW / {String(version.version_number ?? 0).padStart(2, "0")}</span></div>
-          <section><h3>Summary</h3><textarea className={styles.summaryInput} aria-label="Resume summary" value={summary} onChange={(event) => setSummary(event.target.value)} placeholder="Add a concise, factual summary for the generated version." maxLength={900} /></section>
-          {previewProjects && <section><h3>Projects</h3><p>{previewProjects}</p></section>}
-          {previewSkills && <section><h3>Skills</h3><p className={styles.skills}>{previewSkills}</p></section>}
-          {previewEducation && <section><h3>Education</h3><p>{previewEducation}</p></section>}
+          <div className={styles.templateName}>CampusHire Classic</div>
+          <div className={styles.paperHeader}>
+            <h2>{previewName}</h2>
+            <p>{[draft.phone && `Phone: ${draft.phone}`, `Email: ${previewEmail}`, draft.githubUrl && `GitHub: ${draft.githubUrl.replace("https://", "")}`, draft.portfolioUrl && `Portfolio: ${draft.portfolioUrl.replace("https://", "")}`].filter(Boolean).join("  |  ")}</p>
+          </div>
+          {draft.summary && <section><h3>Profile</h3><p className={styles.summary}>{draft.summary}</p></section>}
+          {previewProjects.length > 0 && <section><h3>Projects</h3><ul>{previewProjects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewEducation.length > 0 && <section><h3>Education</h3><ul>{previewEducation.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewExperience.length > 0 && <section><h3>Experience</h3><ul>{previewExperience.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewCredentials.length > 0 && <section><h3>Open source, research, and certification</h3><ul>{previewCredentials.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {(previewSkills.length > 0 || previewAchievements.length > 0) && <section><h3>Skills and achievements</h3>{previewSkills.length > 0 && <p><strong>Skills:</strong> {previewSkills.join(", ")}</p>}{previewAchievements.length > 0 && <ul>{previewAchievements.map((item) => <li key={item}>{item}</li>)}</ul>}</section>}
         </section>
 
         <aside className={styles.review} aria-label="Resume review decisions">
+          <section className={styles.resumeForm} aria-labelledby="resume-content-title">
+            <div className={styles.formHeading}><div><p>Template</p><h2 id="resume-content-title">CampusHire Classic</h2></div><span>A4 · single column</span></div>
+            <p>Only the details entered here are rendered. Keep one project, education, experience, credential, skill, or achievement per line.</p>
+            <div className={styles.formGrid}>
+              <label>Full name<input value={draft.fullName} onChange={(event) => updateDraft("fullName", event.target.value)} maxLength={160} required /></label>
+              <label>Email<input type="email" value={draft.email} onChange={(event) => updateDraft("email", event.target.value)} maxLength={320} required /></label>
+              <label>Phone<input value={draft.phone} onChange={(event) => updateDraft("phone", event.target.value)} maxLength={24} /></label>
+              <label>GitHub URL<input type="url" value={draft.githubUrl} onChange={(event) => updateDraft("githubUrl", event.target.value)} maxLength={500} /></label>
+              <label className={styles.fullField}>Portfolio URL<input type="url" value={draft.portfolioUrl} onChange={(event) => updateDraft("portfolioUrl", event.target.value)} maxLength={500} /></label>
+              <label className={styles.fullField}>Professional summary<textarea aria-label="Professional summary" value={draft.summary} onChange={(event) => updateDraft("summary", event.target.value)} maxLength={900} /></label>
+              <label className={styles.fullField}>Projects<textarea aria-label="Projects" value={draft.projects} onChange={(event) => updateDraft("projects", event.target.value)} placeholder="Project name — impact, technologies, or link" /></label>
+              <label className={styles.fullField}>Education<textarea aria-label="Education" value={draft.education} onChange={(event) => updateDraft("education", event.target.value)} placeholder="Degree — institution · year" /></label>
+              <label className={styles.fullField}>Experience<textarea aria-label="Experience" value={draft.experience} onChange={(event) => updateDraft("experience", event.target.value)} placeholder="Organization — role · dates" /></label>
+              <label className={styles.fullField}>Research and certifications<textarea aria-label="Research and certifications" value={draft.credentials} onChange={(event) => updateDraft("credentials", event.target.value)} placeholder="Credential — issuer · date or status" /></label>
+              <label className={styles.fullField}>Skills<textarea aria-label="Skills" value={draft.skills} onChange={(event) => updateDraft("skills", event.target.value)} placeholder="One skill per line" /></label>
+              <label className={styles.fullField}>Achievements<textarea aria-label="Achievements" value={draft.achievements} onChange={(event) => updateDraft("achievements", event.target.value)} placeholder="One factual achievement per line" /></label>
+            </div>
+          </section>
+
+          {version ? <>
           <div className={styles.score}><Sparkles size={20} aria-hidden="true" /><div><span>Review state</span><strong>{version.status === "completed" ? "Complete" : `${unresolvedFields} fields left`}</strong></div></div>
           <p className={styles.guardrail}>Suggestions and extraction proposals never become resume claims until you decide.</p>
 
@@ -288,6 +414,7 @@ export function ResumeBuilder() {
             </div> : <p className={styles.accepted} role="status">Decision recorded: {suggestion.status}.</p>}
           </article>)}
           {Object.keys(suggestionDecisions).length ? <button type="button" className={styles.primary} disabled={state === "saving"} onClick={() => void saveSuggestions()}>Save {Object.keys(suggestionDecisions).length} suggestion decision{Object.keys(suggestionDecisions).length === 1 ? "" : "s"}</button> : null}
+          </> : <p className={styles.guardrail}>Profile details are prefilled when available. The generated file stays private and is saved as a new version.</p>}
         </aside>
       </div>
     </main>

@@ -58,7 +58,7 @@ describe("ResumeWorkspace", () => {
     render(<ResumeWorkspace />);
 
     await screen.findByText("No resume versions yet");
-    expect(screen.getByRole("link", { name: "Use the manual resume builder" })).toHaveAttribute("href", "/resume/builder");
+    expect(screen.getByRole("link", { name: "Use the manual resume builder" })).toHaveAttribute("href", "/resume/builder?mode=manual");
   });
 
   it("compares evidence and explains application-locked deletion", async () => {
