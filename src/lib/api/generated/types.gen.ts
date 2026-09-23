@@ -5215,6 +5215,40 @@ export type ProjectEntry = {
 };
 
 /**
+ * ProjectEntryResponse
+ */
+export type ProjectEntryResponse = {
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Outcomes
+     */
+    outcomes: Array<string>;
+    /**
+     * Project Type
+     */
+    project_type: 'academic' | 'personal' | 'internship' | 'hackathon' | 'other';
+    /**
+     * Project Url
+     */
+    project_url: string | null;
+    /**
+     * Technologies
+     */
+    technologies: Array<string>;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
  * ProjectsSkillsStep
  */
 export type ProjectsSkillsStep = {
@@ -7202,9 +7236,7 @@ export type StudentOnboardingResponse = {
     /**
      * Projects
      */
-    projects: Array<{
-        [key: string]: unknown;
-    }>;
+    projects: Array<ProjectEntryResponse>;
     /**
      * Revision
      */
