@@ -171,7 +171,7 @@ export function EditorialLanding() {
                   src="/product-evidence/student-priorities.png"
                   alt="CampusHire student readiness workspace showing a next placement action and reviewed profile details"
                   fill
-                  priority
+                  loading="eager"
                   sizes="(max-width: 900px) 94vw, 52vw"
                 />
               </div>
