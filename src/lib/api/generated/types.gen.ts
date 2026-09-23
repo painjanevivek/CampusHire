@@ -7120,7 +7120,7 @@ export type StudentMessageCreate = {
     /**
      * Intent
      */
-    intent: 'explain_eligibility' | 'explain_role_match' | 'improve_profile_or_resume' | 'preparation_roadmap';
+    intent: 'explain_eligibility' | 'explain_role_match' | 'interview_practice' | 'improve_profile_or_resume' | 'preparation_roadmap';
     /**
      * Message
      */
