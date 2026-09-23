@@ -25,8 +25,8 @@ type Draft = Record<string, string | boolean>;
 type SaveState = "loading" | "idle" | "saving" | "saved" | "error" | "conflict";
 
 const blank: Draft = {
-  full_name: "", prn: "", department: "", graduation_year: "",
-  degree: "", branch: "", education_institution: "", start_year: "", score: "", score_scale: "cgpa_10", active_backlogs: "0",
+  full_name: "", institution_name: "", prn: "", graduation_year: "",
+  degree: "", branch: "", start_year: "", score: "", score_scale: "cgpa_10", active_backlogs: "0",
   experience_organization: "", experience_title: "", experience_start: "", experience_end: "", responsibilities: "",
   project_title: "", project_description: "", technologies: "", outcomes: "", skills: "", certification_name: "", certification_issuer: "",
   target_roles: "", industries: "", locations: "", job_types: "full_time", work_modes: "hybrid",
@@ -51,8 +51,8 @@ function hydrate(data: Onboarding): Draft {
   const channels = Array.isArray(participation.communication_channels) ? participation.communication_channels : [];
   return {
     ...blank,
-    full_name: String(data.identity.full_name ?? ""), prn: String(data.identity.prn ?? ""), department: String(data.identity.department ?? ""), graduation_year: String(data.identity.graduation_year ?? ""),
-    degree: String(education.degree ?? ""), branch: String(education.branch ?? ""), education_institution: String(education.institution ?? data.institution_name ?? ""), start_year: String(education.start_year ?? ""), score: String(education.score ?? ""), score_scale: String(education.score_scale ?? "cgpa_10"), active_backlogs: String(education.active_backlogs ?? 0),
+    full_name: String(data.identity.full_name ?? ""), institution_name: String(data.institution_name ?? ""), prn: String(data.identity.prn ?? ""), graduation_year: String(data.identity.graduation_year ?? ""),
+    degree: String(education.degree ?? ""), branch: String(education.branch ?? data.identity.department ?? ""), start_year: String(education.start_year ?? ""), score: String(education.score ?? ""), score_scale: String(education.score_scale ?? "cgpa_10"), active_backlogs: String(education.active_backlogs ?? 0),
     experience_organization: String(experience.organization ?? ""), experience_title: String(experience.title ?? ""), experience_start: String(experience.start_date ?? ""), experience_end: String(experience.end_date ?? ""), responsibilities: Array.isArray(experience.responsibilities) ? experience.responsibilities.join("\n") : "",
     project_title: String(project.title ?? ""), project_description: String(project.description ?? ""), technologies: Array.isArray(project.technologies) ? project.technologies.join(", ") : "", outcomes: Array.isArray(project.outcomes) ? project.outcomes.join("\n") : "", skills: data.skills.map((item) => String(item.name ?? "")).filter(Boolean).join(", "), certification_name: String(certification.name ?? ""), certification_issuer: String(certification.issuer ?? ""),
     target_roles: Array.isArray(career.target_roles) ? career.target_roles.join(", ") : "", industries: Array.isArray(career.industries) ? career.industries.join(", ") : "", locations: Array.isArray(career.locations) ? career.locations.join(", ") : "", job_types: Array.isArray(career.job_types) ? career.job_types.join(",") : "full_time", work_modes: Array.isArray(career.work_modes) ? career.work_modes.join(",") : "hybrid",
@@ -62,8 +62,8 @@ function hydrate(data: Onboarding): Draft {
 
 function backendStepBody(step: number, draft: Draft) {
   const value = (key: string) => String(draft[key] ?? "").trim();
-  if (step === 1) return { identity: { full_name: value("full_name"), prn: value("prn"), department: value("department"), graduation_year: Number(value("graduation_year")) } };
-  if (step === 2) return { education: [{ qualification_level: "degree", degree: value("degree"), branch: value("branch"), institution: value("education_institution"), start_year: value("start_year") ? Number(value("start_year")) : null, graduation_year: Number(value("graduation_year")), score: Number(value("score")), score_scale: value("score_scale"), active_backlogs: Number(value("active_backlogs") || 0) }] };
+  if (step === 1) return { identity: { full_name: value("full_name"), prn: value("prn"), department: value("branch"), graduation_year: Number(value("graduation_year")) } };
+  if (step === 2) return { education: [{ qualification_level: "degree", degree: value("degree"), branch: value("branch"), institution: value("institution_name"), start_year: value("start_year") ? Number(value("start_year")) : null, graduation_year: Number(value("graduation_year")), score: Number(value("score")), score_scale: value("score_scale"), active_backlogs: Number(value("active_backlogs") || 0) }] };
   if (step === 3) return { experience: value("experience_organization") ? [{ organization: value("experience_organization"), title: value("experience_title"), start_date: value("experience_start"), end_date: value("experience_end") || null, is_current: !value("experience_end"), responsibilities: lines(draft.responsibilities) }] : [] };
   if (step === 4) return { projects_skills: { projects: value("project_title") ? [{ title: value("project_title"), description: value("project_description"), technologies: lines(draft.technologies), outcomes: lines(draft.outcomes), project_url: null }] : [], skills: lines(draft.skills), certifications: value("certification_name") ? [{ name: value("certification_name"), issuer: value("certification_issuer"), issued_on: null, expires_on: null, credential_url: null }] : [] } };
   if (step === 5) return { career_preferences: { target_roles: lines(draft.target_roles), industries: lines(draft.industries), locations: lines(draft.locations), job_types: lines(draft.job_types), work_modes: lines(draft.work_modes) } };
@@ -73,8 +73,8 @@ function backendStepBody(step: number, draft: Draft) {
 
 function canSaveStage(stage: number, draft: Draft): boolean {
   const value = (key: string) => String(draft[key] ?? "").trim();
-  if (stage === 1) return value("full_name").length >= 2 && value("prn").length >= 2 && value("department").length >= 2 && Number(value("graduation_year")) >= 2000
-    && value("degree").length >= 2 && value("branch").length >= 2 && value("education_institution").length >= 2 && value("score") !== "";
+  if (stage === 1) return value("full_name").length >= 2 && value("institution_name").length >= 2 && value("prn").length >= 2 && value("branch").length >= 2 && Number(value("graduation_year")) >= 2000
+    && value("degree").length >= 2 && value("score") !== "";
   if (stage === 2) return !value("experience_organization") || (value("experience_organization").length >= 2 && value("experience_title").length >= 2 && Boolean(value("experience_start")));
   if (stage === 3) return (!value("project_title") || (value("project_title").length >= 2 && value("project_description").length >= 10)) && (!value("certification_name") || (value("certification_name").length >= 2 && value("certification_issuer").length >= 2));
   if (stage === 4) return lines(draft.target_roles).length > 0;
@@ -136,6 +136,11 @@ export function StudentOnboardingWizard() {
       setMessage("Complete the required fields for this step. Your tab draft is still saved.");
       return;
     }
+    if (advance && step === 5 && draft.review_confirmed !== true) {
+      setState("error");
+      setMessage("Review and confirm your profile before entering the workspace.");
+      return;
+    }
     if (!dirty && !advance) return;
     if (!dirty && advance && step < onboardingStageForBackendStep(data.current_step)) {
       setStep((current) => Math.min(current + 1, 5));
@@ -174,6 +179,29 @@ export function StudentOnboardingWizard() {
     } finally { saving.current = false; }
   }
 
+  async function skipOptionalStep() {
+    if (!data || ![2, 3].includes(step) || saving.current) return;
+    const skippedStep = step;
+    saving.current = true;
+    setState("saving");
+    setMessage("");
+    try {
+      const saved = await sendStep(data, skippedStep + 1, {});
+      setData(saved);
+      setDraft(hydrate(saved));
+      setDirty(false);
+      setState("saved");
+      window.sessionStorage.removeItem(`campushire.onboarding.v2.${saved.profile_id}`);
+      setStep(skippedStep + 1);
+      setMessage(skippedStep === 2
+        ? "Experience skipped. You can add it later from your profile."
+        : "Projects and skills skipped. You can add them later from your profile.");
+    } catch (cause) {
+      if (cause instanceof ApiError && cause.status === 409) setState("conflict"); else setState("error");
+      setMessage(cause instanceof ApiError ? cause.message : "Could not skip this step. Your tab draft is still available.");
+    } finally { saving.current = false; }
+  }
+
   function change(key: string, value: string | boolean) { setDraft((current) => ({ ...current, [key]: value })); setDirty(true); setState("idle"); }
   function submit(event: FormEvent) { event.preventDefault(); void save(true); }
 
@@ -189,7 +217,7 @@ export function StudentOnboardingWizard() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
-        <div><p>Student profile</p><h1>Build your evidence once.</h1><span>Five guided steps help your placement team understand your profile. You can add optional details later.</span></div>
+        <div><p>Student profile</p><h1>Build your profile once.</h1><span>Five guided steps help your placement team understand your background. You can add optional details later.</span></div>
       </header>
       <nav className={styles.progress} aria-label="Student onboarding progress">
         <div className={styles.progressMeta}>
@@ -203,21 +231,18 @@ export function StudentOnboardingWizard() {
       </nav>
       <div className={styles.layout}>
         <section className={styles.panel}>
-          <header className={styles.panelHeader}><div><p>Step {step}</p><h2>{steps[step - 1][0]}</h2><span>{steps[step - 1][1]}. Optional fields can be added or updated later.</span></div><div className={styles.saveStatus} data-state={state}><Cloud aria-hidden="true" />{state === "saving" ? "Saving…" : state === "saved" ? "Saved" : state === "conflict" ? "Reload required" : "Autosave on"}</div></header>
+          <header className={styles.panelHeader}><div><p>Step {step}</p><h2>{steps[step - 1][0]}</h2><span>{steps[step - 1][1]}. {step === 2 ? "Optional—skip now and add experience later." : step === 3 ? "Optional—skip now and add projects or skills later." : step === 5 ? "Optional—set placement participation now, or skip and enter your workspace." : "Optional fields can be added or updated later."}</span></div><div className={styles.saveStatus} data-state={state}><Cloud aria-hidden="true" />{state === "saving" ? "Saving…" : state === "saved" ? "Saved" : state === "conflict" ? "Reload required" : "Autosave on"}</div></header>
           {message ? <Alert tone={state === "error" || state === "conflict" ? "error" : "info"}>{message}{state === "conflict" ? <Button type="button" variant="quiet" onClick={() => void load()}>Reload latest</Button> : null}</Alert> : null}
           <form className={styles.form} onSubmit={submit}>
             {step === 1 ? <>
               <Input id="full_name" label="Full name" value={String(draft.full_name)} onChange={(e) => change("full_name", e.target.value)} required />
-              <Input id="institution" label="Institution" value={data.institution_name ?? ""} readOnly aria-readonly="true" />
+              <Input id="institution" label="Institution" value={String(draft.institution_name)} readOnly aria-readonly="true" />
               <Input id="prn" label="PRN / enrollment ID" value={String(draft.prn)} onChange={(e) => change("prn", e.target.value)} required />
-              <Input id="department" label="Department" value={String(draft.department)} onChange={(e) => change("department", e.target.value)} required />
+              <Input id="branch" label="Branch" value={String(draft.branch)} onChange={(e) => change("branch", e.target.value)} required />
               <Input id="graduation_year" label="Graduation year" type="number" min={2000} max={2100} value={String(draft.graduation_year)} onChange={(e) => change("graduation_year", e.target.value)} required />
               <Input id="degree" label="Degree" value={String(draft.degree)} onChange={(e) => change("degree", e.target.value)} required />
-              <Input id="branch" label="Branch" value={String(draft.branch)} onChange={(e) => change("branch", e.target.value)} required />
-              <Input id="education_institution" label="Awarding institution" value={String(draft.education_institution)} onChange={(e) => change("education_institution", e.target.value)} required />
               <Input id="start_year" label="Start year (optional)" type="number" value={String(draft.start_year)} onChange={(e) => change("start_year", e.target.value)} />
               <Input id="score" label="CGPA / percentage" type="number" step="0.01" value={String(draft.score)} onChange={(e) => change("score", e.target.value)} required />
-              <Select id="score_scale" label="Score scale" value={String(draft.score_scale)} onChange={(e) => change("score_scale", e.target.value)}><option value="cgpa_10">CGPA out of 10</option><option value="percentage">Percentage</option></Select>
               <Input id="active_backlogs" label="Active backlogs" type="number" min={0} value={String(draft.active_backlogs)} onChange={(e) => change("active_backlogs", e.target.value)} required />
             </> : null}
             {step === 2 ? <>
@@ -250,12 +275,12 @@ export function StudentOnboardingWizard() {
               <label><input type="checkbox" checked={Boolean(draft.communication_in_app)} onChange={(e) => change("communication_in_app", e.target.checked)} /> In-app updates</label>
               <label className={styles.fieldRow}><input type="checkbox" checked={Boolean(draft.privacy_accepted)} onChange={(e) => change("privacy_accepted", e.target.checked)} required /> I accept the placement participation privacy and visibility choices.</label>
               <div className={styles.reviewList}>
-                <div><Check aria-hidden="true" /><span><strong>Profile-driven use</strong><small>Reviewed evidence supports matching and optional resume generation. Eligibility remains deterministic.</small></span></div>
+          <div><Check aria-hidden="true" /><span><strong>Profile-driven use</strong><small>Details you choose to share can support role suggestions and optional resume drafts. Published rules still determine eligibility.</small></span></div>
                 <div><Check aria-hidden="true" /><span><strong>Your information stays under your control</strong><small>Generated wording always requires preview and explicit acceptance.</small></span></div>
                 <label><input type="checkbox" checked={Boolean(draft.review_confirmed)} onChange={(e) => change("review_confirmed", e.target.checked)} required /> I reviewed this information and confirm it is accurate.</label>
               </div>
             </> : null}
-            <div className={styles.actions}>{step > 1 ? <Button type="button" variant="quiet" onClick={() => setStep((current) => current - 1)}><ArrowLeft aria-hidden="true" /> Back</Button> : null}<Button type="submit" disabled={state === "saving"}>{step === 5 ? "Complete onboarding" : <>Save and continue <ArrowRight aria-hidden="true" /></>}</Button></div>
+            <div className={styles.actions}>{step > 1 ? <Button type="button" variant="quiet" onClick={() => setStep((current) => current - 1)}><ArrowLeft aria-hidden="true" /> Back</Button> : null}{[2, 3].includes(step) ? <Button type="button" variant="quiet" disabled={state === "saving"} onClick={() => void skipOptionalStep()}>Skip this step</Button> : null}<Button type="submit" disabled={state === "saving"}>{step === 5 ? "Complete onboarding" : <>Save and continue <ArrowRight aria-hidden="true" /></>}</Button></div>
           </form>
         </section>
       </div>
