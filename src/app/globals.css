@@ -232,16 +232,6 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .signUpConsent input { width: 1rem; height: 1rem; margin: .2rem 0 0; accent-color: var(--brand-blue); }
 .signUpConsent a { color: var(--brand-blue-dark); }
 .signUpFieldPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.signUpInvitation { display: grid; gap: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
-.signUpInvitationTrigger { min-height: var(--control-min-size); display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
-.signUpInvitationTrigger > span { display: grid; gap: .2rem; }
-.signUpInvitationTrigger small { color: var(--ink-muted); font-size: .8rem; line-height: 1.4; }
-.signUpInvitationTrigger svg { flex: 0 0 auto; width: 1.125rem; color: var(--ink-muted); transition: transform 220ms cubic-bezier(.22, 1, .36, 1); }
-.signUpInvitationTrigger svg.isOpen { transform: rotate(180deg); }
-.signUpInvitationPanel { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows 240ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease, visibility 0s linear 240ms; }
-.signUpInvitationPanel.isOpen { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
-.signUpInvitationInner { min-height: 0; overflow: hidden; padding: 0 1rem; border-top: 1px solid transparent; transition: padding 240ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease; }
-.signUpInvitationPanel.isOpen .signUpInvitationInner { padding: 1rem; border-color: var(--line); }
 .roleChoice { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .roleChoice label { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: .65rem; padding: .9rem; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
 .roleChoice label:has(input:checked) { border-color: var(--brand-blue); background: color-mix(in srgb, var(--brand-blue) 7%, transparent); }
@@ -333,7 +323,6 @@ dialog::backdrop { background: var(--modal-backdrop); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .signUpInvitationTrigger svg, .signUpInvitationPanel, .signUpInvitationInner { transition-duration: 0.01ms; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

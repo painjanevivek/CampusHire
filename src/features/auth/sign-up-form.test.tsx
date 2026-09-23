@@ -24,17 +24,9 @@ async function completeForm(password = "a secure campus passphrase") {
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Asha" } });
   fireEvent.change(screen.getByLabelText("Surname"), { target: { value: "Patil" } });
   fireEvent.change(screen.getByLabelText("DOB"), { target: { value: "2004-05-16" } });
-  fireEvent.change(screen.getByLabelText("Email"), {
-    target: { value: "asha@student-campus.edu" },
-  });
-  fireEvent.click(screen.getByRole("button", { name: /have an invitation code/i }));
-  fireEvent.change(screen.getByLabelText("Invitation code (optional)"), {
-    target: { value: "approved-roster-invitation-code" },
-  });
+  fireEvent.change(screen.getByLabelText("Email"), { target: { value: "asha@student-campus.edu" } });
   fireEvent.change(screen.getByLabelText("Password"), { target: { value: password } });
-  fireEvent.change(screen.getByLabelText("Re-enter password"), {
-    target: { value: password },
-  });
+  fireEvent.change(screen.getByLabelText("Re-enter password"), { target: { value: password } });
   fireEvent.click(screen.getByRole("checkbox"));
 }
 
@@ -46,55 +38,26 @@ describe("SignUpForm", () => {
     pushMock.mockReset();
   });
 
-  it("keeps email and college required and progressively discloses the optional invitation code", async () => {
+  it("keeps student identity, email, college, password, and consent required without an invitation field", async () => {
     render(<SignUpForm />);
 
     await waitFor(() => expect(screen.getByRole("option", { name: "Test College" })).toBeInTheDocument());
-    expect(screen.getAllByRole("textbox")).toHaveLength(3);
     expect(screen.getByLabelText("Name")).toBeRequired();
     expect(screen.getByLabelText("Surname")).toBeRequired();
     expect(screen.getByLabelText("DOB")).toBeRequired();
     expect(screen.getByLabelText("Email")).toBeRequired();
     expect(screen.getByLabelText("College")).toBeRequired();
-    const disclosure = screen.getByRole("button", { name: /have an invitation code/i });
-    expect(disclosure).toHaveAttribute("aria-expanded", "false");
-    fireEvent.click(disclosure);
-    expect(disclosure).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getAllByRole("textbox")).toHaveLength(4);
-    expect(screen.getByLabelText("Invitation code (optional)")).not.toBeRequired();
     expect(screen.getByLabelText("Password")).toBeRequired();
     expect(screen.getByLabelText("Re-enter password")).toBeRequired();
-    expect(screen.getByRole("checkbox")).toBeRequired();
+    expect(screen.queryByLabelText(/invitation code/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /invitation code/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/reviews access before activation/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/activate your account now/i)).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Show password" })).toHaveLength(2);
     expect(screen.getByRole("button", { name: "Sign Up" })).toBeInTheDocument();
-    expect(screen.getByText(/placement office/i)).toBeInTheDocument();
-    expect(screen.queryByText("T&P")).not.toBeInTheDocument();
   });
 
-  it("submits without an invitation code as an access request, not a signed-in account", async () => {
-    csrfRequestMock.mockResolvedValue({
-      status: "approval_pending",
-      message: "Your request was recorded for placement-office review.",
-      next_path: null,
-    });
-    render(<SignUpForm />);
-    await completeForm();
-    fireEvent.change(screen.getByLabelText("Invitation code (optional)"), {
-      target: { value: "" },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
-
-    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalled());
-    expect(JSON.parse(csrfRequestMock.mock.calls[0][1].body)).toMatchObject({
-      email: "asha@student-campus.edu",
-      invitation_code: null,
-    });
-    expect(await screen.findByText("Your request was recorded for placement-office review.")).toBeInTheDocument();
-    expect(pushMock).not.toHaveBeenCalled();
-  });
-
-  it("submits the complete student registration payload", async () => {
+  it("registers without an invitation code and continues to student onboarding", async () => {
     csrfRequestMock.mockResolvedValue({
       status: "registered",
       message: "Account created. Continue to your student profile.",
@@ -105,25 +68,21 @@ describe("SignUpForm", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
 
-    await waitFor(() =>
-      expect(csrfRequestMock).toHaveBeenCalledWith("/auth/signup", {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Asha",
-          surname: "Patil",
-          dob: "2004-05-16",
-          email: "asha@student-campus.edu",
-          institution_id: institutionId,
-          invitation_code: "approved-roster-invitation-code",
-          password: "a secure campus passphrase",
-          re_enter_password: "a secure campus passphrase",
-          terms_version: "2026-08-28",
-          privacy_version: "2026-08-28",
-        }),
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Asha",
+        surname: "Patil",
+        dob: "2004-05-16",
+        email: "asha@student-campus.edu",
+        institution_id: institutionId,
+        password: "a secure campus passphrase",
+        re_enter_password: "a secure campus passphrase",
+        terms_version: "2026-08-28",
+        privacy_version: "2026-08-28",
       }),
-    );
+    }));
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/onboarding"));
-    expect(screen.queryByText(/activation link/i)).not.toBeInTheDocument();
   });
 
   it("does not submit when the passwords differ", async () => {

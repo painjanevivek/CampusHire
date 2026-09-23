@@ -3,8 +3,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/feedback";
 import { Input, Select } from "@/components/ui/form-controls";
@@ -21,7 +19,6 @@ export function SignUpForm() {
   const [institutions, setInstitutions] = useState<SignupInstitution[]>([]);
   const [institutionsLoading, setInstitutionsLoading] = useState(true);
   const [institutionsError, setInstitutionsError] = useState("");
-  const [invitationOpen, setInvitationOpen] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -73,7 +70,6 @@ export function SignUpForm() {
           dob: data.get("dob"),
           email: data.get("email"),
           institution_id: data.get("institution_id"),
-          invitation_code: String(data.get("invitation_code") ?? "").trim() || null,
           password,
           re_enter_password: repeatedPassword,
           terms_version: "2026-08-28",
@@ -129,17 +125,12 @@ export function SignUpForm() {
         type="email"
         label="Email"
         autoComplete="email"
-        hint="Any valid email address works. Your selected college reviews access before activation."
         required
       />
       <Select
         id="institution_id"
         name="institution_id"
         label="College"
-        hint={institutionsLoading
-          ? "Loading available colleges…"
-          : "Choose the college where you want placement access. A valid invitation code can activate your account now."
-        }
         required
         disabled={institutionsLoading || Boolean(institutionsError) || institutions.length === 0}
       >
@@ -152,39 +143,6 @@ export function SignUpForm() {
       {!institutionsLoading && !institutionsError && institutions.length === 0 ? (
         <Alert tone="info">No colleges are available for registration yet.</Alert>
       ) : null}
-      <div className="signUpInvitation">
-        <button
-          className="signUpInvitationTrigger"
-          type="button"
-          aria-expanded={invitationOpen}
-          aria-controls="signup-invitation-panel"
-          onClick={() => setInvitationOpen((open) => !open)}
-        >
-          <span>
-            <strong>Have an invitation code?</strong>
-            <small>Optional · use a code from your placement office to activate now.</small>
-          </span>
-          <ChevronDown aria-hidden="true" className={invitationOpen ? "isOpen" : undefined} />
-        </button>
-        <div
-          className={`signUpInvitationPanel${invitationOpen ? " isOpen" : ""}`}
-          id="signup-invitation-panel"
-          aria-hidden={!invitationOpen}
-          inert={!invitationOpen}
-        >
-          <div className="signUpInvitationInner">
-            <Input
-              id="invitation_code"
-              name="invitation_code"
-              label="Invitation code (optional)"
-              autoComplete="off"
-              minLength={20}
-              maxLength={200}
-              hint="The code must be issued for the email address above."
-            />
-          </div>
-        </div>
-      </div>
 
       <div className="signUpFieldPair">
         <PasswordInput
