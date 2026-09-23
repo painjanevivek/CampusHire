@@ -5,7 +5,7 @@ import { EditorialLanding } from "@/features/marketing/editorial-landing";
 export const metadata: Metadata = {
   title: "Accountable campus recruitment",
   description:
-    "CampusHire connects student evidence, published eligibility rules, applications, and human placement review in one accountable record.",
+    "CampusHire connects student profiles, published eligibility rules, applications, and human placement review in one accountable record.",
   openGraph: {
     title: "CampusHire — accountable campus recruitment",
     description:

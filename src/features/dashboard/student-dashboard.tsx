@@ -136,7 +136,7 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
               <div><dt>Expected effect</dt><dd>Unlocks {data.nextAction.unlocks.toLowerCase()}</dd></div>
             </dl>
             <details className={styles.actionEvidence}>
-              <summary>Evidence behind this action</summary>
+              <summary>Why this is your next step</summary>
               <p>Policy {data.nextAction.policy_version}</p>
               <ul>{data.nextAction.source_facts.map((fact) => <li key={fact}>{fact}</li>)}</ul>
             </details>
@@ -149,13 +149,13 @@ export function StudentDashboard({ data }: { data: StudentDashboardData }) {
             {item.deadline_at && <small>{new Date(item.deadline_at).toLocaleString(undefined, { timeZone: data.timezone ?? "UTC" })} ({data.timezone ?? "UTC"})</small>}
           </li>)}</ul></section>}
           <div className={styles.readinessHeader}>
-            <p className={styles.kicker}>Reviewed evidence</p>
+            <p className={styles.kicker}>Profile readiness</p>
             <ListChecks size={26} aria-hidden="true" />
           </div>
           <div className={styles.evidenceSummary}>
             <strong>{data.readiness.completed_evidence} of {data.readiness.total_evidence}</strong>
-            <span>evidence areas complete</span>
-            <small>{data.readiness.required_complete ? "Required identity and resume evidence are ready." : "Required evidence is still incomplete."}</small>
+            <span>profile sections complete</span>
+            <small>{data.readiness.required_complete ? "Your required profile details and resume are ready." : "Some required profile details are still missing."}</small>
           </div>
           <dl className={styles.evidenceList}>
             {data.evidence.map((item) => (

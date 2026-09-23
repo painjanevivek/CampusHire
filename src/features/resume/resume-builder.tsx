@@ -316,7 +316,7 @@ export function ResumeBuilder() {
   }
 
   if (!version && !manualMode) {
-    return <main id="main-content" className={styles.page}><div className={styles.empty}><FileDown aria-hidden="true" /><h1>No resume is ready for review</h1><p>Create a version from reviewed profile evidence in Resume Studio.</p><Link href="/resume"><ArrowLeft size={16} aria-hidden="true" /> Return to resumes</Link></div></main>;
+    return <main id="main-content" className={styles.page}><div className={styles.empty}><FileDown aria-hidden="true" /><h1>No resume is ready for review</h1><p>Create a version from the profile details you have reviewed in Resume Studio.</p><Link href="/resume"><ArrowLeft size={16} aria-hidden="true" /> Return to resumes</Link></div></main>;
   }
 
   const previewName = draft.fullName || "Your name";
@@ -339,7 +339,7 @@ export function ResumeBuilder() {
       </header>
 
       {message && <Alert tone={state === "error" ? "error" : "success"}>{message}</Alert>}
-      {generated ? <details className={styles.generatedEvidence}><summary>Generated version evidence</summary><dl><div><dt>Generator</dt><dd>{generated.generator_version ?? "CampusHire generator"}</dd></div><div><dt>Evidence digest</dt><dd><code>{generated.evidence_digest}</code></dd></div></dl><p>The digest identifies the reviewed content used for this PDF; it is not a credential verification.</p></details> : null}
+      {generated ? <details className={styles.generatedEvidence}><summary>How this version was created</summary><dl><div><dt>Generator</dt><dd>{generated.generator_version ?? "CampusHire generator"}</dd></div><div><dt>Content reference</dt><dd><code>{generated.evidence_digest}</code></dd></div></dl><p>This reference identifies the profile details used for this PDF. It does not verify your credentials.</p></details> : null}
 
       <div className={styles.grid}>
         <section className={styles.paper} aria-label="Resume preview">

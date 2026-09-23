@@ -732,7 +732,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
                 </div>
               ) : null}
 
-              <Alert tone="info">Need a new version? Use Resume Studio to build it from reviewed profile evidence, then return here.</Alert>
+              <Alert tone="info">Need a new version? Use Resume Studio to build it from profile details you have reviewed, then return here.</Alert>
             </>
           ) : null}
 
@@ -835,7 +835,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
                           <div><dt>Placement restrictions</dt><dd>{draft.material_terms.terms.placement_restrictions.join("; ") || "None listed"}</dd></div>
                           <div><dt>Application deadline</dt><dd>{new Date(draft.material_terms.terms.application_deadline).toLocaleString()}</dd></div>
                         </dl>
-                        <small className={styles.digest}>Evidence digest {draft.material_terms.content_digest}</small>
+                        <small className={styles.digest}>Content reference {draft.material_terms.content_digest}</small>
                       </div>
                     </article>
                   ) : (

@@ -276,10 +276,34 @@ def configure_degraded_api(context: BrowserContext) -> list[str]:
 
     def unavailable(route: Any) -> None:
         requests.append(route.request.url)
+        request_origin = route.request.headers.get("origin")
+        if not request_origin:
+            referer = urlsplit(route.request.headers.get("referer", ""))
+            request_origin = (
+                f"{referer.scheme}://{referer.netloc}"
+                if referer.scheme and referer.netloc
+                else None
+            )
+        if not request_origin:
+            raise RuntimeError("A browser origin is required for the degraded API fixture")
+        headers = {
+            "access-control-allow-origin": request_origin,
+            "access-control-allow-credentials": "true",
+            "vary": "Origin",
+        }
+        if route.request.method == "OPTIONS":
+            headers.update(
+                {
+                    "access-control-allow-methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+                    "access-control-allow-headers": "Accept, Content-Type, X-CSRF-Token, X-Request-ID",
+                }
+            )
+            route.fulfill(status=204, headers=headers)
+            return
         route.fulfill(
             status=503,
             content_type="application/json",
-            headers={"access-control-allow-origin": "*"},
+            headers=headers,
             body=json.dumps(
                 {
                     "detail": {

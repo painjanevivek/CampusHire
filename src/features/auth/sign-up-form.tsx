@@ -19,6 +19,7 @@ export function SignUpForm() {
   const [institutions, setInstitutions] = useState<SignupInstitution[]>([]);
   const [institutionsLoading, setInstitutionsLoading] = useState(true);
   const [institutionsError, setInstitutionsError] = useState("");
+  const [institutionLoadAttempt, setInstitutionLoadAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,7 +39,13 @@ export function SignUpForm() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [institutionLoadAttempt]);
+
+  function retryInstitutionLoad() {
+    setInstitutionsError("");
+    setInstitutionsLoading(true);
+    setInstitutionLoadAttempt((attempt) => attempt + 1);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -139,7 +146,10 @@ export function SignUpForm() {
           <option key={institution.id} value={institution.id}>{institution.name}</option>
         ))}
       </Select>
-      {institutionsError ? <Alert tone="error">{institutionsError}</Alert> : null}
+      {institutionsError ? <>
+        <Alert tone="error">{institutionsError}</Alert>
+        <Button type="button" variant="quiet" onClick={retryInstitutionLoad}>Retry college options</Button>
+      </> : null}
       {!institutionsLoading && !institutionsError && institutions.length === 0 ? (
         <Alert tone="info">No colleges are available for registration yet.</Alert>
       ) : null}

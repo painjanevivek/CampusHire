@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SignUpForm } from "./sign-up-form";
+import { ApiError } from "@/lib/api/client";
 
 const institutionId = "00000000-0000-0000-0000-000000000001";
 
@@ -83,6 +84,48 @@ describe("SignUpForm", () => {
       }),
     }));
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/onboarding"));
+  });
+
+  it("shows a distinct accessible pending-review confirmation without redirecting", async () => {
+    csrfRequestMock.mockResolvedValue({
+      status: "approval_pending",
+      message: "Your student registration is waiting for institution review.",
+      next_path: null,
+    });
+    render(<SignUpForm />);
+    await completeForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Your student registration is waiting for institution review.",
+    );
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it("offers a retry when institution options fail to load", async () => {
+    apiRequestMock.mockReset();
+    apiRequestMock
+      .mockRejectedValueOnce(new Error("Network unavailable"))
+      .mockResolvedValueOnce([{ id: institutionId, name: "Test College" }]);
+    render(<SignUpForm />);
+
+    expect(await screen.findByText("College options could not be loaded. Try again.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Retry college options" }));
+
+    expect(await screen.findByRole("option", { name: "Test College" })).toBeInTheDocument();
+    expect(apiRequestMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows backend validation messages without redirecting", async () => {
+    csrfRequestMock.mockRejectedValue(ApiError.fromStatus(422, "Choose an institution from the current list."));
+    render(<SignUpForm />);
+    await completeForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Choose an institution from the current list.");
+    expect(pushMock).not.toHaveBeenCalled();
   });
 
   it("does not submit when the passwords differ", async () => {

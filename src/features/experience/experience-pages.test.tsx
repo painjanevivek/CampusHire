@@ -36,7 +36,7 @@ describe("Product experience pages", () => {
     mocks.resource.mockImplementation(path => ({ data: path === "/tnp/recruitment/drives" ? [] : { start_at: "2026-08-01T00:00:00Z", end_at: "2026-09-01T00:00:00Z", timezone: "UTC", definition: { code: "placement_outcomes", version: null, status: "unconfigured", effective_at: null, frozen_at: "2026-09-01T00:00:00Z" }, metrics: [{ key: "review", label: "First review turnaround", value: null, sample_size: 0, explanation: "No recorded first departures.", href: "/admin/applications?review_pending=true" }] }, refresh: mocks.refresh }));
     render(<Reports />);
     expect(screen.getByText(/Application stages and verified outcomes are different records/)).toBeInTheDocument();
-    expect(screen.getByText(/An offered application must not be read as a confirmed joining/)).toBeInTheDocument();
+    expect(screen.getByText(/An accepted application does not confirm that you joined/)).toBeInTheDocument();
     expect(screen.getByText("No data")).toBeInTheDocument();
     expect(screen.getByText("Sample: 0")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "View source records" })).toHaveAttribute("href", "/tnp/applications?review_pending=true");

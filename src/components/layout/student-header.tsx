@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bot, BriefcaseBusiness, ClipboardList, Home, ListChecks, Menu, X } from "lucide-react";
@@ -25,12 +25,21 @@ const navigationIcons = { Dashboard: Home, Opportunities: BriefcaseBusiness, App
 export function StudentHeader() {
   const pathname = usePathname();
   const [surface, setSurface] = useState<"navigation" | "profile" | "notifications" | null>(null);
+  const [showAccessMessage, setShowAccessMessage] = useState(false);
   const menuOpen = surface === "navigation";
+  const onboardingIncomplete = pathname === "/onboarding";
   const setMenuOpen = useCallback((open: boolean) => setSurface(open ? "navigation" : null), []);
   const setProfileOpen = useCallback((open: boolean) => setSurface(current => open ? "profile" : current === "profile" ? null : current), []);
   const setNotificationsOpen = useCallback((open: boolean) => setSurface(current => open ? "notifications" : current === "notifications" ? null : current), []);
   const menuButton = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLElement>(null);
+  const handleFeatureNavigation = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    if (onboardingIncomplete) {
+      event.preventDefault();
+      setShowAccessMessage(true);
+    }
+    setMenuOpen(false);
+  }, [onboardingIncomplete, setMenuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -47,9 +56,10 @@ export function StudentHeader() {
   }, [menuOpen, setMenuOpen]);
 
   return (
+    <>
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link className={styles.brand} href="/dashboard" aria-label="CampusHire Student Dashboard">
+        <Link className={styles.brand} href="/dashboard" aria-label="CampusHire Student Dashboard" onClick={handleFeatureNavigation}>
           <BrandMark />
           <strong>CampusHire</strong>
         </Link>
@@ -83,24 +93,32 @@ export function StudentHeader() {
                 key={label}
                 href={href}
                 aria-current={selected ? "page" : undefined}
-                onClick={() => setMenuOpen(false)}
+                onClick={handleFeatureNavigation}
               >
                 <Icon size={16} aria-hidden="true" />{label}
               </Link>
             );
           })}
-          <Link className={styles.mobileCopilot} href="/copilot" onClick={() => setMenuOpen(false)}>
+          <Link className={styles.mobileCopilot} href="/copilot" onClick={handleFeatureNavigation}>
             <Bot size={16} aria-hidden="true" />Ask Copilot
           </Link>
         </nav>
 
         <div className={styles.utilities}>
-          <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot"><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
+          <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot" onClick={handleFeatureNavigation}><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
           <ThemeToggle />
           <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} />
-          <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} />
+          <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} onFeatureNavigation={handleFeatureNavigation} />
         </div>
       </div>
     </header>
+    {onboardingIncomplete && showAccessMessage ? (
+      <div className={styles.accessNotice} role="status" aria-live="polite">
+        <Bot aria-hidden="true" />
+        <span>Complete your student profile to unlock CampusHire’s AI Copilot and student features.</span>
+        <button type="button" aria-label="Dismiss profile completion message" onClick={() => setShowAccessMessage(false)}><X aria-hidden="true" /></button>
+      </div>
+    ) : null}
+    </>
   );
 }

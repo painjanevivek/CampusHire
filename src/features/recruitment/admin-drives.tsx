@@ -1051,7 +1051,7 @@ export function AdminDrives() {
                           <Input id="preview-backlogs" name="active_backlogs" label="Active backlogs" type="number" min="0" max="100" />
                           <button type="submit" disabled={busy}>Test these rules</button>
                         </form>
-                        {eligibilityPreview ? <div role="status" className={styles.previewResult}><Badge tone={eligibilityPreview.status === "eligible" ? "success" : "warning"}>{eligibilityPreview.status.replaceAll("_", " ")}</Badge><span>Rule version {eligibilityPreview.rule_version ?? "unavailable"}</span>{eligibilityPreview.missing_evidence.length ? <p>Manual review required for: {eligibilityPreview.missing_evidence.join(", ")}.</p> : null}</div> : null}
+                        {eligibilityPreview ? <div role="status" className={styles.previewResult}><Badge tone={eligibilityPreview.status === "eligible" ? "success" : "warning"}>{eligibilityPreview.status.replaceAll("_", " ")}</Badge><span>Rule version {eligibilityPreview.rule_version ?? "unavailable"}</span>{eligibilityPreview.missing_evidence.length ? <p>Details needed for manual review: {eligibilityPreview.missing_evidence.join(", ")}.</p> : null}</div> : null}
                       </details>
                       {extractions.map((proposal) => (
                         <article
@@ -1159,7 +1159,7 @@ export function AdminDrives() {
                           </ul>
                           {set.policy_references?.length ? (
                             <p className={styles.policyReferences}>
-                              Policy evidence: {set.policy_references.map((policy) =>
+                              Policy references: {set.policy_references.map((policy) =>
                                 `${policy.title} v${policy.version}`).join(", ")}
                             </p>
                           ) : null}
@@ -1336,15 +1336,15 @@ export function AdminDrives() {
             Add rule
           </button>
           <fieldset className={styles.policyEvidence}>
-            <legend>Approved policy evidence</legend>
+            <legend>Approved policies</legend>
             <p>
               Attach the exact approved versions used to prepare these rules.
               The references are locked when this rule version is created.
             </p>
             {policyLoadUnavailable ? (
               <Alert tone="warning">
-                Approved policy evidence could not be verified. Refresh before
-                creating a rule version that depends on policy evidence.
+                CampusHire could not confirm the approved policy details. Refresh before
+                creating a rule version that uses these policies.
               </Alert>
             ) : policies.length ? (
               policies.map((policy) => (
@@ -1365,14 +1365,14 @@ export function AdminDrives() {
               ))
             ) : (
               <Alert tone="warning">
-                No approved policy version is available. Publish reviewed policy
-                evidence before attaching it to this rule version.
+                No approved policy version is available. Publish the reviewed policy
+                before attaching it to this rule version.
               </Alert>
             )}
           </fieldset>
           <Alert tone="warning">
             <CircleAlert aria-hidden="true" /> Preview carefully. Existing
-            applications retain their original decision evidence; this version
+            applications retain the details used for their original decision; this version
             applies only after the drive is saved.
           </Alert>
           <div className={styles.actions}>

@@ -5197,6 +5197,10 @@ export type ProjectEntry = {
      */
     outcomes?: Array<string>;
     /**
+     * Project Type
+     */
+    project_type?: 'academic' | 'personal' | 'internship' | 'hackathon' | 'other';
+    /**
      * Project Url
      */
     project_url?: string | null;

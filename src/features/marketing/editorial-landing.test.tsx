@@ -15,7 +15,7 @@ describe("EditorialLanding", () => {
     const brand = screen.getByRole("link", { name: "CampusHire home" });
     expect(brand.closest("header")).toHaveAttribute("data-public-header");
     expect(brand.closest("header")).toHaveAttribute("data-landing-header");
-    expect(screen.getByRole("heading", { name: /campus placement, with the proof in view/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /campus placement, with clear decisions/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Create your profile" })).toHaveAttribute("href", "/sign-up?from=/");
     expect(screen.getByRole("link", { name: "See the placement record" })).toHaveAttribute("href", "#record");
     expect(screen.queryByRole("search")).not.toBeInTheDocument();
@@ -42,7 +42,7 @@ describe("EditorialLanding", () => {
     const record = screen.getByRole("region", { name: "The placement record" });
     const steps = within(record).getAllByRole("listitem");
     expect(steps.map((step) => step.textContent)).toEqual([
-      expect.stringMatching(/profile evidence/i),
+      expect.stringMatching(/your profile/i),
       expect.stringMatching(/reviewed resume/i),
       expect.stringMatching(/published eligibility/i),
       expect.stringMatching(/application snapshot/i),

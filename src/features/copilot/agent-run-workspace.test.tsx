@@ -84,7 +84,7 @@ describe("AgentRunWorkspace", () => {
 
     expect(await screen.findByRole("option", { name: "Software Engineer" })).toBeInTheDocument();
     expect(screen.queryByLabelText(/role id/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Missing resume evidence means unknown/i)).toBeInTheDocument();
+    expect(screen.getByText(/marks it as not provided rather than assuming you lack it/i)).toBeInTheDocument();
     expect(screen.getByText(/Practice conversations, free-text answers/i)).toBeInTheDocument();
   });
 
@@ -298,7 +298,7 @@ describe("AgentRunWorkspace", () => {
 
     render(<AgentRunWorkspace audience="student" />);
 
-    const disclosure = await screen.findByText("Evidence and versions");
+    const disclosure = await screen.findByText("Sources and versions");
     fireEvent.click(disclosure);
     expect(screen.getByText("gemini-approved-release")).toBeInTheDocument();
     expect(screen.getByText("campus-agent-v2")).toBeInTheDocument();

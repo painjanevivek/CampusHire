@@ -40,8 +40,40 @@
 .form label:has(> input[type="checkbox"]) { min-height: 44px; display: flex; align-items: center; gap: 10px; }
 .form label:has(> input[type="checkbox"]) input { width: 20px; height: 20px; flex: 0 0 auto; }
 .actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+.projectQuestion { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 10px; }
+.projectQuestion legend { padding: 0 8px; font-weight: var(--font-weight-label); }
+.projectQuestion label { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; color: var(--ink-muted); background: var(--canvas); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; }
+.projectQuestion label:has(input:checked) { color: var(--brand-blue-dark); background: var(--brand-blue-soft); border-color: var(--brand-blue); }
+.projectQuestion input { width: 16px; height: 16px; accent-color: var(--brand-blue); }
+.projectSection, .projectSkills { grid-column: 1 / -1; min-width: 0; }
+.projectSection { display: grid; gap: 18px; }
+.projectEditor { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 18px; padding: 22px; background: var(--canvas); border: 1px solid var(--line); border-radius: 12px; }
+.projectEditor > h3 { grid-column: 1 / -1; margin: 0; font-size: 1.2rem; }
+.projectEditor > button { justify-self: start; }
+.projectDescription { display: block; }
+.projectDescription > span, .projectDescription > small { display: block; color: var(--ink-muted); }
+.projectDescription > textarea { width: 100%; margin: 8px 0 4px; padding: 12px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font: inherit; resize: vertical; }
+.skillLabel { font-weight: var(--font-weight-label); }
+.skillPicker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.skillChip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; color: var(--ink-muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; font: inherit; font-size: .875rem; cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease; }
+.skillChip svg { width: 15px; height: 15px; }
+.skillChip[data-selected="true"] { color: var(--brand-blue-dark); background: var(--brand-blue-soft); border-color: var(--brand-blue); }
+.skillChip:focus-visible, .selectedSkills button:focus-visible { outline: 3px solid var(--brand-blue); outline-offset: 2px; }
+.customSkill { display: flex; align-items: end; gap: 10px; margin-top: 14px; }
+.skillHint { margin: 8px 0 0; color: var(--ink-muted); font-size: .875rem; }
+.selectedSkills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.selectedSkills > span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px 5px 11px; color: var(--brand-blue-dark); background: var(--brand-blue-soft); border: 1px solid var(--line); border-radius: 999px; font-size: .875rem; }
+.selectedSkills button { display: grid; width: 22px; height: 22px; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+.selectedSkills button svg { width: 14px; height: 14px; }
+.projectCard { display: flex; justify-content: space-between; gap: 16px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.projectCard h3 { margin: 4px 0 6px; }
+.projectCard p { margin: 0 0 8px; color: var(--ink-muted); }
+.projectCard > div:first-child > span, .projectCard small { color: var(--ink-muted); font-size: .8rem; }
+.projectCard a { display: block; width: fit-content; margin-top: 7px; color: var(--brand-blue-dark); }
+.projectActions { display: flex; align-items: start; gap: 6px; }
 @media (max-width: 880px) { .progress { padding: 16px; } .progress ol { gap: 8px; } .progress li { font-size: .75rem; } }
-@media (max-width: 600px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } .hero { align-items: start; flex-direction: column; } .progress { margin: 20px 0 16px; padding: 14px 12px; } .progress ol { gap: 6px; } .progress li { overflow-wrap: anywhere; font-size: .6875rem; } .progressMeta { font-size: .6875rem; } .panel { padding: 22px 18px; } .form { grid-template-columns: 1fr; } .fieldRow, .actions { grid-column: 1; } .fieldRow { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .page { width: min(100% - 24px, 1180px); padding-top: 28px; } .hero { align-items: start; flex-direction: column; } .progress { margin: 20px 0 16px; padding: 14px 12px; } .progress ol { gap: 6px; } .progress li { overflow-wrap: anywhere; font-size: .6875rem; } .progressMeta { font-size: .6875rem; } .panel { padding: 22px 18px; } .form { grid-template-columns: 1fr; } .fieldRow, .actions { grid-column: 1; } .fieldRow { grid-template-columns: 1fr; } .projectEditor { grid-template-columns: 1fr; padding: 18px; } .projectEditor > h3, .projectSkills, .projectQuestion, .projectSection { grid-column: 1; } .projectCard { flex-direction: column; } .projectActions { justify-content: flex-end; } .customSkill { align-items: stretch; flex-direction: column; } }
 @media (max-width: 600px) { .panelHeader { flex-direction: column; } .saveStatus { order: -1; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .saveStatus[data-state="saving"] svg, .loadingState svg { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .skillChip { transition: none; } }

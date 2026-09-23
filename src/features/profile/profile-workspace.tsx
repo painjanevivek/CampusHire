@@ -95,7 +95,7 @@ export function ProfileWorkspace() {
           </div>
           <p className={styles.progressNote} role="status">{!profile ? "Profile completion is not available yet." : requiredCompleted === requiredItems.length && requiredItems.length > 0 ? "All required profile details are complete." : `${requiredItems.length - requiredCompleted} required detail ${requiredItems.length - requiredCompleted === 1 ? "area" : "areas"} remaining.`}</p>
           <details>
-            <summary>Review required profile evidence</summary>
+            <summary>Check required profile details</summary>
             <ul>{requiredItems.map((item) => <li key={item.key}>{item.complete ? "Complete" : "Missing"}: {item.label}</li>)}</ul>
           </details>
           <dl className={styles.profileFacts}>

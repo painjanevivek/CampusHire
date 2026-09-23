@@ -441,7 +441,7 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
           </h1>
           <span>
             {audience === "student"
-              ? "Eligibility stays rule-based. The agent builds an evidence-backed plan you control."
+              ? "Eligibility follows published rules. The agent builds a preparation plan from your profile and the role details, for you to review."
               : "Extract requirements, surface blockers, and review every proposed change with your team."}
           </span>
         </div>
@@ -451,8 +451,8 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
       <Alert tone="info">
         <ShieldCheck aria-hidden="true" /> Each task is bounded to 4 model calls, 6 tools,
         one correction, 90 active seconds, and $0.03 reserved spend. Generated structure is
-        validated against its evidence before review. Missing resume evidence means unknown ability,
-        never missing ability.
+        checked against the available information before review. If your resume does not mention a skill,
+        CampusHire marks it as not provided rather than assuming you lack it.
       </Alert>
       {error ? <Alert tone="error">{error}</Alert> : null}
 
@@ -547,7 +547,7 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
             <ol>{events.map((event) => <li key={event.sequence}><span><Clock3 aria-hidden="true" /></span><div><strong>{event.summary}</strong><small>{new Date(event.created_at).toLocaleString()}</small></div></li>)}</ol>
             {artifact ? (
               <details>
-                <summary>Evidence and versions</summary>
+                <summary>Sources and versions</summary>
                 <ul>
                   {artifact.evidence_references.map((reference) => (
                     <li key={reference.source_id}>
@@ -592,7 +592,7 @@ export function AgentRunWorkspace({ audience }: { audience: Audience }) {
 }
 
 function StudentArtifactView({ plan, summary, onSummary }: { plan: PreparationContent; summary: string; onSummary: (value: string) => void }) {
-  return <section className={styles.artifact}><div className={styles.artifactHeader}><div><p>Preparation proposal</p><h2>{plan.title}</h2></div><Badge tone={plan.eligibility.status === "eligible" ? "success" : "warning"}>{plan.eligibility.status.replaceAll("_", " ")}</Badge></div><label>Plan summary<textarea value={summary} onChange={(event) => onSummary(event.target.value)} rows={4} /></label><div className={styles.truthGrid}><article><strong>Eligibility</strong><p>Deterministic rule result · version {plan.eligibility.rule_version ?? "unavailable"}</p></article><article><strong>Unknown evidence</strong><p>{plan.eligibility.missing_evidence.join(", ") || "None recorded by the eligibility engine"}</p></article><article><strong>Planned effort</strong><p>{plan.total_minutes} minutes</p></article></div><div className={styles.priorities}>{plan.priorities.map((priority) => <article key={priority.skill}><div><h3>{priority.skill}</h3><Badge tone={priority.evidence_state === "recorded" ? "success" : "neutral"}>{priority.evidence_state}</Badge></div><p>{priority.rationale}</p><ul>{priority.activities.map((activity) => <li key={`${priority.skill}-${activity.title}`}><strong>{activity.title}</strong><span>{activity.objective}</span><small>{activity.minutes} min · due in {activity.due_offset_days} days</small></li>)}</ul></article>)}</div>{plan.unresolved_questions.length ? <Alert tone="warning">Unresolved: {plan.unresolved_questions.join(" · ")}</Alert> : null}</section>;
+  return <section className={styles.artifact}><div className={styles.artifactHeader}><div><p>Preparation proposal</p><h2>{plan.title}</h2></div><Badge tone={plan.eligibility.status === "eligible" ? "success" : "warning"}>{plan.eligibility.status.replaceAll("_", " ")}</Badge></div><label>Plan summary<textarea value={summary} onChange={(event) => onSummary(event.target.value)} rows={4} /></label><div className={styles.truthGrid}><article><strong>Eligibility</strong><p>Deterministic rule result · version {plan.eligibility.rule_version ?? "unavailable"}</p></article><article><strong>Details not listed in the profile</strong><p>{plan.eligibility.missing_evidence.join(", ") || "No missing details are listed for this role"}</p></article><article><strong>Planned effort</strong><p>{plan.total_minutes} minutes</p></article></div><div className={styles.priorities}>{plan.priorities.map((priority) => <article key={priority.skill}><div><h3>{priority.skill}</h3><Badge tone={priority.evidence_state === "recorded" ? "success" : "neutral"}>{priority.evidence_state}</Badge></div><p>{priority.rationale}</p><ul>{priority.activities.map((activity) => <li key={`${priority.skill}-${activity.title}`}><strong>{activity.title}</strong><span>{activity.objective}</span><small>{activity.minutes} min · due in {activity.due_offset_days} days</small></li>)}</ul></article>)}</div>{plan.unresolved_questions.length ? <Alert tone="warning">Unresolved: {plan.unresolved_questions.join(" · ")}</Alert> : null}</section>;
 }
 
 function DriveArtifactView({ content, announcement, onAnnouncement }: { content: DriveContent; announcement: string; onAnnouncement: (value: string) => void }) {

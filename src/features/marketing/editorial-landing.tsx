@@ -21,7 +21,7 @@ import styles from "./editorial-landing.module.css";
 const recordSteps = [
   {
     number: "01",
-    title: "Profile evidence",
+    title: "Your profile",
     detail: "Education, skills, projects, and links you can review.",
   },
   {
@@ -37,7 +37,7 @@ const recordSteps = [
   {
     number: "04",
     title: "Application snapshot",
-    detail: "The submitted evidence and rule version remain intact.",
+    detail: "Your submitted details and the rules used for the decision stay unchanged.",
   },
   {
     number: "05",
@@ -50,7 +50,7 @@ const journey = [
   {
     number: "01",
     label: "Build the record",
-    title: "Start with evidence you recognise.",
+    title: "Start with details you recognise.",
     description:
       "Complete a resumable profile, add projects and professional links, then review the resume CampusHire will use.",
     note: "Nothing is submitted while you are still preparing.",
@@ -76,7 +76,7 @@ const journey = [
     label: "Close the loop",
     title: "Respond, review, and record.",
     description:
-      "Students answer requests for missing information while authorised placement staff keep evidence beside every decision.",
+      "Students answer requests for missing information while authorised placement staff keep relevant records beside each decision.",
     note: "Supplemental responses never erase the first submission.",
   },
 ];
@@ -141,8 +141,8 @@ export function EditorialLanding() {
         <section className={styles.hero} aria-labelledby="landing-title" data-landing-hero>
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy} data-hero-copy>
-              <p className={styles.kicker}><span>Student evidence</span><ArrowRight aria-hidden="true" /><span>Human decision</span></p>
-              <h1 id="landing-title">Campus placement, <em>with the proof in view.</em></h1>
+              <p className={styles.kicker}><span>Student profile</span><ArrowRight aria-hidden="true" /><span>Human decision</span></p>
+            <h1 id="landing-title">Campus placement, <em>with clear decisions.</em></h1>
               <p className={styles.heroDescription}>
                 CampusHire gives students and placement teams one accountable record for preparation,
                 eligibility, applications, and review.
@@ -169,14 +169,14 @@ export function EditorialLanding() {
               <div className={styles.heroImage}>
                 <Image
                   src="/product-evidence/student-priorities.png"
-                  alt="CampusHire student readiness workspace showing a next placement action and reviewed evidence"
+                  alt="CampusHire student readiness workspace showing a next placement action and reviewed profile details"
                   fill
                   priority
                   sizes="(max-width: 900px) 94vw, 52vw"
                 />
               </div>
               <div className={styles.heroProductFooter}>
-                <span><i /> Evidence ready</span>
+                <span><i /> Profile ready</span>
                 <span>Next action stays visible</span>
               </div>
             </aside>
@@ -197,7 +197,7 @@ export function EditorialLanding() {
             <p className={styles.sectionLabel}>One record, start to finish</p>
             <h2>What follows the application?</h2>
             <span>
-              Not a mystery score. A chain of reviewed evidence, published rules, and recorded actions.
+              See the profile details, published rules, and actions behind each result.
             </span>
           </header>
           <ol className={styles.recordTrack}>
@@ -223,7 +223,7 @@ export function EditorialLanding() {
             <p className={styles.sectionLabel}>The same truth, seen from both sides</p>
             <h2>One application record.<br />Two accountable views.</h2>
             <p>
-              Students see the action they need to take. Placement teams see the evidence they need
+              Students see the action they need to take. Placement teams see the information they need
               to review. The handoff stays explicit.
             </p>
             <span className={styles.evidenceDisclaimer}>
@@ -234,18 +234,18 @@ export function EditorialLanding() {
             <ProductFrame
               className={styles.studentFrame}
               src="/product-evidence/student-priorities.png"
-              alt="Student readiness workspace with one next action and four reviewed evidence areas"
+              alt="Student readiness workspace with one next action and four reviewed profile sections"
               label="Student workspace"
               title="The student sees the next move."
-              description="Action, reason, effort, and the evidence behind it stay together."
+              description="The next action, its reason, and the profile details behind it stay together."
             />
             <ProductFrame
               className={styles.placementFrame}
               src="/product-evidence/placement-review.png"
-              alt="Placement team application review with candidate queue and eligibility evidence"
+              alt="Placement team application review with a candidate queue and eligibility details"
               label="T&P workspace"
               title="The team sees the review trail."
-              description="Candidate context, eligibility evidence, and a reasoned decision share one view."
+              description="Candidate details, eligibility rules, and the resulting decision share one view."
             />
           </div>
         </section>
@@ -302,7 +302,7 @@ export function EditorialLanding() {
             </article>
           </div>
           <div className={styles.boundaryLedger} data-reveal-item>
-            <p><Fingerprint aria-hidden="true" /> AI may explain, suggest wording, or surface evidence.</p>
+            <p><Fingerprint aria-hidden="true" /> AI can explain results, suggest wording, and bring relevant profile details into view.</p>
             <p><UserRoundCheck aria-hidden="true" /> Students approve their details before action.</p>
             <p><Building2 aria-hidden="true" /> Official decisions stay with published rules and responsible people.</p>
           </div>
@@ -325,7 +325,7 @@ export function EditorialLanding() {
             </article>
             <article data-reveal-item>
               <span className={styles.entryNumber}>02 / Training &amp; Placement</span>
-              <h3>Run every drive with evidence beside the decision.</h3>
+              <h3>Keep student records beside every placement decision.</h3>
               <p>Publish requirements, review applications, request clarification, and preserve an audit trail.</p>
               <div>
                 <Link className={styles.darkAction} href="/tnp/sign-in">Open T&amp;P sign in <ArrowRight size={18} aria-hidden="true" /></Link>

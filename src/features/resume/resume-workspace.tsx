@@ -168,7 +168,7 @@ export function ResumeWorkspace() {
         <div>
           <p className={styles.eyebrow}>Student documents</p>
           <h1>Resume Studio</h1>
-          <p>Create versioned CampusHire PDFs from evidence you reviewed in your profile.</p>
+          <p>Create a versioned CampusHire PDF from profile details you have reviewed.</p>
         </div>
         <Link href={nextReview ? `/resume/builder?version=${nextReview.id}` : "/resume/builder"} className={styles.builderLink}>Open review workspace <ArrowRight size={17} aria-hidden="true" /></Link>
       </header>
@@ -176,8 +176,8 @@ export function ResumeWorkspace() {
       <div className={styles.grid}>
         <section className={styles.uploadCard}>
           <div className={styles.cardLabel}><FileText size={18} aria-hidden="true" /> New version</div>
-          <h2>Build from reviewed evidence</h2>
-          <p>Select profile evidence, generate an optional AI draft, inspect every supporting source, edit it, and explicitly accept it before a PDF is created.</p>
+          <h2>Build from your profile</h2>
+          <p>Choose the profile details to use, ask AI to draft your resume, check where each statement came from, then edit and approve it before creating a PDF.</p>
           <Link className={styles.primaryAction} href="/resume/studio">Open AI Resume Studio</Link>
           <Link href="/resume/builder?mode=manual">Use the manual resume builder</Link>
           {message && <Alert tone={state === "complete" ? "success" : "error"}>{state === "complete" && <FileCheck2 size={18} aria-hidden="true" />}{message}</Alert>}
@@ -188,8 +188,8 @@ export function ResumeWorkspace() {
           <ShieldCheck size={26} aria-hidden="true" />
           <h2 id="resume-process-title">Nothing changes silently</h2>
           <ol>
-            <li><span>01</span><div><strong>Select evidence</strong><p>Choose reviewed education, skills, projects, and experience</p></div></li>
-            <li><span>02</span><div><strong>Generate and validate</strong><p>Every claim must map back to selected profile evidence</p></div></li>
+            <li><span>01</span><div><strong>Choose profile details</strong><p>Select education, skills, projects, and experience you have reviewed.</p></div></li>
+            <li><span>02</span><div><strong>Generate and check</strong><p>Each statement must match the information you selected.</p></div></li>
             <li><span>03</span><div><strong>Your decision</strong><p>Edit, reject, or explicitly accept before creating a PDF</p></div></li>
           </ol>
         </aside>
@@ -212,7 +212,7 @@ export function ResumeWorkspace() {
               <p className={styles.pipelineNow}>{pipelineCopy[version.processing_stage]}</p>
               {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No resume details were accepted."}</small>}
               <details className={styles.pipelineDetails}>
-                <summary>Processing and evidence details</summary>
+                <summary>Processing details</summary>
                 <ol>{pipelineStages.map((stage) => {
                   const currentIndex = pipelineStages.findIndex((item) => item.key === progressStage(version.processing_stage));
                   const stageIndex = pipelineStages.findIndex((item) => item.key === stage.key);
@@ -220,7 +220,7 @@ export function ResumeWorkspace() {
                   const complete = terminal || (currentIndex >= 0 && stageIndex < currentIndex);
                   return <li key={stage.key} data-state={stage.key === progressStage(version.processing_stage) ? "current" : complete ? "complete" : "upcoming"}>{stage.label}</li>;
                 })}</ol>
-                <dl><div><dt>Evidence digest</dt><dd><code>{version.evidence_digest}</code></dd></div>{version.generator_version ? <div><dt>Generator</dt><dd>{version.generator_version}</dd></div> : null}<div><dt>Review revision</dt><dd>{version.review_revision}</dd></div></dl>
+                <dl><div><dt>Content reference</dt><dd><code>{version.evidence_digest}</code></dd></div>{version.generator_version ? <div><dt>Generator</dt><dd>{version.generator_version}</dd></div> : null}<div><dt>Review revision</dt><dd>{version.review_revision}</dd></div></dl>
               </details>
             </div>
             <div className={styles.versionActions}>

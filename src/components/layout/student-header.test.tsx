@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentHeader } from "./student-header";
@@ -38,6 +38,27 @@ describe("StudentHeader", () => {
     );
     expect(screen.getByRole("link", { name: "Dashboard" })).not.toHaveAttribute(
       "aria-current",
+    );
+  });
+
+  it("keeps student features gated during onboarding and explains how to unlock AI tools", () => {
+    route.pathname = "/onboarding";
+    render(<StudentHeader />);
+
+    const featureLinks = [
+      "CampusHire Student Dashboard",
+      "Dashboard",
+      "Opportunities",
+      "Applications",
+      "Preparation",
+      "Ask CampusHire Copilot",
+    ];
+    for (const label of featureLinks) {
+      fireEvent.click(screen.getByRole("link", { name: label }));
+    }
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Complete your student profile to unlock CampusHire’s AI Copilot and student features.",
     );
   });
 });

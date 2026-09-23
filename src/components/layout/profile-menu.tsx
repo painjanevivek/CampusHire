@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 import Link from "next/link";
 import { Settings, UserRound } from "lucide-react";
 import { ProfileAvatar } from "@/features/profile/profile-photo";
 import { SignOutButton } from "./sign-out-button";
 import styles from "./profile-menu.module.css";
 
-export function ProfileMenu({ open, onChange }: { open: boolean; onChange: (open: boolean) => void }) {
+export function ProfileMenu({ open, onChange, onFeatureNavigation }: {
+  open: boolean;
+  onChange: (open: boolean) => void;
+  onFeatureNavigation?: (event: MouseEvent<HTMLAnchorElement>) => void;
+}) {
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -21,12 +25,16 @@ export function ProfileMenu({ open, onChange }: { open: boolean; onChange: (open
     document.addEventListener("pointerdown", outside);
     return () => { window.removeEventListener("keydown", escape); document.removeEventListener("pointerdown", outside); };
   }, [open, onChange]);
+  function navigate(event: MouseEvent<HTMLAnchorElement>) {
+    onFeatureNavigation?.(event);
+    onChange(false);
+  }
   return <div ref={root} className={styles.root} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) onChange(false); }}>
     <button ref={trigger} type="button" className={styles.trigger} aria-label={open ? "Close profile menu" : "Open profile menu"} aria-expanded={open} aria-controls="student-profile-menu" onClick={() => onChange(!open)}><ProfileAvatar /></button>
     {open && <nav id="student-profile-menu" aria-label="Your account" className={styles.panel}>
       <p>Your account</p>
-      <Link href="/profile" onClick={() => onChange(false)}><UserRound aria-hidden="true" />Profile</Link>
-      <Link href="/profile#account-settings" onClick={() => onChange(false)}><Settings aria-hidden="true" />Settings</Link>
+      <Link href="/profile" onClick={navigate}><UserRound aria-hidden="true" />Profile</Link>
+      <Link href="/profile#account-settings" onClick={navigate}><Settings aria-hidden="true" />Settings</Link>
       <SignOutButton destination="/sign-in" labeled />
     </nav>}
   </div>;

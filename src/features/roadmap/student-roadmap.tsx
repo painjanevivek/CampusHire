@@ -103,7 +103,7 @@ export function StudentRoadmap() {
   }
 
   async function reopen(node: RoadmapNode) {
-    if (!window.confirm(`Mark ${node.title} as needing evidence again? Later milestones remain recorded.`)) return;
+    if (!window.confirm(`Reopen ${node.title}? Later milestones will stay recorded.`)) return;
     setBusy(true);
     setError("");
     setNotice("");
@@ -112,7 +112,7 @@ export function StudentRoadmap() {
         method: "POST",
         body: JSON.stringify({ completed: false, evidence_label: null, evidence_reference: null }),
       }));
-      setNotice(`${node.title} reopened. Add new completion details when the evidence is ready.`);
+      setNotice(`${node.title} reopened. Add updated completion details when you are ready.`);
     } catch {
       setError("That milestone could not be reopened. Saved progress is unchanged.");
     } finally {
@@ -260,9 +260,9 @@ export function StudentRoadmap() {
             </span>
             {node.state === "completed" && Object.keys(node.evidence).length > 0 ? (
               <details className={styles.savedEvidence}>
-                <summary>Saved completion evidence</summary>
+                <summary>Saved completion details</summary>
                 {typeof node.evidence.label === "string" ? <p>{node.evidence.label}</p> : null}
-                {typeof node.evidence.reference === "string" ? <Link href={node.evidence.reference}>Open linked CampusHire evidence</Link> : null}
+                {typeof node.evidence.reference === "string" ? <Link href={node.evidence.reference}>Open linked CampusHire record</Link> : null}
               </details>
             ) : null}
             {node.state === "completed" ? (

@@ -11,12 +11,12 @@ const readyDashboard: StudentDashboardData = {
   readiness: { policy_version: "readiness-v2", completed_evidence: 3, total_evidence: 4, required_complete: true },
   state: "ready",
   nextAction: {
-    title: "Add deployment evidence",
+    title: "Add deployment details",
     description: "Publish one working project and attach its live link.",
     reason: "A verified deployment is the clearest gap for your target role.",
     href: "/roadmap",
     estimated_minutes: 15,
-    unlocks: "Verified project evidence",
+    unlocks: "Project review",
     completion_criteria: "A live deployment link is saved and verified.",
     policy_version: "readiness-v2",
     source_facts: ["reviewed_resume:available", "roadmap:deployment_pending"],
@@ -44,15 +44,15 @@ describe("StudentDashboard", () => {
 
     expect(screen.getByRole("region", { name: "Next readiness action" })).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Add deployment evidence" }),
+      screen.getByRole("heading", { name: "Add deployment details" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Why this next?")).toBeInTheDocument();
     expect(screen.getByText("15 minutes")).toBeInTheDocument();
     expect(screen.getByText("A live deployment link is saved and verified.")).toBeInTheDocument();
-    expect(screen.getByText("Unlocks verified project evidence")).toBeInTheDocument();
+    expect(screen.getByText("Unlocks project review")).toBeInTheDocument();
     expect(screen.getByText("3 of 4")).toBeInTheDocument();
     expect(screen.getByText("Readiness policy readiness-v2")).toBeInTheDocument();
-    expect(screen.getByText("Evidence behind this action")).toBeInTheDocument();
+    expect(screen.getByText("Why this is your next step")).toBeInTheDocument();
 
     const opportunity = screen.getByRole("article", {
       name: "AI Platform Intern at Northstar Labs",

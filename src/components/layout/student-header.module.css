@@ -7,6 +7,42 @@
   border-bottom: 1px solid var(--line);
 }
 
+.accessNotice {
+  width: min(calc(100% - 2rem), var(--layout-student-max));
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px auto 0;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--brand-blue) 24%, var(--line));
+  border-inline-start: 3px solid var(--brand-blue);
+  border-radius: 8px;
+  background: var(--brand-blue-soft);
+  color: var(--ink);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.accessNotice > svg { flex: 0 0 auto; color: var(--brand-blue-dark); }
+
+.accessNotice button {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  margin-inline-start: auto;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.accessNotice button:hover { border-color: var(--line); color: var(--ink); }
+.accessNotice button:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+
 .inner {
   width: min(
     calc(100% - var(--layout-gutter-desktop) - var(--layout-gutter-desktop)),

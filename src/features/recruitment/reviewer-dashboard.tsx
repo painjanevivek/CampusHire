@@ -44,14 +44,14 @@ export function ReviewerDashboard() {
       <PageHeader
         eyebrow="Assigned review"
         title={loading ? "Loading assigned work…" : assigned ? `${assigned} assigned ${assigned === 1 ? "case" : "cases"}.` : "Your assigned queue is clear."}
-        description="Review only the cases assigned to you. Placement policies remain available as approved decision evidence."
+        description="Review only the cases assigned to you. Approved placement policies explain the basis for each decision."
         actions={<button className={styles.refresh} type="button" onClick={() => void load()}><RefreshCcw aria-hidden="true" />Refresh</button>}
       />
       {error && <Alert tone="warning">{error}</Alert>}
       <section className={styles.quickActions} aria-labelledby="reviewer-actions-title">
         <header><div><p>Next action</p><h2 id="reviewer-actions-title">Continue accountable review</h2></div><Badge tone={overdue ? "warning" : "success"}>{overdue ? `${overdue} overdue` : "On track"}</Badge></header>
         <nav aria-label="Reviewer quick actions">
-          <Link href="/tnp/applications?work_view=my_work"><ClipboardCheck aria-hidden="true" /><span><strong>Open assigned reviews</strong><small>Evidence and permitted decisions</small></span><ArrowRight aria-hidden="true" /></Link>
+          <Link href="/tnp/applications?work_view=my_work"><ClipboardCheck aria-hidden="true" /><span><strong>Open assigned reviews</strong><small>Student records and permitted decisions</small></span><ArrowRight aria-hidden="true" /></Link>
           <Link href="/tnp/applications?requests=awaiting_review"><MessageSquareText aria-hidden="true" /><span><strong>Review student responses</strong><small>{responses} waiting for review</small></span><ArrowRight aria-hidden="true" /></Link>
           <Link href="/tnp/policies"><CircleAlert aria-hidden="true" /><span><strong>Consult approved policies</strong><small>Read-only decision guidance</small></span><ArrowRight aria-hidden="true" /></Link>
         </nav>

@@ -150,7 +150,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             </button>
           </header>
 
-          <section><h2>Prepare for this opportunity</h2><p>Compare the published requirements with your reviewed evidence, without changing eligibility.</p><Link href={`/preparation?role=${roleId}`}>Review preparation guidance</Link></section>
+          <section><h2>Prepare for this opportunity</h2><p>Compare the published requirements with the details in your profile. This does not change your eligibility.</p><Link href={`/preparation?role=${roleId}`}>Review preparation guidance</Link></section>
 
           <section>
             <h2>Role overview</h2>
@@ -239,7 +239,7 @@ export function StudentOpportunityDetail({ roleId }: { roleId: string }) {
             )}
             {opportunity.eligibility.missing_evidence.length ? (
               <Alert tone="warning">
-                Manual review needs: {opportunity.eligibility.missing_evidence.join(", ")}.
+                Details needed for manual review: {opportunity.eligibility.missing_evidence.join(", ")}.
                 Missing information does not cause an automatic rejection.
               </Alert>
             ) : null}

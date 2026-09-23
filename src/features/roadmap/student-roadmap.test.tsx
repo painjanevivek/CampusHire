@@ -64,7 +64,7 @@ describe("StudentRoadmap", () => {
     csrfRequestMock.mockResolvedValue({ ...roadmap, completed_count: 0, nodes: roadmap.nodes.map((node) => node.key === "python" ? { ...node, state: "next", evidence: {} } : node) });
     render(<StudentRoadmap />);
 
-    expect(await screen.findByText("Saved completion evidence")).toBeInTheDocument();
+    expect(await screen.findByText("Saved completion details")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Correct completion" }));
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith("/roadmaps/nodes/python", expect.objectContaining({ body: expect.stringContaining('"completed":false') })));
   });

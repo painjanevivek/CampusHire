@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StudentOnboardingWizard, onboardingStageForBackendStep } from "./student-onboarding-wizard";
@@ -61,7 +61,7 @@ describe("student onboarding stages", () => {
     });
   });
 
-  it("presents five onboarding stages in a horizontal progress bar without the old sidebar copy", async () => {
+  it("presents five onboarding stages without unnecessary sidebar guidance", async () => {
     render(<StudentOnboardingWizard />);
 
     expect(await screen.findByRole("heading", { name: "Your profile" })).toBeInTheDocument();
@@ -70,6 +70,8 @@ describe("student onboarding stages", () => {
     expect(screen.getByText("Step 1 of 5")).toBeInTheDocument();
     expect(screen.queryByText(/Complete these steps to open your workspace/)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /finish later/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/Five guided steps help your placement team understand your background/)).toBeInTheDocument();
+    expect(screen.queryByText(/optional/i)).not.toBeInTheDocument();
     await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith("/onboarding", { cache: "no-store" }));
   });
 
@@ -78,7 +80,7 @@ describe("student onboarding stages", () => {
 
     render(<StudentOnboardingWizard />);
 
-    expect(await screen.findByRole("heading", { name: "Projects & skills" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
     expect(screen.getByRole("progressbar", { name: "Onboarding progress" })).toHaveAttribute("aria-valuenow", "3");
     expect(screen.getByText("Step 3 of 5")).toBeInTheDocument();
   });
@@ -88,23 +90,24 @@ describe("student onboarding stages", () => {
 
     render(<StudentOnboardingWizard />);
     expect(await screen.findByRole("heading", { name: "Experience" })).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Organization (optional)"), { target: { value: "Partial internship" } });
+    fireEvent.change(await screen.findByLabelText("Organization"), { target: { value: "Partial internship" } });
     fireEvent.click(screen.getByRole("button", { name: "Skip this step" }));
 
-    expect(await screen.findByRole("heading", { name: "Projects & skills" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(1));
     const skipRequest = JSON.parse(String(csrfRequestMock.mock.calls[0][1].body)) as Record<string, unknown>;
     expect(skipRequest).toMatchObject({ step: 3 });
     expect(skipRequest).not.toHaveProperty("experience");
-    expect(screen.getByText("Experience skipped. You can add it later from your profile.")).toBeInTheDocument();
+    expect(screen.queryByText(/Experience skipped/i)).not.toBeInTheDocument();
   });
 
   it("lets students skip projects and skills without submitting partial content", async () => {
     apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 4 });
 
     render(<StudentOnboardingWizard />);
-    expect(await screen.findByRole("heading", { name: "Projects & skills" })).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Project title (optional)"), { target: { value: "Draft project" } });
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", { name: "Yes" }));
+    fireEvent.change(screen.getByLabelText("Project Title"), { target: { value: "Draft project" } });
     fireEvent.click(screen.getByRole("button", { name: "Skip this step" }));
 
     expect(await screen.findByRole("heading", { name: "Career preferences" })).toBeInTheDocument();
@@ -112,6 +115,62 @@ describe("student onboarding stages", () => {
     const skipRequest = JSON.parse(String(csrfRequestMock.mock.calls[0][1].body)) as Record<string, unknown>;
     expect(skipRequest).toMatchObject({ step: 4 });
     expect(skipRequest).not.toHaveProperty("projects_skills");
+    expect(screen.queryByText(/Projects and skills skipped/i)).not.toBeInTheDocument();
+  });
+
+  it("lets students say they have no projects and continue with an empty project list", async () => {
+    apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 4 });
+
+    render(<StudentOnboardingWizard />);
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", { name: "No" }));
+    expect(screen.queryByLabelText("Project Title")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+
+    expect(await screen.findByRole("heading", { name: "Career preferences" })).toBeInTheDocument();
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(1));
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({
+      step: 4,
+      projects_skills: { projects: [], skills: [], certifications: [] },
+    });
+  });
+
+  it("collects projects with a type, 300-character description, URL, and multi-select skill chips", async () => {
+    apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 4 });
+
+    render(<StudentOnboardingWizard />);
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
+    expect(screen.queryByText(/optional/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", { name: "Yes" }));
+
+    fireEvent.change(screen.getByLabelText("Project Title"), { target: { value: "Campus Placement Portal" } });
+    fireEvent.change(screen.getByLabelText("Project Type"), { target: { value: "academic" } });
+    const description = screen.getByLabelText("What did you work on?");
+    expect(description).toHaveAttribute("maxLength", "300");
+    fireEvent.change(description, { target: { value: "Built a student placement portal with role-based dashboards." } });
+    const project = screen.getByRole("region", { name: "Project experience" });
+    fireEvent.click(within(project).getByRole("button", { name: "React" }));
+    fireEvent.click(within(project).getByRole("button", { name: "PostgreSQL" }));
+    fireEvent.change(screen.getByLabelText("Project link"), { target: { value: "https://example.com/project" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save Project" }));
+
+    expect(screen.getByText("Campus Placement Portal")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add Another Project" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(1));
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({
+      step: 4,
+      projects_skills: {
+        projects: [{
+          title: "Campus Placement Portal",
+          project_type: "academic",
+          description: "Built a student placement portal with role-based dashboards.",
+          technologies: ["React", "PostgreSQL"],
+          project_url: "https://example.com/project",
+        }],
+      },
+    });
   });
 
   it("does not let students skip required placement consent to enter the workspace", async () => {
@@ -124,7 +183,7 @@ describe("student onboarding stages", () => {
     render(<StudentOnboardingWizard />);
     expect(await screen.findByRole("heading", { name: "Placement details" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /skip/i })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Complete onboarding" }));
+    fireEvent.submit(screen.getByRole("button", { name: "Complete onboarding" }).closest("form")!);
 
     expect(await screen.findByText("Complete the required fields for this step. Your tab draft is still saved.")).toBeInTheDocument();
     expect(csrfRequestMock).not.toHaveBeenCalled();
@@ -157,7 +216,7 @@ describe("student onboarding stages", () => {
       "CGPA / percentage": "8.5",
     };
     expect(screen.getByLabelText("Institution")).toHaveValue("Campus University");
-    expect(screen.getByLabelText("Score scale")).toHaveValue("cgpa_10");
+    expect(screen.getByLabelText("Grading scale")).toHaveValue("cgpa_10");
     for (const [label, value] of Object.entries(values)) {
       fireEvent.change(screen.getByLabelText(label), { target: { value } });
     }
@@ -193,7 +252,7 @@ describe("student onboarding stages", () => {
 
     render(<StudentOnboardingWizard />);
     await screen.findByRole("heading", { name: "Placement details" });
-    fireEvent.click(screen.getByRole("button", { name: "Complete onboarding" }));
+    fireEvent.submit(screen.getByRole("button", { name: "Complete onboarding" }).closest("form")!);
     expect(await screen.findByText("Review and confirm your profile before entering the workspace.")).toBeInTheDocument();
     expect(csrfRequestMock).not.toHaveBeenCalled();
 
