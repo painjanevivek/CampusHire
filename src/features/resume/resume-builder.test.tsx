@@ -4,14 +4,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResumeBuilder } from "./resume-builder";
 import { ApiError } from "@/lib/api/client";
 
-const { apiRequestMock, csrfRequestMock, searchParamsMock } = vi.hoisted(() => ({
+const { apiRequestMock, csrfRequestMock, searchParamsMock, routerReplaceMock } = vi.hoisted(() => ({
   apiRequestMock: vi.fn(),
   csrfRequestMock: vi.fn(),
   searchParamsMock: { value: "version=resume-1" },
+  routerReplaceMock: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(searchParamsMock.value),
+  useRouter: () => ({ replace: routerReplaceMock }),
 }));
 
 vi.mock("@/lib/api/client", async (importOriginal) => ({
@@ -61,7 +63,7 @@ describe("ResumeBuilder", () => {
     apiRequestMock.mockResolvedValue(version);
   });
 
-  it("starts the manual builder from profile data and submits the classic template sections", async () => {
+  it("prefills profile data and queues the reviewed modern template", async () => {
     searchParamsMock.value = "mode=manual";
     apiRequestMock.mockResolvedValue({
       full_name: "Asha Patil",
@@ -76,37 +78,45 @@ describe("ResumeBuilder", () => {
       skills: [{ name: "Python" }, { name: "FastAPI" }],
       external_links: { github: "https://github.com/asha" },
     });
-    csrfRequestMock.mockResolvedValue({
-      ...version,
-      id: "generated-1",
-      source: "generated",
-      status: "completed",
-      version_number: 1,
-      generator_version: "campushire-generator-v2",
-    });
+    csrfRequestMock
+      .mockResolvedValueOnce({ ready: true, blocking: [], warnings: [], informational: [] })
+      .mockResolvedValueOnce({
+        ...version,
+        id: "generated-1",
+        source: "generated",
+        status: "queued",
+        version_number: 1,
+        generator_version: "campushire-modern-v1",
+      });
 
     render(<ResumeBuilder />);
 
     expect(await screen.findByDisplayValue("Asha Patil")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "CampusHire Classic" })).toBeInTheDocument();
+    expect(screen.getByText("CampusHire Modern · A4")).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Review \d+ prefilled profile sections and add more/));
     fireEvent.change(screen.getByRole("textbox", { name: "Experience" }), {
       target: { value: "Campus coding club — Volunteer · 2025–2026" },
     });
-    fireEvent.change(screen.getByRole("textbox", { name: "Research and certifications" }), {
+    fireEvent.change(screen.getByRole("textbox", { name: "Research" }), {
+      target: { value: "Campus accessibility survey" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Certifications and credentials" }), {
       target: { value: "AWS Foundations — Certificate of completion · 2026" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Generate versioned PDF" }));
+    fireEvent.click(screen.getByRole("button", { name: "Generate resume" }));
 
-    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenNthCalledWith(2,
       "/resumes/generate",
       expect.objectContaining({
         method: "POST",
         body: expect.stringContaining('"experience":["Campus coding club — Volunteer · 2025–2026"]'),
       }),
     ));
-    const request = JSON.parse(csrfRequestMock.mock.calls[0][1].body as string);
-    expect(request.credentials).toEqual(["AWS Foundations — Certificate of completion · 2026"]);
-    expect(request.education).toEqual(["B.Tech Computer Science — Campus Institute · 2027"]);
+    const request = JSON.parse(csrfRequestMock.mock.calls[1][1].body as string);
+    expect(request.credentials).toEqual([]);
+    expect(request.certifications).toEqual(["AWS Foundations — Certificate of completion · 2026"]);
+    expect(request.research).toEqual(["Campus accessibility survey"]);
+    expect(request.education).toEqual(["B.Tech Computer Science — Campus Institute — 2027"]);
     expect(request.skills).toEqual(["Python", "FastAPI"]);
   });
 

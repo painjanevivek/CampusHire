@@ -42,7 +42,7 @@ describe("ResumeWorkspace", () => {
 
   it("uses the shared student page language", () => {
     render(<ResumeWorkspace />);
-    expect(screen.getByRole("heading", { name: "Resume Studio" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Resume Generator" })).toBeInTheDocument();
   });
 
   it("removes public resume upload controls", async () => {
@@ -51,14 +51,28 @@ describe("ResumeWorkspace", () => {
     await screen.findByText("No resume versions yet");
     expect(screen.queryByRole("button", { name: /upload resume/i })).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Resume PDF")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open AI Resume Studio" })).toHaveAttribute("href", "/resume/studio");
+    expect(screen.queryByRole("link", { name: /AI Resume Studio/i })).not.toBeInTheDocument();
   });
 
   it("offers deterministic manual resume creation when AI is unavailable", async () => {
     render(<ResumeWorkspace />);
 
     await screen.findByText("No resume versions yet");
-    expect(screen.getByRole("link", { name: "Use the manual resume builder" })).toHaveAttribute("href", "/resume/builder?mode=manual");
+    expect(screen.getAllByRole("link", { name: /Open resume generator/i }).every(
+      (link) => link.getAttribute("href") === "/resume/builder?mode=manual",
+    )).toBe(true);
+  });
+
+  it("explains the queued LaTeX generation stage", async () => {
+    apiRequestMock.mockResolvedValueOnce([{
+      ...version,
+      processing_stage: "generating",
+      job: { ...version.job, stage: "generating" },
+    }]);
+    render(<ResumeWorkspace />);
+
+    expect(await screen.findByText("The local LaTeX worker is compiling a PDF from the reviewed profile details."))
+      .toBeInTheDocument();
   });
 
   it("compares evidence and explains application-locked deletion", async () => {

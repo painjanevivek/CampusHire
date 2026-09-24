@@ -5,6 +5,7 @@ export type ResumePipelineStage =
   | "parsing"
   | "parser_retry"
   | "review"
+  | "generating"
   | "generated"
   | "ready"
   | "failed"
@@ -58,6 +59,11 @@ export type ResumeVersion = {
     accepted?: Record<string, unknown>;
     evidence_digest?: string;
     generator_version?: string;
+    template_id?: string;
+    template_version?: string;
+    generation_status?: "queued" | "completed" | "failed";
+    artifact_id?: string;
+    page_count?: number;
   };
   job: ResumeJob | null;
   suggestions: ResumeSuggestion[];

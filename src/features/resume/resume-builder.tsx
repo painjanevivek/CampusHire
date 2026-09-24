@@ -10,6 +10,7 @@ import {
   Edit3,
   FileDown,
   LoaderCircle,
+  RefreshCw,
   Sparkles,
   X,
 } from "lucide-react";
@@ -30,6 +31,7 @@ type ResumeDraft = {
   email: string;
   phone: string;
   githubUrl: string;
+  linkedinUrl: string;
   portfolioUrl: string;
   summary: string;
   skills: string;
@@ -37,7 +39,11 @@ type ResumeDraft = {
   education: string;
   experience: string;
   credentials: string;
+  research: string;
+  publications: string;
   achievements: string;
+  positions: string;
+  extracurricular: string;
 };
 
 type ResumeProfile = {
@@ -57,11 +63,19 @@ type ResumeProfile = {
   external_links: Record<string, string>;
 };
 
+type ResumeReadiness = {
+  ready: boolean;
+  blocking: string[];
+  warnings: string[];
+  informational: string[];
+};
+
 const emptyDraft: ResumeDraft = {
   fullName: "",
   email: "",
   phone: "",
   githubUrl: "",
+  linkedinUrl: "",
   portfolioUrl: "",
   summary: "",
   skills: "",
@@ -69,7 +83,11 @@ const emptyDraft: ResumeDraft = {
   education: "",
   experience: "",
   credentials: "",
+  research: "",
+  publications: "",
   achievements: "",
+  positions: "",
+  extracurricular: "",
 };
 
 function lines(value: string): string[] {
@@ -125,6 +143,7 @@ function profileDraft(profile: ResumeProfile, onboarding: StudentOnboardingRespo
     email: profile.account_email ?? "",
     phone: profile.phone ?? "",
     githubUrl: profile.external_links.github ?? "",
+    linkedinUrl: profile.external_links.linkedin ?? "",
     portfolioUrl: profile.external_links.portfolio ?? "",
     summary,
     skills: skills.filter(Boolean).join("\n"),
@@ -163,6 +182,39 @@ function resolvedValue(version: ResumeVersion, field: string): unknown {
   return decision?.value ?? version.extracted_data.proposed?.[field];
 }
 
+function generationFailureMessage(code: string | null | undefined): string {
+  if (code === "resume_latex_compiler_unavailable") return "The local PDF compiler is unavailable. Check the Resume Generator setup and retry.";
+  if (code === "resume_latex_timeout") return "Resume generation took too long. Your saved profile was not changed; you can retry.";
+  if (code === "resume_latex_dependency_missing") return "A required local LaTeX package is missing. Install the template dependencies, then retry generation.";
+  if (code === "resume_latex_compile_failed" || code === "resume_template_unavailable") return "The resume could not be rendered. Your profile and accepted details are unchanged; you can retry after the renderer is available.";
+  if (code === "resume_pdf_invalid" || code === "resume_pdf_too_large") return "The generated PDF did not pass validation. Your profile was not changed.";
+  if (code === "resume_pdf_too_many_pages") return "This resume is longer than the supported page limit. Shorten optional sections and generate a new version.";
+  return "Resume generation failed safely. Your profile and accepted details are unchanged.";
+}
+
+function resumePayload(draft: ResumeDraft) {
+  return {
+    full_name: draft.fullName.trim(),
+    email: draft.email.trim(),
+    phone: draft.phone.trim() || null,
+    github_url: draft.githubUrl.trim() || null,
+    linkedin_url: draft.linkedinUrl.trim() || null,
+    portfolio_url: draft.portfolioUrl.trim() || null,
+    summary: draft.summary.trim(),
+    skills: lines(draft.skills),
+    projects: lines(draft.projects),
+    education: lines(draft.education),
+    experience: lines(draft.experience),
+    credentials: [],
+    research: lines(draft.research),
+    publications: lines(draft.publications),
+    certifications: lines(draft.credentials),
+    achievements: lines(draft.achievements),
+    positions: lines(draft.positions),
+    extracurricular: lines(draft.extracurricular),
+  };
+}
+
 export function ResumeBuilder() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -176,8 +228,11 @@ export function ResumeBuilder() {
   const [suggestionDecisions, setSuggestionDecisions] = useState<Record<string, { action: "accept" | "edit" | "reject"; edited_text?: string }>>({});
   const [draft, setDraft] = useState<ResumeDraft>(emptyDraft);
   const [generated, setGenerated] = useState<ResumeVersion | null>(null);
-  const [state, setState] = useState<"loading" | "idle" | "saving" | "error">("loading");
+  const [serverReadiness, setServerReadiness] = useState<ResumeReadiness | null>(null);
+  const [state, setState] = useState<"loading" | "idle" | "saving" | "processing" | "error">("loading");
   const [message, setMessage] = useState("");
+  const generationId = generated?.id;
+  const generationStatus = generated?.status;
 
   const selectVersion = useCallback((selected: ResumeVersion) => {
     setVersion(selected);
@@ -195,12 +250,15 @@ export function ResumeBuilder() {
       email: displayValue(resolvedValue(selected, "email")),
       phone: displayValue(resolvedValue(selected, "phone")),
       githubUrl: links.find((value) => value.includes("github.com")) ?? "",
-      portfolioUrl: links.find((value) => !value.includes("github.com")) ?? "",
+      linkedinUrl: links.find((value) => value.includes("linkedin.com")) ?? "",
+      portfolioUrl: links.find((value) => !value.includes("github.com") && !value.includes("linkedin.com")) ?? "",
       skills: values("skills").join("\n"),
       projects: values("projects").join("\n"),
       education: values("education").join("\n"),
       experience: values("experience").join("\n"),
       credentials: values("credentials").join("\n"),
+      research: values("research").join("\n"),
+      publications: values("publications").join("\n"),
       achievements: values("achievements").join("\n"),
     });
   }, []);
@@ -246,11 +304,68 @@ export function ResumeBuilder() {
     return () => { active = false; };
   }, [manualMode, requestedVersion, selectVersion]);
 
+  useEffect(() => {
+    if (!generationId || !generationStatus || ["completed", "failed", "cancelled"].includes(generationStatus)) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    async function poll() {
+      try {
+        const current = await apiRequest<ResumeVersion>(`/resumes/${generationId}`, { cache: "no-store" });
+        if (!active) return;
+        setGenerated(current);
+        if (current.status === "completed") {
+          setState("idle");
+          setMessage(`Resume v${current.version_number ?? ""} is ready to download.`);
+          return;
+        }
+        if (["failed", "cancelled"].includes(current.status)) {
+          setState("error");
+          setMessage(generationFailureMessage(current.safe_error_code));
+          return;
+        }
+        setState("processing");
+        setMessage("Generating your resume in the local document worker…");
+        timer = setTimeout(() => void poll(), 1500);
+      } catch {
+        if (!active) return;
+        setState("processing");
+        setMessage("Resume generation is still running. We’ll check its status again shortly.");
+        timer = setTimeout(() => void poll(), 4000);
+      }
+    }
+    timer = setTimeout(() => void poll(), 1200);
+    return () => {
+      active = false;
+      if (timer) clearTimeout(timer);
+    };
+  }, [generationId, generationStatus]);
+
   const proposedEntries = useMemo(
     () => Object.entries(version?.extracted_data.proposed ?? {}),
     [version],
   );
   const unresolvedFields = Object.values(decisions).filter((item) => item.action === "pending").length;
+  const readiness = useMemo<ResumeReadiness>(() => {
+    const blocking = [
+      ...(draft.fullName.trim().length < 2 ? ["Add your full name."] : []),
+      ...(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.email.trim()) ? ["Add a valid email address."] : []),
+      ...(lines(draft.education).length === 0 ? ["Add at least one education entry."] : []),
+    ];
+    const warnings = [
+      ...(lines(draft.projects).length ? [] : ["Add a project if you have one."]),
+      ...(lines(draft.experience).length ? [] : ["Add experience if you have it."]),
+      ...(lines(draft.skills).length ? [] : ["Add relevant skills."]),
+      ...(draft.githubUrl.trim() ? [] : ["Add GitHub if you have a profile to share."]),
+      ...(draft.linkedinUrl.trim() ? [] : ["Add LinkedIn if you have a profile to share."]),
+      ...(draft.portfolioUrl.trim() ? [] : ["Add a portfolio link if you have one."]),
+    ];
+    return {
+      ready: blocking.length === 0,
+      blocking,
+      warnings,
+      informational: ["Research, publications, and certifications are optional."],
+    };
+  }, [draft]);
 
   async function saveExtraction() {
     if (!version) return;
@@ -323,35 +438,45 @@ export function ResumeBuilder() {
   }
 
   async function generateVersion() {
-    if (!draft.fullName.trim() || !draft.email.trim()) {
-      setMessage("Add both your full name and email before generating a PDF.");
-      return;
-    }
     setState("saving");
     try {
+      const payload = resumePayload(draft);
+      const verifiedReadiness = await csrfRequest<ResumeReadiness>("/resumes/readiness", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      setServerReadiness(verifiedReadiness);
+      if (!verifiedReadiness.ready) {
+        setState("idle");
+        setMessage(`Complete the required details first: ${verifiedReadiness.blocking.join(" ")}`);
+        return;
+      }
       const created = await csrfRequest<ResumeVersion>("/resumes/generate", {
         method: "POST",
-        body: JSON.stringify({
-          full_name: draft.fullName.trim(),
-          email: draft.email.trim(),
-          phone: draft.phone.trim() || null,
-          github_url: draft.githubUrl.trim() || null,
-          portfolio_url: draft.portfolioUrl.trim() || null,
-          summary: draft.summary.trim(),
-          skills: lines(draft.skills),
-          projects: lines(draft.projects),
-          education: lines(draft.education),
-          experience: lines(draft.experience),
-          credentials: lines(draft.credentials),
-          achievements: lines(draft.achievements),
-        }),
+        body: JSON.stringify(payload),
       });
       setGenerated(created);
-      setState("idle");
-      setMessage(`Resume version ${created.version_number} is ready.`);
+      setState(created.status === "completed" ? "idle" : "processing");
+      setMessage(created.status === "completed" ? `Resume version ${created.version_number} is ready.` : "Resume generation is queued in the local document worker…");
+    } catch (error) {
+      setState("error");
+      setMessage(error instanceof ApiError && error.code === "resume_not_ready"
+        ? "Add your name, a valid email address, and at least one education entry before generating."
+        : "Resume generation could not be queued. Your saved profile has not been changed.");
+    }
+  }
+
+  async function retryGeneration() {
+    if (!generated) return;
+    setState("saving");
+    try {
+      const queued = await csrfRequest<ResumeVersion>(`/resumes/${generated.id}/retry`, { method: "POST" });
+      setGenerated(queued);
+      setState("processing");
+      setMessage("Resume generation has been queued for another attempt.");
     } catch {
       setState("error");
-      setMessage("The PDF could not be generated. Your review decisions are still saved.");
+      setMessage("That generation cannot be retried yet. Check the local PDF compiler and try again.");
     }
   }
 
@@ -380,8 +505,10 @@ export function ResumeBuilder() {
   const previewEducation = lines(draft.education);
   const previewExperience = lines(draft.experience);
   const previewCredentials = lines(draft.credentials);
+  const previewResearch = lines(draft.research);
+  const previewPublications = lines(draft.publications);
   const previewAchievements = lines(draft.achievements);
-  const prefilledSections = [draft.skills, draft.projects, draft.education, draft.experience, draft.credentials].filter((item) => item.trim()).length;
+  const prefilledSections = [draft.skills, draft.projects, draft.education, draft.experience, draft.credentials, draft.research, draft.publications].filter((item) => item.trim()).length;
   const updateDraft = (field: keyof ResumeDraft, value: string) => {
     setDraft((current) => ({ ...current, [field]: value }));
   };
@@ -395,28 +522,36 @@ export function ResumeBuilder() {
       <header className={styles.header}>
         <div><h1>{manualMode ? "Resume Generator" : "Resume review"}</h1><span>{manualMode ? "Your saved profile fills in the first draft. Review it, add anything missing, then generate a PDF." : "Check each proposed detail before creating a new PDF."}</span></div>
         <div className={styles.headerActions}>
-          {generated ? <>
+          {generated?.status === "completed" ? <>
             <a className={styles.download} href={apiPath(`/resumes/${generated.id}/download`)}><Download size={17} aria-hidden="true" /> Download PDF</a>
             {onboardingStep ? <button className={styles.continue} type="button" onClick={() => router.replace("/dashboard")}>Continue to workspace</button> : null}
-          </> : <button className={styles.download} type="button" onClick={() => void generateVersion()} disabled={Boolean(version && version.status !== "completed") || state === "saving"}><FileDown size={17} aria-hidden="true" /> Generate resume</button>}
+          </> : generated?.status === "failed" && generated.job?.retryable ? <button className={styles.download} type="button" onClick={() => void retryGeneration()} disabled={state === "saving"}><RefreshCw size={17} aria-hidden="true" /> Retry generation</button> : <button className={styles.download} type="button" onClick={() => void generateVersion()} disabled={Boolean(version && version.status !== "completed") || state === "saving" || state === "processing" || !readiness.ready}><FileDown size={17} aria-hidden="true" />{state === "processing" ? " Generating…" : " Generate resume"}</button>}
         </div>
       </header>
 
       {message && <Alert tone={state === "error" ? "error" : "success"}>{message}</Alert>}
-      {generated ? <details className={styles.generatedEvidence}><summary>How this version was created</summary><dl><div><dt>Generator</dt><dd>{generated.generator_version ?? "CampusHire generator"}</dd></div><div><dt>Content reference</dt><dd><code>{generated.evidence_digest}</code></dd></div></dl><p>This reference identifies the profile details used for this PDF. It does not verify your credentials.</p></details> : null}
+      {manualMode ? <section className={styles.readiness} aria-labelledby="readiness-title">
+        <div><strong id="readiness-title">{readiness.ready ? "Ready to generate" : "Complete required details"}</strong><span>{readiness.ready ? "Your education, name, and email are present." : "A name, email, and at least one education entry are required."}</span></div>
+        {readiness.blocking.length > 0 ? <ul>{readiness.blocking.map((item) => <li key={item}>{item}</li>)}</ul> : null}
+        {readiness.ready && readiness.warnings.length > 0 ? <details><summary>{readiness.warnings.length} optional suggestions</summary><ul>{readiness.warnings.map((item) => <li key={item}>{item}</li>)}</ul></details> : null}
+        {serverReadiness?.ready && serverReadiness.informational.length > 0 ? <small>{serverReadiness.informational[0]}</small> : null}
+      </section> : null}
+      {generated ? <details className={styles.generatedEvidence}><summary>{generated.status === "completed" ? "How this version was created" : generated.status === "failed" ? "Generation details" : "Generation progress"}</summary><dl><div><dt>Status</dt><dd>{generated.status}</dd></div><div><dt>Template</dt><dd>{generated.extracted_data.template_id ?? "CampusHire Modern"} v{generated.extracted_data.template_version ?? "1"}</dd></div><div><dt>Pages</dt><dd>{generated.page_count ?? "Pending"}</dd></div><div><dt>Generator</dt><dd>{generated.generator_version ?? "CampusHire generator"}</dd></div><div><dt>Content reference</dt><dd><code>{generated.evidence_digest}</code></dd></div></dl><p>This reference identifies the reviewed information used for this PDF. It does not verify your credentials.</p></details> : null}
 
       <div className={styles.grid}>
         <section className={styles.paper} aria-label="Resume preview">
-          <div className={styles.templateName}>CampusHire Classic</div>
+          <div className={styles.templateName}>CampusHire Modern · A4</div>
           <div className={styles.paperHeader}>
             <h2>{previewName}</h2>
-            <p>{[draft.phone && `Phone: ${draft.phone}`, `Email: ${previewEmail}`, draft.githubUrl && `GitHub: ${draft.githubUrl.replace("https://", "")}`, draft.portfolioUrl && `Portfolio: ${draft.portfolioUrl.replace("https://", "")}`].filter(Boolean).join("  |  ")}</p>
+            <p>{[draft.phone && `Phone: ${draft.phone}`, `Email: ${previewEmail}`, draft.githubUrl && `GitHub: ${draft.githubUrl.replace("https://", "")}`, draft.linkedinUrl && `LinkedIn: ${draft.linkedinUrl.replace("https://", "")}`, draft.portfolioUrl && `Portfolio: ${draft.portfolioUrl.replace("https://", "")}`].filter(Boolean).join("  |  ")}</p>
           </div>
           {draft.summary && <section><h3>Profile</h3><p className={styles.summary}>{draft.summary}</p></section>}
+          {previewExperience.length > 0 && <section><h3>Experience</h3><ul>{previewExperience.map((item) => <li key={item}>{item}</li>)}</ul></section>}
           {previewProjects.length > 0 && <section><h3>Projects</h3><ul>{previewProjects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
           {previewEducation.length > 0 && <section><h3>Education</h3><ul>{previewEducation.map((item) => <li key={item}>{item}</li>)}</ul></section>}
-          {previewExperience.length > 0 && <section><h3>Experience</h3><ul>{previewExperience.map((item) => <li key={item}>{item}</li>)}</ul></section>}
-          {previewCredentials.length > 0 && <section><h3>Research, publications, open source &amp; certifications</h3><ul>{previewCredentials.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewResearch.length > 0 && <section><h3>Research</h3><ul>{previewResearch.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewPublications.length > 0 && <section><h3>Publications</h3><ul>{previewPublications.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {previewCredentials.length > 0 && <section><h3>Certifications &amp; credentials</h3><ul>{previewCredentials.map((item) => <li key={item}>{item}</li>)}</ul></section>}
           {(previewSkills.length > 0 || previewAchievements.length > 0) && <section><h3>Skills and achievements</h3>{previewSkills.length > 0 && <p><strong>Skills:</strong> {previewSkills.join(", ")}</p>}{previewAchievements.length > 0 && <ul>{previewAchievements.map((item) => <li key={item}>{item}</li>)}</ul>}</section>}
         </section>
 
@@ -429,6 +564,7 @@ export function ResumeBuilder() {
               <label>Email<input type="email" value={draft.email} onChange={(event) => updateDraft("email", event.target.value)} maxLength={320} required /></label>
               <label>Phone<input value={draft.phone} onChange={(event) => updateDraft("phone", event.target.value)} maxLength={24} /></label>
               <label>GitHub URL<input type="url" value={draft.githubUrl} onChange={(event) => updateDraft("githubUrl", event.target.value)} maxLength={500} /></label>
+              <label>LinkedIn URL<input type="url" value={draft.linkedinUrl} onChange={(event) => updateDraft("linkedinUrl", event.target.value)} maxLength={500} /></label>
               <label className={styles.fullField}>Portfolio URL<input type="url" value={draft.portfolioUrl} onChange={(event) => updateDraft("portfolioUrl", event.target.value)} maxLength={500} /></label>
               <label className={styles.fullField}>Career focus and professional summary<textarea aria-label="Career focus and professional summary" value={draft.summary} onChange={(event) => updateDraft("summary", event.target.value)} maxLength={900} rows={4} /></label>
             </div>
@@ -439,14 +575,18 @@ export function ResumeBuilder() {
               <label className={styles.fullField}>Projects<textarea aria-label="Projects" value={draft.projects} onChange={(event) => updateDraft("projects", event.target.value)} placeholder="Project name — impact, technologies, or link" /></label>
               <label className={styles.fullField}>Education<textarea aria-label="Education" value={draft.education} onChange={(event) => updateDraft("education", event.target.value)} placeholder="Degree — institution · year" /></label>
               <label className={styles.fullField}>Experience<textarea aria-label="Experience" value={draft.experience} onChange={(event) => updateDraft("experience", event.target.value)} placeholder="Organization — role · dates" /></label>
-              <label className={styles.fullField}>Research, publications & certifications<textarea aria-label="Research, publications and certifications" value={draft.credentials} onChange={(event) => updateDraft("credentials", event.target.value)} placeholder="Publication, research, or credential — details" /></label>
+              <label className={styles.fullField}>Research<textarea aria-label="Research" value={draft.research} onChange={(event) => updateDraft("research", event.target.value)} placeholder="Research area — contribution or methods" /></label>
+              <label className={styles.fullField}>Publications<textarea aria-label="Publications" value={draft.publications} onChange={(event) => updateDraft("publications", event.target.value)} placeholder="Title — venue, year, link" /></label>
+              <label className={styles.fullField}>Certifications & credentials<textarea aria-label="Certifications and credentials" value={draft.credentials} onChange={(event) => updateDraft("credentials", event.target.value)} placeholder="Credential — issuer, year" /></label>
               <label className={styles.fullField}>Skills<textarea aria-label="Skills" value={draft.skills} onChange={(event) => updateDraft("skills", event.target.value)} placeholder="One skill per line" /></label>
               <label className={styles.fullField}>Achievements<textarea aria-label="Achievements" value={draft.achievements} onChange={(event) => updateDraft("achievements", event.target.value)} placeholder="One factual achievement per line" /></label>
+              <label className={styles.fullField}>Positions of responsibility<textarea aria-label="Positions of responsibility" value={draft.positions} onChange={(event) => updateDraft("positions", event.target.value)} placeholder="Role — organization, dates, contribution" /></label>
+              <label className={styles.fullField}>Extracurricular activities<textarea aria-label="Extracurricular activities" value={draft.extracurricular} onChange={(event) => updateDraft("extracurricular", event.target.value)} placeholder="Activity — role or contribution" /></label>
               </div>
             </details>
             {onboardingStep && !generated ? <div className={styles.deferResume}>
               <p>If you skip now, you can create this later from Preparation → Resume Generator. Later creation is manual only.</p>
-              <button type="button" onClick={() => router.replace("/dashboard")} disabled={state === "saving"}>Skip for now</button>
+              <button type="button" onClick={() => router.replace("/dashboard")} disabled={state === "saving" || state === "processing"}>Skip for now</button>
             </div> : null}
           </section>
 

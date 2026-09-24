@@ -42,6 +42,13 @@ const failureCopy: Record<string, string> = {
   resume_malformed: "The file does not contain a valid readable PDF structure.",
   resume_worker_attempts_exhausted: "Processing stopped after the safe retry budget was exhausted.",
   resume_processing_unexpected: "Processing stopped safely because an unexpected worker error occurred.",
+  resume_latex_compiler_unavailable: "The local LaTeX compiler is unavailable. Check the Resume Generator setup, then retry.",
+  resume_latex_dependency_missing: "A required local LaTeX package is missing. Install the template packages, then retry.",
+  resume_latex_compile_failed: "The PDF could not be compiled. Check the local TeX setup before retrying.",
+  resume_template_unavailable: "The versioned resume template is unavailable. Restore the template file, then retry.",
+  resume_pdf_invalid: "The generated PDF did not pass validation and was not saved as a completed version.",
+  resume_pdf_too_large: "The generated PDF exceeds the supported file size.",
+  resume_pdf_too_many_pages: "This resume is longer than the supported page limit. Shorten optional details and create a new version.",
   resume_job_cancelled: "Processing was cancelled by an authorized placement operator.",
 };
 
@@ -50,6 +57,7 @@ const pipelineStages: Array<{ key: ResumePipelineStage; label: string }> = [
   { key: "scanning", label: "Malware scan" },
   { key: "parsing", label: "Isolated extraction" },
   { key: "review", label: "Student review" },
+  { key: "generating", label: "LaTeX PDF generation" },
   { key: "ready", label: "Ready for use" },
 ];
 
@@ -60,6 +68,7 @@ const pipelineCopy: Record<ResumePipelineStage, string> = {
   parsing: "A network-isolated parser is extracting proposed details.",
   parser_retry: "Extraction will retry; the private original remains unchanged.",
   review: "Extraction is complete and waiting for your decisions.",
+  generating: "The local LaTeX worker is compiling a PDF from the reviewed profile details.",
   generated: "A reviewed CampusHire PDF was generated.",
   ready: "The reviewed CampusHire resume is ready for authorized use.",
   failed: "Processing stopped safely. No unreviewed detail was accepted.",

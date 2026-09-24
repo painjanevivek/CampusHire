@@ -3635,6 +3635,20 @@ export type MfaDisableRequest = {
 };
 
 /**
+ * MfaRecoveryRegenerateRequest
+ */
+export type MfaRecoveryRegenerateRequest = {
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Code
+     */
+    code: string;
+};
+
+/**
  * MfaSetupResponse
  */
 export type MfaSetupResponse = {
@@ -5642,6 +5656,10 @@ export type ResumeContent = {
      */
     github_url?: string | null;
     /**
+     * Linkedin Url
+     */
+    linkedin_url?: string | null;
+    /**
      * Portfolio Url
      */
     portfolio_url?: string | null;
@@ -5654,25 +5672,53 @@ export type ResumeContent = {
      */
     skills?: Array<string>;
     /**
+     * Skill Groups
+     */
+    skill_groups?: Array<SkillGroup>;
+    /**
      * Projects
      */
-    projects?: Array<string>;
+    projects?: Array<ResumeEntry | string>;
     /**
      * Education
      */
-    education?: Array<string>;
+    education?: Array<ResumeEntry | string>;
     /**
      * Experience
      */
-    experience?: Array<string>;
+    experience?: Array<ResumeEntry | string>;
     /**
      * Credentials
      */
     credentials?: Array<string>;
     /**
+     * Research
+     */
+    research?: Array<ResumeEntry | string>;
+    /**
+     * Publications
+     */
+    publications?: Array<ResumeEntry | string>;
+    /**
+     * Certifications
+     */
+    certifications?: Array<ResumeEntry | string>;
+    /**
      * Achievements
      */
     achievements?: Array<string>;
+    /**
+     * Positions
+     */
+    positions?: Array<ResumeEntry | string>;
+    /**
+     * Extracurricular
+     */
+    extracurricular?: Array<ResumeEntry | string>;
+    /**
+     * Section Order
+     */
+    section_order?: Array<'experience' | 'projects' | 'education' | 'research' | 'publications' | 'certifications' | 'skills' | 'achievements' | 'positions' | 'extracurricular'>;
 };
 
 /**
@@ -5696,6 +5742,50 @@ export type ResumeDraft = {
      * Skills
      */
     skills?: Array<GroundedClaim>;
+};
+
+/**
+ * ResumeEntry
+ *
+ * Structured resume evidence used by the renderer; it is not stored as raw LaTeX.
+ */
+export type ResumeEntry = {
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Organization
+     */
+    organization?: string | null;
+    /**
+     * Location
+     */
+    location?: string | null;
+    /**
+     * Start Date
+     */
+    start_date?: string | null;
+    /**
+     * End Date
+     */
+    end_date?: string | null;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Bullets
+     */
+    bullets?: Array<string>;
+    /**
+     * Technologies
+     */
+    technologies?: Array<string>;
+    /**
+     * Url
+     */
+    url?: string | null;
 };
 
 /**
@@ -5873,7 +5963,7 @@ export type ResumeJobResponse = {
     /**
      * Stage
      */
-    stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generating' | 'generated' | 'ready' | 'failed' | 'cancelled';
 };
 
 /**
@@ -5888,6 +5978,28 @@ export type ResumeProposalCreate = {
      * Purpose Role Id
      */
     purpose_role_id?: string | null;
+};
+
+/**
+ * ResumeReadinessResponse
+ */
+export type ResumeReadinessResponse = {
+    /**
+     * Ready
+     */
+    ready: boolean;
+    /**
+     * Blocking
+     */
+    blocking?: Array<string>;
+    /**
+     * Warnings
+     */
+    warnings?: Array<string>;
+    /**
+     * Informational
+     */
+    informational?: Array<string>;
 };
 
 /**
@@ -5999,7 +6111,7 @@ export type ResumeVersionResponse = {
     /**
      * Processing Stage
      */
-    processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generating' | 'generated' | 'ready' | 'failed' | 'cancelled';
     /**
      * Safe Error Code
      */
@@ -6927,6 +7039,20 @@ export type SignupRequest = {
      * Invitation Code
      */
     invitation_code?: string | null;
+};
+
+/**
+ * SkillGroup
+ */
+export type SkillGroup = {
+    /**
+     * Category
+     */
+    category: 'Programming' | 'Frontend' | 'Backend' | 'Databases' | 'AI/ML' | 'Cloud & DevOps' | 'Analytics & SEO' | 'Tools' | 'Other';
+    /**
+     * Items
+     */
+    items?: Array<string>;
 };
 
 /**
@@ -8025,6 +8151,31 @@ export type ChallengeMfaApiV1AuthMfaChallengePostResponses = {
 };
 
 export type ChallengeMfaApiV1AuthMfaChallengePostResponse = ChallengeMfaApiV1AuthMfaChallengePostResponses[keyof ChallengeMfaApiV1AuthMfaChallengePostResponses];
+
+export type RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostData = {
+    body: MfaRecoveryRegenerateRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/recovery-codes/regenerate';
+};
+
+export type RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostError = RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostErrors[keyof RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostErrors];
+
+export type RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaConfirmResponse;
+};
+
+export type RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostResponse = RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostResponses[keyof RegenerateRecoveryCodesApiV1AuthMfaRecoveryCodesRegeneratePostResponses];
 
 export type ResetMfaFactorApiV1AuthMfaDisablePostData = {
     body: MfaDisableRequest;
@@ -10386,10 +10537,35 @@ export type GenerateResumeVersionApiV1ResumesGeneratePostResponses = {
     /**
      * Successful Response
      */
-    201: ResumeVersionResponse;
+    202: ResumeVersionResponse;
 };
 
 export type GenerateResumeVersionApiV1ResumesGeneratePostResponse = GenerateResumeVersionApiV1ResumesGeneratePostResponses[keyof GenerateResumeVersionApiV1ResumesGeneratePostResponses];
+
+export type ReadResumeReadinessApiV1ResumesReadinessPostData = {
+    body: ResumeContent;
+    path?: never;
+    query?: never;
+    url: '/api/v1/resumes/readiness';
+};
+
+export type ReadResumeReadinessApiV1ResumesReadinessPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadResumeReadinessApiV1ResumesReadinessPostError = ReadResumeReadinessApiV1ResumesReadinessPostErrors[keyof ReadResumeReadinessApiV1ResumesReadinessPostErrors];
+
+export type ReadResumeReadinessApiV1ResumesReadinessPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeReadinessResponse;
+};
+
+export type ReadResumeReadinessApiV1ResumesReadinessPostResponse = ReadResumeReadinessApiV1ResumesReadinessPostResponses[keyof ReadResumeReadinessApiV1ResumesReadinessPostResponses];
 
 export type DeleteResumeVersionApiV1ResumesResumeIdDeleteData = {
     body?: never;
@@ -10536,7 +10712,7 @@ export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostR
     /**
      * Successful Response
      */
-    201: ResumeVersionResponse;
+    202: ResumeVersionResponse;
 };
 
 export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponse = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses];
@@ -10885,7 +11061,7 @@ export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersio
     /**
      * Successful Response
      */
-    201: ResumeVersionResponse;
+    202: ResumeVersionResponse;
 };
 
 export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponse = CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses[keyof CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses];
