@@ -7,6 +7,7 @@ import { Alert, RequestState } from "@/components/ui/feedback";
 import { apiRequest } from "@/lib/api/client";
 import type { MfaStatusResponse } from "@/lib/api/generated/types.gen";
 import { MfaResetControl } from "./mfa-reset-control";
+import { MfaRecoveryControl } from "./mfa-recovery-control";
 import styles from "./profile-workspace.module.css";
 
 export function MfaStatusControl({ workspace = "admin" }: { workspace?: "student" | "tnp" | "admin" }) {
@@ -30,6 +31,7 @@ export function MfaStatusControl({ workspace = "admin" }: { workspace?: "student
     return (
       <div className={styles.governanceContent}>
         <Alert tone="success">Authenticator enabled. CampusHire will request a rotating code on future sign-ins to this {accountLabel}.</Alert>
+        <MfaRecoveryControl />
         <MfaResetControl workspace={workspace} />
       </div>
     );
