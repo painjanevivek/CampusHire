@@ -732,7 +732,7 @@ export function ApplicationWizard({ roleId }: { roleId: string }) {
                 </div>
               ) : null}
 
-              <Alert tone="info">Need a new version? Use Resume Studio to build it from profile details you have reviewed, then return here.</Alert>
+              <Alert tone="info">Need a new version? Open Resume Generator to build it from your saved profile, then return here.</Alert>
             </>
           ) : null}
 

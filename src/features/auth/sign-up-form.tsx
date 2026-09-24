@@ -16,6 +16,7 @@ export function SignUpForm() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [repeatedPasswordError, setRepeatedPasswordError] = useState("");
   const [institutions, setInstitutions] = useState<SignupInstitution[]>([]);
   const [institutionsLoading, setInstitutionsLoading] = useState(true);
   const [institutionsError, setInstitutionsError] = useState("");
@@ -57,13 +58,23 @@ export function SignUpForm() {
     setError("");
     setNotice("");
     setPasswordError("");
+    setRepeatedPasswordError("");
+
+    if (Array.from(password).length < 8) {
+      setPasswordError("Use at least 8 characters.");
+      return;
+    }
+    if (Array.from(repeatedPassword).length < 8) {
+      setRepeatedPasswordError("Use at least 8 characters.");
+      return;
+    }
 
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
     if (password !== repeatedPassword) {
-      setPasswordError("Passwords do not match.");
+      setRepeatedPasswordError("Passwords do not match.");
       return;
     }
 
@@ -130,8 +141,10 @@ export function SignUpForm() {
         id="email"
         name="email"
         type="email"
-        label="Email"
+        label="PCCOE institutional email"
         autoComplete="email"
+        placeholder="name.surname23@pccoepune.org"
+        hint="Use your PCCOE institutional email. It must contain your admission batch year."
         required
       />
       <Select
@@ -160,20 +173,23 @@ export function SignUpForm() {
           name="password"
           label="Password"
           autoComplete="new-password"
-          minLength={12}
+          minLength={8}
           maxLength={128}
+          hint="Use at least 8 characters."
+          error={passwordError}
           required
+          onChange={() => passwordError && setPasswordError("")}
         />
         <PasswordInput
           id="re_enter_password"
           name="re_enter_password"
           label="Re-enter password"
           autoComplete="new-password"
-          minLength={12}
+          minLength={8}
           maxLength={128}
+          error={repeatedPasswordError}
           required
-          error={passwordError}
-          onChange={() => passwordError && setPasswordError("")}
+          onChange={() => repeatedPasswordError && setRepeatedPasswordError("")}
         />
       </div>
 

@@ -14,9 +14,7 @@
   border-bottom: 1px solid var(--line);
 }
 
-.eyebrow,
-.cardLabel,
-.status {
+.cardLabel {
   margin: 0 0 8px;
   color: var(--brand-blue);
   font-size: 0.75rem;
@@ -32,7 +30,7 @@
   line-height: 1;
 }
 
-.hero p:not(.eyebrow) {
+.hero p {
   max-width: 680px;
   margin: 12px 0 0;
   color: var(--ink-muted);
@@ -63,7 +61,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.55fr);
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.55fr);
   gap: 24px;
   margin-top: 28px;
 }
@@ -82,8 +80,7 @@
   gap: 16px;
 }
 
-.cardLabel,
-.status {
+.cardLabel {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -98,42 +95,6 @@
 .uploadCard > p {
   margin: 0;
   color: var(--ink-muted);
-}
-
-.filePicker {
-  min-height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 24px;
-  color: var(--brand-blue);
-  background: var(--brand-soft);
-  border: 1px dashed var(--brand-blue);
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.filePicker span {
-  display: grid;
-  gap: 3px;
-}
-
-.filePicker small {
-  color: var(--ink-muted);
-}
-
-.filePicker input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-
-.filePicker:focus-within {
-  outline: 3px solid color-mix(in srgb, var(--brand-blue) 28%, transparent);
-  outline-offset: 3px;
 }
 
 .primaryAction {
@@ -151,24 +112,12 @@
   align-self: start;
 }
 
-.status {
-  color: var(--verified);
-}
-
-.status span {
-  width: 8px;
-  aspect-ratio: 1;
-  background: var(--verified);
-  border-radius: 50%;
-}
-
-.processCard > svg {
-  margin: 28px 0 12px;
-  color: var(--brand-blue);
-}
+.processCard { align-self: start; padding: 0 clamp(18px, 3vw, 24px); }
+.processCard summary { min-height: 68px; display: flex; align-items: center; cursor: pointer; color: var(--brand-blue-dark); font-weight: var(--font-weight-label); }
+.processCard summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand-blue) 28%, transparent); outline-offset: 3px; }
 
 .processCard ol {
-  margin: 28px 0 0;
+  margin: 0 0 14px;
   padding: 0;
   list-style: none;
 }
@@ -177,7 +126,7 @@
   display: grid;
   grid-template-columns: 34px 1fr;
   gap: 12px;
-  padding: 18px 0;
+  padding: 13px 0;
   border-top: 1px solid var(--line);
 }
 
@@ -223,6 +172,10 @@
 .pipelineDetails dd { margin: 0; overflow-wrap: anywhere; }
 .versionActions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 .versionActions a, .versionActions button { min-height: var(--control-min-size); display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; color: var(--brand-blue); background: transparent; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: .82rem; font-weight: var(--font-weight-label); text-decoration: none; cursor: pointer; }
+.renameForm { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; width: 100%; }
+.renameForm input { flex: 1 1 190px; min-width: 0; min-height: 42px; padding: 0 10px; color: var(--ink); background: var(--canvas); border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.renameForm button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 10px; color: var(--brand-blue); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: .82rem; font-weight: var(--font-weight-label); cursor: pointer; }
+.renameForm button:disabled { opacity: .55; cursor: not-allowed; }
 .locked { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); font-size: .75rem; }
 .comparison { margin-top: 28px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--surface); }
 .comparison .sectionHeader > svg { color: var(--brand-blue); }
@@ -246,11 +199,13 @@
   .page { width: min(100% - 24px, 1180px); padding-top: 28px; }
   .builderLink, .primaryAction { width: 100%; }
   .uploadCard, .processCard { padding: 22px 18px; }
-  .filePicker { align-items: flex-start; flex-direction: column; }
+  .primaryAction, .builderLink { width: 100%; }
   .versions { padding: 22px 18px; }
   .versionCard { grid-template-columns: 42px minmax(0, 1fr); }
   .versionActions { grid-column: 1 / -1; justify-content: stretch; }
   .versionActions a, .versionActions button { flex: 1; }
+  .renameForm { display: grid; grid-template-columns: 1fr 1fr; }
+  .renameForm input { grid-column: 1 / -1; }
 }
 @media (max-width: 620px) { .compareSelectors { grid-template-columns: 1fr; } .diffTable > div { grid-template-columns: 1fr; } }
 

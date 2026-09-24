@@ -9,14 +9,6 @@ export type ClientOptions = {
  */
 export type ActivationStage = {
     /**
-     * Estimated Minutes
-     */
-    estimated_minutes: number;
-    /**
-     * Href
-     */
-    href: string;
-    /**
      * Key
      */
     key: 'account_activated' | 'profile_minimum' | 'target_role' | 'resume_reviewed' | 'opportunities_unlocked' | 'first_application';
@@ -28,6 +20,14 @@ export type ActivationStage = {
      * Status
      */
     status: 'complete' | 'current' | 'upcoming';
+    /**
+     * Href
+     */
+    href: string;
+    /**
+     * Estimated Minutes
+     */
+    estimated_minutes: number;
     /**
      * Unlocks
      */
@@ -81,13 +81,17 @@ export type AdminIdentityStep = {
  */
 export type AgentEventResponse = {
     /**
-     * Created At
+     * Sequence
      */
-    created_at: string;
+    sequence: number;
     /**
      * Event Type
      */
     event_type: string;
+    /**
+     * Summary
+     */
+    summary: string;
     /**
      * Metadata
      */
@@ -95,13 +99,9 @@ export type AgentEventResponse = {
         [key: string]: unknown;
     };
     /**
-     * Sequence
+     * Created At
      */
-    sequence: number;
-    /**
-     * Summary
-     */
-    summary: string;
+    created_at: string;
 };
 
 /**
@@ -109,74 +109,13 @@ export type AgentEventResponse = {
  */
 export type AgentRunResponse = {
     /**
-     * Artifact
+     * Id
      */
-    artifact: {
-        [key: string]: unknown;
-    } | null;
+    id: string;
     /**
      * Audience
      */
     audience: 'student' | 'tnp';
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Evaluation Run Id
-     */
-    evaluation_run_id: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    limits: RunLimits;
-    /**
-     * Model Version
-     */
-    model_version: string;
-    /**
-     * Provider Name
-     */
-    provider_name: string;
-    /**
-     * Required Action
-     */
-    required_action: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * Revision
-     */
-    revision: number;
-    /**
-     * Safe Error
-     */
-    safe_error: string | null;
-    /**
-     * Source Fingerprint
-     */
-    source_fingerprint: string | null;
-    /**
-     * Source Projection Version
-     */
-    source_projection_version: string;
-    /**
-     * Status
-     */
-    status: 'queued' | 'running' | 'awaiting_input' | 'awaiting_review' | 'completed' | 'failed' | 'cancelled' | 'expired';
-    /**
-     * Target Id
-     */
-    target_id: string;
-    /**
-     * Target Kind
-     */
-    target_kind: 'role' | 'drive';
-    /**
-     * Updated At
-     */
-    updated_at: string;
     /**
      * Workflow
      */
@@ -185,6 +124,67 @@ export type AgentRunResponse = {
      * Workflow Version
      */
     workflow_version: string;
+    /**
+     * Source Projection Version
+     */
+    source_projection_version: string;
+    /**
+     * Evaluation Run Id
+     */
+    evaluation_run_id: string | null;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
+    /**
+     * Model Version
+     */
+    model_version: string;
+    /**
+     * Target Kind
+     */
+    target_kind: 'role' | 'drive';
+    /**
+     * Target Id
+     */
+    target_id: string;
+    /**
+     * Status
+     */
+    status: 'queued' | 'running' | 'awaiting_input' | 'awaiting_review' | 'completed' | 'failed' | 'cancelled' | 'expired';
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Source Fingerprint
+     */
+    source_fingerprint: string | null;
+    limits: RunLimits;
+    /**
+     * Required Action
+     */
+    required_action: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Safe Error
+     */
+    safe_error: string | null;
+    /**
+     * Artifact
+     */
+    artifact: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
 };
 
 /**
@@ -192,27 +192,23 @@ export type AgentRunResponse = {
  */
 export type ApplicationAcknowledgmentInput = {
     /**
-     * Confirmation
+     * Material Terms Version Id
      */
-    confirmation: 'I ACKNOWLEDGE THESE MATERIAL TERMS';
+    material_terms_version_id: string;
     /**
      * Content Digest
      */
     content_digest: string;
     /**
-     * Material Terms Version Id
+     * Confirmation
      */
-    material_terms_version_id: string;
+    confirmation: 'I ACKNOWLEDGE THESE MATERIAL TERMS';
 };
 
 /**
  * ApplicationAppealCreate
  */
 export type ApplicationAppealCreate = {
-    /**
-     * Confirmation
-     */
-    confirmation: 'SUBMIT APPEAL';
     /**
      * Kind
      */
@@ -225,12 +221,20 @@ export type ApplicationAppealCreate = {
      * Supporting Evidence
      */
     supporting_evidence?: Array<string>;
+    /**
+     * Confirmation
+     */
+    confirmation: 'SUBMIT APPEAL';
 };
 
 /**
  * ApplicationAppealResolution
  */
 export type ApplicationAppealResolution = {
+    /**
+     * Status
+     */
+    status: 'approved' | 'declined';
     /**
      * Administrator Response
      */
@@ -243,10 +247,6 @@ export type ApplicationAppealResolution = {
      * Resolution Effect
      */
     resolution_effect: 'decision_upheld' | 'decision_changed' | 'record_corrected' | 'no_change';
-    /**
-     * Status
-     */
-    status: 'approved' | 'declined';
 };
 
 /**
@@ -254,17 +254,45 @@ export type ApplicationAppealResolution = {
  */
 export type ApplicationAppealResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Kind
+     */
+    kind: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Supporting Evidence
+     */
+    supporting_evidence: Array<string>;
+    /**
      * Administrator Response
      */
     administrator_response: string | null;
     /**
-     * Assignee User Id
-     */
-    assignee_user_id?: string | null;
-    /**
      * Created At
      */
     created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Resolved At
+     */
+    resolved_at: string | null;
+    /**
+     * Assignee User Id
+     */
+    assignee_user_id?: string | null;
     /**
      * Due At
      */
@@ -274,45 +302,17 @@ export type ApplicationAppealResponse = {
      */
     escalation_state?: string;
     /**
-     * Id
+     * Revision
      */
-    id: string;
-    /**
-     * Independence Status
-     */
-    independence_status?: 'unassigned' | 'independent' | 'conflicted';
-    /**
-     * Kind
-     */
-    kind: string;
-    /**
-     * Reason
-     */
-    reason: string;
+    revision?: number;
     /**
      * Resolution Effect
      */
     resolution_effect?: string | null;
     /**
-     * Resolved At
+     * Independence Status
      */
-    resolved_at: string | null;
-    /**
-     * Revision
-     */
-    revision?: number;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Supporting Evidence
-     */
-    supporting_evidence: Array<string>;
-    /**
-     * Updated At
-     */
-    updated_at: string;
+    independence_status?: 'unassigned' | 'independent' | 'conflicted';
 };
 
 /**
@@ -320,16 +320,16 @@ export type ApplicationAppealResponse = {
  */
 export type ApplicationDisclosureResponse = {
     /**
+     * Application Id
+     */
+    application_id: string;
+    form: ApplicationFormResponse;
+    /**
      * Answers
      */
     answers: {
         [key: string]: boolean | string | Array<string>;
     };
-    /**
-     * Application Id
-     */
-    application_id: string;
-    form: ApplicationFormResponse;
     /**
      * Retention Until
      */
@@ -341,17 +341,48 @@ export type ApplicationDisclosureResponse = {
  */
 export type ApplicationDraftResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Role Title
+     */
+    role_title: string;
+    /**
      * Company Name
      */
     company_name: string;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
     /**
      * Current Step
      */
     current_step: string;
     /**
-     * Deadline At
+     * Revision
      */
-    deadline_at: string;
+    revision: number;
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Last Saved At
+     */
+    last_saved_at: string;
+    /**
+     * Profile Revision
+     */
+    profile_revision: number | null;
+    resume: DraftResumeSummary | null;
+    form: ApplicationFormResponse | null;
+    material_terms: MaterialTermsResponse | null;
     /**
      * Disclosure Answers
      */
@@ -363,37 +394,6 @@ export type ApplicationDraftResponse = {
      */
     disclosure_completed: boolean;
     /**
-     * Expires At
-     */
-    expires_at: string;
-    form: ApplicationFormResponse | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Last Saved At
-     */
-    last_saved_at: string;
-    material_terms: MaterialTermsResponse | null;
-    /**
-     * Profile Revision
-     */
-    profile_revision: number | null;
-    resume: DraftResumeSummary | null;
-    /**
-     * Revision
-     */
-    revision: number;
-    /**
-     * Role Id
-     */
-    role_id: string;
-    /**
-     * Role Title
-     */
-    role_title: string;
-    /**
      * Submitted Application Id
      */
     submitted_application_id: string | null;
@@ -404,49 +404,49 @@ export type ApplicationDraftResponse = {
  */
 export type ApplicationFormResponse = {
     /**
-     * Compliance Owner
-     */
-    compliance_owner: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Published At
-     */
-    published_at: string | null;
-    /**
-     * Purpose
-     */
-    purpose: string;
-    /**
-     * Questions
-     */
-    questions: Array<DisclosureQuestion>;
-    /**
-     * Retention Days
-     */
-    retention_days: number;
     /**
      * Role Id
      */
     role_id: string;
     /**
+     * Version
+     */
+    version: number;
+    /**
      * Status
      */
     status: string;
     /**
+     * Purpose
+     */
+    purpose: string;
+    /**
+     * Compliance Owner
+     */
+    compliance_owner: string;
+    /**
+     * Retention Days
+     */
+    retention_days: number;
+    /**
+     * Questions
+     */
+    questions: Array<DisclosureQuestion>;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Version
-     */
-    version: number;
 };
 
 /**
@@ -454,21 +454,21 @@ export type ApplicationFormResponse = {
  */
 export type ApplicationFormUpdate = {
     /**
-     * Compliance Owner
-     */
-    compliance_owner: string;
-    /**
      * Purpose
      */
     purpose: string;
     /**
-     * Questions
+     * Compliance Owner
      */
-    questions?: Array<DisclosureQuestion>;
+    compliance_owner: string;
     /**
      * Retention Days
      */
     retention_days: number;
+    /**
+     * Questions
+     */
+    questions?: Array<DisclosureQuestion>;
 };
 
 /**
@@ -480,17 +480,17 @@ export type ApplicationOverrideCreate = {
      */
     expected_revision?: number | null;
     /**
-     * Policy Reference
+     * Status
      */
-    policy_reference: string;
+    status: 'shortlisted' | 'rejected';
     /**
      * Reason
      */
     reason: string;
     /**
-     * Status
+     * Policy Reference
      */
-    status: 'shortlisted' | 'rejected';
+    policy_reference: string;
 };
 
 /**
@@ -498,57 +498,57 @@ export type ApplicationOverrideCreate = {
  */
 export type ApplicationQueueItem = {
     /**
-     * Assignee User Id
-     */
-    assignee_user_id?: string | null;
-    /**
-     * Assignment Revision
-     */
-    assignment_revision?: number;
-    /**
-     * Awaiting Review
-     */
-    awaiting_review: number;
-    /**
-     * Company Name
-     */
-    company_name: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Due State
-     */
-    due_state: 'unassigned' | 'on_track' | 'due_soon' | 'overdue' | 'complete';
-    /**
      * Id
      */
     id: string;
     /**
-     * Open Requests
+     * Student Name
      */
-    open_requests: number;
-    /**
-     * Review Due At
-     */
-    review_due_at?: string | null;
-    /**
-     * Revision
-     */
-    revision: number;
+    student_name: string;
     /**
      * Role Title
      */
     role_title: string;
     /**
+     * Company Name
+     */
+    company_name: string;
+    /**
      * Status
      */
     status: string;
     /**
-     * Student Name
+     * Revision
      */
-    student_name: string;
+    revision: number;
+    /**
+     * Assignee User Id
+     */
+    assignee_user_id?: string | null;
+    /**
+     * Review Due At
+     */
+    review_due_at?: string | null;
+    /**
+     * Assignment Revision
+     */
+    assignment_revision?: number;
+    /**
+     * Due State
+     */
+    due_state: 'unassigned' | 'on_track' | 'due_soon' | 'overdue' | 'complete';
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Open Requests
+     */
+    open_requests: number;
+    /**
+     * Awaiting Review
+     */
+    awaiting_review: number;
 };
 
 /**
@@ -560,6 +560,10 @@ export type ApplicationQueuePage = {
      */
     items: Array<ApplicationQueueItem>;
     /**
+     * Total
+     */
+    total: number;
+    /**
      * Page
      */
     page: number;
@@ -567,10 +571,6 @@ export type ApplicationQueuePage = {
      * Page Size
      */
     page_size: number;
-    /**
-     * Total
-     */
-    total: number;
 };
 
 /**
@@ -578,93 +578,25 @@ export type ApplicationQueuePage = {
  */
 export type ApplicationResponse = {
     /**
-     * Acknowledgment Snapshot
+     * Revision
      */
-    acknowledgment_snapshot: {
-        [key: string]: unknown;
-    };
-    /**
-     * Allowed Actions
-     */
-    allowed_actions?: Array<string>;
-    /**
-     * Appeals
-     */
-    appeals?: Array<ApplicationAppealResponse>;
-    /**
-     * Application Form Snapshot
-     */
-    application_form_snapshot: {
-        [key: string]: unknown;
-    };
+    revision?: number;
     /**
      * Assignee User Id
      */
     assignee_user_id?: string | null;
     /**
+     * Review Due At
+     */
+    review_due_at?: string | null;
+    /**
      * Assignment Revision
      */
     assignment_revision?: number;
     /**
-     * Awaiting Review
-     */
-    awaiting_review?: number;
-    /**
-     * Can Withdraw
-     */
-    can_withdraw: boolean;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Decision Snapshot
-     */
-    decision_snapshot: {
-        [key: string]: unknown;
-    };
-    /**
-     * Disclosure Status
-     */
-    disclosure_status: string;
-    /**
      * Due State
      */
     due_state?: 'unassigned' | 'on_track' | 'due_soon' | 'overdue' | 'complete';
-    /**
-     * Eligibility Snapshot
-     */
-    eligibility_snapshot: {
-        [key: string]: unknown;
-    };
-    /**
-     * Evidence Provenance
-     */
-    evidence_provenance: string;
-    /**
-     * Facts Snapshot
-     */
-    facts_snapshot: {
-        [key: string]: unknown;
-    };
-    /**
-     * History
-     */
-    history?: Array<StatusEventResponse>;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Institution Timezone
-     */
-    institution_timezone: string;
-    /**
-     * Material Terms Snapshot
-     */
-    material_terms_snapshot: {
-        [key: string]: unknown;
-    };
     /**
      * Next Actor
      */
@@ -678,17 +610,45 @@ export type ApplicationResponse = {
      */
     open_requests?: number;
     /**
-     * Overrides
+     * Awaiting Review
      */
-    overrides?: Array<OverrideResponse>;
+    awaiting_review?: number;
     /**
-     * Packet Digest
+     * Allowed Actions
      */
-    packet_digest: string | null;
+    allowed_actions?: Array<string>;
     /**
-     * Profile Snapshot
+     * Id
      */
-    profile_snapshot: {
+    id: string;
+    /**
+     * Role Id
+     */
+    role_id: string;
+    /**
+     * Student User Id
+     */
+    student_user_id: string;
+    /**
+     * Student Name
+     */
+    student_name: string;
+    /**
+     * Student Email
+     */
+    student_email: string;
+    /**
+     * Resume Version Id
+     */
+    resume_version_id: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Role Snapshot
+     */
+    role_snapshot: {
         [key: string]: unknown;
     };
     /**
@@ -698,25 +658,9 @@ export type ApplicationResponse = {
         [key: string]: unknown;
     };
     /**
-     * Resume Version Id
+     * Facts Snapshot
      */
-    resume_version_id: string;
-    /**
-     * Review Due At
-     */
-    review_due_at?: string | null;
-    /**
-     * Revision
-     */
-    revision?: number;
-    /**
-     * Role Id
-     */
-    role_id: string;
-    /**
-     * Role Snapshot
-     */
-    role_snapshot: {
+    facts_snapshot: {
         [key: string]: unknown;
     };
     /**
@@ -726,33 +670,89 @@ export type ApplicationResponse = {
         [key: string]: unknown;
     };
     /**
-     * Status
+     * Eligibility Snapshot
      */
-    status: string;
+    eligibility_snapshot: {
+        [key: string]: unknown;
+    };
     /**
-     * Student Email
+     * Decision Snapshot
      */
-    student_email: string;
+    decision_snapshot: {
+        [key: string]: unknown;
+    };
     /**
-     * Student Name
+     * Profile Snapshot
      */
-    student_name: string;
+    profile_snapshot: {
+        [key: string]: unknown;
+    };
     /**
-     * Student User Id
+     * Application Form Snapshot
      */
-    student_user_id: string;
+    application_form_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Material Terms Snapshot
+     */
+    material_terms_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Acknowledgment Snapshot
+     */
+    acknowledgment_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Packet Digest
+     */
+    packet_digest: string | null;
+    /**
+     * Evidence Provenance
+     */
+    evidence_provenance: string;
+    /**
+     * Disclosure Status
+     */
+    disclosure_status: string;
+    /**
+     * Institution Timezone
+     */
+    institution_timezone: string;
+    /**
+     * Created At
+     */
+    created_at: string;
     /**
      * Updated At
      */
     updated_at: string;
     /**
+     * Withdrawn At
+     */
+    withdrawn_at: string | null;
+    /**
      * Withdrawal Reason
      */
     withdrawal_reason: string | null;
     /**
-     * Withdrawn At
+     * Can Withdraw
      */
-    withdrawn_at: string | null;
+    can_withdraw: boolean;
+    /**
+     * Appeals
+     */
+    appeals?: Array<ApplicationAppealResponse>;
+    /**
+     * History
+     */
+    history?: Array<StatusEventResponse>;
+    /**
+     * Overrides
+     */
+    overrides?: Array<OverrideResponse>;
 };
 
 /**
@@ -761,15 +761,15 @@ export type ApplicationResponse = {
 export type ApplicationReviewResponse = {
     draft: ApplicationDraftResponse;
     /**
-     * Immutable Notice
-     */
-    immutable_notice: string;
-    /**
      * Profile Snapshot
      */
     profile_snapshot: {
         [key: string]: unknown;
     };
+    /**
+     * Immutable Notice
+     */
+    immutable_notice: string;
 };
 
 /**
@@ -781,13 +781,13 @@ export type ApplicationStatusUpdate = {
      */
     expected_revision?: number | null;
     /**
-     * Reason
-     */
-    reason?: string | null;
-    /**
      * Status
      */
     status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+    /**
+     * Reason
+     */
+    reason?: string | null;
 };
 
 /**
@@ -795,13 +795,13 @@ export type ApplicationStatusUpdate = {
  */
 export type ApplicationWithdrawal = {
     /**
-     * Confirmation
-     */
-    confirmation: 'WITHDRAW';
-    /**
      * Reason
      */
     reason: string;
+    /**
+     * Confirmation
+     */
+    confirmation: 'WITHDRAW';
 };
 
 /**
@@ -809,13 +809,13 @@ export type ApplicationWithdrawal = {
  */
 export type ArtifactApply = {
     /**
-     * Expected Drive Revision
-     */
-    expected_drive_revision: number;
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Expected Drive Revision
+     */
+    expected_drive_revision: number;
     /**
      * Fields
      */
@@ -827,13 +827,13 @@ export type ArtifactApply = {
  */
 export type ArtifactDecision = {
     /**
-     * Decision
-     */
-    decision: 'accept' | 'reject';
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Decision
+     */
+    decision: 'accept' | 'reject';
 };
 
 /**
@@ -841,15 +841,15 @@ export type ArtifactDecision = {
  */
 export type ArtifactEdit = {
     /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
      * Content
      */
     content: {
         [key: string]: unknown;
     };
-    /**
-     * Expected Revision
-     */
-    expected_revision: number;
 };
 
 /**
@@ -857,19 +857,35 @@ export type ArtifactEdit = {
  */
 export type ArtifactResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Run Id
+     */
+    run_id: string;
+    /**
+     * Kind
+     */
+    kind: 'preparation_plan' | 'drive_preparation';
+    /**
+     * Target Id
+     */
+    target_id: string;
+    /**
+     * Status
+     */
+    status: 'draft' | 'accepted' | 'rejected' | 'applied';
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
      * Content
      */
     content: {
         [key: string]: unknown;
     };
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Evaluation Run Id
-     */
-    evaluation_run_id: string | null;
     /**
      * Evidence References
      */
@@ -877,57 +893,41 @@ export type ArtifactResponse = {
         [key: string]: unknown;
     }>;
     /**
-     * Id
+     * Source Fingerprint
      */
-    id: string;
-    /**
-     * Kind
-     */
-    kind: 'preparation_plan' | 'drive_preparation';
-    /**
-     * Model Version
-     */
-    model_version: string;
+    source_fingerprint: string;
     /**
      * Provider Name
      */
     provider_name: string;
     /**
-     * Revision
+     * Model Version
      */
-    revision: number;
+    model_version: string;
     /**
-     * Run Id
+     * Workflow Version
      */
-    run_id: string;
-    /**
-     * Source Fingerprint
-     */
-    source_fingerprint: string;
+    workflow_version: string;
     /**
      * Source Projection Version
      */
     source_projection_version: string;
     /**
+     * Evaluation Run Id
+     */
+    evaluation_run_id: string | null;
+    /**
      * Source Target Revision
      */
     source_target_revision?: number | null;
     /**
-     * Status
+     * Created At
      */
-    status: 'draft' | 'accepted' | 'rejected' | 'applied';
-    /**
-     * Target Id
-     */
-    target_id: string;
+    created_at: string;
     /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Workflow Version
-     */
-    workflow_version: string;
 };
 
 /**
@@ -957,31 +957,25 @@ export type AuditEventPage = {
  */
 export type AuditEventResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
      * Actor User Id
      */
     actor_user_id: string | null;
-    /**
-     * Correlation Id
-     */
-    correlation_id: string | null;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Details
-     */
-    details: {
-        [key: string]: unknown;
-    };
     /**
      * Event Type
      */
     event_type: string;
     /**
-     * Id
+     * Resource Type
      */
-    id: string;
+    resource_type: string | null;
+    /**
+     * Resource Id
+     */
+    resource_id: string | null;
     /**
      * Outcome
      */
@@ -991,13 +985,19 @@ export type AuditEventResponse = {
      */
     reason: string | null;
     /**
-     * Resource Id
+     * Correlation Id
      */
-    resource_id: string | null;
+    correlation_id: string | null;
     /**
-     * Resource Type
+     * Details
      */
-    resource_type: string | null;
+    details: {
+        [key: string]: unknown;
+    };
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -1035,27 +1035,27 @@ export type BounceEventCreate = {
  */
 export type BulkApplicationApplyRequest = {
     /**
-     * Application Ids
-     */
-    application_ids: Array<string>;
-    /**
-     * Confirmation
-     */
-    confirmation: 'APPLY BULK STATUS';
-    /**
      * Expected Revisions
      */
     expected_revisions?: {
         [key: string]: number;
     } | null;
     /**
-     * Reason
+     * Application Ids
      */
-    reason: string;
+    application_ids: Array<string>;
     /**
      * Status
      */
     status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Confirmation
+     */
+    confirmation: 'APPLY BULK STATUS';
 };
 
 /**
@@ -1063,17 +1063,17 @@ export type BulkApplicationApplyRequest = {
  */
 export type BulkApplicationApplyResponse = {
     /**
-     * Application Ids
+     * Updated Count
      */
-    application_ids: Array<string>;
+    updated_count: number;
     /**
      * Notification Count
      */
     notification_count: number;
     /**
-     * Updated Count
+     * Application Ids
      */
-    updated_count: number;
+    application_ids: Array<string>;
 };
 
 /**
@@ -1081,9 +1081,9 @@ export type BulkApplicationApplyResponse = {
  */
 export type BulkApplicationPreviewItem = {
     /**
-     * Allowed
+     * Revision
      */
-    allowed: boolean;
+    revision?: number;
     /**
      * Application Id
      */
@@ -1093,23 +1093,27 @@ export type BulkApplicationPreviewItem = {
      */
     current_status: string;
     /**
-     * Explanation
-     */
-    explanation: string;
-    /**
-     * Revision
-     */
-    revision?: number;
-    /**
      * Target Status
      */
     target_status: string;
+    /**
+     * Allowed
+     */
+    allowed: boolean;
+    /**
+     * Explanation
+     */
+    explanation: string;
 };
 
 /**
  * BulkApplicationPreviewResponse
  */
 export type BulkApplicationPreviewResponse = {
+    /**
+     * Items
+     */
+    items: Array<BulkApplicationPreviewItem>;
     /**
      * Allowed Count
      */
@@ -1118,10 +1122,6 @@ export type BulkApplicationPreviewResponse = {
      * Blocked Count
      */
     blocked_count: number;
-    /**
-     * Items
-     */
-    items: Array<BulkApplicationPreviewItem>;
 };
 
 /**
@@ -1129,23 +1129,23 @@ export type BulkApplicationPreviewResponse = {
  */
 export type BulkApplicationStatusRequest = {
     /**
-     * Application Ids
-     */
-    application_ids: Array<string>;
-    /**
      * Expected Revisions
      */
     expected_revisions?: {
         [key: string]: number;
     } | null;
     /**
-     * Reason
+     * Application Ids
      */
-    reason: string;
+    application_ids: Array<string>;
     /**
      * Status
      */
     status: 'under_review' | 'shortlisted' | 'interview' | 'offered' | 'rejected' | 'withdrawn';
+    /**
+     * Reason
+     */
+    reason: string;
 };
 
 /**
@@ -1167,6 +1167,10 @@ export type CampusEntry = {
  */
 export type CampusProgram = {
     /**
+     * Name
+     */
+    name: string;
+    /**
      * Branches
      */
     branches: Array<string>;
@@ -1174,10 +1178,6 @@ export type CampusProgram = {
      * Graduating Batches
      */
     graduating_batches: Array<number>;
-    /**
-     * Name
-     */
-    name: string;
 };
 
 /**
@@ -1185,21 +1185,21 @@ export type CampusProgram = {
  */
 export type CareerPreferenceStep = {
     /**
+     * Target Roles
+     */
+    target_roles: Array<string>;
+    /**
      * Industries
      */
     industries?: Array<string>;
-    /**
-     * Job Types
-     */
-    job_types?: Array<'full_time' | 'internship' | 'contract'>;
     /**
      * Locations
      */
     locations?: Array<string>;
     /**
-     * Target Roles
+     * Job Types
      */
-    target_roles: Array<string>;
+    job_types?: Array<'full_time' | 'internship' | 'contract'>;
     /**
      * Work Modes
      */
@@ -1211,37 +1211,37 @@ export type CareerPreferenceStep = {
  */
 export type CaseAssignmentHistoryResponse = {
     /**
-     * Actor User Id
+     * Id
      */
-    actor_user_id: string;
-    /**
-     * Case Id
-     */
-    case_id: string;
+    id: string;
     /**
      * Case Type
      */
     case_type: string;
     /**
-     * Created At
+     * Case Id
      */
-    created_at: string;
+    case_id: string;
     /**
      * From Assignee User Id
      */
     from_assignee_user_id: string | null;
     /**
-     * Id
+     * To Assignee User Id
      */
-    id: string;
+    to_assignee_user_id: string | null;
+    /**
+     * Actor User Id
+     */
+    actor_user_id: string;
     /**
      * Reason
      */
     reason: string;
     /**
-     * To Assignee User Id
+     * Created At
      */
-    to_assignee_user_id: string | null;
+    created_at: string;
 };
 
 /**
@@ -1277,25 +1277,25 @@ export type CaseClaimRequest = {
  */
 export type CertificationEntry = {
     /**
-     * Credential Url
+     * Name
      */
-    credential_url?: string | null;
-    /**
-     * Expires On
-     */
-    expires_on?: string | null;
-    /**
-     * Issued On
-     */
-    issued_on?: string | null;
+    name: string;
     /**
      * Issuer
      */
     issuer: string;
     /**
-     * Name
+     * Issued On
      */
-    name: string;
+    issued_on?: string | null;
+    /**
+     * Expires On
+     */
+    expires_on?: string | null;
+    /**
+     * Credential Url
+     */
+    credential_url?: string | null;
 };
 
 /**
@@ -1303,17 +1303,17 @@ export type CertificationEntry = {
  */
 export type Citation = {
     /**
-     * Label
+     * Source Type
      */
-    label: string;
+    source_type: string;
     /**
      * Source Id
      */
     source_id: string;
     /**
-     * Source Type
+     * Label
      */
-    source_type: string;
+    label: string;
 };
 
 /**
@@ -1321,13 +1321,9 @@ export type Citation = {
  */
 export type CommitmentTerms = {
     /**
-     * Currency
+     * Required
      */
-    currency?: string | null;
-    /**
-     * Details
-     */
-    details?: string | null;
+    required: boolean;
     /**
      * Duration Months
      */
@@ -1337,19 +1333,19 @@ export type CommitmentTerms = {
      */
     penalty_amount?: number | null;
     /**
-     * Required
+     * Currency
      */
-    required: boolean;
+    currency?: string | null;
+    /**
+     * Details
+     */
+    details?: string | null;
 };
 
 /**
  * CommunicationPreferencesResponse
  */
 export type CommunicationPreferencesResponse = {
-    /**
-     * Account Emails
-     */
-    account_emails?: true;
     /**
      * Application Updates
      */
@@ -1362,6 +1358,10 @@ export type CommunicationPreferencesResponse = {
      * Security Emails
      */
     security_emails?: true;
+    /**
+     * Account Emails
+     */
+    account_emails?: true;
 };
 
 /**
@@ -1383,10 +1383,6 @@ export type CommunicationPreferencesUpdate = {
  */
 export type CompanyCreate = {
     /**
-     * Description
-     */
-    description?: string | null;
-    /**
      * Name
      */
     name: string;
@@ -1394,20 +1390,16 @@ export type CompanyCreate = {
      * Website Url
      */
     website_url?: string | null;
+    /**
+     * Description
+     */
+    description?: string | null;
 };
 
 /**
  * CompanyResponse
  */
 export type CompanyResponse = {
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Description
-     */
-    description: string | null;
     /**
      * Id
      */
@@ -1417,27 +1409,31 @@ export type CompanyResponse = {
      */
     name: string;
     /**
+     * Website Url
+     */
+    website_url: string | null;
+    /**
+     * Description
+     */
+    description: string | null;
+    /**
      * Status
      */
     status: string;
     /**
+     * Created At
+     */
+    created_at: string;
+    /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Website Url
-     */
-    website_url: string | null;
 };
 
 /**
  * CompanyUpdate
  */
 export type CompanyUpdate = {
-    /**
-     * Description
-     */
-    description?: string | null;
     /**
      * Name
      */
@@ -1446,6 +1442,10 @@ export type CompanyUpdate = {
      * Website Url
      */
     website_url?: string | null;
+    /**
+     * Description
+     */
+    description?: string | null;
 };
 
 /**
@@ -1457,21 +1457,21 @@ export type CompensationTerms = {
      */
     currency: string;
     /**
-     * Maximum Amount
+     * Period
      */
-    maximum_amount?: number | null;
+    period: 'hourly' | 'monthly' | 'annual' | 'one_time';
     /**
      * Minimum Amount
      */
     minimum_amount: number;
     /**
+     * Maximum Amount
+     */
+    maximum_amount?: number | null;
+    /**
      * Notes
      */
     notes?: string | null;
-    /**
-     * Period
-     */
-    period: 'hourly' | 'monthly' | 'annual' | 'one_time';
 };
 
 /**
@@ -1489,35 +1489,39 @@ export type ConversationCreate = {
  */
 export type ConversationResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
      * Audience
      */
     audience: string;
     /**
-     * Created At
+     * Title
      */
-    created_at: string;
+    title: string;
     /**
      * Expires At
      */
     expires_at: string;
     /**
-     * Id
+     * Created At
      */
-    id: string;
+    created_at: string;
     /**
      * Messages
      */
     messages?: Array<MessageResponse>;
-    /**
-     * Title
-     */
-    title: string;
 };
 
 /**
  * CopilotDraft
  */
 export type CopilotDraft = {
+    /**
+     * Title
+     */
+    title: string;
     /**
      * Body
      */
@@ -1526,10 +1530,6 @@ export type CopilotDraft = {
      * Source Ids
      */
     source_ids?: Array<string>;
-    /**
-     * Title
-     */
-    title: string;
 };
 
 /**
@@ -1537,24 +1537,24 @@ export type CopilotDraft = {
  */
 export type CopilotProposalDecision = {
     /**
-     * Decision
-     */
-    decision: 'approve' | 'reject';
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Decision
+     */
+    decision: 'approve' | 'reject';
 };
 
 /**
  * CopilotProposalEdit
  */
 export type CopilotProposalEdit = {
-    content: CopilotDraft;
     /**
      * Expected Revision
      */
     expected_revision: number;
+    content: CopilotDraft;
 };
 
 /**
@@ -1562,24 +1562,26 @@ export type CopilotProposalEdit = {
  */
 export type CopilotProposalResponse = {
     /**
-     * Capability
-     */
-    capability: string;
-    content: CopilotDraft;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Evidence References
-     */
-    evidence_references: Array<{
-        [key: string]: unknown;
-    }>;
-    /**
      * Id
      */
     id: string;
+    /**
+     * Capability
+     */
+    capability: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Revision
+     */
+    revision: number;
+    content: CopilotDraft;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
     /**
      * Model Version
      */
@@ -1589,17 +1591,15 @@ export type CopilotProposalResponse = {
      */
     prompt_version: string;
     /**
-     * Provider Name
+     * Evidence References
      */
-    provider_name: string;
+    evidence_references: Array<{
+        [key: string]: unknown;
+    }>;
     /**
-     * Revision
+     * Created At
      */
-    revision: number;
-    /**
-     * Status
-     */
-    status: string;
+    created_at: string;
 };
 
 /**
@@ -1607,29 +1607,29 @@ export type CopilotProposalResponse = {
  */
 export type CorrectionEventResponse = {
     /**
-     * Action
+     * Id
      */
-    action: string;
+    id: string;
     /**
      * Actor User Id
      */
     actor_user_id: string;
     /**
+     * Action
+     */
+    action: string;
+    /**
      * Body
      */
     body: string;
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Id
-     */
-    id: string;
-    /**
      * Resume Version Id
      */
     resume_version_id: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -1637,45 +1637,45 @@ export type CorrectionEventResponse = {
  */
 export type CorrectionResponse = {
     /**
-     * Application Id
-     */
-    application_id: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Deadline At
-     */
-    deadline_at: string | null;
-    /**
-     * Events
-     */
-    events?: Array<CorrectionEventResponse>;
-    /**
      * Id
      */
     id: string;
+    /**
+     * Application Id
+     */
+    application_id: string;
     /**
      * Instructions
      */
     instructions: string;
     /**
+     * Deadline At
+     */
+    deadline_at: string | null;
+    /**
      * Overdue
      */
     overdue?: boolean;
-    /**
-     * Revision
-     */
-    revision: number;
     /**
      * Status
      */
     status: 'open' | 'awaiting_review' | 'resolved' | 'cancelled';
     /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
      * Updated At
      */
     updated_at: string;
+    /**
+     * Events
+     */
+    events?: Array<CorrectionEventResponse>;
 };
 
 /**
@@ -1687,13 +1687,13 @@ export type DashboardEvidence = {
      */
     label: string;
     /**
-     * Status
-     */
-    status: 'verified' | 'pending' | 'review';
-    /**
      * Value
      */
     value: string;
+    /**
+     * Status
+     */
+    status: 'verified' | 'pending' | 'review';
 };
 
 /**
@@ -1701,33 +1701,33 @@ export type DashboardEvidence = {
  */
 export type DashboardOpportunity = {
     /**
+     * Id
+     */
+    id: string;
+    /**
      * Company
      */
     company: string;
     /**
-     * Eligibility
+     * Role
      */
-    eligibility: string;
-    /**
-     * Href
-     */
-    href: string;
-    /**
-     * Id
-     */
-    id: string;
+    role: string;
     /**
      * Location
      */
     location: string;
     /**
+     * Eligibility
+     */
+    eligibility: string;
+    /**
      * Match
      */
     match: number | null;
     /**
-     * Role
+     * Href
      */
-    role: string;
+    href: string;
 };
 
 /**
@@ -1735,27 +1735,45 @@ export type DashboardOpportunity = {
  */
 export type DashboardReadinessSummary = {
     /**
-     * Completed Evidence
-     */
-    completed_evidence: number;
-    /**
      * Policy Version
      */
     policy_version: string;
     /**
-     * Required Complete
+     * Completed Evidence
      */
-    required_complete: boolean;
+    completed_evidence: number;
     /**
      * Total Evidence
      */
     total_evidence: number;
+    /**
+     * Required Complete
+     */
+    required_complete: boolean;
 };
 
 /**
  * DashboardResponse
  */
 export type DashboardResponse = {
+    /**
+     * Upcoming
+     */
+    upcoming?: Array<NextAction>;
+    /**
+     * Institution Timezone
+     */
+    institution_timezone?: string;
+    /**
+     * Student Name
+     */
+    student_name: string;
+    readiness: DashboardReadinessSummary;
+    /**
+     * State
+     */
+    state: 'ready' | 'incomplete' | 'processing' | 'manual-review' | 'ai-unavailable';
+    next_action: NextAction;
     /**
      * Activation
      */
@@ -1765,32 +1783,14 @@ export type DashboardResponse = {
      */
     evidence: Array<DashboardEvidence>;
     /**
-     * Institution Timezone
-     */
-    institution_timezone?: string;
-    next_action: NextAction;
-    /**
      * Opportunities
      */
     opportunities: Array<DashboardOpportunity>;
-    readiness: DashboardReadinessSummary;
     roadmap: RoadmapResponse | null;
-    /**
-     * State
-     */
-    state: 'ready' | 'incomplete' | 'processing' | 'manual-review' | 'ai-unavailable';
-    /**
-     * Student Name
-     */
-    student_name: string;
     /**
      * Unread Notifications
      */
     unread_notifications: number;
-    /**
-     * Upcoming
-     */
-    upcoming?: Array<NextAction>;
 };
 
 /**
@@ -1816,17 +1816,17 @@ export type DataDeletionResponse = {
      */
     id: string;
     /**
-     * Message
+     * Status
      */
-    message: string;
+    status: string;
     /**
      * Requested At
      */
     requested_at: string;
     /**
-     * Status
+     * Message
      */
-    status: string;
+    message: string;
 };
 
 /**
@@ -1848,10 +1848,6 @@ export type DisclosureQuestion = {
      */
     id: string;
     /**
-     * Options
-     */
-    options?: Array<string>;
-    /**
      * Prompt
      */
     prompt: string;
@@ -1859,6 +1855,10 @@ export type DisclosureQuestion = {
      * Type
      */
     type: 'single_select' | 'multi_select' | 'boolean';
+    /**
+     * Options
+     */
+    options?: Array<string>;
 };
 
 /**
@@ -1866,15 +1866,15 @@ export type DisclosureQuestion = {
  */
 export type DraftDisclosureUpdate = {
     /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
      * Answers
      */
     answers?: {
         [key: string]: boolean | string | Array<string>;
     };
-    /**
-     * Expected Revision
-     */
-    expected_revision: number;
 };
 
 /**
@@ -1906,10 +1906,6 @@ export type DraftProfileConfirmation = {
  */
 export type DraftResumeSummary = {
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
      * Id
      */
     id: string;
@@ -1918,13 +1914,17 @@ export type DraftResumeSummary = {
      */
     original_name: string;
     /**
-     * Parent Version Id
-     */
-    parent_version_id?: string | null;
-    /**
      * Version Number
      */
     version_number: number | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Parent Version Id
+     */
+    parent_version_id?: string | null;
 };
 
 /**
@@ -1945,15 +1945,15 @@ export type DraftResumeUpdate = {
  * DraftSubmitRequest
  */
 export type DraftSubmitRequest = {
-    acknowledgment?: ApplicationAcknowledgmentInput | null;
-    /**
-     * Confirmation
-     */
-    confirmation: 'I CONFIRM THIS APPLICATION IS ACCURATE';
     /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Confirmation
+     */
+    confirmation: 'I CONFIRM THIS APPLICATION IS ACCURATE';
+    acknowledgment?: ApplicationAcknowledgmentInput | null;
 };
 
 /**
@@ -1965,9 +1965,9 @@ export type DriveCreate = {
      */
     company_id: string;
     /**
-     * Deadline At
+     * Title
      */
-    deadline_at: string;
+    title: string;
     /**
      * Description
      */
@@ -1977,23 +1977,27 @@ export type DriveCreate = {
      */
     location: string;
     /**
+     * Work Mode
+     */
+    work_mode: 'on-site' | 'hybrid' | 'remote';
+    /**
      * Opens At
      */
     opens_at: string;
     /**
-     * Title
+     * Deadline At
      */
-    title: string;
-    /**
-     * Work Mode
-     */
-    work_mode: 'on-site' | 'hybrid' | 'remote';
+    deadline_at: string;
 };
 
 /**
  * DriveResponse
  */
 export type DriveResponse = {
+    /**
+     * Id
+     */
+    id: string;
     /**
      * Company Id
      */
@@ -2003,33 +2007,49 @@ export type DriveResponse = {
      */
     company_name: string;
     /**
-     * Created At
+     * Title
      */
-    created_at: string;
-    /**
-     * Deadline At
-     */
-    deadline_at: string;
+    title: string;
     /**
      * Description
      */
     description: string;
     /**
-     * Has Pending Changes
-     */
-    has_pending_changes?: boolean;
-    /**
-     * Id
-     */
-    id: string;
-    /**
      * Location
      */
     location: string;
     /**
+     * Work Mode
+     */
+    work_mode: string;
+    /**
      * Opens At
      */
     opens_at: string;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Role Count
+     */
+    role_count?: number;
     /**
      * Pending Changes
      */
@@ -2037,33 +2057,13 @@ export type DriveResponse = {
         [key: string]: unknown;
     };
     /**
-     * Published At
+     * Has Pending Changes
      */
-    published_at: string | null;
+    has_pending_changes?: boolean;
     /**
      * Revision
      */
     revision?: number;
-    /**
-     * Role Count
-     */
-    role_count?: number;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Title
-     */
-    title: string;
-    /**
-     * Updated At
-     */
-    updated_at: string;
-    /**
-     * Work Mode
-     */
-    work_mode: string;
 };
 
 /**
@@ -2075,9 +2075,9 @@ export type DriveUpdate = {
      */
     company_id?: string | null;
     /**
-     * Deadline At
+     * Title
      */
-    deadline_at?: string | null;
+    title?: string | null;
     /**
      * Description
      */
@@ -2087,17 +2087,17 @@ export type DriveUpdate = {
      */
     location?: string | null;
     /**
+     * Work Mode
+     */
+    work_mode?: 'on-site' | 'hybrid' | 'remote' | null;
+    /**
      * Opens At
      */
     opens_at?: string | null;
     /**
-     * Title
+     * Deadline At
      */
-    title?: string | null;
-    /**
-     * Work Mode
-     */
-    work_mode?: 'on-site' | 'hybrid' | 'remote' | null;
+    deadline_at?: string | null;
 };
 
 /**
@@ -2105,29 +2105,29 @@ export type DriveUpdate = {
  */
 export type EducationEntry = {
     /**
-     * Active Backlogs
+     * Qualification Level
      */
-    active_backlogs?: number;
-    /**
-     * Branch
-     */
-    branch: string;
+    qualification_level: 'degree' | 'class_10' | 'class_12' | 'diploma';
     /**
      * Degree
      */
     degree: string;
     /**
-     * Graduation Year
+     * Branch
      */
-    graduation_year: number;
+    branch: string;
     /**
      * Institution
      */
     institution: string;
     /**
-     * Qualification Level
+     * Start Year
      */
-    qualification_level: 'degree' | 'class_10' | 'class_12' | 'diploma';
+    start_year?: number | null;
+    /**
+     * Graduation Year
+     */
+    graduation_year: number;
     /**
      * Score
      */
@@ -2137,9 +2137,9 @@ export type EducationEntry = {
      */
     score_scale: 'cgpa_10' | 'percentage';
     /**
-     * Start Year
+     * Active Backlogs
      */
-    start_year?: number | null;
+    active_backlogs?: number;
 };
 
 /**
@@ -2147,21 +2147,25 @@ export type EducationEntry = {
  */
 export type EducationItem = {
     /**
-     * Branch
-     */
-    branch: string;
-    /**
      * Degree
      */
     degree: string;
     /**
-     * Graduation Year
+     * Branch
      */
-    graduation_year: number;
+    branch: string;
     /**
      * Institution
      */
     institution: string;
+    /**
+     * Start Year
+     */
+    start_year: number;
+    /**
+     * Graduation Year
+     */
+    graduation_year: number;
     /**
      * Score
      */
@@ -2170,10 +2174,6 @@ export type EducationItem = {
      * Score Scale
      */
     score_scale: 'cgpa_10' | 'percentage';
-    /**
-     * Start Year
-     */
-    start_year: number;
 };
 
 /**
@@ -2181,13 +2181,13 @@ export type EducationItem = {
  */
 export type EducationUpdate = {
     /**
-     * Education
-     */
-    education: Array<EducationItem>;
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Education
+     */
+    education: Array<EducationItem>;
     /**
      * Onboarding Step
      */
@@ -2199,33 +2199,33 @@ export type EducationUpdate = {
  */
 export type EligibilityPreviewRequest = {
     /**
-     * Active Backlogs
+     * Department
      */
-    active_backlogs?: number | null;
-    /**
-     * Branch
-     */
-    branch?: string | null;
-    /**
-     * Cgpa
-     */
-    cgpa?: number | null;
+    department?: string | null;
     /**
      * Degree
      */
     degree?: string | null;
     /**
-     * Department
+     * Branch
      */
-    department?: string | null;
-    /**
-     * Github
-     */
-    github?: string | null;
+    branch?: string | null;
     /**
      * Graduation Year
      */
     graduation_year?: number | null;
+    /**
+     * Cgpa
+     */
+    cgpa?: number | null;
+    /**
+     * Active Backlogs
+     */
+    active_backlogs?: number | null;
+    /**
+     * Github
+     */
+    github?: string | null;
     /**
      * Portfolio
      */
@@ -2241,15 +2241,9 @@ export type EligibilityPreviewRequest = {
  */
 export type EligibilityResponse = {
     /**
-     * Missing Evidence
+     * Status
      */
-    missing_evidence: Array<string>;
-    /**
-     * Results
-     */
-    results: Array<{
-        [key: string]: unknown;
-    }>;
+    status: 'eligible' | 'ineligible' | 'needs_manual_review' | 'unavailable';
     /**
      * Rule Set Id
      */
@@ -2259,9 +2253,15 @@ export type EligibilityResponse = {
      */
     rule_version: string | null;
     /**
-     * Status
+     * Results
      */
-    status: 'eligible' | 'ineligible' | 'needs_manual_review' | 'unavailable';
+    results: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Missing Evidence
+     */
+    missing_evidence: Array<string>;
 };
 
 /**
@@ -2283,53 +2283,53 @@ export type EmailDeliveryPage = {
  */
 export type EmailDeliveryResponse = {
     /**
-     * Attempts
+     * Id
      */
-    attempts: number;
-    /**
-     * Bounced At
-     */
-    bounced_at: string | null;
+    id: string;
     /**
      * Category
      */
     category: string;
     /**
-     * Created At
+     * Template Key
      */
-    created_at: string;
-    /**
-     * Failed At
-     */
-    failed_at: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Max Attempts
-     */
-    max_attempts: number;
-    /**
-     * Next Attempt At
-     */
-    next_attempt_at: string;
-    /**
-     * Safe Error Code
-     */
-    safe_error_code: string | null;
-    /**
-     * Sent At
-     */
-    sent_at: string | null;
+    template_key: string;
     /**
      * Status
      */
     status: string;
     /**
-     * Template Key
+     * Attempts
      */
-    template_key: string;
+    attempts: number;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Next Attempt At
+     */
+    next_attempt_at: string;
+    /**
+     * Sent At
+     */
+    sent_at: string | null;
+    /**
+     * Failed At
+     */
+    failed_at: string | null;
+    /**
+     * Bounced At
+     */
+    bounced_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -2337,17 +2337,17 @@ export type EmailDeliveryResponse = {
  */
 export type EscoSkill = {
     /**
-     * Description
+     * Uri
      */
-    description?: string | null;
+    uri: string;
     /**
      * Preferred Label
      */
     preferred_label: string;
     /**
-     * Uri
+     * Description
      */
-    uri: string;
+    description?: string | null;
 };
 
 /**
@@ -2359,10 +2359,6 @@ export type EvidenceReference = {
      */
     evidence_id: string;
     /**
-     * Facts
-     */
-    facts: string;
-    /**
      * Kind
      */
     kind: string;
@@ -2370,12 +2366,28 @@ export type EvidenceReference = {
      * Label
      */
     label: string;
+    /**
+     * Facts
+     */
+    facts: string;
 };
 
 /**
  * ExperienceEntry
  */
 export type ExperienceEntry = {
+    /**
+     * Organization
+     */
+    organization: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Start Date
+     */
+    start_date: string;
     /**
      * End Date
      */
@@ -2385,21 +2397,9 @@ export type ExperienceEntry = {
      */
     is_current?: boolean;
     /**
-     * Organization
-     */
-    organization: string;
-    /**
      * Responsibilities
      */
     responsibilities?: Array<string>;
-    /**
-     * Start Date
-     */
-    start_date: string;
-    /**
-     * Title
-     */
-    title: string;
 };
 
 /**
@@ -2417,13 +2417,13 @@ export type ExtractionCreate = {
  */
 export type ExtractionFieldDecision = {
     /**
-     * Action
-     */
-    action: 'accept' | 'edit' | 'reject';
-    /**
      * Field Path
      */
     field_path: string;
+    /**
+     * Action
+     */
+    action: 'accept' | 'edit' | 'reject';
     /**
      * Value
      */
@@ -2435,21 +2435,13 @@ export type ExtractionFieldDecision = {
  */
 export type ExtractionResponse = {
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
      * Id
      */
     id: string;
     /**
-     * Model Version
+     * Role Id
      */
-    model_version: string;
-    /**
-     * Prompt Version
-     */
-    prompt_version: string;
+    role_id: string;
     /**
      * Proposed Requirements
      */
@@ -2463,17 +2455,25 @@ export type ExtractionResponse = {
      */
     provider_name: string;
     /**
-     * Review Reason
+     * Model Version
      */
-    review_reason: string | null;
+    model_version: string;
     /**
-     * Role Id
+     * Prompt Version
      */
-    role_id: string;
+    prompt_version: string;
     /**
      * Status
      */
     status: string;
+    /**
+     * Review Reason
+     */
+    review_reason: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
     /**
      * Updated At
      */
@@ -2507,13 +2507,13 @@ export type ExtractionReview = {
  */
 export type ExtractionReviewRequest = {
     /**
-     * Decisions
-     */
-    decisions: Array<ExtractionFieldDecision>;
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Decisions
+     */
+    decisions: Array<ExtractionFieldDecision>;
 };
 
 /**
@@ -2521,13 +2521,13 @@ export type ExtractionReviewRequest = {
  */
 export type FunnelMetric = {
     /**
-     * Count
-     */
-    count: number;
-    /**
      * Event Name
      */
     event_name: string;
+    /**
+     * Count
+     */
+    count: number;
 };
 
 /**
@@ -2549,13 +2549,13 @@ export type FunnelResponse = {
  */
 export type GroundedClaim = {
     /**
-     * Evidence Ids
-     */
-    evidence_ids: Array<string>;
-    /**
      * Text
      */
     text: string;
+    /**
+     * Evidence Ids
+     */
+    evidence_ids: Array<string>;
 };
 
 /**
@@ -2583,9 +2583,37 @@ export type HealthResponse = {
  */
 export type IdentityUpdate = {
     /**
+     * Expected Revision
+     */
+    expected_revision: number;
+    /**
+     * Full Name
+     */
+    full_name?: string | null;
+    /**
+     * Date Of Birth
+     */
+    date_of_birth?: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name?: string | null;
+    /**
+     * Prn
+     */
+    prn?: string | null;
+    /**
+     * Department
+     */
+    department?: string | null;
+    /**
      * Academic Year
      */
     academic_year?: string | null;
+    /**
+     * Phone
+     */
+    phone?: string | null;
     /**
      * City
      */
@@ -2595,37 +2623,9 @@ export type IdentityUpdate = {
      */
     country_code?: string | null;
     /**
-     * Date Of Birth
-     */
-    date_of_birth?: string | null;
-    /**
-     * Department
-     */
-    department?: string | null;
-    /**
-     * Expected Revision
-     */
-    expected_revision: number;
-    /**
-     * Full Name
-     */
-    full_name?: string | null;
-    /**
-     * Institution Name
-     */
-    institution_name?: string | null;
-    /**
      * Onboarding Step
      */
     onboarding_step?: number | null;
-    /**
-     * Phone
-     */
-    phone?: string | null;
-    /**
-     * Prn
-     */
-    prn?: string | null;
 };
 
 /**
@@ -2633,35 +2633,19 @@ export type IdentityUpdate = {
  */
 export type InstitutionIdentityStep = {
     /**
-     * Domain
-     */
-    domain: string;
-    /**
      * Official Name
      */
     official_name: string;
+    /**
+     * Domain
+     */
+    domain: string;
 };
 
 /**
  * InstitutionOnboardingResponse
  */
 export type InstitutionOnboardingResponse = {
-    /**
-     * Activated At
-     */
-    activated_at: string | null;
-    /**
-     * Completed Steps
-     */
-    completed_steps: Array<number>;
-    /**
-     * Current Step
-     */
-    current_step: number;
-    /**
-     * Institution Active
-     */
-    institution_active: boolean;
     /**
      * Institution Id
      */
@@ -2671,49 +2655,61 @@ export type InstitutionOnboardingResponse = {
      */
     institution_name: string;
     /**
+     * Institution Active
+     */
+    institution_active: boolean;
+    /**
      * Revision
      */
     revision: number;
+    /**
+     * Current Step
+     */
+    current_step: number;
+    /**
+     * Completed Steps
+     */
+    completed_steps: Array<number>;
     /**
      * Step Data
      */
     step_data: {
         [key: string]: unknown;
     };
+    /**
+     * Activated At
+     */
+    activated_at: string | null;
 };
 
 /**
  * InstitutionOnboardingUpdate
  */
 export type InstitutionOnboardingUpdate = {
-    administrator?: AdminIdentityStep | null;
-    /**
-     * Campuses
-     */
-    campuses?: Array<CampusEntry> | null;
     /**
      * Expected Revision
      */
     expected_revision: number;
-    institution?: InstitutionIdentityStep | null;
-    placement_cycle?: PlacementCycleStep | null;
-    policies?: PolicyPermissionStep | null;
-    review?: InstitutionReviewStep | null;
-    roster?: RosterInvitationStep | null;
     /**
      * Step
      */
     step: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    administrator?: AdminIdentityStep | null;
+    institution?: InstitutionIdentityStep | null;
+    /**
+     * Campuses
+     */
+    campuses?: Array<CampusEntry> | null;
+    placement_cycle?: PlacementCycleStep | null;
+    roster?: RosterInvitationStep | null;
+    policies?: PolicyPermissionStep | null;
+    review?: InstitutionReviewStep | null;
 };
 
 /**
  * InstitutionProvisionRequest
  */
 export type InstitutionProvisionRequest = {
-    /**
-     * Admin Email
-     */
-    admin_email: string;
     /**
      * Institution Code
      */
@@ -2722,12 +2718,20 @@ export type InstitutionProvisionRequest = {
      * Institution Name
      */
     institution_name: string;
+    /**
+     * Admin Email
+     */
+    admin_email: string;
 };
 
 /**
  * InstitutionProvisionResponse
  */
 export type InstitutionProvisionResponse = {
+    /**
+     * Institution Id
+     */
+    institution_id: string;
     /**
      * Admin Invitation Id
      */
@@ -2740,10 +2744,6 @@ export type InstitutionProvisionResponse = {
      * Expires At
      */
     expires_at: string;
-    /**
-     * Institution Id
-     */
-    institution_id: string;
 };
 
 /**
@@ -2765,21 +2765,21 @@ export type InstitutionRegistrationDecision = {
  */
 export type InstitutionRegistrationRequestCreate = {
     /**
-     * Domain
+     * Institution Name
      */
-    domain: string;
+    institution_name: string;
     /**
      * Institution Code
      */
     institution_code: string;
     /**
-     * Institution Name
-     */
-    institution_name: string;
-    /**
      * Institutional Email
      */
     institutional_email: string;
+    /**
+     * Domain
+     */
+    domain: string;
 };
 
 /**
@@ -2787,17 +2787,29 @@ export type InstitutionRegistrationRequestCreate = {
  */
 export type InstitutionRegistrationResponse = {
     /**
-     * Admin Email
+     * Id
      */
-    admin_email: string;
+    id: string;
     /**
-     * Created At
+     * Institution Name
      */
-    created_at: string;
+    institution_name: string;
+    /**
+     * Institution Code
+     */
+    institution_code: string;
     /**
      * Domain
      */
     domain: string;
+    /**
+     * Admin Email
+     */
+    admin_email: string;
+    /**
+     * Status
+     */
+    status: string;
     /**
      * Duplicate Detected
      */
@@ -2807,39 +2819,23 @@ export type InstitutionRegistrationResponse = {
      */
     email_verified_at: string | null;
     /**
-     * Id
+     * Reviewed At
      */
-    id: string;
-    /**
-     * Institution Code
-     */
-    institution_code: string;
+    reviewed_at: string | null;
     /**
      * Institution Id
      */
     institution_id: string | null;
     /**
-     * Institution Name
+     * Created At
      */
-    institution_name: string;
-    /**
-     * Reviewed At
-     */
-    reviewed_at: string | null;
-    /**
-     * Status
-     */
-    status: string;
+    created_at: string;
 };
 
 /**
  * InstitutionRegistrationStartResponse
  */
 export type InstitutionRegistrationStartResponse = {
-    /**
-     * Message
-     */
-    message: string;
     /**
      * Request Id
      */
@@ -2848,6 +2844,10 @@ export type InstitutionRegistrationStartResponse = {
      * Status
      */
     status: 'verification_pending';
+    /**
+     * Message
+     */
+    message: string;
 };
 
 /**
@@ -2855,23 +2855,19 @@ export type InstitutionRegistrationStartResponse = {
  */
 export type InstitutionReviewStep = {
     /**
-     * Activate Institution
-     */
-    activate_institution: true;
-    /**
      * Invite Team Emails
      */
     invite_team_emails?: Array<string>;
+    /**
+     * Activate Institution
+     */
+    activate_institution: true;
 };
 
 /**
  * InstitutionStatusChange
  */
 export type InstitutionStatusChange = {
-    /**
-     * Expected Updated At
-     */
-    expected_updated_at?: string | null;
     /**
      * Is Active
      */
@@ -2880,6 +2876,10 @@ export type InstitutionStatusChange = {
      * Reason
      */
     reason: string;
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at?: string | null;
 };
 
 /**
@@ -2891,13 +2891,13 @@ export type InvitationAcceptRequest = {
      */
     password: string;
     /**
-     * Privacy Version
-     */
-    privacy_version: string;
-    /**
      * Terms Version
      */
     terms_version: string;
+    /**
+     * Privacy Version
+     */
+    privacy_version: string;
 };
 
 /**
@@ -2905,25 +2905,25 @@ export type InvitationAcceptRequest = {
  */
 export type InvitationActionResponse = {
     /**
-     * Activation Code
+     * Id
      */
-    activation_code?: string | null;
+    id: string;
+    /**
+     * Status
+     */
+    status: 'pending' | 'expired' | 'accepted' | 'revoked';
     /**
      * Expires At
      */
     expires_at: string;
     /**
-     * Id
-     */
-    id: string;
-    /**
      * Message
      */
     message: string;
     /**
-     * Status
+     * Activation Code
      */
-    status: 'pending' | 'expired' | 'accepted' | 'revoked';
+    activation_code?: string | null;
 };
 
 /**
@@ -2931,13 +2931,13 @@ export type InvitationActionResponse = {
  */
 export type InvitationHandoffResponse = {
     /**
-     * Activation Code
-     */
-    activation_code: string;
-    /**
      * Email
      */
     email: string;
+    /**
+     * Activation Code
+     */
+    activation_code: string;
     /**
      * Expires At
      */
@@ -2949,14 +2949,6 @@ export type InvitationHandoffResponse = {
  */
 export type InvitationResponse = {
     /**
-     * Email
-     */
-    email: string;
-    /**
-     * Expires At
-     */
-    expires_at: string;
-    /**
      * Id
      */
     id: string;
@@ -2965,9 +2957,17 @@ export type InvitationResponse = {
      */
     institution_id: string;
     /**
+     * Email
+     */
+    email: string;
+    /**
      * Role
      */
     role: string;
+    /**
+     * Expires At
+     */
+    expires_at: string;
     /**
      * Student Signup Ready
      */
@@ -2989,9 +2989,9 @@ export type InvitationRevocationRequest = {
  */
 export type InvitationSummary = {
     /**
-     * Created At
+     * Id
      */
-    created_at: string;
+    id: string;
     /**
      * Email
      */
@@ -3001,21 +3001,9 @@ export type InvitationSummary = {
      */
     enrollment_id: string | null;
     /**
-     * Expires At
-     */
-    expires_at: string;
-    /**
      * Full Name
      */
     full_name: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Resend Count
-     */
-    resend_count: number;
     /**
      * Role
      */
@@ -3024,6 +3012,18 @@ export type InvitationSummary = {
      * Status
      */
     status: 'pending' | 'expired' | 'accepted' | 'revoked';
+    /**
+     * Expires At
+     */
+    expires_at: string;
+    /**
+     * Resend Count
+     */
+    resend_count: number;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -3031,17 +3031,9 @@ export type InvitationSummary = {
  */
 export type LegalHoldCreate = {
     /**
-     * Owner User Id
+     * User Id
      */
-    owner_user_id: string;
-    /**
-     * Reason
-     */
-    reason: string;
-    /**
-     * Review At
-     */
-    review_at: string;
+    user_id?: string | null;
     /**
      * Scope
      */
@@ -3049,9 +3041,17 @@ export type LegalHoldCreate = {
         [key: string]: unknown;
     };
     /**
-     * User Id
+     * Reason
      */
-    user_id?: string | null;
+    reason: string;
+    /**
+     * Owner User Id
+     */
+    owner_user_id: string;
+    /**
+     * Review At
+     */
+    review_at: string;
 };
 
 /**
@@ -3059,23 +3059,19 @@ export type LegalHoldCreate = {
  */
 export type LegalHoldRelease = {
     /**
-     * Expected Updated At
-     */
-    expected_updated_at: string;
-    /**
      * Reason
      */
     reason: string;
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at: string;
 };
 
 /**
  * LegalHoldResponse
  */
 export type LegalHoldResponse = {
-    /**
-     * Created At
-     */
-    created_at: string;
     /**
      * Id
      */
@@ -3085,25 +3081,9 @@ export type LegalHoldResponse = {
      */
     institution_id: string | null;
     /**
-     * Owner User Id
+     * User Id
      */
-    owner_user_id: string;
-    /**
-     * Reason
-     */
-    reason: string;
-    /**
-     * Release Reason
-     */
-    release_reason: string | null;
-    /**
-     * Released At
-     */
-    released_at: string | null;
-    /**
-     * Review At
-     */
-    review_at: string;
+    user_id: string | null;
     /**
      * Scope
      */
@@ -3111,13 +3091,33 @@ export type LegalHoldResponse = {
         [key: string]: unknown;
     };
     /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Owner User Id
+     */
+    owner_user_id: string;
+    /**
+     * Review At
+     */
+    review_at: string;
+    /**
+     * Released At
+     */
+    released_at: string | null;
+    /**
+     * Release Reason
+     */
+    release_reason: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * User Id
-     */
-    user_id: string | null;
 };
 
 /**
@@ -3133,13 +3133,13 @@ export type LinksUpdate = {
      */
     github_url?: string | null;
     /**
-     * Onboarding Step
-     */
-    onboarding_step?: number | null;
-    /**
      * Portfolio Url
      */
     portfolio_url?: string | null;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
 };
 
 /**
@@ -3147,13 +3147,13 @@ export type LinksUpdate = {
  */
 export type ManualRecoveryHandoff = {
     /**
-     * Expires In Minutes
-     */
-    expires_in_minutes: number;
-    /**
      * Reset Code
      */
     reset_code: string;
+    /**
+     * Expires In Minutes
+     */
+    expires_in_minutes: number;
 };
 
 /**
@@ -3179,17 +3179,17 @@ export type ManualRecoveryRequest = {
  */
 export type MaterialTermChange = {
     /**
-     * After
+     * Path
      */
-    after: unknown | null;
+    path: string;
     /**
      * Before
      */
     before: unknown | null;
     /**
-     * Path
+     * After
      */
-    path: string;
+    after: unknown | null;
 };
 
 /**
@@ -3197,21 +3197,21 @@ export type MaterialTermChange = {
  */
 export type MaterialTermsComparisonResponse = {
     /**
-     * Changes
+     * Role Id
      */
-    changes: Array<MaterialTermChange>;
+    role_id: string;
     /**
      * From Version
      */
     from_version: number;
     /**
-     * Role Id
-     */
-    role_id: string;
-    /**
      * To Version
      */
     to_version: number;
+    /**
+     * Changes
+     */
+    changes: Array<MaterialTermChange>;
 };
 
 /**
@@ -3219,84 +3219,61 @@ export type MaterialTermsComparisonResponse = {
  */
 export type MaterialTermsResponse = {
     /**
-     * Approved By User Id
-     */
-    approved_by_user_id: string | null;
-    /**
-     * Content Digest
-     */
-    content_digest: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Created By User Id
-     */
-    created_by_user_id: string;
-    /**
-     * Effective At
-     */
-    effective_at: string | null;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Published At
-     */
-    published_at: string | null;
     /**
      * Role Id
      */
     role_id: string;
     /**
+     * Version
+     */
+    version: number;
+    /**
      * Status
      */
     status: string;
+    terms: MaterialTermsUpdate;
+    /**
+     * Content Digest
+     */
+    content_digest: string;
+    /**
+     * Created By User Id
+     */
+    created_by_user_id: string;
+    /**
+     * Approved By User Id
+     */
+    approved_by_user_id: string | null;
+    /**
+     * Effective At
+     */
+    effective_at: string | null;
+    /**
+     * Published At
+     */
+    published_at: string | null;
     /**
      * Superseded At
      */
     superseded_at: string | null;
-    terms: MaterialTermsUpdate;
+    /**
+     * Created At
+     */
+    created_at: string;
     /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Version
-     */
-    version: number;
 };
 
 /**
  * MaterialTermsUpdate
  */
 export type MaterialTermsUpdate = {
-    /**
-     * Additional Terms
-     */
-    additional_terms?: string | null;
-    /**
-     * Application Deadline
-     */
-    application_deadline: string;
-    bond: CommitmentTerms;
     compensation: CompensationTerms;
-    /**
-     * Placement Restrictions
-     */
-    placement_restrictions?: Array<string>;
-    probation: CommitmentTerms;
-    /**
-     * Required Documents
-     */
-    required_documents?: Array<string>;
-    /**
-     * Selection Stages
-     */
-    selection_stages?: Array<string>;
-    training: CommitmentTerms;
     /**
      * Work Location
      */
@@ -3305,6 +3282,29 @@ export type MaterialTermsUpdate = {
      * Work Mode
      */
     work_mode: 'on-site' | 'hybrid' | 'remote';
+    bond: CommitmentTerms;
+    probation: CommitmentTerms;
+    training: CommitmentTerms;
+    /**
+     * Application Deadline
+     */
+    application_deadline: string;
+    /**
+     * Required Documents
+     */
+    required_documents?: Array<string>;
+    /**
+     * Selection Stages
+     */
+    selection_stages?: Array<string>;
+    /**
+     * Placement Restrictions
+     */
+    placement_restrictions?: Array<string>;
+    /**
+     * Additional Terms
+     */
+    additional_terms?: string | null;
 };
 
 /**
@@ -3334,14 +3334,14 @@ export type MembershipChoice = {
  */
 export type MembershipCreate = {
     /**
-     * Reason
-     */
-    reason: string;
-    role?: UserRole;
-    /**
      * User Id
      */
     user_id: string;
+    role?: UserRole;
+    /**
+     * Reason
+     */
+    reason: string;
 };
 
 /**
@@ -3371,10 +3371,6 @@ export type MembershipPage = {
  */
 export type MembershipResponse = {
     /**
-     * Email
-     */
-    email?: string | null;
-    /**
      * Id
      */
     id: string;
@@ -3382,6 +3378,10 @@ export type MembershipResponse = {
      * Institution Id
      */
     institution_id: string;
+    /**
+     * User Id
+     */
+    user_id: string;
     /**
      * Role
      */
@@ -3391,9 +3391,9 @@ export type MembershipResponse = {
      */
     status: string;
     /**
-     * User Id
+     * Email
      */
-    user_id: string;
+    email?: string | null;
     /**
      * Username
      */
@@ -3405,13 +3405,13 @@ export type MembershipResponse = {
  */
 export type MembershipStatusUpdate = {
     /**
-     * Reason
-     */
-    reason: string;
-    /**
      * Status
      */
     status: string;
+    /**
+     * Reason
+     */
+    reason: string;
 };
 
 /**
@@ -3419,21 +3419,21 @@ export type MembershipStatusUpdate = {
  */
 export type MessageResponse = {
     /**
-     * Citations
+     * Id
      */
-    citations: Array<Citation>;
+    id: string;
+    /**
+     * Role
+     */
+    role: string;
     /**
      * Content
      */
     content: string;
     /**
-     * Created At
+     * Citations
      */
-    created_at: string;
-    /**
-     * Id
-     */
-    id: string;
+    citations: Array<Citation>;
     /**
      * Missing Evidence
      */
@@ -3443,23 +3443,15 @@ export type MessageResponse = {
      */
     proposal_id: string | null;
     /**
-     * Role
+     * Created At
      */
-    role: string;
+    created_at: string;
 };
 
 /**
  * Metric
  */
 export type Metric = {
-    /**
-     * Explanation
-     */
-    explanation: string;
-    /**
-     * Href
-     */
-    href: string;
     /**
      * Key
      */
@@ -3469,13 +3461,21 @@ export type Metric = {
      */
     label: string;
     /**
+     * Value
+     */
+    value: number | null;
+    /**
      * Sample Size
      */
     sample_size: number;
     /**
-     * Value
+     * Explanation
      */
-    value: number | null;
+    explanation: string;
+    /**
+     * Href
+     */
+    href: string;
 };
 
 /**
@@ -3501,25 +3501,9 @@ export type MetricDefinitionCreate = {
      */
     code: string;
     /**
-     * Denominator
-     */
-    denominator: {
-        [key: string]: unknown;
-    };
-    /**
      * Effective At
      */
     effective_at: string;
-    /**
-     * Evidence Requirements
-     */
-    evidence_requirements: Array<string>;
-    /**
-     * Exclusions
-     */
-    exclusions?: Array<{
-        [key: string]: unknown;
-    }>;
     /**
      * Filters
      */
@@ -3527,33 +3511,11 @@ export type MetricDefinitionCreate = {
         [key: string]: unknown;
     };
     /**
-     * Notes
-     */
-    notes?: string | null;
-    /**
      * Numerator
      */
     numerator: {
         [key: string]: unknown;
     };
-};
-
-/**
- * MetricDefinitionResponse
- */
-export type MetricDefinitionResponse = {
-    /**
-     * Approved At
-     */
-    approved_at: string | null;
-    /**
-     * Approved By User Id
-     */
-    approved_by_user_id: string | null;
-    /**
-     * Code
-     */
-    code: string;
     /**
      * Denominator
      */
@@ -3561,19 +3523,45 @@ export type MetricDefinitionResponse = {
         [key: string]: unknown;
     };
     /**
-     * Effective At
+     * Exclusions
      */
-    effective_at: string;
+    exclusions?: Array<{
+        [key: string]: unknown;
+    }>;
     /**
      * Evidence Requirements
      */
     evidence_requirements: Array<string>;
     /**
-     * Exclusions
+     * Notes
      */
-    exclusions: Array<{
-        [key: string]: unknown;
-    }>;
+    notes?: string | null;
+};
+
+/**
+ * MetricDefinitionResponse
+ */
+export type MetricDefinitionResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * Version
+     */
+    version: number;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Effective At
+     */
+    effective_at: string;
     /**
      * Filters
      */
@@ -3581,23 +3569,35 @@ export type MetricDefinitionResponse = {
         [key: string]: unknown;
     };
     /**
-     * Id
-     */
-    id: string;
-    /**
      * Numerator
      */
     numerator: {
         [key: string]: unknown;
     };
     /**
-     * Status
+     * Denominator
      */
-    status: string;
+    denominator: {
+        [key: string]: unknown;
+    };
     /**
-     * Version
+     * Exclusions
      */
-    version: number;
+    exclusions: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Evidence Requirements
+     */
+    evidence_requirements: Array<string>;
+    /**
+     * Approved By User Id
+     */
+    approved_by_user_id: string | null;
+    /**
+     * Approved At
+     */
+    approved_at: string | null;
 };
 
 /**
@@ -3625,13 +3625,13 @@ export type MfaConfirmResponse = {
  */
 export type MfaDisableRequest = {
     /**
-     * Code
-     */
-    code: string;
-    /**
      * Password
      */
     password: string;
+    /**
+     * Code
+     */
+    code: string;
 };
 
 /**
@@ -3639,13 +3639,13 @@ export type MfaDisableRequest = {
  */
 export type MfaSetupResponse = {
     /**
-     * Provisioning Uri
-     */
-    provisioning_uri: string;
-    /**
      * Secret
      */
     secret: string;
+    /**
+     * Provisioning Uri
+     */
+    provisioning_uri: string;
 };
 
 /**
@@ -3667,55 +3667,67 @@ export type NextAction = {
      */
     category?: string;
     /**
-     * Completion Criteria
-     */
-    completion_criteria: string;
-    /**
      * Deadline At
      */
     deadline_at?: string | null;
-    /**
-     * Description
-     */
-    description: string;
-    /**
-     * Estimated Minutes
-     */
-    estimated_minutes: number;
-    /**
-     * Href
-     */
-    href: string;
     /**
      * Key
      */
     key: string;
     /**
-     * Policy Version
+     * Title
      */
-    policy_version: string;
+    title: string;
+    /**
+     * Description
+     */
+    description: string;
     /**
      * Reason
      */
     reason: string;
     /**
+     * Href
+     */
+    href: string;
+    /**
+     * Policy Version
+     */
+    policy_version: string;
+    /**
      * Source Facts
      */
     source_facts: Array<string>;
     /**
-     * Title
+     * Estimated Minutes
      */
-    title: string;
+    estimated_minutes: number;
     /**
      * Unlocks
      */
     unlocks: string;
+    /**
+     * Completion Criteria
+     */
+    completion_criteria: string;
 };
 
 /**
  * NotificationCreate
  */
 export type NotificationCreate = {
+    /**
+     * Recipient User Id
+     */
+    recipient_user_id: string;
+    /**
+     * Event Key
+     */
+    event_key: string;
+    /**
+     * Title
+     */
+    title: string;
     /**
      * Body
      */
@@ -3724,18 +3736,6 @@ export type NotificationCreate = {
      * Deep Link
      */
     deep_link: string;
-    /**
-     * Event Key
-     */
-    event_key: string;
-    /**
-     * Recipient User Id
-     */
-    recipient_user_id: string;
-    /**
-     * Title
-     */
-    title: string;
 };
 
 /**
@@ -3757,51 +3757,61 @@ export type NotificationPage = {
  */
 export type NotificationResponse = {
     /**
-     * Body
-     */
-    body: string;
-    /**
      * Category
      */
     category?: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Deep Link
-     */
-    deep_link: string;
-    /**
-     * Event Key
-     */
-    event_key: string;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Read At
-     */
-    read_at: string | null;
-    /**
-     * Related Application Id
-     */
-    related_application_id?: string | null;
     /**
      * Related Request Id
      */
     related_request_id?: string | null;
     /**
+     * Related Application Id
+     */
+    related_application_id?: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Event Key
+     */
+    event_key: string;
+    /**
      * Title
      */
     title: string;
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Deep Link
+     */
+    deep_link: string;
+    /**
+     * Read At
+     */
+    read_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
  * OperationsSummaryResponse
  */
 export type OperationsSummaryResponse = {
+    /**
+     * Status Counts
+     */
+    status_counts: {
+        [key: string]: number;
+    };
+    /**
+     * Oldest Queued Age Seconds
+     */
+    oldest_queued_age_seconds: number | null;
     /**
      * Active Leases
      */
@@ -3810,16 +3820,6 @@ export type OperationsSummaryResponse = {
      * Exhausted Failures
      */
     exhausted_failures: number;
-    /**
-     * Oldest Queued Age Seconds
-     */
-    oldest_queued_age_seconds: number | null;
-    /**
-     * Status Counts
-     */
-    status_counts: {
-        [key: string]: number;
-    };
 };
 
 /**
@@ -3831,10 +3831,6 @@ export type Operator = 'eq' | 'in' | 'gte' | 'lte' | 'present';
  * OpportunityPage
  */
 export type OpportunityPage = {
-    /**
-     * Empty Reason
-     */
-    empty_reason?: 'no_published_drive' | 'filters_exclude_results' | 'profile_incomplete' | null;
     /**
      * Items
      */
@@ -3851,12 +3847,87 @@ export type OpportunityPage = {
      * Total
      */
     total: number;
+    /**
+     * Empty Reason
+     */
+    empty_reason?: 'no_published_drive' | 'filters_exclude_results' | 'profile_incomplete' | null;
 };
 
 /**
  * OpportunityResponse
  */
 export type OpportunityResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Drive Id
+     */
+    drive_id: string;
+    /**
+     * Company Name
+     */
+    company_name: string;
+    /**
+     * Drive Title
+     */
+    drive_title: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Employment Type
+     */
+    employment_type: string;
+    /**
+     * Location
+     */
+    location: string;
+    /**
+     * Work Mode
+     */
+    work_mode: string;
+    /**
+     * Salary Display
+     */
+    salary_display: string | null;
+    /**
+     * Skills
+     */
+    skills: Array<string>;
+    /**
+     * Requirements
+     */
+    requirements: Array<string>;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes?: {
+        [key: string]: unknown;
+    };
+    eligibility: EligibilityResponse;
+    /**
+     * Saved
+     */
+    saved: boolean;
     /**
      * Application Id
      */
@@ -3865,83 +3936,36 @@ export type OpportunityResponse = {
      * Application Status
      */
     application_status?: string | null;
-    /**
-     * Company Name
-     */
-    company_name: string;
-    /**
-     * Deadline At
-     */
-    deadline_at: string;
-    /**
-     * Description
-     */
-    description: string;
-    /**
-     * Drive Id
-     */
-    drive_id: string;
-    /**
-     * Drive Title
-     */
-    drive_title: string;
-    eligibility: EligibilityResponse;
-    /**
-     * Employment Type
-     */
-    employment_type: string;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Location
-     */
-    location: string;
-    /**
-     * Pending Changes
-     */
-    pending_changes?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Published At
-     */
-    published_at: string | null;
-    /**
-     * Requirements
-     */
-    requirements: Array<string>;
-    /**
-     * Salary Display
-     */
-    salary_display: string | null;
-    /**
-     * Saved
-     */
-    saved: boolean;
-    /**
-     * Skills
-     */
-    skills: Array<string>;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Title
-     */
-    title: string;
-    /**
-     * Work Mode
-     */
-    work_mode: string;
 };
 
 /**
  * OutcomeEventCreate
  */
 export type OutcomeEventCreate = {
+    /**
+     * Event Type
+     */
+    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
+    /**
+     * Outcome State
+     */
+    outcome_state: 'provisional' | 'verified';
+    /**
+     * Event At
+     */
+    event_at: string;
+    /**
+     * Source Type
+     */
+    source_type: string;
+    /**
+     * Source Reference
+     */
+    source_reference?: string | null;
+    /**
+     * Evidence Reference
+     */
+    evidence_reference?: string | null;
     /**
      * Compensation Amount
      */
@@ -3955,21 +3979,9 @@ export type OutcomeEventCreate = {
      */
     compensation_period?: 'hour' | 'month' | 'year' | 'total' | null;
     /**
-     * Correction Reason
+     * Stipend Amount
      */
-    correction_reason?: string | null;
-    /**
-     * Event At
-     */
-    event_at: string;
-    /**
-     * Event Type
-     */
-    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
-    /**
-     * Evidence Reference
-     */
-    evidence_reference?: string | null;
+    stipend_amount?: number | string | null;
     /**
      * Joining Date
      */
@@ -3979,33 +3991,21 @@ export type OutcomeEventCreate = {
      */
     joining_location?: string | null;
     /**
-     * Next Update Due At
-     */
-    next_update_due_at?: string | null;
-    /**
      * Next Update Owner
      */
     next_update_owner?: string | null;
     /**
-     * Outcome State
+     * Next Update Due At
      */
-    outcome_state: 'provisional' | 'verified';
-    /**
-     * Source Reference
-     */
-    source_reference?: string | null;
-    /**
-     * Source Type
-     */
-    source_type: string;
-    /**
-     * Stipend Amount
-     */
-    stipend_amount?: number | string | null;
+    next_update_due_at?: string | null;
     /**
      * Supersedes Event Id
      */
     supersedes_event_id?: string | null;
+    /**
+     * Correction Reason
+     */
+    correction_reason?: string | null;
 };
 
 /**
@@ -4013,9 +4013,53 @@ export type OutcomeEventCreate = {
  */
 export type OutcomeEventResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
      * Application Id
      */
     application_id: string;
+    /**
+     * Student User Id
+     */
+    student_user_id: string;
+    /**
+     * Event Type
+     */
+    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
+    /**
+     * Outcome State
+     */
+    outcome_state: 'provisional' | 'verified';
+    /**
+     * Event At
+     */
+    event_at: string;
+    /**
+     * Source Type
+     */
+    source_type: string;
+    /**
+     * Source Reference
+     */
+    source_reference: string | null;
+    /**
+     * Evidence Reference
+     */
+    evidence_reference: string | null;
+    /**
+     * Verified By User Id
+     */
+    verified_by_user_id: string | null;
+    /**
+     * Verified At
+     */
+    verified_at: string | null;
     /**
      * Compensation Amount
      */
@@ -4029,37 +4073,9 @@ export type OutcomeEventResponse = {
      */
     compensation_period: string | null;
     /**
-     * Correction Reason
+     * Stipend Amount
      */
-    correction_reason: string | null;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Created By User Id
-     */
-    created_by_user_id: string;
-    /**
-     * Event At
-     */
-    event_at: string;
-    /**
-     * Event Type
-     */
-    event_type: 'selection' | 'offer_issued' | 'offer_accepted' | 'offer_declined' | 'offer_rescinded' | 'joining_deferred' | 'joining' | 'no_show' | 'placement_confirmed' | 'internship' | 'ppo' | 'higher_studies' | 'approved_off_campus';
-    /**
-     * Evidence Reference
-     */
-    evidence_reference: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Institution Id
-     */
-    institution_id: string;
+    stipend_amount: string | null;
     /**
      * Joining Date
      */
@@ -4069,49 +4085,33 @@ export type OutcomeEventResponse = {
      */
     joining_location: string | null;
     /**
-     * Next Update Due At
-     */
-    next_update_due_at: string | null;
-    /**
      * Next Update Owner
      */
     next_update_owner: string | null;
     /**
-     * Outcome State
+     * Next Update Due At
      */
-    outcome_state: 'provisional' | 'verified';
-    /**
-     * Source Reference
-     */
-    source_reference: string | null;
-    /**
-     * Source Type
-     */
-    source_type: string;
-    /**
-     * Stipend Amount
-     */
-    stipend_amount: string | null;
-    /**
-     * Student User Id
-     */
-    student_user_id: string;
-    /**
-     * Superseded By Event Id
-     */
-    superseded_by_event_id?: string | null;
+    next_update_due_at: string | null;
     /**
      * Supersedes Event Id
      */
     supersedes_event_id: string | null;
     /**
-     * Verified At
+     * Superseded By Event Id
      */
-    verified_at: string | null;
+    superseded_by_event_id?: string | null;
     /**
-     * Verified By User Id
+     * Correction Reason
      */
-    verified_by_user_id: string | null;
+    correction_reason: string | null;
+    /**
+     * Created By User Id
+     */
+    created_by_user_id: string;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -4119,33 +4119,33 @@ export type OutcomeEventResponse = {
  */
 export type OverrideResponse = {
     /**
-     * Actor User Id
-     */
-    actor_user_id: string;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
      * Id
      */
     id: string;
     /**
-     * Policy Reference
+     * Actor User Id
      */
-    policy_reference: string | null;
+    actor_user_id: string;
     /**
      * Previous Status
      */
     previous_status: string;
     /**
+     * Target Status
+     */
+    target_status: string;
+    /**
      * Reason
      */
     reason: string;
     /**
-     * Target Status
+     * Policy Reference
      */
-    target_status: string;
+    policy_reference: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
@@ -4169,25 +4169,47 @@ export type PasswordResetRequest = {
 };
 
 /**
+ * PlacementAccessResponse
+ */
+export type PlacementAccessResponse = {
+    /**
+     * Available
+     */
+    available: boolean;
+    /**
+     * Study Year
+     */
+    study_year?: number | null;
+    /**
+     * Academic Year Start
+     */
+    academic_year_start?: number | null;
+    /**
+     * Verification Required
+     */
+    verification_required?: boolean;
+};
+
+/**
  * PlacementCycleStep
  */
 export type PlacementCycleStep = {
-    /**
-     * Ends On
-     */
-    ends_on: string;
     /**
      * Name
      */
     name: string;
     /**
-     * Participating Cohorts
-     */
-    participating_cohorts: Array<string>;
-    /**
      * Starts On
      */
     starts_on: string;
+    /**
+     * Ends On
+     */
+    ends_on: string;
+    /**
+     * Participating Cohorts
+     */
+    participating_cohorts: Array<string>;
 };
 
 /**
@@ -4195,21 +4217,21 @@ export type PlacementCycleStep = {
  */
 export type PlacementParticipationStep = {
     /**
-     * Communication Channels
-     */
-    communication_channels: Array<'email' | 'in_app'>;
-    /**
      * Placement Cycle
      */
     placement_cycle: string;
     /**
-     * Privacy Accepted
+     * Communication Channels
      */
-    privacy_accepted: true;
+    communication_channels: Array<'email' | 'in_app'>;
     /**
      * Visibility
      */
     visibility: 'placement_team' | 'participating_recruiters';
+    /**
+     * Privacy Accepted
+     */
+    privacy_accepted: true;
 };
 
 /**
@@ -4217,23 +4239,27 @@ export type PlacementParticipationStep = {
  */
 export type PlatformAdminAssignmentResponse = {
     /**
-     * Assigned At
+     * User Id
      */
-    assigned_at: string;
+    user_id: string;
     /**
      * Revision
      */
     revision: number;
     /**
-     * User Id
+     * Assigned At
      */
-    user_id: string;
+    assigned_at: string;
 };
 
 /**
  * PlatformAdminTransferRequest
  */
 export type PlatformAdminTransferRequest = {
+    /**
+     * User Id
+     */
+    user_id: string;
     /**
      * Expected Revision
      */
@@ -4242,10 +4268,6 @@ export type PlatformAdminTransferRequest = {
      * Reason
      */
     reason: string;
-    /**
-     * User Id
-     */
-    user_id: string;
 };
 
 /**
@@ -4253,21 +4275,13 @@ export type PlatformAdminTransferRequest = {
  */
 export type PlatformDashboardSummary = {
     /**
-     * Active Institutions
-     */
-    active_institutions: number;
-    /**
-     * Overdue Escalations
-     */
-    overdue_escalations: number;
-    /**
      * Pending Institution Approvals
      */
     pending_institution_approvals: number;
     /**
-     * Reporting Freshness At
+     * Active Institutions
      */
-    reporting_freshness_at: string | null;
+    active_institutions: number;
     /**
      * Tnp Accounts
      */
@@ -4276,6 +4290,14 @@ export type PlatformDashboardSummary = {
      * Unresolved Service Items
      */
     unresolved_service_items: number;
+    /**
+     * Overdue Escalations
+     */
+    overdue_escalations: number;
+    /**
+     * Reporting Freshness At
+     */
+    reporting_freshness_at: string | null;
 };
 
 /**
@@ -4283,17 +4305,17 @@ export type PlatformDashboardSummary = {
  */
 export type PlatformHealthSummary = {
     /**
-     * Checked At
+     * Status
      */
-    checked_at: string;
+    status: 'healthy' | 'degraded';
     /**
      * Queues
      */
     queues: Array<ServiceQueueStatus>;
     /**
-     * Status
+     * Checked At
      */
-    status: 'healthy' | 'degraded';
+    checked_at: string;
 };
 
 /**
@@ -4301,33 +4323,25 @@ export type PlatformHealthSummary = {
  */
 export type PlatformInstitutionDetail = {
     /**
-     * Application Count
+     * Id
      */
-    application_count: number;
+    id: string;
     /**
      * Code
      */
     code: string;
     /**
-     * Domains
+     * Name
      */
-    domains: Array<string>;
-    /**
-     * Drive Count
-     */
-    drive_count: number;
-    /**
-     * Id
-     */
-    id: string;
+    name: string;
     /**
      * Is Active
      */
     is_active: boolean;
     /**
-     * Name
+     * Timezone
      */
-    name: string;
+    timezone: string;
     /**
      * Staff Count
      */
@@ -4337,13 +4351,21 @@ export type PlatformInstitutionDetail = {
      */
     student_count: number;
     /**
-     * Timezone
+     * Application Count
      */
-    timezone: string;
+    application_count: number;
     /**
      * Updated At
      */
     updated_at: string;
+    /**
+     * Domains
+     */
+    domains: Array<string>;
+    /**
+     * Drive Count
+     */
+    drive_count: number;
 };
 
 /**
@@ -4373,25 +4395,25 @@ export type PlatformInstitutionPage = {
  */
 export type PlatformInstitutionSummary = {
     /**
-     * Application Count
+     * Id
      */
-    application_count: number;
+    id: string;
     /**
      * Code
      */
     code: string;
     /**
-     * Id
+     * Name
      */
-    id: string;
+    name: string;
     /**
      * Is Active
      */
     is_active: boolean;
     /**
-     * Name
+     * Timezone
      */
-    name: string;
+    timezone: string;
     /**
      * Staff Count
      */
@@ -4401,9 +4423,9 @@ export type PlatformInstitutionSummary = {
      */
     student_count: number;
     /**
-     * Timezone
+     * Application Count
      */
-    timezone: string;
+    application_count: number;
     /**
      * Updated At
      */
@@ -4415,6 +4437,18 @@ export type PlatformInstitutionSummary = {
  */
 export type PlatformReportSummary = {
     /**
+     * Institution Count
+     */
+    institution_count: number;
+    /**
+     * Student Count
+     */
+    student_count: number;
+    /**
+     * Drive Count
+     */
+    drive_count: number;
+    /**
      * Application Count
      */
     application_count: number;
@@ -4425,25 +4459,13 @@ export type PlatformReportSummary = {
         [key: string]: number;
     };
     /**
-     * Drive Count
-     */
-    drive_count: number;
-    /**
      * Generated At
      */
     generated_at: string;
     /**
-     * Institution Count
-     */
-    institution_count: number;
-    /**
      * Provisional
      */
     provisional?: boolean;
-    /**
-     * Student Count
-     */
-    student_count: number;
 };
 
 /**
@@ -4451,27 +4473,25 @@ export type PlatformReportSummary = {
  */
 export type PlatformSettingsResponse = {
     /**
-     * Ai Key Configured
+     * Ai Provider
      */
-    ai_key_configured: boolean;
+    ai_provider: string;
     /**
      * Ai Model
      */
     ai_model: string | null;
     /**
-     * Ai Provider
+     * Ai Key Configured
      */
-    ai_provider: string;
+    ai_key_configured: boolean;
     /**
      * Email Configured
      */
     email_configured: boolean;
     /**
-     * Feature Availability
+     * Storage Backend
      */
-    feature_availability: {
-        [key: string]: unknown;
-    };
+    storage_backend: string;
     /**
      * Platform Notice
      */
@@ -4485,21 +4505,17 @@ export type PlatformSettingsResponse = {
         [key: string]: unknown;
     };
     /**
-     * Storage Backend
+     * Feature Availability
      */
-    storage_backend: string;
+    feature_availability: {
+        [key: string]: unknown;
+    };
 };
 
 /**
  * PlatformSettingsUpdate
  */
 export type PlatformSettingsUpdate = {
-    /**
-     * Feature Availability
-     */
-    feature_availability?: {
-        [key: string]: unknown;
-    } | null;
     /**
      * Platform Notice
      */
@@ -4512,16 +4528,18 @@ export type PlatformSettingsUpdate = {
     service_targets?: {
         [key: string]: unknown;
     } | null;
+    /**
+     * Feature Availability
+     */
+    feature_availability?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 /**
  * PlatformStaffAccount
  */
 export type PlatformStaffAccount = {
-    /**
-     * Email
-     */
-    email: string;
     /**
      * Id
      */
@@ -4531,9 +4549,17 @@ export type PlatformStaffAccount = {
      */
     institution_id: string;
     /**
-     * Requires Terms Acceptance
+     * User Id
      */
-    requires_terms_acceptance: boolean;
+    user_id: string;
+    /**
+     * Username
+     */
+    username: string | null;
+    /**
+     * Email
+     */
+    email: string;
     /**
      * Role
      */
@@ -4543,13 +4569,9 @@ export type PlatformStaffAccount = {
      */
     status: string;
     /**
-     * User Id
+     * Requires Terms Acceptance
      */
-    user_id: string;
-    /**
-     * Username
-     */
-    username: string | null;
+    requires_terms_acceptance: boolean;
 };
 
 /**
@@ -4557,35 +4579,27 @@ export type PlatformStaffAccount = {
  */
 export type PlatformStaffAccountCreate = {
     /**
+     * Username
+     */
+    username: string;
+    /**
      * Password
      */
     password: string;
-    /**
-     * Reason
-     */
-    reason: string;
     /**
      * Role
      */
     role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
     /**
-     * Username
+     * Reason
      */
-    username: string;
+    reason: string;
 };
 
 /**
  * PlatformStaffAssignmentCreate
  */
 export type PlatformStaffAssignmentCreate = {
-    /**
-     * Reason
-     */
-    reason: string;
-    /**
-     * Role
-     */
-    role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
     /**
      * User Id
      */
@@ -4594,6 +4608,14 @@ export type PlatformStaffAssignmentCreate = {
      * Username
      */
     username?: string | null;
+    /**
+     * Role
+     */
+    role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
+    /**
+     * Reason
+     */
+    reason: string;
 };
 
 /**
@@ -4601,17 +4623,17 @@ export type PlatformStaffAssignmentCreate = {
  */
 export type PlatformStaffStatusChange = {
     /**
-     * Reason
+     * Status
      */
-    reason: string;
+    status: 'active' | 'suspended' | 'revoked';
     /**
      * Role
      */
     role?: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor' | null;
     /**
-     * Status
+     * Reason
      */
-    status: 'active' | 'suspended' | 'revoked';
+    reason: string;
 };
 
 /**
@@ -4627,10 +4649,6 @@ export type PolicyAnswer = {
      */
     citations: Array<string>;
     /**
-     * Grounded
-     */
-    grounded: boolean;
-    /**
      * Policy Id
      */
     policy_id: string | null;
@@ -4638,6 +4656,10 @@ export type PolicyAnswer = {
      * Policy Version
      */
     policy_version: number | null;
+    /**
+     * Grounded
+     */
+    grounded: boolean;
 };
 
 /**
@@ -4645,27 +4667,23 @@ export type PolicyAnswer = {
  */
 export type PolicyCreate = {
     /**
-     * Sections
+     * Title
      */
-    sections: Array<PolicySectionInput>;
+    title: string;
     /**
      * Source Reference
      */
     source_reference: string;
     /**
-     * Title
+     * Sections
      */
-    title: string;
+    sections: Array<PolicySectionInput>;
 };
 
 /**
  * PolicyPermissionStep
  */
 export type PolicyPermissionStep = {
-    /**
-     * Approval Roles
-     */
-    approval_roles?: Array<'tnp_owner' | 'tnp_admin' | 'tnp_reviewer'>;
     /**
      * Eligibility Template Names
      */
@@ -4674,6 +4692,10 @@ export type PolicyPermissionStep = {
      * Policy Names
      */
     policy_names?: Array<string>;
+    /**
+     * Approval Roles
+     */
+    approval_roles?: Array<'tnp_owner' | 'tnp_admin' | 'tnp_reviewer'>;
 };
 
 /**
@@ -4691,6 +4713,36 @@ export type PolicyQuestion = {
  */
 export type PolicyResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Version
+     */
+    version: number;
+    /**
+     * Source Reference
+     */
+    source_reference: string;
+    /**
+     * Sections
+     */
+    sections: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Review Reason
+     */
+    review_reason: string | null;
+    /**
      * Approved At
      */
     approved_at: string | null;
@@ -4699,39 +4751,9 @@ export type PolicyResponse = {
      */
     created_at: string;
     /**
-     * Id
-     */
-    id: string;
-    /**
-     * Review Reason
-     */
-    review_reason: string | null;
-    /**
-     * Sections
-     */
-    sections: Array<{
-        [key: string]: unknown;
-    }>;
-    /**
-     * Source Reference
-     */
-    source_reference: string;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Title
-     */
-    title: string;
-    /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Version
-     */
-    version: number;
 };
 
 /**
@@ -4753,13 +4775,13 @@ export type PolicyReview = {
  */
 export type PolicySectionInput = {
     /**
-     * Page
-     */
-    page: number;
-    /**
      * Section
      */
     section: string;
+    /**
+     * Page
+     */
+    page: number;
     /**
      * Text
      */
@@ -4771,21 +4793,21 @@ export type PolicySectionInput = {
  */
 export type PracticeConsentResponse = {
     /**
+     * Purpose
+     */
+    purpose: 'practice_aggregates';
+    /**
      * Consent Version
      */
     consent_version: string;
-    /**
-     * Granted At
-     */
-    granted_at: string | null;
     /**
      * Opted In
      */
     opted_in: boolean;
     /**
-     * Purpose
+     * Granted At
      */
-    purpose: 'practice_aggregates';
+    granted_at: string | null;
     /**
      * Revoked At
      */
@@ -4815,19 +4837,23 @@ export type PreferencesUpdate = {
      */
     expected_revision: number;
     /**
-     * Onboarding Step
-     */
-    onboarding_step?: number | null;
-    /**
      * Target Roles
      */
     target_roles: Array<string>;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
 };
 
 /**
  * PreparationEvidence
  */
 export type PreparationEvidence = {
+    /**
+     * Requirement
+     */
+    requirement: string;
     /**
      * Demonstrated
      */
@@ -4836,42 +4862,12 @@ export type PreparationEvidence = {
      * Evidence
      */
     evidence: string;
-    /**
-     * Requirement
-     */
-    requirement: string;
 };
 
 /**
  * PreparationResponse
  */
 export type PreparationResponse = {
-    /**
-     * Activities
-     */
-    activities?: Array<{
-        [key: string]: string;
-    }>;
-    /**
-     * Evidence
-     */
-    evidence: Array<PreparationEvidence>;
-    /**
-     * Guidance Stale
-     */
-    guidance_stale: boolean;
-    /**
-     * Mapping Status
-     */
-    mapping_status: string;
-    /**
-     * Requirements
-     */
-    requirements: Array<string>;
-    /**
-     * Roadmap Href
-     */
-    roadmap_href: string;
     /**
      * Role Id
      */
@@ -4881,18 +4877,44 @@ export type PreparationResponse = {
      */
     role_title: string;
     /**
+     * Source Resume Version Id
+     */
+    source_resume_version_id: string | null;
+    /**
      * Source Profile Revision
      */
     source_profile_revision: number | null;
     /**
-     * Source Resume Version Id
+     * Evidence
      */
-    source_resume_version_id: string | null;
+    evidence: Array<PreparationEvidence>;
+    /**
+     * Requirements
+     */
+    requirements: Array<string>;
+    /**
+     * Mapping Status
+     */
+    mapping_status: string;
+    /**
+     * Roadmap Href
+     */
+    roadmap_href: string;
     /**
      * Suggestions
      */
     suggestions: Array<{
         [key: string]: unknown;
+    }>;
+    /**
+     * Guidance Stale
+     */
+    guidance_stale: boolean;
+    /**
+     * Activities
+     */
+    activities?: Array<{
+        [key: string]: string;
     }>;
 };
 
@@ -4901,13 +4923,13 @@ export type PreparationResponse = {
  */
 export type PrivacyRequestCreate = {
     /**
-     * Details
-     */
-    details?: string | null;
-    /**
      * Request Type
      */
     request_type: 'export' | 'correction' | 'erasure' | 'consent_withdrawal' | 'grievance';
+    /**
+     * Details
+     */
+    details?: string | null;
 };
 
 /**
@@ -4918,10 +4940,6 @@ export type PrivacyRequestDecision = {
      * Action
      */
     action: 'assign' | 'approve' | 'decline' | 'hold' | 'complete';
-    /**
-     * Expected Updated At
-     */
-    expected_updated_at: string;
     /**
      * Owner User Id
      */
@@ -4934,6 +4952,10 @@ export type PrivacyRequestDecision = {
      * Resolution Effect
      */
     resolution_effect?: string | null;
+    /**
+     * Expected Updated At
+     */
+    expected_updated_at: string;
 };
 
 /**
@@ -4941,33 +4963,41 @@ export type PrivacyRequestDecision = {
  */
 export type PrivacyRequestResponse = {
     /**
-     * Cleanup Request Id
+     * Id
      */
-    cleanup_request_id: string | null;
+    id: string;
     /**
-     * Completed At
+     * User Id
      */
-    completed_at: string | null;
+    user_id: string | null;
     /**
-     * Created At
+     * Request Type
      */
-    created_at: string;
+    request_type: string;
+    /**
+     * Status
+     */
+    status: string;
     /**
      * Details
      */
     details: string | null;
     /**
+     * Owner User Id
+     */
+    owner_user_id: string | null;
+    /**
      * Due At
      */
     due_at: string | null;
     /**
-     * Id
+     * Result Summary
      */
-    id: string;
+    result_summary: string | null;
     /**
-     * Owner User Id
+     * Resolution Effect
      */
-    owner_user_id: string | null;
+    resolution_effect: string | null;
     /**
      * Processing Receipt
      */
@@ -4975,33 +5005,25 @@ export type PrivacyRequestResponse = {
         [key: string]: unknown;
     };
     /**
+     * Cleanup Request Id
+     */
+    cleanup_request_id: string | null;
+    /**
      * Receipt Reference
      */
     receipt_reference: string | null;
     /**
-     * Request Type
+     * Created At
      */
-    request_type: string;
-    /**
-     * Resolution Effect
-     */
-    resolution_effect: string | null;
-    /**
-     * Result Summary
-     */
-    result_summary: string | null;
-    /**
-     * Status
-     */
-    status: string;
+    created_at: string;
     /**
      * Updated At
      */
     updated_at: string;
     /**
-     * User Id
+     * Completed At
      */
-    user_id: string | null;
+    completed_at: string | null;
 };
 
 /**
@@ -5019,17 +5041,45 @@ export type ProfilePhotoResponse = {
  */
 export type ProfileResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string | null;
+    /**
+     * Full Name
+     */
+    full_name: string | null;
+    /**
+     * Date Of Birth
+     */
+    date_of_birth: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name: string | null;
+    /**
+     * Prn
+     */
+    prn: string | null;
+    /**
+     * Department
+     */
+    department: string | null;
+    /**
      * Academic Year
      */
     academic_year: string | null;
     /**
+     * Phone
+     */
+    phone: string | null;
+    /**
      * Account Email
      */
     account_email?: string | null;
-    /**
-     * Checklist
-     */
-    checklist: Array<ReadinessItem>;
     /**
      * City
      */
@@ -5039,65 +5089,11 @@ export type ProfileResponse = {
      */
     country_code: string | null;
     /**
-     * Date Of Birth
-     */
-    date_of_birth: string | null;
-    /**
-     * Department
-     */
-    department: string | null;
-    /**
      * Education
      */
     education: Array<{
         [key: string]: unknown;
     }>;
-    /**
-     * External Links
-     */
-    external_links: {
-        [key: string]: string;
-    };
-    /**
-     * Full Name
-     */
-    full_name: string | null;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Institution Id
-     */
-    institution_id: string | null;
-    /**
-     * Institution Name
-     */
-    institution_name: string | null;
-    /**
-     * Is Complete
-     */
-    is_complete: boolean;
-    /**
-     * Onboarding Step
-     */
-    onboarding_step: number;
-    /**
-     * Phone
-     */
-    phone: string | null;
-    /**
-     * Prn
-     */
-    prn: string | null;
-    /**
-     * Readiness
-     */
-    readiness: number;
-    /**
-     * Revision
-     */
-    revision: number;
     /**
      * Skills
      */
@@ -5109,39 +5105,41 @@ export type ProfileResponse = {
      */
     target_roles: Array<string>;
     /**
+     * External Links
+     */
+    external_links: {
+        [key: string]: string;
+    };
+    /**
+     * Onboarding Step
+     */
+    onboarding_step: number;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
      * Updated At
      */
     updated_at: string;
+    /**
+     * Readiness
+     */
+    readiness: number;
+    /**
+     * Is Complete
+     */
+    is_complete: boolean;
+    /**
+     * Checklist
+     */
+    checklist: Array<ReadinessItem>;
 };
 
 /**
  * ProfileUpdate
  */
 export type ProfileUpdate = {
-    /**
-     * Academic Year
-     */
-    academic_year?: string | null;
-    /**
-     * City
-     */
-    city?: string | null;
-    /**
-     * Country Code
-     */
-    country_code?: string | null;
-    /**
-     * Date Of Birth
-     */
-    date_of_birth?: string | null;
-    /**
-     * Department
-     */
-    department?: string | null;
-    /**
-     * Education
-     */
-    education?: Array<EducationItem> | null;
     /**
      * Expected Revision
      */
@@ -5151,29 +5149,41 @@ export type ProfileUpdate = {
      */
     full_name?: string | null;
     /**
-     * Github Url
+     * Date Of Birth
      */
-    github_url?: string | null;
+    date_of_birth?: string | null;
     /**
      * Institution Name
      */
     institution_name?: string | null;
     /**
-     * Onboarding Step
+     * Prn
      */
-    onboarding_step?: number | null;
+    prn?: string | null;
+    /**
+     * Department
+     */
+    department?: string | null;
+    /**
+     * Academic Year
+     */
+    academic_year?: string | null;
     /**
      * Phone
      */
     phone?: string | null;
     /**
-     * Portfolio Url
+     * City
      */
-    portfolio_url?: string | null;
+    city?: string | null;
     /**
-     * Prn
+     * Country Code
      */
-    prn?: string | null;
+    country_code?: string | null;
+    /**
+     * Education
+     */
+    education?: Array<EducationItem> | null;
     /**
      * Skills
      */
@@ -5182,6 +5192,18 @@ export type ProfileUpdate = {
      * Target Roles
      */
     target_roles?: Array<string> | null;
+    /**
+     * Github Url
+     */
+    github_url?: string | null;
+    /**
+     * Portfolio Url
+     */
+    portfolio_url?: string | null;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
 };
 
 /**
@@ -5189,29 +5211,29 @@ export type ProfileUpdate = {
  */
 export type ProjectEntry = {
     /**
-     * Description
+     * Title
      */
-    description: string;
-    /**
-     * Outcomes
-     */
-    outcomes?: Array<string>;
+    title: string;
     /**
      * Project Type
      */
     project_type?: 'academic' | 'personal' | 'internship' | 'hackathon' | 'other';
     /**
-     * Project Url
+     * Description
      */
-    project_url?: string | null;
+    description: string;
     /**
      * Technologies
      */
     technologies?: Array<string>;
     /**
-     * Title
+     * Outcomes
      */
-    title: string;
+    outcomes?: Array<string>;
+    /**
+     * Project Url
+     */
+    project_url?: string | null;
 };
 
 /**
@@ -5219,43 +5241,39 @@ export type ProjectEntry = {
  */
 export type ProjectEntryResponse = {
     /**
-     * Description
-     */
-    description: string;
-    /**
      * Id
      */
     id: string;
     /**
-     * Outcomes
+     * Title
      */
-    outcomes: Array<string>;
+    title: string;
     /**
      * Project Type
      */
     project_type: 'academic' | 'personal' | 'internship' | 'hackathon' | 'other';
     /**
-     * Project Url
+     * Description
      */
-    project_url: string | null;
+    description: string;
     /**
      * Technologies
      */
     technologies: Array<string>;
     /**
-     * Title
+     * Outcomes
      */
-    title: string;
+    outcomes: Array<string>;
+    /**
+     * Project Url
+     */
+    project_url: string | null;
 };
 
 /**
  * ProjectsSkillsStep
  */
 export type ProjectsSkillsStep = {
-    /**
-     * Certifications
-     */
-    certifications?: Array<CertificationEntry>;
     /**
      * Projects
      */
@@ -5264,6 +5282,10 @@ export type ProjectsSkillsStep = {
      * Skills
      */
     skills?: Array<string>;
+    /**
+     * Certifications
+     */
+    certifications?: Array<CertificationEntry>;
 };
 
 /**
@@ -5271,24 +5293,24 @@ export type ProjectsSkillsStep = {
  */
 export type ProposalDecisionRequest = {
     /**
-     * Decision
-     */
-    decision: 'accept' | 'reject';
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Decision
+     */
+    decision: 'accept' | 'reject';
 };
 
 /**
  * ProposalEditRequest
  */
 export type ProposalEditRequest = {
-    content: ResumeDraft;
     /**
      * Expected Revision
      */
     expected_revision: number;
+    content: ResumeDraft;
 };
 
 /**
@@ -5296,30 +5318,38 @@ export type ProposalEditRequest = {
  */
 export type ProposalResponse = {
     /**
-     * Accepted At
+     * Id
      */
-    accepted_at: string | null;
+    id: string;
     /**
      * Capability
      */
     capability: string;
+    /**
+     * Purpose Role Id
+     */
+    purpose_role_id: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Revision
+     */
+    revision: number;
     content: ResumeDraft;
-    /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Evidence Digest
-     */
-    evidence_digest: string;
     /**
      * Evidence References
      */
     evidence_references: Array<EvidenceReference>;
     /**
-     * Id
+     * Evidence Digest
      */
-    id: string;
+    evidence_digest: string;
+    /**
+     * Provider Name
+     */
+    provider_name: string;
     /**
      * Model Version
      */
@@ -5329,25 +5359,17 @@ export type ProposalResponse = {
      */
     prompt_version: string;
     /**
-     * Provider Name
+     * Created At
      */
-    provider_name: string;
+    created_at: string;
     /**
-     * Purpose Role Id
+     * Accepted At
      */
-    purpose_role_id: string | null;
+    accepted_at: string | null;
     /**
      * Rejected At
      */
     rejected_at: string | null;
-    /**
-     * Revision
-     */
-    revision: number;
-    /**
-     * Status
-     */
-    status: string;
 };
 
 /**
@@ -5355,29 +5377,33 @@ export type ProposalResponse = {
  */
 export type PublishPreview = {
     /**
-     * Blockers
+     * Drive Id
      */
-    blockers: Array<string>;
+    drive_id: string;
+    /**
+     * Title
+     */
+    title: string;
     /**
      * Company Name
      */
     company_name: string;
     /**
-     * Completed Steps
+     * Opens At
      */
-    completed_steps: Array<number>;
+    opens_at: string;
     /**
      * Deadline At
      */
     deadline_at: string;
     /**
-     * Drive Id
+     * Blockers
      */
-    drive_id: string;
+    blockers: Array<string>;
     /**
-     * Opens At
+     * Roles
      */
-    opens_at: string;
+    roles: Array<PublishRolePreview>;
     /**
      * Pending Changes
      */
@@ -5385,13 +5411,9 @@ export type PublishPreview = {
         [key: string]: unknown;
     };
     /**
-     * Roles
+     * Completed Steps
      */
-    roles: Array<PublishRolePreview>;
-    /**
-     * Title
-     */
-    title: string;
+    completed_steps: Array<number>;
 };
 
 /**
@@ -5399,29 +5421,33 @@ export type PublishPreview = {
  */
 export type PublishRolePreview = {
     /**
-     * Description
-     */
-    description: string;
-    /**
-     * Form Questions
-     */
-    form_questions: Array<{
-        [key: string]: unknown;
-    }>;
-    /**
      * Id
      */
     id: string;
+    /**
+     * Visible On Publish
+     */
+    visible_on_publish: boolean;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description: string;
     /**
      * Location
      */
     location: string;
     /**
-     * Pending Changes
+     * Work Mode
      */
-    pending_changes: {
-        [key: string]: unknown;
-    };
+    work_mode: string;
+    /**
+     * Salary Display
+     */
+    salary_display: string | null;
     /**
      * Requirements
      */
@@ -5433,31 +5459,23 @@ export type PublishRolePreview = {
         [key: string]: unknown;
     }>;
     /**
-     * Salary Display
+     * Form Questions
      */
-    salary_display: string | null;
+    form_questions: Array<{
+        [key: string]: unknown;
+    }>;
     /**
-     * Title
+     * Pending Changes
      */
-    title: string;
-    /**
-     * Visible On Publish
-     */
-    visible_on_publish: boolean;
-    /**
-     * Work Mode
-     */
-    work_mode: string;
+    pending_changes: {
+        [key: string]: unknown;
+    };
 };
 
 /**
  * ReadinessItem
  */
 export type ReadinessItem = {
-    /**
-     * Complete
-     */
-    complete: boolean;
     /**
      * Key
      */
@@ -5466,6 +5484,10 @@ export type ReadinessItem = {
      * Label
      */
     label: string;
+    /**
+     * Complete
+     */
+    complete: boolean;
     /**
      * Required
      */
@@ -5477,6 +5499,10 @@ export type ReadinessItem = {
  */
 export type RegistrationStartResponse = {
     /**
+     * Status
+     */
+    status: 'registered' | 'approval_pending' | 'registration_unavailable';
+    /**
      * Message
      */
     message: string;
@@ -5484,10 +5510,6 @@ export type RegistrationStartResponse = {
      * Next Path
      */
     next_path?: string | null;
-    /**
-     * Status
-     */
-    status: 'registered' | 'approval_pending' | 'registration_unavailable';
 };
 
 /**
@@ -5509,6 +5531,14 @@ export type ReportDefinitionMetadata = {
      */
     code: string;
     /**
+     * Version
+     */
+    version?: number | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
      * Effective At
      */
     effective_at?: string | null;
@@ -5516,37 +5546,29 @@ export type ReportDefinitionMetadata = {
      * Frozen At
      */
     frozen_at: string;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Version
-     */
-    version?: number | null;
 };
 
 /**
  * ReportResponse
  */
 export type ReportResponse = {
-    definition: ReportDefinitionMetadata;
-    /**
-     * End At
-     */
-    end_at: string;
-    /**
-     * Metrics
-     */
-    metrics: Array<Metric>;
     /**
      * Start At
      */
     start_at: string;
     /**
+     * End At
+     */
+    end_at: string;
+    /**
      * Timezone
      */
     timezone: string;
+    definition: ReportDefinitionMetadata;
+    /**
+     * Metrics
+     */
+    metrics: Array<Metric>;
 };
 
 /**
@@ -5554,19 +5576,23 @@ export type ReportResponse = {
  */
 export type RequestCreate = {
     /**
-     * Deadline At
-     */
-    deadline_at?: string | null;
-    /**
      * Instructions
      */
     instructions: string;
+    /**
+     * Deadline At
+     */
+    deadline_at?: string | null;
 };
 
 /**
  * RequestResolution
  */
 export type RequestResolution = {
+    /**
+     * Expected Revision
+     */
+    expected_revision: number;
     /**
      * Action
      */
@@ -5575,10 +5601,6 @@ export type RequestResolution = {
      * Body
      */
     body: string;
-    /**
-     * Expected Revision
-     */
-    expected_revision: number;
 };
 
 /**
@@ -5586,13 +5608,13 @@ export type RequestResolution = {
  */
 export type RequestResponseCreate = {
     /**
-     * Body
-     */
-    body: string;
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Body
+     */
+    body: string;
     /**
      * Resume Version Id
      */
@@ -5604,72 +5626,72 @@ export type RequestResponseCreate = {
  */
 export type ResumeContent = {
     /**
-     * Achievements
+     * Full Name
      */
-    achievements?: Array<string>;
-    /**
-     * Credentials
-     */
-    credentials?: Array<string>;
-    /**
-     * Education
-     */
-    education?: Array<string>;
+    full_name: string;
     /**
      * Email
      */
     email: string;
     /**
-     * Experience
+     * Phone
      */
-    experience?: Array<string>;
-    /**
-     * Full Name
-     */
-    full_name: string;
+    phone?: string | null;
     /**
      * Github Url
      */
     github_url?: string | null;
     /**
-     * Phone
-     */
-    phone?: string | null;
-    /**
      * Portfolio Url
      */
     portfolio_url?: string | null;
     /**
-     * Projects
+     * Summary
      */
-    projects?: Array<string>;
+    summary?: string;
     /**
      * Skills
      */
     skills?: Array<string>;
     /**
-     * Summary
+     * Projects
      */
-    summary?: string;
+    projects?: Array<string>;
+    /**
+     * Education
+     */
+    education?: Array<string>;
+    /**
+     * Experience
+     */
+    experience?: Array<string>;
+    /**
+     * Credentials
+     */
+    credentials?: Array<string>;
+    /**
+     * Achievements
+     */
+    achievements?: Array<string>;
 };
 
 /**
  * ResumeDraft
  */
 export type ResumeDraft = {
+    professional_summary?: GroundedClaim | null;
     /**
      * Education
      */
     education?: Array<GroundedClaim>;
     /**
-     * Experience Bullets
-     */
-    experience_bullets?: Array<GroundedClaim>;
-    professional_summary?: GroundedClaim | null;
-    /**
      * Project Bullets
      */
     project_bullets?: Array<GroundedClaim>;
+    /**
+     * Experience Bullets
+     */
+    experience_bullets?: Array<GroundedClaim>;
     /**
      * Skills
      */
@@ -5691,37 +5713,37 @@ export type ResumeEvidenceResponse = {
  */
 export type ResumeJobEventResponse = {
     /**
-     * Attempt
+     * Id
      */
-    attempt: number;
-    /**
-     * Correlation Id
-     */
-    correlation_id: string | null;
+    id: string;
     /**
      * Event Type
      */
     event_type: string;
     /**
-     * Id
+     * Status
      */
-    id: string;
+    status: string;
     /**
-     * Occurred At
+     * Attempt
      */
-    occurred_at: string;
+    attempt: number;
+    /**
+     * Worker Id
+     */
+    worker_id: string | null;
     /**
      * Safe Error Code
      */
     safe_error_code: string | null;
     /**
-     * Status
+     * Correlation Id
      */
-    status: string;
+    correlation_id: string | null;
     /**
-     * Worker Id
+     * Occurred At
      */
-    worker_id: string | null;
+    occurred_at: string;
 };
 
 /**
@@ -5729,65 +5751,65 @@ export type ResumeJobEventResponse = {
  */
 export type ResumeJobOperatorResponse = {
     /**
-     * Attempts
-     */
-    attempts: number;
-    /**
-     * Available At
-     */
-    available_at: string;
-    /**
-     * Cancellation Requested At
-     */
-    cancellation_requested_at: string | null;
-    /**
-     * Claimed By
-     */
-    claimed_by: string | null;
-    /**
-     * Duration Ms
-     */
-    duration_ms: number | null;
-    /**
-     * Events
-     */
-    events?: Array<ResumeJobEventResponse>;
-    /**
-     * Finished At
-     */
-    finished_at: string | null;
-    /**
-     * Heartbeat At
-     */
-    heartbeat_at: string | null;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Lease Expires At
-     */
-    lease_expires_at: string | null;
-    /**
-     * Max Attempts
-     */
-    max_attempts: number;
     /**
      * Resume Version Id
      */
     resume_version_id: string;
     /**
-     * Safe Error Code
+     * Status
      */
-    safe_error_code: string | null;
+    status: string;
+    /**
+     * Attempts
+     */
+    attempts: number;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Available At
+     */
+    available_at: string;
     /**
      * Started At
      */
     started_at: string | null;
     /**
-     * Status
+     * Heartbeat At
      */
-    status: string;
+    heartbeat_at: string | null;
+    /**
+     * Lease Expires At
+     */
+    lease_expires_at: string | null;
+    /**
+     * Claimed By
+     */
+    claimed_by: string | null;
+    /**
+     * Cancellation Requested At
+     */
+    cancellation_requested_at: string | null;
+    /**
+     * Finished At
+     */
+    finished_at: string | null;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number | null;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code: string | null;
+    /**
+     * Events
+     */
+    events?: Array<ResumeJobEventResponse>;
 };
 
 /**
@@ -5809,49 +5831,49 @@ export type ResumeJobPage = {
  */
 export type ResumeJobResponse = {
     /**
-     * Attempts
-     */
-    attempts: number;
-    /**
-     * Cancellable
-     */
-    cancellable: boolean;
-    /**
-     * Duration Ms
-     */
-    duration_ms: number | null;
-    /**
-     * Finished At
-     */
-    finished_at: string | null;
-    /**
      * Id
      */
     id: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Attempts
+     */
+    attempts: number;
     /**
      * Max Attempts
      */
     max_attempts: number;
     /**
-     * Retryable
-     */
-    retryable: boolean;
-    /**
      * Safe Error Code
      */
     safe_error_code: string | null;
     /**
-     * Stage
+     * Retryable
      */
-    stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    retryable: boolean;
+    /**
+     * Cancellable
+     */
+    cancellable: boolean;
     /**
      * Started At
      */
     started_at: string | null;
     /**
-     * Status
+     * Finished At
      */
-    status: string;
+    finished_at: string | null;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number | null;
+    /**
+     * Stage
+     */
+    stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
 };
 
 /**
@@ -5859,13 +5881,23 @@ export type ResumeJobResponse = {
  */
 export type ResumeProposalCreate = {
     /**
-     * Purpose Role Id
-     */
-    purpose_role_id?: string | null;
-    /**
      * Selected Evidence Ids
      */
     selected_evidence_ids?: Array<string>;
+    /**
+     * Purpose Role Id
+     */
+    purpose_role_id?: string | null;
+};
+
+/**
+ * ResumeRenameRequest
+ */
+export type ResumeRenameRequest = {
+    /**
+     * Name
+     */
+    name: string;
 };
 
 /**
@@ -5873,17 +5905,13 @@ export type ResumeProposalCreate = {
  */
 export type ResumeSuggestionResponse = {
     /**
-     * Decided Text
+     * Id
      */
-    decided_text: string | null;
+    id: string;
     /**
      * Field Path
      */
     field_path: string;
-    /**
-     * Id
-     */
-    id: string;
     /**
      * Original Text
      */
@@ -5900,6 +5928,10 @@ export type ResumeSuggestionResponse = {
      * Status
      */
     status: string;
+    /**
+     * Decided Text
+     */
+    decided_text: string | null;
 };
 
 /**
@@ -5917,52 +5949,37 @@ export type ResumeVersionMaterializeRequest = {
  */
 export type ResumeVersionResponse = {
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Evidence Digest
-     */
-    evidence_digest: string;
-    /**
-     * Extracted Data
-     */
-    extracted_data?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Generator Version
-     */
-    generator_version: string | null;
-    /**
      * Id
      */
     id: string;
-    job?: ResumeJobResponse | null;
     /**
-     * Locked By Application
+     * Version Number
      */
-    locked_by_application?: boolean;
+    version_number: number | null;
+    /**
+     * Source
+     */
+    source: string;
     /**
      * Original Name
      */
     original_name: string;
     /**
+     * Status
+     */
+    status: string;
+    /**
+     * Scan Status
+     */
+    scan_status: string;
+    /**
      * Page Count
      */
     page_count: number | null;
     /**
-     * Parent Version Id
+     * Created At
      */
-    parent_version_id?: string | null;
-    /**
-     * Processing Stage
-     */
-    processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
-    /**
-     * Purpose Role Id
-     */
-    purpose_role_id?: string | null;
+    created_at: string;
     /**
      * Review Completed At
      */
@@ -5972,29 +5989,44 @@ export type ResumeVersionResponse = {
      */
     review_revision: number;
     /**
+     * Evidence Digest
+     */
+    evidence_digest: string;
+    /**
+     * Generator Version
+     */
+    generator_version: string | null;
+    /**
+     * Processing Stage
+     */
+    processing_stage: 'quarantined' | 'scanning' | 'scan_retry' | 'parsing' | 'parser_retry' | 'review' | 'generated' | 'ready' | 'failed' | 'cancelled';
+    /**
      * Safe Error Code
      */
     safe_error_code: string | null;
     /**
-     * Scan Status
+     * Locked By Application
      */
-    scan_status: string;
+    locked_by_application?: boolean;
     /**
-     * Source
+     * Parent Version Id
      */
-    source: string;
+    parent_version_id?: string | null;
     /**
-     * Status
+     * Purpose Role Id
      */
-    status: string;
+    purpose_role_id?: string | null;
+    /**
+     * Extracted Data
+     */
+    extracted_data?: {
+        [key: string]: unknown;
+    };
+    job?: ResumeJobResponse | null;
     /**
      * Suggestions
      */
     suggestions?: Array<ResumeSuggestionResponse>;
-    /**
-     * Version Number
-     */
-    version_number: number | null;
 };
 
 /**
@@ -6012,17 +6044,17 @@ export type ReviewStep = {
  */
 export type RoadmapAvailabilityResponse = {
     /**
-     * Guidance Provider Status
+     * Status
      */
-    guidance_provider_status: 'available' | 'unavailable';
+    status: 'available' | 'no_target_role' | 'no_approved_template' | 'institution_restriction';
     /**
      * Reason
      */
     reason: string;
     /**
-     * Status
+     * Guidance Provider Status
      */
-    status: 'available' | 'no_target_role' | 'no_approved_template' | 'institution_restriction';
+    guidance_provider_status: 'available' | 'unavailable';
     /**
      * Templates
      */
@@ -6034,19 +6066,17 @@ export type RoadmapAvailabilityResponse = {
  */
 export type RoadmapNodeResponse = {
     /**
-     * Completion
-     */
-    completion: string;
-    /**
-     * Evidence
-     */
-    evidence: {
-        [key: string]: unknown;
-    };
-    /**
      * Key
      */
     key: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Completion
+     */
+    completion: string;
     /**
      * Prerequisites
      */
@@ -6056,9 +6086,11 @@ export type RoadmapNodeResponse = {
      */
     state: 'completed' | 'next' | 'locked';
     /**
-     * Title
+     * Evidence
      */
-    title: string;
+    evidence: {
+        [key: string]: unknown;
+    };
 };
 
 /**
@@ -6084,29 +6116,17 @@ export type RoadmapProgressUpdate = {
  */
 export type RoadmapResponse = {
     /**
-     * Completed Count
-     */
-    completed_count: number;
-    /**
      * Id
      */
     id: string;
     /**
-     * Nodes
+     * Template Id
      */
-    nodes: Array<RoadmapNodeResponse>;
+    template_id: string;
     /**
      * Slug
      */
     slug: string;
-    /**
-     * Summary
-     */
-    summary: string;
-    /**
-     * Template Id
-     */
-    template_id: string;
     /**
      * Title
      */
@@ -6115,6 +6135,18 @@ export type RoadmapResponse = {
      * Version
      */
     version: number;
+    /**
+     * Summary
+     */
+    summary: string;
+    /**
+     * Completed Count
+     */
+    completed_count: number;
+    /**
+     * Nodes
+     */
+    nodes: Array<RoadmapNodeResponse>;
 };
 
 /**
@@ -6136,17 +6168,9 @@ export type RoadmapTemplateResponse = {
      */
     id: string;
     /**
-     * Node Count
-     */
-    node_count: number;
-    /**
      * Slug
      */
     slug: string;
-    /**
-     * Summary
-     */
-    summary: string;
     /**
      * Title
      */
@@ -6155,12 +6179,24 @@ export type RoadmapTemplateResponse = {
      * Version
      */
     version: number;
+    /**
+     * Summary
+     */
+    summary: string;
+    /**
+     * Node Count
+     */
+    node_count: number;
 };
 
 /**
  * RoleCreate
  */
 export type RoleCreate = {
+    /**
+     * Title
+     */
+    title: string;
     /**
      * Description
      */
@@ -6174,9 +6210,9 @@ export type RoleCreate = {
      */
     location: string;
     /**
-     * Requirements
+     * Work Mode
      */
-    requirements?: Array<string>;
+    work_mode: 'on-site' | 'hybrid' | 'remote';
     /**
      * Salary Display
      */
@@ -6186,13 +6222,9 @@ export type RoleCreate = {
      */
     skills?: Array<string>;
     /**
-     * Title
+     * Requirements
      */
-    title: string;
-    /**
-     * Work Mode
-     */
-    work_mode: 'on-site' | 'hybrid' | 'remote';
+    requirements?: Array<string>;
 };
 
 /**
@@ -6200,51 +6232,41 @@ export type RoleCreate = {
  */
 export type RoleResponse = {
     /**
-     * Company Name
+     * Id
      */
-    company_name: string;
-    /**
-     * Deadline At
-     */
-    deadline_at: string;
-    /**
-     * Description
-     */
-    description: string;
+    id: string;
     /**
      * Drive Id
      */
     drive_id: string;
     /**
+     * Company Name
+     */
+    company_name: string;
+    /**
      * Drive Title
      */
     drive_title: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description: string;
     /**
      * Employment Type
      */
     employment_type: string;
     /**
-     * Id
-     */
-    id: string;
-    /**
      * Location
      */
     location: string;
     /**
-     * Pending Changes
+     * Work Mode
      */
-    pending_changes?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Published At
-     */
-    published_at: string | null;
-    /**
-     * Requirements
-     */
-    requirements: Array<string>;
+    work_mode: string;
     /**
      * Salary Display
      */
@@ -6254,23 +6276,37 @@ export type RoleResponse = {
      */
     skills: Array<string>;
     /**
+     * Requirements
+     */
+    requirements: Array<string>;
+    /**
      * Status
      */
     status: string;
     /**
-     * Title
+     * Published At
      */
-    title: string;
+    published_at: string | null;
     /**
-     * Work Mode
+     * Deadline At
      */
-    work_mode: string;
+    deadline_at: string;
+    /**
+     * Pending Changes
+     */
+    pending_changes?: {
+        [key: string]: unknown;
+    };
 };
 
 /**
  * RoleUpdate
  */
 export type RoleUpdate = {
+    /**
+     * Title
+     */
+    title?: string | null;
     /**
      * Description
      */
@@ -6284,9 +6320,9 @@ export type RoleUpdate = {
      */
     location?: string | null;
     /**
-     * Requirements
+     * Work Mode
      */
-    requirements?: Array<string> | null;
+    work_mode?: 'on-site' | 'hybrid' | 'remote' | null;
     /**
      * Salary Display
      */
@@ -6296,13 +6332,9 @@ export type RoleUpdate = {
      */
     skills?: Array<string> | null;
     /**
-     * Title
+     * Requirements
      */
-    title?: string | null;
-    /**
-     * Work Mode
-     */
-    work_mode?: 'on-site' | 'hybrid' | 'remote' | null;
+    requirements?: Array<string> | null;
 };
 
 /**
@@ -6310,29 +6342,9 @@ export type RoleUpdate = {
  */
 export type RosterCommitResponse = {
     /**
-     * Committed At
-     */
-    committed_at: string | null;
-    /**
-     * Handoffs
-     */
-    handoffs: Array<InvitationHandoffResponse>;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Invalid Rows
-     */
-    invalid_rows: number;
-    /**
-     * Invited Rows
-     */
-    invited_rows: number;
-    /**
-     * Rows
-     */
-    rows: Array<RosterRowResponse>;
     /**
      * Status
      */
@@ -6345,6 +6357,26 @@ export type RosterCommitResponse = {
      * Valid Rows
      */
     valid_rows: number;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
+    /**
+     * Committed At
+     */
+    committed_at: string | null;
+    /**
+     * Rows
+     */
+    rows: Array<RosterRowResponse>;
+    /**
+     * Handoffs
+     */
+    handoffs: Array<InvitationHandoffResponse>;
 };
 
 /**
@@ -6352,25 +6384,9 @@ export type RosterCommitResponse = {
  */
 export type RosterImportResponse = {
     /**
-     * Committed At
-     */
-    committed_at: string | null;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Invalid Rows
-     */
-    invalid_rows: number;
-    /**
-     * Invited Rows
-     */
-    invited_rows: number;
-    /**
-     * Rows
-     */
-    rows: Array<RosterRowResponse>;
     /**
      * Status
      */
@@ -6383,12 +6399,56 @@ export type RosterImportResponse = {
      * Valid Rows
      */
     valid_rows: number;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
+    /**
+     * Committed At
+     */
+    committed_at: string | null;
+    /**
+     * Rows
+     */
+    rows: Array<RosterRowResponse>;
 };
 
 /**
  * RosterImportSummary
  */
 export type RosterImportSummary = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Filename
+     */
+    filename: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Total Rows
+     */
+    total_rows: number;
+    /**
+     * Valid Rows
+     */
+    valid_rows: number;
+    /**
+     * Invalid Rows
+     */
+    invalid_rows: number;
+    /**
+     * Invited Rows
+     */
+    invited_rows: number;
     /**
      * Committed At
      */
@@ -6397,34 +6457,6 @@ export type RosterImportSummary = {
      * Created At
      */
     created_at: string;
-    /**
-     * Filename
-     */
-    filename: string;
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Invalid Rows
-     */
-    invalid_rows: number;
-    /**
-     * Invited Rows
-     */
-    invited_rows: number;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Total Rows
-     */
-    total_rows: number;
-    /**
-     * Valid Rows
-     */
-    valid_rows: number;
 };
 
 /**
@@ -6432,19 +6464,23 @@ export type RosterImportSummary = {
  */
 export type RosterInvitationStep = {
     /**
-     * Invitation Mode
-     */
-    invitation_mode: 'roster_only' | 'roster_and_verified_domain';
-    /**
      * Roster Import Id
      */
     roster_import_id?: string | null;
+    /**
+     * Invitation Mode
+     */
+    invitation_mode: 'roster_only' | 'roster_and_verified_domain';
 };
 
 /**
  * RosterRowResponse
  */
 export type RosterRowResponse = {
+    /**
+     * Row Number
+     */
+    row_number: number;
     /**
      * Email
      */
@@ -6454,21 +6490,17 @@ export type RosterRowResponse = {
      */
     enrollment_id: string | null;
     /**
-     * Errors
-     */
-    errors: Array<string>;
-    /**
      * Full Name
      */
     full_name: string | null;
     /**
-     * Row Number
-     */
-    row_number: number;
-    /**
      * Status
      */
     status: string;
+    /**
+     * Errors
+     */
+    errors: Array<string>;
 };
 
 /**
@@ -6479,15 +6511,15 @@ export type Rule = {
      * Field
      */
     field: string;
-    /**
-     * Label
-     */
-    label: string;
     operator: Operator;
     /**
      * Value
      */
     value?: unknown;
+    /**
+     * Label
+     */
+    label: string;
 };
 
 /**
@@ -6495,17 +6527,9 @@ export type Rule = {
  */
 export type RulePolicyReference = {
     /**
-     * Approved At
-     */
-    approved_at: string | null;
-    /**
      * Id
      */
     id: string;
-    /**
-     * Source Reference
-     */
-    source_reference: string;
     /**
      * Title
      */
@@ -6514,6 +6538,14 @@ export type RulePolicyReference = {
      * Version
      */
     version: number;
+    /**
+     * Source Reference
+     */
+    source_reference: string;
+    /**
+     * Approved At
+     */
+    approved_at: string | null;
 };
 
 /**
@@ -6521,13 +6553,13 @@ export type RulePolicyReference = {
  */
 export type RuleSetCreate = {
     /**
-     * Policy Ids
-     */
-    policy_ids?: Array<string>;
-    /**
      * Rules
      */
     rules: Array<Rule>;
+    /**
+     * Policy Ids
+     */
+    policy_ids?: Array<string>;
 };
 
 /**
@@ -6535,29 +6567,21 @@ export type RuleSetCreate = {
  */
 export type RuleSetResponse = {
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
-     * Created By User Id
-     */
-    created_by_user_id: string;
-    /**
      * Id
      */
     id: string;
     /**
-     * Policy References
-     */
-    policy_references: Array<RulePolicyReference>;
-    /**
-     * Published At
-     */
-    published_at: string | null;
-    /**
      * Role Id
      */
     role_id: string;
+    /**
+     * Version
+     */
+    version: number;
+    /**
+     * Status
+     */
+    status: string;
     /**
      * Rules
      */
@@ -6565,17 +6589,25 @@ export type RuleSetResponse = {
         [key: string]: unknown;
     }>;
     /**
-     * Status
+     * Policy References
      */
-    status: string;
+    policy_references: Array<RulePolicyReference>;
+    /**
+     * Created By User Id
+     */
+    created_by_user_id: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
     /**
      * Updated At
      */
     updated_at: string;
-    /**
-     * Version
-     */
-    version: number;
 };
 
 /**
@@ -6593,29 +6625,29 @@ export type RunCancel = {
  */
 export type RunLimits = {
     /**
-     * Active Seconds Remaining
+     * Model Calls Remaining
      */
-    active_seconds_remaining: number;
+    model_calls_remaining: number;
     /**
-     * Actual Cost Microunits
+     * Tool Calls Remaining
      */
-    actual_cost_microunits: number;
+    tool_calls_remaining: number;
     /**
      * Correction Attempts Remaining
      */
     correction_attempts_remaining: number;
     /**
-     * Model Calls Remaining
+     * Active Seconds Remaining
      */
-    model_calls_remaining: number;
+    active_seconds_remaining: number;
     /**
      * Reserved Cost Microunits
      */
     reserved_cost_microunits: number;
     /**
-     * Tool Calls Remaining
+     * Actual Cost Microunits
      */
-    tool_calls_remaining: number;
+    actual_cost_microunits: number;
 };
 
 /**
@@ -6655,21 +6687,25 @@ export type SaveResponse = {
  */
 export type SavedViewCreate = {
     /**
+     * Name
+     */
+    name: string;
+    /**
      * Filters
      */
     filters?: {
         [key: string]: string;
     };
-    /**
-     * Name
-     */
-    name: string;
 };
 
 /**
  * SavedViewResponse
  */
 export type SavedViewResponse = {
+    /**
+     * Name
+     */
+    name: string;
     /**
      * Filters
      */
@@ -6680,10 +6716,6 @@ export type SavedViewResponse = {
      * Id
      */
     id: string;
-    /**
-     * Name
-     */
-    name: string;
 };
 
 /**
@@ -6691,11 +6723,23 @@ export type SavedViewResponse = {
  */
 export type SemanticMatchResponse = {
     /**
+     * Status
+     */
+    status: 'available' | 'unavailable';
+    /**
+     * Score
+     */
+    score: number | null;
+    /**
      * Components
      */
     components: {
         [key: string]: number;
     };
+    /**
+     * Explanation
+     */
+    explanation: Array<string>;
     /**
      * Embedding Model
      */
@@ -6705,43 +6749,39 @@ export type SemanticMatchResponse = {
      */
     embedding_version: string;
     /**
-     * Evaluated At
-     */
-    evaluated_at?: string | null;
-    /**
-     * Explanation
-     */
-    explanation: Array<string>;
-    /**
-     * Safe Error Code
-     */
-    safe_error_code?: string | null;
-    /**
-     * Score
-     */
-    score: number | null;
-    /**
      * Scoring Version
      */
     scoring_version: string;
-    /**
-     * Source Profile Revision
-     */
-    source_profile_revision: number | null;
     /**
      * Source Resume Version Id
      */
     source_resume_version_id: string | null;
     /**
-     * Status
+     * Source Profile Revision
      */
-    status: 'available' | 'unavailable';
+    source_profile_revision: number | null;
+    /**
+     * Safe Error Code
+     */
+    safe_error_code?: string | null;
+    /**
+     * Evaluated At
+     */
+    evaluated_at?: string | null;
 };
 
 /**
  * ServiceQueueStatus
  */
 export type ServiceQueueStatus = {
+    /**
+     * Service
+     */
+    service: string;
+    /**
+     * Pending
+     */
+    pending: number;
     /**
      * Failed
      */
@@ -6750,14 +6790,6 @@ export type ServiceQueueStatus = {
      * Oldest Outstanding At
      */
     oldest_outstanding_at: string | null;
-    /**
-     * Pending
-     */
-    pending: number;
-    /**
-     * Service
-     */
-    service: string;
 };
 
 /**
@@ -6765,13 +6797,13 @@ export type ServiceQueueStatus = {
  */
 export type ServiceStatusResponse = {
     /**
-     * Maintenance Message
-     */
-    maintenance_message: string | null;
-    /**
      * Status
      */
     status: 'operational' | 'maintenance';
+    /**
+     * Maintenance Message
+     */
+    maintenance_message: string | null;
     /**
      * Transactional Email
      */
@@ -6783,29 +6815,29 @@ export type ServiceStatusResponse = {
  */
 export type SessionResponse = {
     /**
+     * Id
+     */
+    id: string;
+    /**
      * Created At
      */
     created_at: string;
     /**
-     * Current
+     * Last Activity At
      */
-    current: boolean;
-    /**
-     * Device Summary
-     */
-    device_summary: string | null;
+    last_activity_at: string;
     /**
      * Expires At
      */
     expires_at: string;
     /**
-     * Id
+     * Device Summary
      */
-    id: string;
+    device_summary: string | null;
     /**
-     * Last Activity At
+     * Current
      */
-    last_activity_at: string;
+    current: boolean;
 };
 
 /**
@@ -6830,11 +6862,11 @@ export type SignInRequest = {
  * SignInResponse
  */
 export type SignInResponse = {
+    user: UserResponse;
     /**
      * Next Step
      */
     next_step?: string;
-    user: UserResponse;
 };
 
 /**
@@ -6856,6 +6888,14 @@ export type SignupInstitution = {
  */
 export type SignupRequest = {
     /**
+     * Name
+     */
+    name: string;
+    /**
+     * Surname
+     */
+    surname: string;
+    /**
      * Dob
      */
     dob: string;
@@ -6868,33 +6908,25 @@ export type SignupRequest = {
      */
     institution_id?: string | null;
     /**
-     * Invitation Code
-     */
-    invitation_code?: string | null;
-    /**
-     * Name
-     */
-    name: string;
-    /**
      * Password
      */
     password: string;
-    /**
-     * Privacy Version
-     */
-    privacy_version: string;
     /**
      * Re Enter Password
      */
     re_enter_password: string;
     /**
-     * Surname
-     */
-    surname: string;
-    /**
      * Terms Version
      */
     terms_version: string;
+    /**
+     * Privacy Version
+     */
+    privacy_version: string;
+    /**
+     * Invitation Code
+     */
+    invitation_code?: string | null;
 };
 
 /**
@@ -6920,13 +6952,13 @@ export type SkillsUpdate = {
      */
     expected_revision: number;
     /**
-     * Onboarding Step
-     */
-    onboarding_step?: number | null;
-    /**
      * Skills
      */
     skills: Array<SkillItem>;
+    /**
+     * Onboarding Step
+     */
+    onboarding_step?: number | null;
 };
 
 /**
@@ -6934,13 +6966,13 @@ export type SkillsUpdate = {
  */
 export type SourceReview = {
     /**
-     * Decision
-     */
-    decision: 'approve' | 'reject';
-    /**
      * Expected Version
      */
     expected_version: number;
+    /**
+     * Decision
+     */
+    decision: 'approve' | 'reject';
 };
 
 /**
@@ -6948,21 +6980,21 @@ export type SourceReview = {
  */
 export type SourceVersionCreate = {
     /**
-     * Canonical Url
-     */
-    canonical_url: string;
-    /**
-     * Permitted Use
-     */
-    permitted_use: string;
-    /**
      * Source Type
      */
     source_type: 'nptel' | 'swayam' | 'official_career_page' | 'faculty_resource';
     /**
+     * Canonical Url
+     */
+    canonical_url: string;
+    /**
      * Title
      */
     title: string;
+    /**
+     * Permitted Use
+     */
+    permitted_use: string;
 };
 
 /**
@@ -6970,47 +7002,17 @@ export type SourceVersionCreate = {
  */
 export type SourceVersionResponse = {
     /**
-     * Access Scope
-     */
-    access_scope: string;
-    /**
-     * Active
-     */
-    active: boolean;
-    /**
-     * Canonical Url
-     */
-    canonical_url: string;
-    /**
      * Id
      */
     id: string;
     /**
-     * Last Verified At
-     */
-    last_verified_at: string | null;
-    /**
-     * Metadata
-     */
-    metadata: {
-        [key: string]: unknown;
-    };
-    /**
-     * Permitted Use
-     */
-    permitted_use: string;
-    /**
-     * Review Status
-     */
-    review_status: string;
-    /**
-     * Safe Error
-     */
-    safe_error: string | null;
-    /**
      * Source Type
      */
     source_type: string;
+    /**
+     * Canonical Url
+     */
+    canonical_url: string;
     /**
      * Title
      */
@@ -7019,6 +7021,36 @@ export type SourceVersionResponse = {
      * Version
      */
     version: number;
+    /**
+     * Review Status
+     */
+    review_status: string;
+    /**
+     * Access Scope
+     */
+    access_scope: string;
+    /**
+     * Permitted Use
+     */
+    permitted_use: string;
+    /**
+     * Metadata
+     */
+    metadata: {
+        [key: string]: unknown;
+    };
+    /**
+     * Last Verified At
+     */
+    last_verified_at: string | null;
+    /**
+     * Safe Error
+     */
+    safe_error: string | null;
+    /**
+     * Active
+     */
+    active: boolean;
 };
 
 /**
@@ -7026,31 +7058,27 @@ export type SourceVersionResponse = {
  */
 export type StaffAccountCreate = {
     /**
+     * Username
+     */
+    username: string;
+    /**
      * Password
      */
     password: string;
-    /**
-     * Reason
-     */
-    reason: string;
     /**
      * Role
      */
     role: 'tnp_admin' | 'tnp_reviewer' | 'tnp_auditor';
     /**
-     * Username
+     * Reason
      */
-    username: string;
+    reason: string;
 };
 
 /**
  * StaffAccountResponse
  */
 export type StaffAccountResponse = {
-    /**
-     * Email
-     */
-    email?: string | null;
     /**
      * Id
      */
@@ -7060,9 +7088,9 @@ export type StaffAccountResponse = {
      */
     institution_id: string;
     /**
-     * Requires Terms Acceptance
+     * User Id
      */
-    requires_terms_acceptance: boolean;
+    user_id: string;
     /**
      * Role
      */
@@ -7072,13 +7100,17 @@ export type StaffAccountResponse = {
      */
     status: string;
     /**
-     * User Id
+     * Email
      */
-    user_id: string;
+    email?: string | null;
     /**
      * Username
      */
     username?: string | null;
+    /**
+     * Requires Terms Acceptance
+     */
+    requires_terms_acceptance: boolean;
 };
 
 /**
@@ -7086,29 +7118,29 @@ export type StaffAccountResponse = {
  */
 export type StatusEventResponse = {
     /**
-     * Actor User Id
+     * Id
      */
-    actor_user_id: string;
-    /**
-     * Created At
-     */
-    created_at: string;
+    id: string;
     /**
      * From Status
      */
     from_status: string | null;
     /**
-     * Id
+     * To Status
      */
-    id: string;
+    to_status: string;
+    /**
+     * Actor User Id
+     */
+    actor_user_id: string;
     /**
      * Reason
      */
     reason: string | null;
     /**
-     * To Status
+     * Created At
      */
-    to_status: string;
+    created_at: string;
 };
 
 /**
@@ -7116,17 +7148,17 @@ export type StatusEventResponse = {
  */
 export type StudentAccessRequestSummary = {
     /**
-     * Created At
+     * Id
      */
-    created_at: string;
+    id: string;
     /**
      * Email
      */
     email: string;
     /**
-     * Id
+     * Created At
      */
-    id: string;
+    created_at: string;
 };
 
 /**
@@ -7134,21 +7166,21 @@ export type StudentAccessRequestSummary = {
  */
 export type StudentIdentityStep = {
     /**
-     * Department
-     */
-    department: string;
-    /**
      * Full Name
      */
     full_name: string;
     /**
-     * Graduation Year
-     */
-    graduation_year: number;
-    /**
      * Prn
      */
     prn: string;
+    /**
+     * Department
+     */
+    department: string;
+    /**
+     * Graduation Year
+     */
+    graduation_year: number;
 };
 
 /**
@@ -7174,17 +7206,25 @@ export type StudentMessageCreate = {
  */
 export type StudentOnboardingResponse = {
     /**
-     * Career Preferences
+     * Profile Id
      */
-    career_preferences: {
-        [key: string]: unknown;
-    } | null;
+    profile_id: string;
     /**
-     * Certifications
+     * Institution Id
      */
-    certifications: Array<{
-        [key: string]: unknown;
-    }>;
+    institution_id: string | null;
+    /**
+     * Institution Name
+     */
+    institution_name: string | null;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Current Step
+     */
+    current_step: number;
     /**
      * Completed
      */
@@ -7194,9 +7234,11 @@ export type StudentOnboardingResponse = {
      */
     completed_at: string | null;
     /**
-     * Current Step
+     * Identity
      */
-    current_step: number;
+    identity: {
+        [key: string]: unknown;
+    };
     /**
      * Education
      */
@@ -7210,70 +7252,92 @@ export type StudentOnboardingResponse = {
         [key: string]: unknown;
     }>;
     /**
-     * Identity
-     */
-    identity: {
-        [key: string]: unknown;
-    };
-    /**
-     * Institution Id
-     */
-    institution_id: string | null;
-    /**
-     * Institution Name
-     */
-    institution_name: string | null;
-    /**
-     * Placement Participation
-     */
-    placement_participation: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * Profile Id
-     */
-    profile_id: string;
-    /**
      * Projects
      */
     projects: Array<ProjectEntryResponse>;
-    /**
-     * Revision
-     */
-    revision: number;
     /**
      * Skills
      */
     skills: Array<{
         [key: string]: unknown;
     }>;
+    /**
+     * Certifications
+     */
+    certifications: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Career Preferences
+     */
+    career_preferences: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Placement Participation
+     */
+    placement_participation: {
+        [key: string]: unknown;
+    } | null;
 };
 
 /**
  * StudentOnboardingUpdate
  */
 export type StudentOnboardingUpdate = {
-    career_preferences?: CareerPreferenceStep | null;
-    /**
-     * Education
-     */
-    education?: Array<EducationEntry> | null;
     /**
      * Expected Revision
      */
     expected_revision: number;
     /**
-     * Experience
-     */
-    experience?: Array<ExperienceEntry> | null;
-    identity?: StudentIdentityStep | null;
-    placement_participation?: PlacementParticipationStep | null;
-    projects_skills?: ProjectsSkillsStep | null;
-    review?: ReviewStep | null;
-    /**
      * Step
      */
     step: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    identity?: StudentIdentityStep | null;
+    /**
+     * Education
+     */
+    education?: Array<EducationEntry> | null;
+    /**
+     * Experience
+     */
+    experience?: Array<ExperienceEntry> | null;
+    projects_skills?: ProjectsSkillsStep | null;
+    career_preferences?: CareerPreferenceStep | null;
+    placement_participation?: PlacementParticipationStep | null;
+    review?: ReviewStep | null;
+};
+
+/**
+ * StudentPrnVerificationDecision
+ */
+export type StudentPrnVerificationDecision = {
+    /**
+     * Official Prn
+     */
+    official_prn: string;
+    /**
+     * Reason
+     */
+    reason: string;
+};
+
+/**
+ * StudentPrnVerificationResponse
+ */
+export type StudentPrnVerificationResponse = {
+    /**
+     * Student Id
+     */
+    student_id: string;
+    /**
+     * Verified
+     */
+    verified: boolean;
+    /**
+     * Verified At
+     */
+    verified_at: string;
 };
 
 /**
@@ -7281,25 +7345,25 @@ export type StudentOnboardingUpdate = {
  */
 export type StudentRunCreate = {
     /**
-     * Available Minutes Per Week
+     * Role Id
      */
-    available_minutes_per_week: number;
-    /**
-     * Existing Plan Id
-     */
-    existing_plan_id?: string | null;
+    role_id: string;
     /**
      * Goal
      */
     goal: string;
     /**
-     * Role Id
+     * Available Minutes Per Week
      */
-    role_id: string;
+    available_minutes_per_week: number;
     /**
      * Target Date
      */
     target_date: string;
+    /**
+     * Existing Plan Id
+     */
+    existing_plan_id?: string | null;
 };
 
 /**
@@ -7343,13 +7407,13 @@ export type SuggestionDecisionRequest = {
  */
 export type SuggestionReviewBatch = {
     /**
-     * Decisions
-     */
-    decisions: Array<SuggestionBatchItem>;
-    /**
      * Expected Revision
      */
     expected_revision: number;
+    /**
+     * Decisions
+     */
+    decisions: Array<SuggestionBatchItem>;
 };
 
 /**
@@ -7361,23 +7425,19 @@ export type SupportRequestCreate = {
      */
     category: 'account' | 'profile' | 'eligibility' | 'application' | 'resume' | 'roadmap' | 'privacy' | 'accessibility' | 'other';
     /**
-     * Message
-     */
-    message: string;
-    /**
      * Route Context
      */
     route_context: string;
+    /**
+     * Message
+     */
+    message: string;
 };
 
 /**
  * SupportRequestResponse
  */
 export type SupportRequestResponse = {
-    /**
-     * Created At
-     */
-    created_at: string;
     /**
      * Reference
      */
@@ -7386,17 +7446,21 @@ export type SupportRequestResponse = {
      * Status
      */
     status: string;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 /**
  * TailoredResumeRequest
  */
 export type TailoredResumeRequest = {
-    content: ResumeContent;
     /**
      * Role Id
      */
     role_id: string;
+    content: ResumeContent;
 };
 
 /**
@@ -7404,13 +7468,13 @@ export type TailoredResumeRequest = {
  */
 export type TermsAcceptanceRequest = {
     /**
-     * Privacy Version
-     */
-    privacy_version: string;
-    /**
      * Terms Version
      */
     terms_version: string;
+    /**
+     * Privacy Version
+     */
+    privacy_version: string;
 };
 
 /**
@@ -7454,17 +7518,21 @@ export type TnpRunCreate = {
  */
 export type UserResponse = {
     /**
-     * Capabilities
+     * Id
      */
-    capabilities?: Array<string>;
+    id: string;
     /**
      * Email
      */
     email: string;
     /**
-     * Id
+     * Username
      */
-    id: string;
+    username?: string | null;
+    /**
+     * Role
+     */
+    role: string;
     /**
      * Institution Id
      */
@@ -7478,17 +7546,14 @@ export type UserResponse = {
      */
     membership_status?: string | null;
     /**
-     * Role
-     */
-    role: string;
-    /**
-     * Username
-     */
-    username?: string | null;
-    /**
      * Workspace
      */
     workspace?: 'admin' | 'tnp' | 'student';
+    /**
+     * Capabilities
+     */
+    capabilities?: Array<string>;
+    placement_access?: PlacementAccessResponse | null;
 };
 
 /**
@@ -7501,16 +7566,6 @@ export type UserRole = 'student' | 'platform_admin' | 'tnp_owner' | 'tnp_admin' 
  */
 export type ValidationError = {
     /**
-     * Context
-     */
-    ctx?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Input
-     */
-    input?: unknown;
-    /**
      * Location
      */
     loc: Array<string | number>;
@@ -7522,159 +7577,752 @@ export type ValidationError = {
      * Error Type
      */
     type: string;
+    /**
+     * Input
+     */
+    input?: unknown;
+    /**
+     * Context
+     */
+    ctx?: {
+        [key: string]: unknown;
+    };
 };
 
-export type ReadFunnelApiV1AdminAnalyticsFunnelGetData = {
+export type LivenessApiV1HealthLiveGetData = {
     body?: never;
     path?: never;
-    query?: {
-        /**
-         * Window Days
-         */
-        window_days?: number;
-    };
-    url: '/api/v1/admin/analytics/funnel';
+    query?: never;
+    url: '/api/v1/health/live';
 };
 
-export type ReadFunnelApiV1AdminAnalyticsFunnelGetErrors = {
+export type LivenessApiV1HealthLiveGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: HealthResponse;
+};
+
+export type LivenessApiV1HealthLiveGetResponse = LivenessApiV1HealthLiveGetResponses[keyof LivenessApiV1HealthLiveGetResponses];
+
+export type ReadinessApiV1HealthReadyGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/health/ready';
+};
+
+export type ReadinessApiV1HealthReadyGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: HealthResponse;
+};
+
+export type ReadinessApiV1HealthReadyGetResponse = ReadinessApiV1HealthReadyGetResponses[keyof ReadinessApiV1HealthReadyGetResponses];
+
+export type CsrfApiV1AuthCsrfGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/csrf';
+};
+
+export type CsrfApiV1AuthCsrfGetResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type CsrfApiV1AuthCsrfGetResponse = CsrfApiV1AuthCsrfGetResponses[keyof CsrfApiV1AuthCsrfGetResponses];
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/signup/institutions';
+};
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses = {
+    /**
+     * Response Signup Institutions Api V1 Auth Signup Institutions Get
+     *
+     * Successful Response
+     */
+    200: Array<SignupInstitution>;
+};
+
+export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponse = SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses[keyof SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses];
+
+export type SignupApiV1AuthSignupPostData = {
+    body: SignupRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/signup';
+};
+
+export type SignupApiV1AuthSignupPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadFunnelApiV1AdminAnalyticsFunnelGetError = ReadFunnelApiV1AdminAnalyticsFunnelGetErrors[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetErrors];
+export type SignupApiV1AuthSignupPostError = SignupApiV1AuthSignupPostErrors[keyof SignupApiV1AuthSignupPostErrors];
 
-export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponses = {
+export type SignupApiV1AuthSignupPostResponses = {
     /**
      * Successful Response
      */
-    200: FunnelResponse;
+    201: RegistrationStartResponse;
 };
 
-export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponse = ReadFunnelApiV1AdminAnalyticsFunnelGetResponses[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetResponses];
+export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
 
-export type ReadAuditEventsApiV1AdminAuditEventsGetData = {
-    body?: never;
+export type SignInApiV1AuthSignInPostData = {
+    body: SignInRequest;
     path?: never;
-    query?: {
-        /**
-         * Actor User Id
-         */
-        actor_user_id?: string | null;
-        /**
-         * Resource Type
-         */
-        resource_type?: string | null;
-        /**
-         * Action
-         */
-        action?: string | null;
-        /**
-         * Outcome
-         */
-        outcome?: string | null;
-        /**
-         * Correlation Id
-         */
-        correlation_id?: string | null;
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-        /**
-         * Sort
-         */
-        sort?: 'asc' | 'desc';
-    };
-    url: '/api/v1/admin/audit/events';
+    query?: never;
+    url: '/api/v1/auth/sign-in';
 };
 
-export type ReadAuditEventsApiV1AdminAuditEventsGetErrors = {
+export type SignInApiV1AuthSignInPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadAuditEventsApiV1AdminAuditEventsGetError = ReadAuditEventsApiV1AdminAuditEventsGetErrors[keyof ReadAuditEventsApiV1AdminAuditEventsGetErrors];
+export type SignInApiV1AuthSignInPostError = SignInApiV1AuthSignInPostErrors[keyof SignInApiV1AuthSignInPostErrors];
 
-export type ReadAuditEventsApiV1AdminAuditEventsGetResponses = {
+export type SignInApiV1AuthSignInPostResponses = {
     /**
      * Successful Response
      */
-    200: AuditEventPage;
+    200: SignInResponse;
 };
 
-export type ReadAuditEventsApiV1AdminAuditEventsGetResponse = ReadAuditEventsApiV1AdminAuditEventsGetResponses[keyof ReadAuditEventsApiV1AdminAuditEventsGetResponses];
+export type SignInApiV1AuthSignInPostResponse = SignInApiV1AuthSignInPostResponses[keyof SignInApiV1AuthSignInPostResponses];
 
-export type DownloadAuditExportApiV1AdminAuditExportCsvGetData = {
+export type ReadActiveMembershipsApiV1AuthMembershipsGetData = {
     body?: never;
     path?: never;
-    query?: {
-        /**
-         * Actor User Id
-         */
-        actor_user_id?: string | null;
-        /**
-         * Resource Type
-         */
-        resource_type?: string | null;
-        /**
-         * Action
-         */
-        action?: string | null;
-        /**
-         * Outcome
-         */
-        outcome?: string | null;
-        /**
-         * Correlation Id
-         */
-        correlation_id?: string | null;
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Sort
-         */
-        sort?: 'asc' | 'desc';
-    };
-    url: '/api/v1/admin/audit/export.csv';
+    query?: never;
+    url: '/api/v1/auth/memberships';
 };
 
-export type DownloadAuditExportApiV1AdminAuditExportCsvGetErrors = {
+export type ReadActiveMembershipsApiV1AuthMembershipsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DownloadAuditExportApiV1AdminAuditExportCsvGetError = DownloadAuditExportApiV1AdminAuditExportCsvGetErrors[keyof DownloadAuditExportApiV1AdminAuditExportCsvGetErrors];
+export type ReadActiveMembershipsApiV1AuthMembershipsGetError = ReadActiveMembershipsApiV1AuthMembershipsGetErrors[keyof ReadActiveMembershipsApiV1AuthMembershipsGetErrors];
 
-export type DownloadAuditExportApiV1AdminAuditExportCsvGetResponses = {
+export type ReadActiveMembershipsApiV1AuthMembershipsGetResponses = {
+    /**
+     * Response Read Active Memberships Api V1 Auth Memberships Get
+     *
+     * Successful Response
+     */
+    200: Array<MembershipChoice>;
+};
+
+export type ReadActiveMembershipsApiV1AuthMembershipsGetResponse = ReadActiveMembershipsApiV1AuthMembershipsGetResponses[keyof ReadActiveMembershipsApiV1AuthMembershipsGetResponses];
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostData = {
+    body: ActiveMembershipRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/active-membership';
+};
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostError = SelectActiveMembershipApiV1AuthActiveMembershipPostErrors[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostErrors];
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    200: UserResponse;
 };
+
+export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponse = SelectActiveMembershipApiV1AuthActiveMembershipPostResponses[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostResponses];
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostData = {
+    body: TermsAcceptanceRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/terms/accept';
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostError = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors];
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SignInResponse;
+};
+
+export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponse = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses];
+
+export type DemoSignInApiV1AuthDemoSignInPostData = {
+    body: DemoSignInRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/demo-sign-in';
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostError = DemoSignInApiV1AuthDemoSignInPostErrors[keyof DemoSignInApiV1AuthDemoSignInPostErrors];
+
+export type DemoSignInApiV1AuthDemoSignInPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SignInResponse;
+};
+
+export type DemoSignInApiV1AuthDemoSignInPostResponse = DemoSignInApiV1AuthDemoSignInPostResponses[keyof DemoSignInApiV1AuthDemoSignInPostResponses];
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetData = {
+    body?: never;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/invitations/{token}';
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetError = ValidateInvitationApiV1AuthInvitationsTokenGetErrors[keyof ValidateInvitationApiV1AuthInvitationsTokenGetErrors];
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: InvitationResponse;
+};
+
+export type ValidateInvitationApiV1AuthInvitationsTokenGetResponse = ValidateInvitationApiV1AuthInvitationsTokenGetResponses[keyof ValidateInvitationApiV1AuthInvitationsTokenGetResponses];
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostData = {
+    body: InvitationAcceptRequest;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/invitations/{token}/accept';
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostError = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors];
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UserResponse;
+};
+
+export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponse = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses];
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostData = {
+    body: PasswordResetRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/password-reset/request';
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostError = RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors];
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses = {
+    /**
+     * Response Request Password Reset Api V1 Auth Password Reset Request Post
+     *
+     * Successful Response
+     */
+    202: {
+        [key: string]: string;
+    };
+};
+
+export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponse = RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses];
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostData = {
+    body: PasswordResetConfirm;
+    path: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/password-reset/{token}/confirm';
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostError = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors];
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponse = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses];
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/status';
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetError = ReadMfaStatusApiV1AuthMfaStatusGetErrors[keyof ReadMfaStatusApiV1AuthMfaStatusGetErrors];
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaStatusResponse;
+};
+
+export type ReadMfaStatusApiV1AuthMfaStatusGetResponse = ReadMfaStatusApiV1AuthMfaStatusGetResponses[keyof ReadMfaStatusApiV1AuthMfaStatusGetResponses];
+
+export type SetupMfaApiV1AuthMfaSetupPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/setup';
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostError = SetupMfaApiV1AuthMfaSetupPostErrors[keyof SetupMfaApiV1AuthMfaSetupPostErrors];
+
+export type SetupMfaApiV1AuthMfaSetupPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaSetupResponse;
+};
+
+export type SetupMfaApiV1AuthMfaSetupPostResponse = SetupMfaApiV1AuthMfaSetupPostResponses[keyof SetupMfaApiV1AuthMfaSetupPostResponses];
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostData = {
+    body: MfaCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/confirm';
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostError = ConfirmMfaApiV1AuthMfaConfirmPostErrors[keyof ConfirmMfaApiV1AuthMfaConfirmPostErrors];
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaConfirmResponse;
+};
+
+export type ConfirmMfaApiV1AuthMfaConfirmPostResponse = ConfirmMfaApiV1AuthMfaConfirmPostResponses[keyof ConfirmMfaApiV1AuthMfaConfirmPostResponses];
+
+export type ChallengeMfaApiV1AuthMfaChallengePostData = {
+    body: MfaCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/challenge';
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostError = ChallengeMfaApiV1AuthMfaChallengePostErrors[keyof ChallengeMfaApiV1AuthMfaChallengePostErrors];
+
+export type ChallengeMfaApiV1AuthMfaChallengePostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ChallengeMfaApiV1AuthMfaChallengePostResponse = ChallengeMfaApiV1AuthMfaChallengePostResponses[keyof ChallengeMfaApiV1AuthMfaChallengePostResponses];
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostData = {
+    body: MfaDisableRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/disable';
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostError = ResetMfaFactorApiV1AuthMfaDisablePostErrors[keyof ResetMfaFactorApiV1AuthMfaDisablePostErrors];
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type ResetMfaFactorApiV1AuthMfaDisablePostResponse = ResetMfaFactorApiV1AuthMfaDisablePostResponses[keyof ResetMfaFactorApiV1AuthMfaDisablePostResponses];
+
+export type ReadSessionsApiV1AuthSessionsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/sessions';
+};
+
+export type ReadSessionsApiV1AuthSessionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadSessionsApiV1AuthSessionsGetError = ReadSessionsApiV1AuthSessionsGetErrors[keyof ReadSessionsApiV1AuthSessionsGetErrors];
+
+export type ReadSessionsApiV1AuthSessionsGetResponses = {
+    /**
+     * Response Read Sessions Api V1 Auth Sessions Get
+     *
+     * Successful Response
+     */
+    200: Array<SessionResponse>;
+};
+
+export type ReadSessionsApiV1AuthSessionsGetResponse = ReadSessionsApiV1AuthSessionsGetResponses[keyof ReadSessionsApiV1AuthSessionsGetResponses];
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Session Id
+         */
+        session_id: string;
+    };
+    query?: never;
+    url: '/api/v1/auth/sessions/{session_id}';
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteError = DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors];
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponse = DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses];
+
+export type MeApiV1AuthMeGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/me';
+};
+
+export type MeApiV1AuthMeGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type MeApiV1AuthMeGetError = MeApiV1AuthMeGetErrors[keyof MeApiV1AuthMeGetErrors];
+
+export type MeApiV1AuthMeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: UserResponse;
+};
+
+export type MeApiV1AuthMeGetResponse = MeApiV1AuthMeGetResponses[keyof MeApiV1AuthMeGetResponses];
+
+export type SignOutApiV1AuthSignOutPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/sign-out';
+};
+
+export type SignOutApiV1AuthSignOutPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SignOutApiV1AuthSignOutPostError = SignOutApiV1AuthSignOutPostErrors[keyof SignOutApiV1AuthSignOutPostErrors];
+
+export type SignOutApiV1AuthSignOutPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type SignOutApiV1AuthSignOutPostResponse = SignOutApiV1AuthSignOutPostResponses[keyof SignOutApiV1AuthSignOutPostResponses];
+
+export type SignOutAllApiV1AuthSignOutAllPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/sign-out-all';
+};
+
+export type SignOutAllApiV1AuthSignOutAllPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SignOutAllApiV1AuthSignOutAllPostError = SignOutAllApiV1AuthSignOutAllPostErrors[keyof SignOutAllApiV1AuthSignOutAllPostErrors];
+
+export type SignOutAllApiV1AuthSignOutAllPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type SignOutAllApiV1AuthSignOutAllPostResponse = SignOutAllApiV1AuthSignOutAllPostResponses[keyof SignOutAllApiV1AuthSignOutAllPostResponses];
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostData = {
+    body: InstitutionRegistrationRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/institution-registrations';
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostError = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors];
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: InstitutionRegistrationStartResponse;
+};
+
+export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponse = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses];
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostData = {
+    body: RegistrationTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/institution-registrations/verify';
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostError = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors];
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionRegistrationResponse;
+};
+
+export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponse = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses];
+
+export type ReadServiceStatusApiV1ServiceStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/service-status';
+};
+
+export type ReadServiceStatusApiV1ServiceStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ServiceStatusResponse;
+};
+
+export type ReadServiceStatusApiV1ServiceStatusGetResponse = ReadServiceStatusApiV1ServiceStatusGetResponses[keyof ReadServiceStatusApiV1ServiceStatusGetResponses];
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/communications/preferences';
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetError = ReadPreferencesApiV1CommunicationsPreferencesGetErrors[keyof ReadPreferencesApiV1CommunicationsPreferencesGetErrors];
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CommunicationPreferencesResponse;
+};
+
+export type ReadPreferencesApiV1CommunicationsPreferencesGetResponse = ReadPreferencesApiV1CommunicationsPreferencesGetResponses[keyof ReadPreferencesApiV1CommunicationsPreferencesGetResponses];
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutData = {
+    body: CommunicationPreferencesUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/communications/preferences';
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutError = WritePreferencesApiV1CommunicationsPreferencesPutErrors[keyof WritePreferencesApiV1CommunicationsPreferencesPutErrors];
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: CommunicationPreferencesResponse;
+};
+
+export type WritePreferencesApiV1CommunicationsPreferencesPutResponse = WritePreferencesApiV1CommunicationsPreferencesPutResponses[keyof WritePreferencesApiV1CommunicationsPreferencesPutResponses];
+
+export type SubmitSupportRequestApiV1SupportRequestsPostData = {
+    body: SupportRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/support/requests';
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostError = SubmitSupportRequestApiV1SupportRequestsPostErrors[keyof SubmitSupportRequestApiV1SupportRequestsPostErrors];
+
+export type SubmitSupportRequestApiV1SupportRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SupportRequestResponse;
+};
+
+export type SubmitSupportRequestApiV1SupportRequestsPostResponse = SubmitSupportRequestApiV1SupportRequestsPostResponses[keyof SubmitSupportRequestApiV1SupportRequestsPostResponses];
 
 export type ReadEmailDeliveriesApiV1AdminCommunicationsEmailDeliveriesGetData = {
     body?: never;
@@ -7740,605 +8388,2310 @@ export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRet
 
 export type RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponse = RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses[keyof RetryFailedEmailApiV1AdminCommunicationsEmailDeliveriesDeliveryIdRetryPostResponses];
 
-export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetData = {
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Window Days
+         */
+        window_days?: number;
+    };
+    url: '/api/v1/admin/analytics/funnel';
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetError = ReadFunnelApiV1AdminAnalyticsFunnelGetErrors[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetErrors];
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: FunnelResponse;
+};
+
+export type ReadFunnelApiV1AdminAnalyticsFunnelGetResponse = ReadFunnelApiV1AdminAnalyticsFunnelGetResponses[keyof ReadFunnelApiV1AdminAnalyticsFunnelGetResponses];
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostData = {
+    body: BounceEventCreate;
+    headers?: {
+        /**
+         * X-Email-Webhook-Key
+         */
+        'x-email-webhook-key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/operator/email/bounce';
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostError = ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors];
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EmailDeliveryResponse;
+};
+
+export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponse = ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses];
+
+export type VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostData = {
+    body: StudentPrnVerificationDecision;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Student Id
+         */
+        student_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/students/{student_id}/prn-verification';
+};
+
+export type VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostError = VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostErrors[keyof VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostErrors];
+
+export type VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentPrnVerificationResponse;
+};
+
+export type VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostResponse = VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostResponses[keyof VerifyStudentPrnApiV1InstitutionsInstitutionIdStudentsStudentIdPrnVerificationPostResponses];
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostData = {
+    body: ManualRecoveryRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Student Id
+         */
+        student_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/students/{student_id}/manual-recovery';
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostError = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors];
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ManualRecoveryHandoff;
+};
+
+export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponse = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses];
+
+export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetData = {
     body?: never;
     path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Membership Status
+         */
+        membership_status?: string | null;
+        /**
+         * Role
+         */
+        role?: UserRole | null;
+        /**
+         * Sort
+         */
+        sort?: 'email' | 'status' | 'created_at';
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/institutions/{institution_id}/memberships';
+};
+
+export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetError = ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors[keyof ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors];
+
+export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MembershipPage;
+};
+
+export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponse = ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses[keyof ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses];
+
+export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostData = {
+    body: MembershipCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/memberships';
+};
+
+export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostError = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors];
+
+export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: MembershipResponse;
+};
+
+export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponse = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses];
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: {
+        /**
+         * Role
+         */
+        role?: UserRole | null;
+    };
+    url: '/api/v1/institutions/{institution_id}/memberships/export.csv';
+};
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetError = ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors[keyof ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors];
+
+export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/student-access-requests';
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetError = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors];
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses = {
+    /**
+     * Response Read Student Access Requests Api V1 Institutions  Institution Id  Student Access Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<StudentAccessRequestSummary>;
+};
+
+export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponse = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses];
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports';
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetError = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors];
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses = {
+    /**
+     * Response Read Roster Imports Api V1 Institutions  Institution Id  Roster Imports Get
+     *
+     * Successful Response
+     */
+    200: Array<RosterImportSummary>;
+};
+
+export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponse = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses];
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations';
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetError = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors];
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses = {
+    /**
+     * Response Read Invitations Api V1 Institutions  Institution Id  Invitations Get
+     *
+     * Successful Response
+     */
+    200: Array<InvitationSummary>;
+};
+
+export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponse = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses];
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostData = {
+    body: StaffAccountCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/staff-accounts';
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostError = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors];
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: StaffAccountResponse;
+};
+
+export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses];
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchData = {
+    body: MembershipStatusUpdate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Membership Id
+         */
+        membership_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/memberships/{membership_id}';
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchError = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors];
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: MembershipResponse;
+};
+
+export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponse = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses];
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/template';
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetError = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors];
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: string;
+};
+
+export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponse = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses];
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostData = {
+    body: BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/preview';
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostError = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors];
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: RosterImportResponse;
+};
+
+export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponse = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses];
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Roster Import Id
+         */
+        roster_import_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}';
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetError = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors];
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: RosterImportResponse;
+};
+
+export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponse = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses];
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Roster Import Id
+         */
+        roster_import_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}/commit';
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostError = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors];
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RosterCommitResponse;
+};
+
+export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponse = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses];
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Invitation Id
+         */
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/resend';
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostError = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors];
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InvitationActionResponse;
+};
+
+export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponse = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses];
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostData = {
+    body: InvitationRevocationRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Invitation Id
+         */
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/revoke';
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostError = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors];
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InvitationActionResponse;
+};
+
+export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponse = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses];
+
+export type ReadProfileApiV1ProfileGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile';
+};
+
+export type ReadProfileApiV1ProfileGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadProfileApiV1ProfileGetError = ReadProfileApiV1ProfileGetErrors[keyof ReadProfileApiV1ProfileGetErrors];
+
+export type ReadProfileApiV1ProfileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReadProfileApiV1ProfileGetResponse = ReadProfileApiV1ProfileGetResponses[keyof ReadProfileApiV1ProfileGetResponses];
+
+export type PatchProfileApiV1ProfilePatchData = {
+    body: ProfileUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile';
+};
+
+export type PatchProfileApiV1ProfilePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PatchProfileApiV1ProfilePatchError = PatchProfileApiV1ProfilePatchErrors[keyof PatchProfileApiV1ProfilePatchErrors];
+
+export type PatchProfileApiV1ProfilePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type PatchProfileApiV1ProfilePatchResponse = PatchProfileApiV1ProfilePatchResponses[keyof PatchProfileApiV1ProfilePatchResponses];
+
+export type RemovePhotoApiV1ProfilePhotoDeleteData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteError = RemovePhotoApiV1ProfilePhotoDeleteErrors[keyof RemovePhotoApiV1ProfilePhotoDeleteErrors];
+
+export type RemovePhotoApiV1ProfilePhotoDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RemovePhotoApiV1ProfilePhotoDeleteResponse = RemovePhotoApiV1ProfilePhotoDeleteResponses[keyof RemovePhotoApiV1ProfilePhotoDeleteResponses];
+
+export type ReadPhotoApiV1ProfilePhotoGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetError = ReadPhotoApiV1ProfilePhotoGetErrors[keyof ReadPhotoApiV1ProfilePhotoGetErrors];
+
+export type ReadPhotoApiV1ProfilePhotoGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfilePhotoResponse;
+};
+
+export type ReadPhotoApiV1ProfilePhotoGetResponse = ReadPhotoApiV1ProfilePhotoGetResponses[keyof ReadPhotoApiV1ProfilePhotoGetResponses];
+
+export type UploadPhotoApiV1ProfilePhotoPutData = {
+    body: BodyUploadPhotoApiV1ProfilePhotoPut;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/photo';
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutError = UploadPhotoApiV1ProfilePhotoPutErrors[keyof UploadPhotoApiV1ProfilePhotoPutErrors];
+
+export type UploadPhotoApiV1ProfilePhotoPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfilePhotoResponse;
+};
+
+export type UploadPhotoApiV1ProfilePhotoPutResponse = UploadPhotoApiV1ProfilePhotoPutResponses[keyof UploadPhotoApiV1ProfilePhotoPutResponses];
+
+export type PatchIdentityApiV1ProfileIdentityPatchData = {
+    body: IdentityUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/identity';
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchError = PatchIdentityApiV1ProfileIdentityPatchErrors[keyof PatchIdentityApiV1ProfileIdentityPatchErrors];
+
+export type PatchIdentityApiV1ProfileIdentityPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type PatchIdentityApiV1ProfileIdentityPatchResponse = PatchIdentityApiV1ProfileIdentityPatchResponses[keyof PatchIdentityApiV1ProfileIdentityPatchResponses];
+
+export type ReplaceEducationApiV1ProfileEducationPutData = {
+    body: EducationUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/education';
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutError = ReplaceEducationApiV1ProfileEducationPutErrors[keyof ReplaceEducationApiV1ProfileEducationPutErrors];
+
+export type ReplaceEducationApiV1ProfileEducationPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceEducationApiV1ProfileEducationPutResponse = ReplaceEducationApiV1ProfileEducationPutResponses[keyof ReplaceEducationApiV1ProfileEducationPutResponses];
+
+export type ReplaceSkillsApiV1ProfileSkillsPutData = {
+    body: SkillsUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/skills';
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutError = ReplaceSkillsApiV1ProfileSkillsPutErrors[keyof ReplaceSkillsApiV1ProfileSkillsPutErrors];
+
+export type ReplaceSkillsApiV1ProfileSkillsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceSkillsApiV1ProfileSkillsPutResponse = ReplaceSkillsApiV1ProfileSkillsPutResponses[keyof ReplaceSkillsApiV1ProfileSkillsPutResponses];
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutData = {
+    body: PreferencesUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/preferences';
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutError = ReplacePreferencesApiV1ProfilePreferencesPutErrors[keyof ReplacePreferencesApiV1ProfilePreferencesPutErrors];
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplacePreferencesApiV1ProfilePreferencesPutResponse = ReplacePreferencesApiV1ProfilePreferencesPutResponses[keyof ReplacePreferencesApiV1ProfilePreferencesPutResponses];
+
+export type ReplaceLinksApiV1ProfileLinksPutData = {
+    body: LinksUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile/links';
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutError = ReplaceLinksApiV1ProfileLinksPutErrors[keyof ReplaceLinksApiV1ProfileLinksPutErrors];
+
+export type ReplaceLinksApiV1ProfileLinksPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProfileResponse;
+};
+
+export type ReplaceLinksApiV1ProfileLinksPutResponse = ReplaceLinksApiV1ProfileLinksPutResponses[keyof ReplaceLinksApiV1ProfileLinksPutResponses];
+
+export type ReadStudentOnboardingApiV1OnboardingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/onboarding';
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetError = ReadStudentOnboardingApiV1OnboardingGetErrors[keyof ReadStudentOnboardingApiV1OnboardingGetErrors];
+
+export type ReadStudentOnboardingApiV1OnboardingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentOnboardingResponse;
+};
+
+export type ReadStudentOnboardingApiV1OnboardingGetResponse = ReadStudentOnboardingApiV1OnboardingGetResponses[keyof ReadStudentOnboardingApiV1OnboardingGetResponses];
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutData = {
+    body: StudentOnboardingUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/onboarding/step';
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutError = SaveStudentOnboardingStepApiV1OnboardingStepPutErrors[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutErrors];
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentOnboardingResponse;
+};
+
+export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponse = SaveStudentOnboardingStepApiV1OnboardingStepPutResponses[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutResponses];
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/onboarding';
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetError = ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors];
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponse = ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses];
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutData = {
+    body: InstitutionOnboardingUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/onboarding/step';
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutError = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors];
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: InstitutionOnboardingResponse;
+};
+
+export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponse = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses];
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/requests';
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetError = ReadOwnRequestsApiV1PrivacyRequestsGetErrors[keyof ReadOwnRequestsApiV1PrivacyRequestsGetErrors];
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetResponses = {
+    /**
+     * Response Read Own Requests Api V1 Privacy Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<PrivacyRequestResponse>;
+};
+
+export type ReadOwnRequestsApiV1PrivacyRequestsGetResponse = ReadOwnRequestsApiV1PrivacyRequestsGetResponses[keyof ReadOwnRequestsApiV1PrivacyRequestsGetResponses];
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostData = {
+    body: PrivacyRequestCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/requests';
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostError = SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors];
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PrivacyRequestResponse;
+};
+
+export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponse = SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses];
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostData = {
+    body: DataDeletionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/privacy/deletion-requests';
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostError = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors];
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: DataDeletionResponse;
+};
+
+export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponse = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses];
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/requests';
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetError = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors];
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses = {
+    /**
+     * Response Read Institution Requests Api V1 Tnp Privacy Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<PrivacyRequestResponse>;
+};
+
+export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponse = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses];
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchData = {
+    body: PrivacyRequestDecision;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/privacy/requests/{request_id}';
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchError = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors];
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PrivacyRequestResponse;
+};
+
+export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponse = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses];
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds';
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetError = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors];
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses = {
+    /**
+     * Response Read Legal Holds Api V1 Tnp Privacy Legal Holds Get
+     *
+     * Successful Response
+     */
+    200: Array<LegalHoldResponse>;
+};
+
+export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponse = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses];
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostData = {
+    body: LegalHoldCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds';
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostError = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors];
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: LegalHoldResponse;
+};
+
+export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponse = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses];
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchData = {
+    body: LegalHoldRelease;
+    path: {
+        /**
+         * Hold Id
+         */
+        hold_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/privacy/legal-holds/{hold_id}/release';
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchError = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors];
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: LegalHoldResponse;
+};
+
+export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponse = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses];
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/dashboard';
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetError = ReadPlatformDashboardApiV1PlatformDashboardGetErrors[keyof ReadPlatformDashboardApiV1PlatformDashboardGetErrors];
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformDashboardSummary;
+};
+
+export type ReadPlatformDashboardApiV1PlatformDashboardGetResponse = ReadPlatformDashboardApiV1PlatformDashboardGetResponses[keyof ReadPlatformDashboardApiV1PlatformDashboardGetResponses];
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Is Active
+         */
+        is_active?: boolean | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/institutions';
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetError = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors];
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionPage;
+};
+
+export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponse = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses];
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostData = {
+    body: InstitutionProvisionRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/institutions';
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostError = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors];
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: InstitutionProvisionResponse;
+};
+
+export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponse = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses];
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}';
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetError = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors];
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionDetail;
+};
+
+export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponse = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses];
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: {
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/institutions/{institution_id}/applications';
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetError = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors];
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminApplicationPage;
+};
+
+export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponse = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses];
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchData = {
+    body: InstitutionStatusChange;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/status';
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchError = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors];
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformInstitutionDetail;
+};
+
+export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponse = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses];
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetError = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors];
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses = {
+    /**
+     * Response Read Platform Staff Accounts Api V1 Platform Institutions  Institution Id  Staff Accounts Get
+     *
+     * Successful Response
+     */
+    200: Array<PlatformStaffAccount>;
+};
+
+export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponse = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses];
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostData = {
+    body: PlatformStaffAccountCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostError = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors];
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlatformStaffAccount;
+};
+
+export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses];
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostData = {
+    body: PlatformStaffAssignmentCreate;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-assignments';
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostError = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors];
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlatformStaffAccount;
+};
+
+export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponse = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses];
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostData = {
+    body: ManualRecoveryRequest;
+    path: {
+        /**
+         * User Id
+         */
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/staff-accounts/{user_id}/manual-recovery';
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostError = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors];
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ManualRecoveryHandoff;
+};
+
+export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponse = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses];
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchData = {
+    body: PlatformStaffStatusChange;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Membership Id
+         */
+        membership_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts/{membership_id}';
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchError = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors];
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformStaffAccount;
+};
+
+export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponse = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses];
+
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
         /**
          * Application Id
          */
         application_id: string;
     };
     query?: never;
-    url: '/api/v1/admin/compliance/applications/{application_id}/disclosures';
+    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/assignment';
 };
 
-export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors = {
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetError = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors];
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostError = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors];
 
-export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses = {
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses = {
     /**
      * Successful Response
      */
-    200: ApplicationDisclosureResponse;
+    200: ApplicationResponse;
 };
 
-export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponse = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses];
+export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponse = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses];
 
-export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostData = {
-    body: ExtractionReview;
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
     path: {
         /**
-         * Proposal Id
+         * Institution Id
          */
-        proposal_id: string;
+        institution_id: string;
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
     };
     query?: never;
-    url: '/api/v1/admin/intelligence/extractions/{proposal_id}/review';
+    url: '/api/v1/platform/institutions/{institution_id}/application-appeals/{appeal_id}/assignment';
 };
 
-export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors = {
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostError = DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors[keyof DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors];
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostError = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors];
 
-export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses = {
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses = {
     /**
      * Successful Response
      */
-    200: ExtractionResponse;
+    200: ApplicationAppealResponse;
 };
 
-export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponse = DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses[keyof DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses];
+export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponse = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses];
 
-export type ReadPoliciesApiV1AdminIntelligencePoliciesGetData = {
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/admin/intelligence/policies';
+    url: '/api/v1/platform/institution-registration-requests';
 };
 
-export type ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors = {
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadPoliciesApiV1AdminIntelligencePoliciesGetError = ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors[keyof ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors];
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetError = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors];
 
-export type ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses = {
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses = {
     /**
-     * Response Read Policies Api V1 Admin Intelligence Policies Get
+     * Response Read Platform Registration Requests Api V1 Platform Institution Registration Requests Get
      *
      * Successful Response
      */
-    200: Array<PolicyResponse>;
+    200: Array<InstitutionRegistrationResponse>;
 };
 
-export type ReadPoliciesApiV1AdminIntelligencePoliciesGetResponse = ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses[keyof ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses];
+export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponse = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses];
 
-export type AddPolicyApiV1AdminIntelligencePoliciesPostData = {
-    body: PolicyCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/intelligence/policies';
-};
-
-export type AddPolicyApiV1AdminIntelligencePoliciesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddPolicyApiV1AdminIntelligencePoliciesPostError = AddPolicyApiV1AdminIntelligencePoliciesPostErrors[keyof AddPolicyApiV1AdminIntelligencePoliciesPostErrors];
-
-export type AddPolicyApiV1AdminIntelligencePoliciesPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: PolicyResponse;
-};
-
-export type AddPolicyApiV1AdminIntelligencePoliciesPostResponse = AddPolicyApiV1AdminIntelligencePoliciesPostResponses[keyof AddPolicyApiV1AdminIntelligencePoliciesPostResponses];
-
-export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostData = {
-    body: PolicyQuestion;
-    path?: never;
-    query?: never;
-    url: '/api/v1/admin/intelligence/policies/query';
-};
-
-export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostError = QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors[keyof QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors];
-
-export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: PolicyAnswer;
-};
-
-export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponse = QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses[keyof QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses];
-
-export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostData = {
-    body: PolicyReview;
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostData = {
+    body: InstitutionRegistrationDecision;
     path: {
         /**
-         * Policy Id
+         * Request Id
          */
-        policy_id: string;
+        request_id: string;
     };
     query?: never;
-    url: '/api/v1/admin/intelligence/policies/{policy_id}/review';
+    url: '/api/v1/platform/institution-registration-requests/{request_id}/decision';
 };
 
-export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors = {
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostError = DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors[keyof DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors];
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostError = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors];
 
-export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses = {
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses = {
     /**
      * Successful Response
      */
-    200: PolicyResponse;
+    200: InstitutionRegistrationResponse;
 };
 
-export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponse = DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses[keyof DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses];
+export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponse = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses];
 
-export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetData = {
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetData = {
     body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/intelligence/roles/{role_id}/extractions';
-};
-
-export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetError = ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors[keyof ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors];
-
-export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses = {
-    /**
-     * Response Read Extractions Api V1 Admin Intelligence Roles  Role Id  Extractions Get
-     *
-     * Successful Response
-     */
-    200: Array<ExtractionResponse>;
-};
-
-export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponse = ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses[keyof ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses];
-
-export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostData = {
-    body: ExtractionCreate;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/intelligence/roles/{role_id}/extractions';
-};
-
-export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostError = AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors[keyof AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors];
-
-export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: ExtractionResponse;
-};
-
-export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponse = AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses[keyof AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses];
-
-export type CreateNotificationApiV1AdminNotificationsPostData = {
-    body: NotificationCreate;
     path?: never;
     query?: never;
-    url: '/api/v1/admin/notifications';
+    url: '/api/v1/platform/reports/summary';
 };
 
-export type CreateNotificationApiV1AdminNotificationsPostErrors = {
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateNotificationApiV1AdminNotificationsPostError = CreateNotificationApiV1AdminNotificationsPostErrors[keyof CreateNotificationApiV1AdminNotificationsPostErrors];
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetError = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors];
 
-export type CreateNotificationApiV1AdminNotificationsPostResponses = {
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses = {
     /**
      * Successful Response
      */
-    201: NotificationResponse;
+    200: PlatformReportSummary;
 };
 
-export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
+export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponse = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses];
 
-export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/system-health';
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetError = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors];
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformHealthSummary;
+};
+
+export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponse = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses];
+
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetData = {
     body?: never;
     path?: never;
     query?: {
         /**
-         * Job Status
+         * Institution Id
          */
-        job_status?: string | null;
+        institution_id?: string | null;
         /**
-         * Limit
+         * Page
          */
-        limit?: number;
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
     };
-    url: '/api/v1/admin/operations/resume-jobs';
+    url: '/api/v1/platform/audit/events';
 };
 
-export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors = {
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetError = ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors];
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetError = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors];
 
-export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses = {
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses = {
     /**
      * Successful Response
      */
-    200: ResumeJobPage;
+    200: AuditEventPage;
 };
 
-export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponse = ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses];
+export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponse = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses];
 
-export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostData = {
-    body?: never;
-    path: {
-        /**
-         * Job Id
-         */
-        job_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/operations/resume-jobs/{job_id}/cancel';
-};
-
-export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostError = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors];
-
-export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ResumeJobOperatorResponse;
-};
-
-export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponse = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses];
-
-export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostData = {
-    body?: never;
-    path: {
-        /**
-         * Job Id
-         */
-        job_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/operations/resume-jobs/{job_id}/retry';
-};
-
-export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostError = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors];
-
-export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ResumeJobOperatorResponse;
-};
-
-export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponse = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses];
-
-export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetData = {
+export type ReadPlatformSettingsApiV1PlatformSettingsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/admin/operations/summary';
+    url: '/api/v1/platform/settings';
 };
 
-export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors = {
+export type ReadPlatformSettingsApiV1PlatformSettingsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetError = ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors];
+export type ReadPlatformSettingsApiV1PlatformSettingsGetError = ReadPlatformSettingsApiV1PlatformSettingsGetErrors[keyof ReadPlatformSettingsApiV1PlatformSettingsGetErrors];
 
-export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses = {
+export type ReadPlatformSettingsApiV1PlatformSettingsGetResponses = {
     /**
      * Successful Response
      */
-    200: OperationsSummaryResponse;
+    200: PlatformSettingsResponse;
 };
 
-export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponse = ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses];
+export type ReadPlatformSettingsApiV1PlatformSettingsGetResponse = ReadPlatformSettingsApiV1PlatformSettingsGetResponses[keyof ReadPlatformSettingsApiV1PlatformSettingsGetResponses];
 
-export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
+export type SetPlatformSettingsApiV1PlatformSettingsPatchData = {
+    body: PlatformSettingsUpdate;
+    path?: never;
     query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
+    url: '/api/v1/platform/settings';
 };
 
-export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors = {
+export type SetPlatformSettingsApiV1PlatformSettingsPatchErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetError = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors];
+export type SetPlatformSettingsApiV1PlatformSettingsPatchError = SetPlatformSettingsApiV1PlatformSettingsPatchErrors[keyof SetPlatformSettingsApiV1PlatformSettingsPatchErrors];
 
-export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses = {
+export type SetPlatformSettingsApiV1PlatformSettingsPatchResponses = {
     /**
-     * Response Read Role Application Form Api V1 Admin Recruitment Roles  Role Id  Application Form Get
+     * Successful Response
+     */
+    200: PlatformSettingsResponse;
+};
+
+export type SetPlatformSettingsApiV1PlatformSettingsPatchResponse = SetPlatformSettingsApiV1PlatformSettingsPatchResponses[keyof SetPlatformSettingsApiV1PlatformSettingsPatchResponses];
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/admin-assignment';
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetError = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors];
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformAdminAssignmentResponse;
+};
+
+export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponse = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses];
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostData = {
+    body: PlatformAdminTransferRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/admin-assignment/transfer';
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostError = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors];
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformAdminAssignmentResponse;
+};
+
+export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponse = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses];
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Institution Id
+         */
+        institution_id: string;
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/outcomes';
+};
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetError = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors];
+
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses = {
+    /**
+     * Response Platform Outcome Drillthrough Api V1 Platform Institutions  Institution Id  Applications  Application Id  Outcomes Get
      *
      * Successful Response
      */
-    200: ApplicationFormResponse | null;
+    200: Array<OutcomeEventResponse>;
 };
 
-export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponse = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses];
+export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponse = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses];
 
-export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutData = {
-    body: ApplicationFormUpdate;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
-};
-
-export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutError = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors];
-
-export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationFormResponse;
-};
-
-export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponse = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses];
-
-export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostData = {
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetData = {
     body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
+    path?: never;
     query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form/publish';
+    url: '/api/v1/platform/metric-definitions';
 };
 
-export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors = {
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostError = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors];
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetError = MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors];
 
-export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses = {
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses = {
     /**
-     * Successful Response
-     */
-    200: ApplicationFormResponse;
-};
-
-export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponse = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses];
-
-export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
-};
-
-export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetError = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors];
-
-export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses = {
-    /**
-     * Response Read Role Material Terms Api V1 Admin Recruitment Roles  Role Id  Material Terms Get
+     * Response Metric Definitions Api V1 Platform Metric Definitions Get
      *
      * Successful Response
      */
-    200: MaterialTermsResponse | null;
+    200: Array<MetricDefinitionResponse>;
 };
 
-export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponse = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses];
+export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponse = MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses];
 
-export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutData = {
-    body: MaterialTermsUpdate;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostData = {
+    body: MetricDefinitionCreate;
+    path?: never;
     query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
+    url: '/api/v1/platform/metric-definitions';
 };
 
-export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors = {
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutError = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors];
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostError = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors];
 
-export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses = {
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses = {
     /**
      * Successful Response
      */
-    200: MaterialTermsResponse;
+    200: MetricDefinitionResponse;
 };
 
-export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponse = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses];
+export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponse = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses];
 
-export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetData = {
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostData = {
+    body: MetricDefinitionApproval;
+    path: {
+        /**
+         * Definition Id
+         */
+        definition_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/metric-definitions/{definition_id}/approve';
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostError = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors];
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MetricDefinitionResponse;
+};
+
+export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponse = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses];
+
+export type ListResumesApiV1ResumesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/resumes';
+};
+
+export type ListResumesApiV1ResumesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListResumesApiV1ResumesGetError = ListResumesApiV1ResumesGetErrors[keyof ListResumesApiV1ResumesGetErrors];
+
+export type ListResumesApiV1ResumesGetResponses = {
+    /**
+     * Response List Resumes Api V1 Resumes Get
+     *
+     * Successful Response
+     */
+    200: Array<ResumeVersionResponse>;
+};
+
+export type ListResumesApiV1ResumesGetResponse = ListResumesApiV1ResumesGetResponses[keyof ListResumesApiV1ResumesGetResponses];
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostData = {
+    body: ResumeContent;
+    path?: never;
+    query?: never;
+    url: '/api/v1/resumes/generate';
+};
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostError = GenerateResumeVersionApiV1ResumesGeneratePostErrors[keyof GenerateResumeVersionApiV1ResumesGeneratePostErrors];
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ResumeVersionResponse;
+};
+
+export type GenerateResumeVersionApiV1ResumesGeneratePostResponse = GenerateResumeVersionApiV1ResumesGeneratePostResponses[keyof GenerateResumeVersionApiV1ResumesGeneratePostResponses];
+
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteData = {
     body?: never;
     path: {
         /**
-         * Role Id
+         * Resume Id
          */
-        role_id: string;
+        resume_id: string;
     };
-    query: {
-        /**
-         * From Version
-         */
-        from_version: number;
-        /**
-         * To Version
-         */
-        to_version: number;
-    };
-    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/compare';
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}';
 };
 
-export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors = {
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetError = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors];
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteError = DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors];
 
-export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses = {
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses = {
     /**
      * Successful Response
      */
-    200: MaterialTermsComparisonResponse;
+    204: void;
 };
 
-export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponse = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses];
+export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponse = DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses];
 
-export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostData = {
+export type ReadResumeApiV1ResumesResumeIdGetData = {
     body?: never;
     path: {
         /**
-         * Role Id
+         * Resume Id
          */
-        role_id: string;
-        /**
-         * Terms Id
-         */
-        terms_id: string;
+        resume_id: string;
     };
     query?: never;
-    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/{terms_id}/publish';
+    url: '/api/v1/resumes/{resume_id}';
 };
 
-export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors = {
+export type ReadResumeApiV1ResumesResumeIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostError = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors];
+export type ReadResumeApiV1ResumesResumeIdGetError = ReadResumeApiV1ResumesResumeIdGetErrors[keyof ReadResumeApiV1ResumesResumeIdGetErrors];
 
-export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses = {
+export type ReadResumeApiV1ResumesResumeIdGetResponses = {
     /**
      * Successful Response
      */
-    200: MaterialTermsResponse;
+    200: ResumeVersionResponse;
 };
 
-export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponse = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses];
+export type ReadResumeApiV1ResumesResumeIdGetResponse = ReadResumeApiV1ResumesResumeIdGetResponses[keyof ReadResumeApiV1ResumesResumeIdGetResponses];
+
+export type RenameResumeVersionApiV1ResumesResumeIdNamePatchData = {
+    body: ResumeRenameRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/name';
+};
+
+export type RenameResumeVersionApiV1ResumesResumeIdNamePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RenameResumeVersionApiV1ResumesResumeIdNamePatchError = RenameResumeVersionApiV1ResumesResumeIdNamePatchErrors[keyof RenameResumeVersionApiV1ResumesResumeIdNamePatchErrors];
+
+export type RenameResumeVersionApiV1ResumesResumeIdNamePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type RenameResumeVersionApiV1ResumesResumeIdNamePatchResponse = RenameResumeVersionApiV1ResumesResumeIdNamePatchResponses[keyof RenameResumeVersionApiV1ResumesResumeIdNamePatchResponses];
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/editable-content';
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetError = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors];
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeContent;
+};
+
+export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponse = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses];
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostData = {
+    body: TailoredResumeRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/tailored-versions';
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostError = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors];
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ResumeVersionResponse;
+};
+
+export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponse = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses];
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostData = {
+    body: ExtractionReviewRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/review';
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostError = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors];
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponse = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses];
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostData = {
+    body: SuggestionDecisionRequest;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+        /**
+         * Suggestion Id
+         */
+        suggestion_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/suggestions/{suggestion_id}';
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostError = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors];
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostData = {
+    body: SuggestionReviewBatch;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/suggestion-review';
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostError = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors];
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponse = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses];
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/retry';
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostError = RetryResumeJobApiV1ResumesResumeIdRetryPostErrors[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostErrors];
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeVersionResponse;
+};
+
+export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponse = RetryResumeJobApiV1ResumesResumeIdRetryPostResponses[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostResponses];
+
+export type DownloadResumeApiV1ResumesResumeIdDownloadGetData = {
+    body?: never;
+    path: {
+        /**
+         * Resume Id
+         */
+        resume_id: string;
+    };
+    query?: never;
+    url: '/api/v1/resumes/{resume_id}/download';
+};
+
+export type DownloadResumeApiV1ResumesResumeIdDownloadGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DownloadResumeApiV1ResumesResumeIdDownloadGetError = DownloadResumeApiV1ResumesResumeIdDownloadGetErrors[keyof DownloadResumeApiV1ResumesResumeIdDownloadGetErrors];
+
+export type DownloadResumeApiV1ResumesResumeIdDownloadGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type ReadResumeEvidenceApiV1AiResumeStudioEvidenceGetData = {
     body?: never;
@@ -8537,96 +10890,6 @@ export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersio
 
 export type CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponse = CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses[keyof CreateResumeFromProposalApiV1AiResumeStudioProposalsProposalIdVersionsPostResponses];
 
-export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
-};
-
-export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetError = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors];
-
-export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponse = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses];
-
-export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutData = {
-    body: ArtifactEdit;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
-};
-
-export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutError = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors];
-
-export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponse = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses];
-
-export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostData = {
-    body: ArtifactDecision;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}/decision';
-};
-
-export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostError = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors];
-
-export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponse = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses];
-
 export type ListStudentConversationsApiV1AiStudentCopilotConversationsGetData = {
     body?: never;
     path?: never;
@@ -8766,396 +11029,6 @@ export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMe
 };
 
 export type SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponse = SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses[keyof SendStudentMessageApiV1AiStudentCopilotConversationsConversationIdMessagesPostResponses];
-
-export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/ai/student-copilot/practice-consent';
-};
-
-export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetError = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors];
-
-export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PracticeConsentResponse;
-};
-
-export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponse = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses];
-
-export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutData = {
-    body: PracticeConsentUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/ai/student-copilot/practice-consent';
-};
-
-export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutError = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors];
-
-export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: PracticeConsentResponse;
-};
-
-export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponse = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses];
-
-export type GetStudentRunsApiV1AiStudentCopilotRunsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Target Id
-         */
-        target_id?: string | null;
-    };
-    url: '/api/v1/ai/student-copilot/runs';
-};
-
-export type GetStudentRunsApiV1AiStudentCopilotRunsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetStudentRunsApiV1AiStudentCopilotRunsGetError = GetStudentRunsApiV1AiStudentCopilotRunsGetErrors[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetErrors];
-
-export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponses = {
-    /**
-     * Response Get Student Runs Api V1 Ai Student Copilot Runs Get
-     *
-     * Successful Response
-     */
-    200: Array<AgentRunResponse>;
-};
-
-export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponse = GetStudentRunsApiV1AiStudentCopilotRunsGetResponses[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetResponses];
-
-export type StartStudentRunApiV1AiStudentCopilotRunsPostData = {
-    body: StudentRunCreate;
-    headers: {
-        /**
-         * Idempotency-Key
-         */
-        'Idempotency-Key': string;
-    };
-    path?: never;
-    query?: never;
-    url: '/api/v1/ai/student-copilot/runs';
-};
-
-export type StartStudentRunApiV1AiStudentCopilotRunsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type StartStudentRunApiV1AiStudentCopilotRunsPostError = StartStudentRunApiV1AiStudentCopilotRunsPostErrors[keyof StartStudentRunApiV1AiStudentCopilotRunsPostErrors];
-
-export type StartStudentRunApiV1AiStudentCopilotRunsPostResponses = {
-    /**
-     * Successful Response
-     */
-    202: AgentRunResponse;
-};
-
-export type StartStudentRunApiV1AiStudentCopilotRunsPostResponse = StartStudentRunApiV1AiStudentCopilotRunsPostResponses[keyof StartStudentRunApiV1AiStudentCopilotRunsPostResponses];
-
-export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/runs/{run_id}';
-};
-
-export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteError = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors];
-
-export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponse = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses];
-
-export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/runs/{run_id}';
-};
-
-export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetError = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors];
-
-export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AgentRunResponse;
-};
-
-export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponse = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses];
-
-export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostData = {
-    body: RunCancel;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/runs/{run_id}/cancel';
-};
-
-export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostError = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors];
-
-export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: AgentRunResponse;
-};
-
-export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponse = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses];
-
-export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: {
-        /**
-         * After
-         */
-        after?: number;
-    };
-    url: '/api/v1/ai/student-copilot/runs/{run_id}/events';
-};
-
-export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetError = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors];
-
-export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses = {
-    /**
-     * Response Get Student Run Events Api V1 Ai Student Copilot Runs  Run Id  Events Get
-     *
-     * Successful Response
-     */
-    200: Array<AgentEventResponse>;
-};
-
-export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponse = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses];
-
-export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostData = {
-    body: RunResume;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/student-copilot/runs/{run_id}/resume';
-};
-
-export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostError = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors];
-
-export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: AgentRunResponse;
-};
-
-export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponse = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses];
-
-export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
-};
-
-export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetError = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors];
-
-export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponse = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses];
-
-export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutData = {
-    body: ArtifactEdit;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
-};
-
-export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutError = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors];
-
-export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponse = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses];
-
-export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostData = {
-    body: ArtifactApply;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/apply';
-};
-
-export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostError = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors];
-
-export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponse = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses];
-
-export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostData = {
-    body: ArtifactDecision;
-    path: {
-        /**
-         * Artifact Id
-         */
-        artifact_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/decision';
-};
-
-export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostError = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors];
-
-export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ArtifactResponse;
-};
-
-export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponse = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses];
 
 export type ListTnpConversationsApiV1AiTnpCopilotConversationsGetData = {
     body?: never;
@@ -9387,6 +11260,366 @@ export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostRes
 
 export type ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponse = ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses[keyof ReviewTnpProposalApiV1AiTnpCopilotProposalsProposalIdDecisionPostResponses];
 
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Target Id
+         */
+        target_id?: string | null;
+    };
+    url: '/api/v1/ai/student-copilot/runs';
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetError = GetStudentRunsApiV1AiStudentCopilotRunsGetErrors[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetErrors];
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponses = {
+    /**
+     * Response Get Student Runs Api V1 Ai Student Copilot Runs Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentRunResponse>;
+};
+
+export type GetStudentRunsApiV1AiStudentCopilotRunsGetResponse = GetStudentRunsApiV1AiStudentCopilotRunsGetResponses[keyof GetStudentRunsApiV1AiStudentCopilotRunsGetResponses];
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostData = {
+    body: StudentRunCreate;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs';
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostError = StartStudentRunApiV1AiStudentCopilotRunsPostErrors[keyof StartStudentRunApiV1AiStudentCopilotRunsPostErrors];
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: AgentRunResponse;
+};
+
+export type StartStudentRunApiV1AiStudentCopilotRunsPostResponse = StartStudentRunApiV1AiStudentCopilotRunsPostResponses[keyof StartStudentRunApiV1AiStudentCopilotRunsPostResponses];
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}';
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteError = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteErrors];
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponse = DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses[keyof DeleteStudentRunApiV1AiStudentCopilotRunsRunIdDeleteResponses];
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}';
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetError = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetErrors];
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponse = GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses[keyof GetStudentRunApiV1AiStudentCopilotRunsRunIdGetResponses];
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: {
+        /**
+         * After
+         */
+        after?: number;
+    };
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/events';
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetError = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetErrors];
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses = {
+    /**
+     * Response Get Student Run Events Api V1 Ai Student Copilot Runs  Run Id  Events Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentEventResponse>;
+};
+
+export type GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponse = GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses[keyof GetStudentRunEventsApiV1AiStudentCopilotRunsRunIdEventsGetResponses];
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostData = {
+    body: RunResume;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/resume';
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostError = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostErrors];
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponse = ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses[keyof ResumeStudentRunApiV1AiStudentCopilotRunsRunIdResumePostResponses];
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostData = {
+    body: RunCancel;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/runs/{run_id}/cancel';
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostError = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostErrors];
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponse = CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses[keyof CancelStudentRunApiV1AiStudentCopilotRunsRunIdCancelPostResponses];
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetError = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetErrors];
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponse = GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses[keyof GetStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdGetResponses];
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutData = {
+    body: ArtifactEdit;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}';
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutError = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutErrors];
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponse = UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses[keyof UpdateStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdPutResponses];
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostData = {
+    body: ArtifactDecision;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/student-copilot/artifacts/{artifact_id}/decision';
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostError = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostErrors];
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponse = DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideStudentArtifactApiV1AiStudentCopilotArtifactsArtifactIdDecisionPostResponses];
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/practice-consent';
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetError = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetErrors];
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PracticeConsentResponse;
+};
+
+export type GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponse = GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses[keyof GetPracticeConsentApiV1AiStudentCopilotPracticeConsentGetResponses];
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutData = {
+    body: PracticeConsentUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/ai/student-copilot/practice-consent';
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutError = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutErrors];
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: PracticeConsentResponse;
+};
+
+export type SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponse = SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses[keyof SetPracticeConsentApiV1AiStudentCopilotPracticeConsentPutResponses];
+
 export type GetTnpRunsApiV1AiTnpCopilotRunsGetData = {
     body?: never;
     path?: never;
@@ -9480,36 +11713,6 @@ export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses = {
 
 export type GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponse = GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses[keyof GetTnpRunApiV1AiTnpCopilotRunsRunIdGetResponses];
 
-export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostData = {
-    body: RunCancel;
-    path: {
-        /**
-         * Run Id
-         */
-        run_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/runs/{run_id}/cancel';
-};
-
-export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostError = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors];
-
-export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: AgentRunResponse;
-};
-
-export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponse = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses];
-
 export type GetTnpRunEventsApiV1AiTnpCopilotRunsRunIdEventsGetData = {
     body?: never;
     path: {
@@ -9577,6 +11780,156 @@ export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses = {
 
 export type ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponse = ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses[keyof ResumeTnpRunApiV1AiTnpCopilotRunsRunIdResumePostResponses];
 
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostData = {
+    body: RunCancel;
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/runs/{run_id}/cancel';
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostError = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostErrors];
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentRunResponse;
+};
+
+export type CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponse = CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses[keyof CancelTnpRunApiV1AiTnpCopilotRunsRunIdCancelPostResponses];
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetError = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetErrors];
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponse = GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses[keyof GetTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdGetResponses];
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutData = {
+    body: ArtifactEdit;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}';
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutError = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutErrors];
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponse = UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses[keyof UpdateTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdPutResponses];
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostData = {
+    body: ArtifactDecision;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/decision';
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostError = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostErrors];
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponse = DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses[keyof DecideTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdDecisionPostResponses];
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostData = {
+    body: ArtifactApply;
+    path: {
+        /**
+         * Artifact Id
+         */
+        artifact_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/artifacts/{artifact_id}/apply';
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostError = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostErrors];
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactResponse;
+};
+
+export type ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponse = ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses[keyof ApplyTnpArtifactApiV1AiTnpCopilotArtifactsArtifactIdApplyPostResponses];
+
 export type GetSourcesApiV1AiTnpCopilotSourcesGetData = {
     body?: never;
     path?: never;
@@ -9629,6 +11982,36 @@ export type CreateSourceApiV1AiTnpCopilotSourcesPostResponses = {
 
 export type CreateSourceApiV1AiTnpCopilotSourcesPostResponse = CreateSourceApiV1AiTnpCopilotSourcesPostResponses[keyof CreateSourceApiV1AiTnpCopilotSourcesPostResponses];
 
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostData = {
+    body: SourceReview;
+    path: {
+        /**
+         * Source Id
+         */
+        source_id: string;
+    };
+    query?: never;
+    url: '/api/v1/ai/tnp-copilot/sources/{source_id}/review';
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostError = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors];
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SourceVersionResponse;
+};
+
+export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponse = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses];
+
 export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetData = {
     body?: never;
     path?: never;
@@ -9660,1944 +12043,6 @@ export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses = {
 };
 
 export type SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponse = SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses[keyof SearchEscoApiV1AiTnpCopilotSourcesEscoGetResponses];
-
-export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostData = {
-    body: SourceReview;
-    path: {
-        /**
-         * Source Id
-         */
-        source_id: string;
-    };
-    query?: never;
-    url: '/api/v1/ai/tnp-copilot/sources/{source_id}/review';
-};
-
-export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostError = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostErrors];
-
-export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SourceVersionResponse;
-};
-
-export type DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponse = DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses[keyof DecideSourceApiV1AiTnpCopilotSourcesSourceIdReviewPostResponses];
-
-export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}';
-};
-
-export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteError = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors];
-
-export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponse = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses];
-
-export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}';
-};
-
-export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetError = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors];
-
-export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponse = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses];
-
-export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutData = {
-    body: DraftDisclosureUpdate;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/disclosures';
-};
-
-export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutError = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors];
-
-export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponse = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses];
-
-export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutData = {
-    body: DraftMaterialTermsUpdate;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/material-terms';
-};
-
-export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutError = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors];
-
-export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponse = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses];
-
-export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutData = {
-    body: DraftProfileConfirmation;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/profile-confirmation';
-};
-
-export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutError = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors];
-
-export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponse = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses];
-
-export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutData = {
-    body: DraftResumeUpdate;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/resume';
-};
-
-export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutError = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors];
-
-export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponse = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses];
-
-export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetData = {
-    body?: never;
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/review';
-};
-
-export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetError = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors];
-
-export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationReviewResponse;
-};
-
-export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponse = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses];
-
-export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostData = {
-    body: DraftSubmitRequest;
-    headers: {
-        /**
-         * Idempotency-Key
-         */
-        'Idempotency-Key': string;
-    };
-    path: {
-        /**
-         * Draft Id
-         */
-        draft_id: string;
-    };
-    query?: never;
-    url: '/api/v1/application-drafts/{draft_id}/submit';
-};
-
-export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostError = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors];
-
-export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: ApplicationResponse;
-};
-
-export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponse = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses];
-
-export type ReadStudentApplicationsApiV1ApplicationsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/applications';
-};
-
-export type ReadStudentApplicationsApiV1ApplicationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadStudentApplicationsApiV1ApplicationsGetError = ReadStudentApplicationsApiV1ApplicationsGetErrors[keyof ReadStudentApplicationsApiV1ApplicationsGetErrors];
-
-export type ReadStudentApplicationsApiV1ApplicationsGetResponses = {
-    /**
-     * Response Read Student Applications Api V1 Applications Get
-     *
-     * Successful Response
-     */
-    200: Array<ApplicationResponse>;
-};
-
-export type ReadStudentApplicationsApiV1ApplicationsGetResponse = ReadStudentApplicationsApiV1ApplicationsGetResponses[keyof ReadStudentApplicationsApiV1ApplicationsGetResponses];
-
-export type SubmitApplicationApiV1ApplicationsPostData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/applications';
-};
-
-export type SubmitApplicationApiV1ApplicationsPostErrors = {
-    /**
-     * Direct submission is retired; use the versioned application packet.
-     */
-    410: unknown;
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitApplicationApiV1ApplicationsPostError = SubmitApplicationApiV1ApplicationsPostErrors[keyof SubmitApplicationApiV1ApplicationsPostErrors];
-
-export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}';
-};
-
-export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetError = ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors];
-
-export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponse = ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses];
-
-export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostData = {
-    body: ApplicationAppealCreate;
-    headers: {
-        /**
-         * Idempotency-Key
-         */
-        'Idempotency-Key': string;
-    };
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/appeals';
-};
-
-export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostError = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors];
-
-export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: ApplicationAppealResponse;
-};
-
-export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponse = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses];
-
-export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/deadline.ics';
-};
-
-export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetError = DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors[keyof DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors];
-
-export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/disclosures';
-};
-
-export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetError = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors];
-
-export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDisclosureResponse;
-};
-
-export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponse = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses];
-
-export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/outcomes';
-};
-
-export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetError = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors];
-
-export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses = {
-    /**
-     * Response Student Outcome Timeline Api V1 Applications  Application Id  Outcomes Get
-     *
-     * Successful Response
-     */
-    200: Array<OutcomeEventResponse>;
-};
-
-export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponse = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses];
-
-export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/requests';
-};
-
-export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetError = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors];
-
-export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses = {
-    /**
-     * Response Student Requests Api V1 Applications  Application Id  Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<CorrectionResponse>;
-};
-
-export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponse = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses];
-
-export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostData = {
-    body: RequestResponseCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/requests/{request_id}/response';
-};
-
-export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostError = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors];
-
-export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: CorrectionResponse;
-};
-
-export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponse = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses];
-
-export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostData = {
-    body: ApplicationWithdrawal;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/applications/{application_id}/withdraw';
-};
-
-export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostError = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors];
-
-export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponse = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses];
-
-export type SelectActiveMembershipApiV1AuthActiveMembershipPostData = {
-    body: ActiveMembershipRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/active-membership';
-};
-
-export type SelectActiveMembershipApiV1AuthActiveMembershipPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SelectActiveMembershipApiV1AuthActiveMembershipPostError = SelectActiveMembershipApiV1AuthActiveMembershipPostErrors[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostErrors];
-
-export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserResponse;
-};
-
-export type SelectActiveMembershipApiV1AuthActiveMembershipPostResponse = SelectActiveMembershipApiV1AuthActiveMembershipPostResponses[keyof SelectActiveMembershipApiV1AuthActiveMembershipPostResponses];
-
-export type CsrfApiV1AuthCsrfGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/csrf';
-};
-
-export type CsrfApiV1AuthCsrfGetResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type CsrfApiV1AuthCsrfGetResponse = CsrfApiV1AuthCsrfGetResponses[keyof CsrfApiV1AuthCsrfGetResponses];
-
-export type DemoSignInApiV1AuthDemoSignInPostData = {
-    body: DemoSignInRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/demo-sign-in';
-};
-
-export type DemoSignInApiV1AuthDemoSignInPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DemoSignInApiV1AuthDemoSignInPostError = DemoSignInApiV1AuthDemoSignInPostErrors[keyof DemoSignInApiV1AuthDemoSignInPostErrors];
-
-export type DemoSignInApiV1AuthDemoSignInPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SignInResponse;
-};
-
-export type DemoSignInApiV1AuthDemoSignInPostResponse = DemoSignInApiV1AuthDemoSignInPostResponses[keyof DemoSignInApiV1AuthDemoSignInPostResponses];
-
-export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostData = {
-    body: InstitutionRegistrationRequestCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/institution-registrations';
-};
-
-export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostError = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostErrors];
-
-export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses = {
-    /**
-     * Successful Response
-     */
-    202: InstitutionRegistrationStartResponse;
-};
-
-export type CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponse = CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses[keyof CreateRegistrationRequestApiV1AuthInstitutionRegistrationsPostResponses];
-
-export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostData = {
-    body: RegistrationTokenRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/institution-registrations/verify';
-};
-
-export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostError = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostErrors];
-
-export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionRegistrationResponse;
-};
-
-export type VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponse = VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses[keyof VerifyRegistrationRequestApiV1AuthInstitutionRegistrationsVerifyPostResponses];
-
-export type ValidateInvitationApiV1AuthInvitationsTokenGetData = {
-    body?: never;
-    path: {
-        /**
-         * Token
-         */
-        token: string;
-    };
-    query?: never;
-    url: '/api/v1/auth/invitations/{token}';
-};
-
-export type ValidateInvitationApiV1AuthInvitationsTokenGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ValidateInvitationApiV1AuthInvitationsTokenGetError = ValidateInvitationApiV1AuthInvitationsTokenGetErrors[keyof ValidateInvitationApiV1AuthInvitationsTokenGetErrors];
-
-export type ValidateInvitationApiV1AuthInvitationsTokenGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: InvitationResponse;
-};
-
-export type ValidateInvitationApiV1AuthInvitationsTokenGetResponse = ValidateInvitationApiV1AuthInvitationsTokenGetResponses[keyof ValidateInvitationApiV1AuthInvitationsTokenGetResponses];
-
-export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostData = {
-    body: InvitationAcceptRequest;
-    path: {
-        /**
-         * Token
-         */
-        token: string;
-    };
-    query?: never;
-    url: '/api/v1/auth/invitations/{token}/accept';
-};
-
-export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostError = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostErrors];
-
-export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: UserResponse;
-};
-
-export type ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponse = ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses[keyof ActivateInvitationApiV1AuthInvitationsTokenAcceptPostResponses];
-
-export type MeApiV1AuthMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/me';
-};
-
-export type MeApiV1AuthMeGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type MeApiV1AuthMeGetError = MeApiV1AuthMeGetErrors[keyof MeApiV1AuthMeGetErrors];
-
-export type MeApiV1AuthMeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: UserResponse;
-};
-
-export type MeApiV1AuthMeGetResponse = MeApiV1AuthMeGetResponses[keyof MeApiV1AuthMeGetResponses];
-
-export type ReadActiveMembershipsApiV1AuthMembershipsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/memberships';
-};
-
-export type ReadActiveMembershipsApiV1AuthMembershipsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadActiveMembershipsApiV1AuthMembershipsGetError = ReadActiveMembershipsApiV1AuthMembershipsGetErrors[keyof ReadActiveMembershipsApiV1AuthMembershipsGetErrors];
-
-export type ReadActiveMembershipsApiV1AuthMembershipsGetResponses = {
-    /**
-     * Response Read Active Memberships Api V1 Auth Memberships Get
-     *
-     * Successful Response
-     */
-    200: Array<MembershipChoice>;
-};
-
-export type ReadActiveMembershipsApiV1AuthMembershipsGetResponse = ReadActiveMembershipsApiV1AuthMembershipsGetResponses[keyof ReadActiveMembershipsApiV1AuthMembershipsGetResponses];
-
-export type ChallengeMfaApiV1AuthMfaChallengePostData = {
-    body: MfaCodeRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/mfa/challenge';
-};
-
-export type ChallengeMfaApiV1AuthMfaChallengePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChallengeMfaApiV1AuthMfaChallengePostError = ChallengeMfaApiV1AuthMfaChallengePostErrors[keyof ChallengeMfaApiV1AuthMfaChallengePostErrors];
-
-export type ChallengeMfaApiV1AuthMfaChallengePostResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type ChallengeMfaApiV1AuthMfaChallengePostResponse = ChallengeMfaApiV1AuthMfaChallengePostResponses[keyof ChallengeMfaApiV1AuthMfaChallengePostResponses];
-
-export type ConfirmMfaApiV1AuthMfaConfirmPostData = {
-    body: MfaCodeRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/mfa/confirm';
-};
-
-export type ConfirmMfaApiV1AuthMfaConfirmPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ConfirmMfaApiV1AuthMfaConfirmPostError = ConfirmMfaApiV1AuthMfaConfirmPostErrors[keyof ConfirmMfaApiV1AuthMfaConfirmPostErrors];
-
-export type ConfirmMfaApiV1AuthMfaConfirmPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: MfaConfirmResponse;
-};
-
-export type ConfirmMfaApiV1AuthMfaConfirmPostResponse = ConfirmMfaApiV1AuthMfaConfirmPostResponses[keyof ConfirmMfaApiV1AuthMfaConfirmPostResponses];
-
-export type ResetMfaFactorApiV1AuthMfaDisablePostData = {
-    body: MfaDisableRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/mfa/disable';
-};
-
-export type ResetMfaFactorApiV1AuthMfaDisablePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResetMfaFactorApiV1AuthMfaDisablePostError = ResetMfaFactorApiV1AuthMfaDisablePostErrors[keyof ResetMfaFactorApiV1AuthMfaDisablePostErrors];
-
-export type ResetMfaFactorApiV1AuthMfaDisablePostResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type ResetMfaFactorApiV1AuthMfaDisablePostResponse = ResetMfaFactorApiV1AuthMfaDisablePostResponses[keyof ResetMfaFactorApiV1AuthMfaDisablePostResponses];
-
-export type SetupMfaApiV1AuthMfaSetupPostData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/mfa/setup';
-};
-
-export type SetupMfaApiV1AuthMfaSetupPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SetupMfaApiV1AuthMfaSetupPostError = SetupMfaApiV1AuthMfaSetupPostErrors[keyof SetupMfaApiV1AuthMfaSetupPostErrors];
-
-export type SetupMfaApiV1AuthMfaSetupPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: MfaSetupResponse;
-};
-
-export type SetupMfaApiV1AuthMfaSetupPostResponse = SetupMfaApiV1AuthMfaSetupPostResponses[keyof SetupMfaApiV1AuthMfaSetupPostResponses];
-
-export type ReadMfaStatusApiV1AuthMfaStatusGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/mfa/status';
-};
-
-export type ReadMfaStatusApiV1AuthMfaStatusGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadMfaStatusApiV1AuthMfaStatusGetError = ReadMfaStatusApiV1AuthMfaStatusGetErrors[keyof ReadMfaStatusApiV1AuthMfaStatusGetErrors];
-
-export type ReadMfaStatusApiV1AuthMfaStatusGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: MfaStatusResponse;
-};
-
-export type ReadMfaStatusApiV1AuthMfaStatusGetResponse = ReadMfaStatusApiV1AuthMfaStatusGetResponses[keyof ReadMfaStatusApiV1AuthMfaStatusGetResponses];
-
-export type RequestPasswordResetApiV1AuthPasswordResetRequestPostData = {
-    body: PasswordResetRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/password-reset/request';
-};
-
-export type RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RequestPasswordResetApiV1AuthPasswordResetRequestPostError = RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostErrors];
-
-export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses = {
-    /**
-     * Response Request Password Reset Api V1 Auth Password Reset Request Post
-     *
-     * Successful Response
-     */
-    202: {
-        [key: string]: string;
-    };
-};
-
-export type RequestPasswordResetApiV1AuthPasswordResetRequestPostResponse = RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses[keyof RequestPasswordResetApiV1AuthPasswordResetRequestPostResponses];
-
-export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostData = {
-    body: PasswordResetConfirm;
-    path: {
-        /**
-         * Token
-         */
-        token: string;
-    };
-    query?: never;
-    url: '/api/v1/auth/password-reset/{token}/confirm';
-};
-
-export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostError = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostErrors];
-
-export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponse = ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses[keyof ResetPasswordApiV1AuthPasswordResetTokenConfirmPostResponses];
-
-export type ReadSessionsApiV1AuthSessionsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/sessions';
-};
-
-export type ReadSessionsApiV1AuthSessionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadSessionsApiV1AuthSessionsGetError = ReadSessionsApiV1AuthSessionsGetErrors[keyof ReadSessionsApiV1AuthSessionsGetErrors];
-
-export type ReadSessionsApiV1AuthSessionsGetResponses = {
-    /**
-     * Response Read Sessions Api V1 Auth Sessions Get
-     *
-     * Successful Response
-     */
-    200: Array<SessionResponse>;
-};
-
-export type ReadSessionsApiV1AuthSessionsGetResponse = ReadSessionsApiV1AuthSessionsGetResponses[keyof ReadSessionsApiV1AuthSessionsGetResponses];
-
-export type DeleteSessionApiV1AuthSessionsSessionIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Session Id
-         */
-        session_id: string;
-    };
-    query?: never;
-    url: '/api/v1/auth/sessions/{session_id}';
-};
-
-export type DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteSessionApiV1AuthSessionsSessionIdDeleteError = DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteErrors];
-
-export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteSessionApiV1AuthSessionsSessionIdDeleteResponse = DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses[keyof DeleteSessionApiV1AuthSessionsSessionIdDeleteResponses];
-
-export type SignInApiV1AuthSignInPostData = {
-    body: SignInRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/sign-in';
-};
-
-export type SignInApiV1AuthSignInPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SignInApiV1AuthSignInPostError = SignInApiV1AuthSignInPostErrors[keyof SignInApiV1AuthSignInPostErrors];
-
-export type SignInApiV1AuthSignInPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SignInResponse;
-};
-
-export type SignInApiV1AuthSignInPostResponse = SignInApiV1AuthSignInPostResponses[keyof SignInApiV1AuthSignInPostResponses];
-
-export type SignOutApiV1AuthSignOutPostData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/sign-out';
-};
-
-export type SignOutApiV1AuthSignOutPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SignOutApiV1AuthSignOutPostError = SignOutApiV1AuthSignOutPostErrors[keyof SignOutApiV1AuthSignOutPostErrors];
-
-export type SignOutApiV1AuthSignOutPostResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type SignOutApiV1AuthSignOutPostResponse = SignOutApiV1AuthSignOutPostResponses[keyof SignOutApiV1AuthSignOutPostResponses];
-
-export type SignOutAllApiV1AuthSignOutAllPostData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/sign-out-all';
-};
-
-export type SignOutAllApiV1AuthSignOutAllPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SignOutAllApiV1AuthSignOutAllPostError = SignOutAllApiV1AuthSignOutAllPostErrors[keyof SignOutAllApiV1AuthSignOutAllPostErrors];
-
-export type SignOutAllApiV1AuthSignOutAllPostResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type SignOutAllApiV1AuthSignOutAllPostResponse = SignOutAllApiV1AuthSignOutAllPostResponses[keyof SignOutAllApiV1AuthSignOutAllPostResponses];
-
-export type SignupApiV1AuthSignupPostData = {
-    body: SignupRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/signup';
-};
-
-export type SignupApiV1AuthSignupPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SignupApiV1AuthSignupPostError = SignupApiV1AuthSignupPostErrors[keyof SignupApiV1AuthSignupPostErrors];
-
-export type SignupApiV1AuthSignupPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: RegistrationStartResponse;
-};
-
-export type SignupApiV1AuthSignupPostResponse = SignupApiV1AuthSignupPostResponses[keyof SignupApiV1AuthSignupPostResponses];
-
-export type SignupInstitutionsApiV1AuthSignupInstitutionsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/signup/institutions';
-};
-
-export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses = {
-    /**
-     * Response Signup Institutions Api V1 Auth Signup Institutions Get
-     *
-     * Successful Response
-     */
-    200: Array<SignupInstitution>;
-};
-
-export type SignupInstitutionsApiV1AuthSignupInstitutionsGetResponse = SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses[keyof SignupInstitutionsApiV1AuthSignupInstitutionsGetResponses];
-
-export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostData = {
-    body: TermsAcceptanceRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/auth/terms/accept';
-};
-
-export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostError = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostErrors];
-
-export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SignInResponse;
-};
-
-export type AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponse = AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses[keyof AcceptCurrentStaffTermsApiV1AuthTermsAcceptPostResponses];
-
-export type ReadPreferencesApiV1CommunicationsPreferencesGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/communications/preferences';
-};
-
-export type ReadPreferencesApiV1CommunicationsPreferencesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPreferencesApiV1CommunicationsPreferencesGetError = ReadPreferencesApiV1CommunicationsPreferencesGetErrors[keyof ReadPreferencesApiV1CommunicationsPreferencesGetErrors];
-
-export type ReadPreferencesApiV1CommunicationsPreferencesGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: CommunicationPreferencesResponse;
-};
-
-export type ReadPreferencesApiV1CommunicationsPreferencesGetResponse = ReadPreferencesApiV1CommunicationsPreferencesGetResponses[keyof ReadPreferencesApiV1CommunicationsPreferencesGetResponses];
-
-export type WritePreferencesApiV1CommunicationsPreferencesPutData = {
-    body: CommunicationPreferencesUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/communications/preferences';
-};
-
-export type WritePreferencesApiV1CommunicationsPreferencesPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type WritePreferencesApiV1CommunicationsPreferencesPutError = WritePreferencesApiV1CommunicationsPreferencesPutErrors[keyof WritePreferencesApiV1CommunicationsPreferencesPutErrors];
-
-export type WritePreferencesApiV1CommunicationsPreferencesPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: CommunicationPreferencesResponse;
-};
-
-export type WritePreferencesApiV1CommunicationsPreferencesPutResponse = WritePreferencesApiV1CommunicationsPreferencesPutResponses[keyof WritePreferencesApiV1CommunicationsPreferencesPutResponses];
-
-export type ReadDashboardApiV1DashboardGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/dashboard';
-};
-
-export type ReadDashboardApiV1DashboardGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadDashboardApiV1DashboardGetError = ReadDashboardApiV1DashboardGetErrors[keyof ReadDashboardApiV1DashboardGetErrors];
-
-export type ReadDashboardApiV1DashboardGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: DashboardResponse;
-};
-
-export type ReadDashboardApiV1DashboardGetResponse = ReadDashboardApiV1DashboardGetResponses[keyof ReadDashboardApiV1DashboardGetResponses];
-
-export type LivenessApiV1HealthLiveGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/health/live';
-};
-
-export type LivenessApiV1HealthLiveGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: HealthResponse;
-};
-
-export type LivenessApiV1HealthLiveGetResponse = LivenessApiV1HealthLiveGetResponses[keyof LivenessApiV1HealthLiveGetResponses];
-
-export type ReadinessApiV1HealthReadyGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/health/ready';
-};
-
-export type ReadinessApiV1HealthReadyGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: HealthResponse;
-};
-
-export type ReadinessApiV1HealthReadyGetResponse = ReadinessApiV1HealthReadyGetResponses[keyof ReadinessApiV1HealthReadyGetResponses];
-
-export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/invitations';
-};
-
-export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetError = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetErrors];
-
-export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses = {
-    /**
-     * Response Read Invitations Api V1 Institutions  Institution Id  Invitations Get
-     *
-     * Successful Response
-     */
-    200: Array<InvitationSummary>;
-};
-
-export type ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponse = ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses[keyof ReadInvitationsApiV1InstitutionsInstitutionIdInvitationsGetResponses];
-
-export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Invitation Id
-         */
-        invitation_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/resend';
-};
-
-export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostError = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostErrors];
-
-export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: InvitationActionResponse;
-};
-
-export type ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponse = ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses[keyof ResendMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdResendPostResponses];
-
-export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostData = {
-    body: InvitationRevocationRequest;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Invitation Id
-         */
-        invitation_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/invitations/{invitation_id}/revoke';
-};
-
-export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostError = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostErrors];
-
-export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: InvitationActionResponse;
-};
-
-export type RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponse = RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses[keyof RevokeMembershipInvitationApiV1InstitutionsInstitutionIdInvitationsInvitationIdRevokePostResponses];
-
-export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: {
-        /**
-         * Query
-         */
-        query?: string | null;
-        /**
-         * Membership Status
-         */
-        membership_status?: string | null;
-        /**
-         * Role
-         */
-        role?: UserRole | null;
-        /**
-         * Sort
-         */
-        sort?: 'email' | 'status' | 'created_at';
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/institutions/{institution_id}/memberships';
-};
-
-export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetError = ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors[keyof ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetErrors];
-
-export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: MembershipPage;
-};
-
-export type ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponse = ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses[keyof ReadMembershipsApiV1InstitutionsInstitutionIdMembershipsGetResponses];
-
-export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostData = {
-    body: MembershipCreate;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/memberships';
-};
-
-export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostError = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostErrors];
-
-export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: MembershipResponse;
-};
-
-export type CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponse = CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses[keyof CreateMembershipApiV1InstitutionsInstitutionIdMembershipsPostResponses];
-
-export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: {
-        /**
-         * Role
-         */
-        role?: UserRole | null;
-    };
-    url: '/api/v1/institutions/{institution_id}/memberships/export.csv';
-};
-
-export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetError = ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors[keyof ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetErrors];
-
-export type ExportMembershipsApiV1InstitutionsInstitutionIdMembershipsExportCsvGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchData = {
-    body: MembershipStatusUpdate;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Membership Id
-         */
-        membership_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/memberships/{membership_id}';
-};
-
-export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchError = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchErrors];
-
-export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: MembershipResponse;
-};
-
-export type ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponse = ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses[keyof ChangeMembershipStatusApiV1InstitutionsInstitutionIdMembershipsMembershipIdPatchResponses];
-
-export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/roster-imports';
-};
-
-export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetError = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetErrors];
-
-export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses = {
-    /**
-     * Response Read Roster Imports Api V1 Institutions  Institution Id  Roster Imports Get
-     *
-     * Successful Response
-     */
-    200: Array<RosterImportSummary>;
-};
-
-export type ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponse = ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses[keyof ReadRosterImportsApiV1InstitutionsInstitutionIdRosterImportsGetResponses];
-
-export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostData = {
-    body: BodyPreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPost;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/roster-imports/preview';
-};
-
-export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostError = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostErrors];
-
-export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: RosterImportResponse;
-};
-
-export type PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponse = PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses[keyof PreviewRosterImportApiV1InstitutionsInstitutionIdRosterImportsPreviewPostResponses];
-
-export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/roster-imports/template';
-};
-
-export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetError = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetErrors];
-
-export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: string;
-};
-
-export type RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponse = RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses[keyof RosterTemplateApiV1InstitutionsInstitutionIdRosterImportsTemplateGetResponses];
-
-export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Roster Import Id
-         */
-        roster_import_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}';
-};
-
-export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetError = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetErrors];
-
-export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: RosterImportResponse;
-};
-
-export type ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponse = ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses[keyof ReadRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdGetResponses];
-
-export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Roster Import Id
-         */
-        roster_import_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/roster-imports/{roster_import_id}/commit';
-};
-
-export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostError = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostErrors];
-
-export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: RosterCommitResponse;
-};
-
-export type CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponse = CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses[keyof CommitRosterImportApiV1InstitutionsInstitutionIdRosterImportsRosterImportIdCommitPostResponses];
-
-export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostData = {
-    body: StaffAccountCreate;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/staff-accounts';
-};
-
-export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostError = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostErrors];
-
-export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: StaffAccountResponse;
-};
-
-export type ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionStaffAccountApiV1InstitutionsInstitutionIdStaffAccountsPostResponses];
-
-export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/student-access-requests';
-};
-
-export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetError = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetErrors];
-
-export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses = {
-    /**
-     * Response Read Student Access Requests Api V1 Institutions  Institution Id  Student Access Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<StudentAccessRequestSummary>;
-};
-
-export type ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponse = ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses[keyof ReadStudentAccessRequestsApiV1InstitutionsInstitutionIdStudentAccessRequestsGetResponses];
-
-export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostData = {
-    body: ManualRecoveryRequest;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Student Id
-         */
-        student_id: string;
-    };
-    query?: never;
-    url: '/api/v1/institutions/{institution_id}/students/{student_id}/manual-recovery';
-};
-
-export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostError = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostErrors];
-
-export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ManualRecoveryHandoff;
-};
-
-export type IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponse = IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses[keyof IssueStudentManualRecoveryApiV1InstitutionsInstitutionIdStudentsStudentIdManualRecoveryPostResponses];
-
-export type ReadNotificationsApiV1NotificationsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/notifications';
-};
-
-export type ReadNotificationsApiV1NotificationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadNotificationsApiV1NotificationsGetError = ReadNotificationsApiV1NotificationsGetErrors[keyof ReadNotificationsApiV1NotificationsGetErrors];
-
-export type ReadNotificationsApiV1NotificationsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: NotificationPage;
-};
-
-export type ReadNotificationsApiV1NotificationsGetResponse = ReadNotificationsApiV1NotificationsGetResponses[keyof ReadNotificationsApiV1NotificationsGetResponses];
-
-export type ReadNotificationApiV1NotificationsNotificationIdReadPostData = {
-    body?: never;
-    path: {
-        /**
-         * Notification Id
-         */
-        notification_id: string;
-    };
-    query?: never;
-    url: '/api/v1/notifications/{notification_id}/read';
-};
-
-export type ReadNotificationApiV1NotificationsNotificationIdReadPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadNotificationApiV1NotificationsNotificationIdReadPostError = ReadNotificationApiV1NotificationsNotificationIdReadPostErrors[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostErrors];
-
-export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: NotificationResponse;
-};
-
-export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
-
-export type ReadStudentOnboardingApiV1OnboardingGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/onboarding';
-};
-
-export type ReadStudentOnboardingApiV1OnboardingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadStudentOnboardingApiV1OnboardingGetError = ReadStudentOnboardingApiV1OnboardingGetErrors[keyof ReadStudentOnboardingApiV1OnboardingGetErrors];
-
-export type ReadStudentOnboardingApiV1OnboardingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: StudentOnboardingResponse;
-};
-
-export type ReadStudentOnboardingApiV1OnboardingGetResponse = ReadStudentOnboardingApiV1OnboardingGetResponses[keyof ReadStudentOnboardingApiV1OnboardingGetResponses];
-
-export type SaveStudentOnboardingStepApiV1OnboardingStepPutData = {
-    body: StudentOnboardingUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/onboarding/step';
-};
-
-export type SaveStudentOnboardingStepApiV1OnboardingStepPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SaveStudentOnboardingStepApiV1OnboardingStepPutError = SaveStudentOnboardingStepApiV1OnboardingStepPutErrors[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutErrors];
-
-export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: StudentOnboardingResponse;
-};
-
-export type SaveStudentOnboardingStepApiV1OnboardingStepPutResponse = SaveStudentOnboardingStepApiV1OnboardingStepPutResponses[keyof SaveStudentOnboardingStepApiV1OnboardingStepPutResponses];
-
-export type ReceiveEmailBounceApiV1OperatorEmailBouncePostData = {
-    body: BounceEventCreate;
-    headers?: {
-        /**
-         * X-Email-Webhook-Key
-         */
-        'x-email-webhook-key'?: string | null;
-    };
-    path?: never;
-    query?: never;
-    url: '/api/v1/operator/email/bounce';
-};
-
-export type ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReceiveEmailBounceApiV1OperatorEmailBouncePostError = ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostErrors];
-
-export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: EmailDeliveryResponse;
-};
-
-export type ReceiveEmailBounceApiV1OperatorEmailBouncePostResponse = ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses[keyof ReceiveEmailBounceApiV1OperatorEmailBouncePostResponses];
 
 export type ReadOpportunitiesApiV1OpportunitiesGetData = {
     body?: never;
@@ -11699,101 +12144,6 @@ export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponses = {
 
 export type ReadOpportunityApiV1OpportunitiesRoleIdGetResponse = ReadOpportunityApiV1OpportunitiesRoleIdGetResponses[keyof ReadOpportunityApiV1OpportunitiesRoleIdGetResponses];
 
-export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/opportunities/{role_id}/application-draft';
-};
-
-export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostError = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors];
-
-export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationDraftResponse;
-};
-
-export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponse = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses];
-
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/opportunities/{role_id}/match';
-};
-
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostError = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors];
-
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SemanticMatchResponse;
-};
-
-export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponse = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses];
-
-export type PreparationApiV1OpportunitiesRoleIdPreparationGetData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: {
-        /**
-         * Resume Id
-         */
-        resume_id?: string | null;
-    };
-    url: '/api/v1/opportunities/{role_id}/preparation';
-};
-
-export type PreparationApiV1OpportunitiesRoleIdPreparationGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreparationApiV1OpportunitiesRoleIdPreparationGetError = PreparationApiV1OpportunitiesRoleIdPreparationGetErrors[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetErrors];
-
-export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PreparationResponse;
-};
-
-export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponse = PreparationApiV1OpportunitiesRoleIdPreparationGetResponses[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetResponses];
-
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostData = {
     body?: never;
     path: {
@@ -11824,1550 +12174,566 @@ export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses = {
 
 export type SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponse = SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses[keyof SaveOpportunityApiV1OpportunitiesRoleIdSavePostResponses];
 
-export type SavedViewsApiV1OpportunityViewsGetData = {
+export type ReadStudentApplicationsApiV1ApplicationsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/opportunity-views';
+    url: '/api/v1/applications';
 };
 
-export type SavedViewsApiV1OpportunityViewsGetErrors = {
+export type ReadStudentApplicationsApiV1ApplicationsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type SavedViewsApiV1OpportunityViewsGetError = SavedViewsApiV1OpportunityViewsGetErrors[keyof SavedViewsApiV1OpportunityViewsGetErrors];
+export type ReadStudentApplicationsApiV1ApplicationsGetError = ReadStudentApplicationsApiV1ApplicationsGetErrors[keyof ReadStudentApplicationsApiV1ApplicationsGetErrors];
 
-export type SavedViewsApiV1OpportunityViewsGetResponses = {
+export type ReadStudentApplicationsApiV1ApplicationsGetResponses = {
     /**
-     * Response Saved Views Api V1 Opportunity Views Get
+     * Response Read Student Applications Api V1 Applications Get
      *
      * Successful Response
      */
-    200: Array<SavedViewResponse>;
+    200: Array<ApplicationResponse>;
 };
 
-export type SavedViewsApiV1OpportunityViewsGetResponse = SavedViewsApiV1OpportunityViewsGetResponses[keyof SavedViewsApiV1OpportunityViewsGetResponses];
+export type ReadStudentApplicationsApiV1ApplicationsGetResponse = ReadStudentApplicationsApiV1ApplicationsGetResponses[keyof ReadStudentApplicationsApiV1ApplicationsGetResponses];
 
-export type CreateViewApiV1OpportunityViewsPostData = {
-    body: SavedViewCreate;
+export type SubmitApplicationApiV1ApplicationsPostData = {
+    body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/opportunity-views';
+    url: '/api/v1/applications';
 };
 
-export type CreateViewApiV1OpportunityViewsPostErrors = {
+export type SubmitApplicationApiV1ApplicationsPostErrors = {
+    /**
+     * Direct submission is retired; use the versioned application packet.
+     */
+    410: unknown;
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateViewApiV1OpportunityViewsPostError = CreateViewApiV1OpportunityViewsPostErrors[keyof CreateViewApiV1OpportunityViewsPostErrors];
+export type SubmitApplicationApiV1ApplicationsPostError = SubmitApplicationApiV1ApplicationsPostErrors[keyof SubmitApplicationApiV1ApplicationsPostErrors];
 
-export type CreateViewApiV1OpportunityViewsPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: SavedViewResponse;
-};
-
-export type CreateViewApiV1OpportunityViewsPostResponse = CreateViewApiV1OpportunityViewsPostResponses[keyof CreateViewApiV1OpportunityViewsPostResponses];
-
-export type DeleteViewApiV1OpportunityViewsViewIdDeleteData = {
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetData = {
     body?: never;
     path: {
-        /**
-         * View Id
-         */
-        view_id: string;
-    };
-    query?: never;
-    url: '/api/v1/opportunity-views/{view_id}';
-};
-
-export type DeleteViewApiV1OpportunityViewsViewIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteViewApiV1OpportunityViewsViewIdDeleteError = DeleteViewApiV1OpportunityViewsViewIdDeleteErrors[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteErrors];
-
-export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponse = DeleteViewApiV1OpportunityViewsViewIdDeleteResponses[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteResponses];
-
-export type UpdateViewApiV1OpportunityViewsViewIdPutData = {
-    body: SavedViewCreate;
-    path: {
-        /**
-         * View Id
-         */
-        view_id: string;
-    };
-    query?: never;
-    url: '/api/v1/opportunity-views/{view_id}';
-};
-
-export type UpdateViewApiV1OpportunityViewsViewIdPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateViewApiV1OpportunityViewsViewIdPutError = UpdateViewApiV1OpportunityViewsViewIdPutErrors[keyof UpdateViewApiV1OpportunityViewsViewIdPutErrors];
-
-export type UpdateViewApiV1OpportunityViewsViewIdPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: SavedViewResponse;
-};
-
-export type UpdateViewApiV1OpportunityViewsViewIdPutResponse = UpdateViewApiV1OpportunityViewsViewIdPutResponses[keyof UpdateViewApiV1OpportunityViewsViewIdPutResponses];
-
-export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/admin-assignment';
-};
-
-export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetError = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetErrors];
-
-export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformAdminAssignmentResponse;
-};
-
-export type ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponse = ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses[keyof ReadPlatformAdminAssignmentApiV1PlatformAdminAssignmentGetResponses];
-
-export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostData = {
-    body: PlatformAdminTransferRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/admin-assignment/transfer';
-};
-
-export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostError = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostErrors];
-
-export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformAdminAssignmentResponse;
-};
-
-export type TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponse = TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses[keyof TransferPlatformAdminAssignmentApiV1PlatformAdminAssignmentTransferPostResponses];
-
-export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Institution Id
-         */
-        institution_id?: string | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/platform/audit/events';
-};
-
-export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetError = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetErrors];
-
-export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AuditEventPage;
-};
-
-export type ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponse = ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses[keyof ReadPlatformAuditEventsApiV1PlatformAuditEventsGetResponses];
-
-export type ReadPlatformDashboardApiV1PlatformDashboardGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/dashboard';
-};
-
-export type ReadPlatformDashboardApiV1PlatformDashboardGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformDashboardApiV1PlatformDashboardGetError = ReadPlatformDashboardApiV1PlatformDashboardGetErrors[keyof ReadPlatformDashboardApiV1PlatformDashboardGetErrors];
-
-export type ReadPlatformDashboardApiV1PlatformDashboardGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformDashboardSummary;
-};
-
-export type ReadPlatformDashboardApiV1PlatformDashboardGetResponse = ReadPlatformDashboardApiV1PlatformDashboardGetResponses[keyof ReadPlatformDashboardApiV1PlatformDashboardGetResponses];
-
-export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/institution-registration-requests';
-};
-
-export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetError = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetErrors];
-
-export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses = {
-    /**
-     * Response Read Platform Registration Requests Api V1 Platform Institution Registration Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<InstitutionRegistrationResponse>;
-};
-
-export type ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponse = ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses[keyof ReadPlatformRegistrationRequestsApiV1PlatformInstitutionRegistrationRequestsGetResponses];
-
-export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostData = {
-    body: InstitutionRegistrationDecision;
-    path: {
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institution-registration-requests/{request_id}/decision';
-};
-
-export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostError = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostErrors];
-
-export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionRegistrationResponse;
-};
-
-export type DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponse = DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses[keyof DecidePlatformRegistrationRequestApiV1PlatformInstitutionRegistrationRequestsRequestIdDecisionPostResponses];
-
-export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Query
-         */
-        query?: string | null;
-        /**
-         * Is Active
-         */
-        is_active?: boolean | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/platform/institutions';
-};
-
-export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetError = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetErrors];
-
-export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformInstitutionPage;
-};
-
-export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponse = ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses[keyof ReadPlatformInstitutionsApiV1PlatformInstitutionsGetResponses];
-
-export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostData = {
-    body: InstitutionProvisionRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/institutions';
-};
-
-export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostError = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostErrors];
-
-export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: InstitutionProvisionResponse;
-};
-
-export type ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponse = ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses[keyof ProvisionPlatformInstitutionApiV1PlatformInstitutionsPostResponses];
-
-export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}';
-};
-
-export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetError = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetErrors];
-
-export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformInstitutionDetail;
-};
-
-export type ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponse = ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses[keyof ReadPlatformInstitutionApiV1PlatformInstitutionsInstitutionIdGetResponses];
-
-export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostData = {
-    body: CaseAssignmentRequest;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Appeal Id
-         */
-        appeal_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/application-appeals/{appeal_id}/assignment';
-};
-
-export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostError = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostErrors];
-
-export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationAppealResponse;
-};
-
-export type ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponse = ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses[keyof ReassignPlatformAppealApiV1PlatformInstitutionsInstitutionIdApplicationAppealsAppealIdAssignmentPostResponses];
-
-export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: {
-        /**
-         * Application Status
-         */
-        application_status?: string | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/platform/institutions/{institution_id}/applications';
-};
-
-export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetError = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetErrors];
-
-export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AdminApplicationPage;
-};
-
-export type ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponse = ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses[keyof ReadPlatformInstitutionApplicationsApiV1PlatformInstitutionsInstitutionIdApplicationsGetResponses];
-
-export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostData = {
-    body: CaseAssignmentRequest;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
         /**
          * Application Id
          */
         application_id: string;
     };
     query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/assignment';
+    url: '/api/v1/applications/{application_id}';
 };
 
-export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors = {
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostError = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostErrors];
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetError = ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetErrors];
 
-export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses = {
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses = {
     /**
      * Successful Response
      */
     200: ApplicationResponse;
 };
 
-export type ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponse = ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses[keyof ReassignPlatformApplicationApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdAssignmentPostResponses];
+export type ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponse = ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses[keyof ReadStudentApplicationApiV1ApplicationsApplicationIdGetResponses];
 
-export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetData = {
-    body?: never;
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostData = {
+    body: ApplicationWithdrawal;
     path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
         /**
          * Application Id
          */
         application_id: string;
     };
     query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/applications/{application_id}/outcomes';
+    url: '/api/v1/applications/{application_id}/withdraw';
 };
 
-export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors = {
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetError = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetErrors];
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostError = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostErrors];
 
-export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses = {
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses = {
     /**
-     * Response Platform Outcome Drillthrough Api V1 Platform Institutions  Institution Id  Applications  Application Id  Outcomes Get
-     *
      * Successful Response
      */
-    200: Array<OutcomeEventResponse>;
+    200: ApplicationResponse;
 };
 
-export type PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponse = PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses[keyof PlatformOutcomeDrillthroughApiV1PlatformInstitutionsInstitutionIdApplicationsApplicationIdOutcomesGetResponses];
+export type WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponse = WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses[keyof WithdrawStudentApplicationApiV1ApplicationsApplicationIdWithdrawPostResponses];
 
-export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetData = {
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostData = {
+    body: ApplicationAppealCreate;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/appeals';
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostError = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostErrors];
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ApplicationAppealResponse;
+};
+
+export type SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponse = SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses[keyof SubmitApplicationAppealApiV1ApplicationsApplicationIdAppealsPostResponses];
+
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetData = {
     body?: never;
     path: {
         /**
-         * Institution Id
+         * Application Id
          */
-        institution_id: string;
+        application_id: string;
     };
     query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
+    url: '/api/v1/applications/{application_id}/deadline.ics';
 };
 
-export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors = {
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetError = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetErrors];
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetError = DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors[keyof DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetErrors];
 
-export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses = {
-    /**
-     * Response Read Platform Staff Accounts Api V1 Platform Institutions  Institution Id  Staff Accounts Get
-     *
-     * Successful Response
-     */
-    200: Array<PlatformStaffAccount>;
-};
-
-export type ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponse = ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses[keyof ReadPlatformStaffAccountsApiV1PlatformInstitutionsInstitutionIdStaffAccountsGetResponses];
-
-export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostData = {
-    body: PlatformStaffAccountCreate;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts';
-};
-
-export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostError = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostErrors];
-
-export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: PlatformStaffAccount;
-};
-
-export type ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponse = ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses[keyof ProvisionPlatformStaffAccountApiV1PlatformInstitutionsInstitutionIdStaffAccountsPostResponses];
-
-export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchData = {
-    body: PlatformStaffStatusChange;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-        /**
-         * Membership Id
-         */
-        membership_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/staff-accounts/{membership_id}';
-};
-
-export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchError = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchErrors];
-
-export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformStaffAccount;
-};
-
-export type ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponse = ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses[keyof ChangePlatformStaffAccessApiV1PlatformInstitutionsInstitutionIdStaffAccountsMembershipIdPatchResponses];
-
-export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostData = {
-    body: PlatformStaffAssignmentCreate;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/staff-assignments';
-};
-
-export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostError = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostErrors];
-
-export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: PlatformStaffAccount;
-};
-
-export type AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponse = AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses[keyof AssignExistingPlatformStaffApiV1PlatformInstitutionsInstitutionIdStaffAssignmentsPostResponses];
-
-export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchData = {
-    body: InstitutionStatusChange;
-    path: {
-        /**
-         * Institution Id
-         */
-        institution_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/institutions/{institution_id}/status';
-};
-
-export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchError = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchErrors];
-
-export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformInstitutionDetail;
-};
-
-export type SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponse = SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses[keyof SetPlatformInstitutionStatusApiV1PlatformInstitutionsInstitutionIdStatusPatchResponses];
-
-export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/metric-definitions';
-};
-
-export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetError = MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetErrors];
-
-export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses = {
-    /**
-     * Response Metric Definitions Api V1 Platform Metric Definitions Get
-     *
-     * Successful Response
-     */
-    200: Array<MetricDefinitionResponse>;
-};
-
-export type MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponse = MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses[keyof MetricDefinitionsApiV1PlatformMetricDefinitionsGetResponses];
-
-export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostData = {
-    body: MetricDefinitionCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/metric-definitions';
-};
-
-export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostError = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostErrors];
-
-export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: MetricDefinitionResponse;
-};
-
-export type CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponse = CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses[keyof CreateMetricDefinitionApiV1PlatformMetricDefinitionsPostResponses];
-
-export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostData = {
-    body: MetricDefinitionApproval;
-    path: {
-        /**
-         * Definition Id
-         */
-        definition_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/metric-definitions/{definition_id}/approve';
-};
-
-export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostError = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostErrors];
-
-export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: MetricDefinitionResponse;
-};
-
-export type ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponse = ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses[keyof ApproveMetricDefinitionApiV1PlatformMetricDefinitionsDefinitionIdApprovePostResponses];
-
-export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/reports/summary';
-};
-
-export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetError = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetErrors];
-
-export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformReportSummary;
-};
-
-export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponse = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses];
-
-export type ReadPlatformSettingsApiV1PlatformSettingsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/settings';
-};
-
-export type ReadPlatformSettingsApiV1PlatformSettingsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformSettingsApiV1PlatformSettingsGetError = ReadPlatformSettingsApiV1PlatformSettingsGetErrors[keyof ReadPlatformSettingsApiV1PlatformSettingsGetErrors];
-
-export type ReadPlatformSettingsApiV1PlatformSettingsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformSettingsResponse;
-};
-
-export type ReadPlatformSettingsApiV1PlatformSettingsGetResponse = ReadPlatformSettingsApiV1PlatformSettingsGetResponses[keyof ReadPlatformSettingsApiV1PlatformSettingsGetResponses];
-
-export type SetPlatformSettingsApiV1PlatformSettingsPatchData = {
-    body: PlatformSettingsUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/settings';
-};
-
-export type SetPlatformSettingsApiV1PlatformSettingsPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SetPlatformSettingsApiV1PlatformSettingsPatchError = SetPlatformSettingsApiV1PlatformSettingsPatchErrors[keyof SetPlatformSettingsApiV1PlatformSettingsPatchErrors];
-
-export type SetPlatformSettingsApiV1PlatformSettingsPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformSettingsResponse;
-};
-
-export type SetPlatformSettingsApiV1PlatformSettingsPatchResponse = SetPlatformSettingsApiV1PlatformSettingsPatchResponses[keyof SetPlatformSettingsApiV1PlatformSettingsPatchResponses];
-
-export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostData = {
-    body: ManualRecoveryRequest;
-    path: {
-        /**
-         * User Id
-         */
-        user_id: string;
-    };
-    query?: never;
-    url: '/api/v1/platform/staff-accounts/{user_id}/manual-recovery';
-};
-
-export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostError = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostErrors];
-
-export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ManualRecoveryHandoff;
-};
-
-export type IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponse = IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses[keyof IssueStaffManualRecoveryApiV1PlatformStaffAccountsUserIdManualRecoveryPostResponses];
-
-export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/platform/system-health';
-};
-
-export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetError = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetErrors];
-
-export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PlatformHealthSummary;
-};
-
-export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponse = ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses[keyof ReadPlatformSystemHealthApiV1PlatformSystemHealthGetResponses];
-
-export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostData = {
-    body: DataDeletionCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/privacy/deletion-requests';
-};
-
-export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostError = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostErrors];
-
-export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses = {
-    /**
-     * Successful Response
-     */
-    202: DataDeletionResponse;
-};
-
-export type CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponse = CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses[keyof CreateDeletionRequestApiV1PrivacyDeletionRequestsPostResponses];
-
-export type ReadOwnRequestsApiV1PrivacyRequestsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/privacy/requests';
-};
-
-export type ReadOwnRequestsApiV1PrivacyRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadOwnRequestsApiV1PrivacyRequestsGetError = ReadOwnRequestsApiV1PrivacyRequestsGetErrors[keyof ReadOwnRequestsApiV1PrivacyRequestsGetErrors];
-
-export type ReadOwnRequestsApiV1PrivacyRequestsGetResponses = {
-    /**
-     * Response Read Own Requests Api V1 Privacy Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<PrivacyRequestResponse>;
-};
-
-export type ReadOwnRequestsApiV1PrivacyRequestsGetResponse = ReadOwnRequestsApiV1PrivacyRequestsGetResponses[keyof ReadOwnRequestsApiV1PrivacyRequestsGetResponses];
-
-export type SubmitPrivacyRequestApiV1PrivacyRequestsPostData = {
-    body: PrivacyRequestCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/privacy/requests';
-};
-
-export type SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitPrivacyRequestApiV1PrivacyRequestsPostError = SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostErrors];
-
-export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: PrivacyRequestResponse;
-};
-
-export type SubmitPrivacyRequestApiV1PrivacyRequestsPostResponse = SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses[keyof SubmitPrivacyRequestApiV1PrivacyRequestsPostResponses];
-
-export type ReadProfileApiV1ProfileGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile';
-};
-
-export type ReadProfileApiV1ProfileGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadProfileApiV1ProfileGetError = ReadProfileApiV1ProfileGetErrors[keyof ReadProfileApiV1ProfileGetErrors];
-
-export type ReadProfileApiV1ProfileGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type ReadProfileApiV1ProfileGetResponse = ReadProfileApiV1ProfileGetResponses[keyof ReadProfileApiV1ProfileGetResponses];
-
-export type PatchProfileApiV1ProfilePatchData = {
-    body: ProfileUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile';
-};
-
-export type PatchProfileApiV1ProfilePatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PatchProfileApiV1ProfilePatchError = PatchProfileApiV1ProfilePatchErrors[keyof PatchProfileApiV1ProfilePatchErrors];
-
-export type PatchProfileApiV1ProfilePatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type PatchProfileApiV1ProfilePatchResponse = PatchProfileApiV1ProfilePatchResponses[keyof PatchProfileApiV1ProfilePatchResponses];
-
-export type ReplaceEducationApiV1ProfileEducationPutData = {
-    body: EducationUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/education';
-};
-
-export type ReplaceEducationApiV1ProfileEducationPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReplaceEducationApiV1ProfileEducationPutError = ReplaceEducationApiV1ProfileEducationPutErrors[keyof ReplaceEducationApiV1ProfileEducationPutErrors];
-
-export type ReplaceEducationApiV1ProfileEducationPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type ReplaceEducationApiV1ProfileEducationPutResponse = ReplaceEducationApiV1ProfileEducationPutResponses[keyof ReplaceEducationApiV1ProfileEducationPutResponses];
-
-export type PatchIdentityApiV1ProfileIdentityPatchData = {
-    body: IdentityUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/identity';
-};
-
-export type PatchIdentityApiV1ProfileIdentityPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PatchIdentityApiV1ProfileIdentityPatchError = PatchIdentityApiV1ProfileIdentityPatchErrors[keyof PatchIdentityApiV1ProfileIdentityPatchErrors];
-
-export type PatchIdentityApiV1ProfileIdentityPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type PatchIdentityApiV1ProfileIdentityPatchResponse = PatchIdentityApiV1ProfileIdentityPatchResponses[keyof PatchIdentityApiV1ProfileIdentityPatchResponses];
-
-export type ReplaceLinksApiV1ProfileLinksPutData = {
-    body: LinksUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/links';
-};
-
-export type ReplaceLinksApiV1ProfileLinksPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReplaceLinksApiV1ProfileLinksPutError = ReplaceLinksApiV1ProfileLinksPutErrors[keyof ReplaceLinksApiV1ProfileLinksPutErrors];
-
-export type ReplaceLinksApiV1ProfileLinksPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type ReplaceLinksApiV1ProfileLinksPutResponse = ReplaceLinksApiV1ProfileLinksPutResponses[keyof ReplaceLinksApiV1ProfileLinksPutResponses];
-
-export type RemovePhotoApiV1ProfilePhotoDeleteData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/photo';
-};
-
-export type RemovePhotoApiV1ProfilePhotoDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RemovePhotoApiV1ProfilePhotoDeleteError = RemovePhotoApiV1ProfilePhotoDeleteErrors[keyof RemovePhotoApiV1ProfilePhotoDeleteErrors];
-
-export type RemovePhotoApiV1ProfilePhotoDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type RemovePhotoApiV1ProfilePhotoDeleteResponse = RemovePhotoApiV1ProfilePhotoDeleteResponses[keyof RemovePhotoApiV1ProfilePhotoDeleteResponses];
-
-export type ReadPhotoApiV1ProfilePhotoGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/photo';
-};
-
-export type ReadPhotoApiV1ProfilePhotoGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadPhotoApiV1ProfilePhotoGetError = ReadPhotoApiV1ProfilePhotoGetErrors[keyof ReadPhotoApiV1ProfilePhotoGetErrors];
-
-export type ReadPhotoApiV1ProfilePhotoGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfilePhotoResponse;
-};
-
-export type ReadPhotoApiV1ProfilePhotoGetResponse = ReadPhotoApiV1ProfilePhotoGetResponses[keyof ReadPhotoApiV1ProfilePhotoGetResponses];
-
-export type UploadPhotoApiV1ProfilePhotoPutData = {
-    body: BodyUploadPhotoApiV1ProfilePhotoPut;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/photo';
-};
-
-export type UploadPhotoApiV1ProfilePhotoPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UploadPhotoApiV1ProfilePhotoPutError = UploadPhotoApiV1ProfilePhotoPutErrors[keyof UploadPhotoApiV1ProfilePhotoPutErrors];
-
-export type UploadPhotoApiV1ProfilePhotoPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfilePhotoResponse;
-};
-
-export type UploadPhotoApiV1ProfilePhotoPutResponse = UploadPhotoApiV1ProfilePhotoPutResponses[keyof UploadPhotoApiV1ProfilePhotoPutResponses];
-
-export type ReplacePreferencesApiV1ProfilePreferencesPutData = {
-    body: PreferencesUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/preferences';
-};
-
-export type ReplacePreferencesApiV1ProfilePreferencesPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReplacePreferencesApiV1ProfilePreferencesPutError = ReplacePreferencesApiV1ProfilePreferencesPutErrors[keyof ReplacePreferencesApiV1ProfilePreferencesPutErrors];
-
-export type ReplacePreferencesApiV1ProfilePreferencesPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type ReplacePreferencesApiV1ProfilePreferencesPutResponse = ReplacePreferencesApiV1ProfilePreferencesPutResponses[keyof ReplacePreferencesApiV1ProfilePreferencesPutResponses];
-
-export type ReplaceSkillsApiV1ProfileSkillsPutData = {
-    body: SkillsUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/profile/skills';
-};
-
-export type ReplaceSkillsApiV1ProfileSkillsPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReplaceSkillsApiV1ProfileSkillsPutError = ReplaceSkillsApiV1ProfileSkillsPutErrors[keyof ReplaceSkillsApiV1ProfileSkillsPutErrors];
-
-export type ReplaceSkillsApiV1ProfileSkillsPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: ProfileResponse;
-};
-
-export type ReplaceSkillsApiV1ProfileSkillsPutResponse = ReplaceSkillsApiV1ProfileSkillsPutResponses[keyof ReplaceSkillsApiV1ProfileSkillsPutResponses];
-
-export type ListResumesApiV1ResumesGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/resumes';
-};
-
-export type ListResumesApiV1ResumesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ListResumesApiV1ResumesGetError = ListResumesApiV1ResumesGetErrors[keyof ListResumesApiV1ResumesGetErrors];
-
-export type ListResumesApiV1ResumesGetResponses = {
-    /**
-     * Response List Resumes Api V1 Resumes Get
-     *
-     * Successful Response
-     */
-    200: Array<ResumeVersionResponse>;
-};
-
-export type ListResumesApiV1ResumesGetResponse = ListResumesApiV1ResumesGetResponses[keyof ListResumesApiV1ResumesGetResponses];
-
-export type GenerateResumeVersionApiV1ResumesGeneratePostData = {
-    body: ResumeContent;
-    path?: never;
-    query?: never;
-    url: '/api/v1/resumes/generate';
-};
-
-export type GenerateResumeVersionApiV1ResumesGeneratePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GenerateResumeVersionApiV1ResumesGeneratePostError = GenerateResumeVersionApiV1ResumesGeneratePostErrors[keyof GenerateResumeVersionApiV1ResumesGeneratePostErrors];
-
-export type GenerateResumeVersionApiV1ResumesGeneratePostResponses = {
-    /**
-     * Successful Response
-     */
-    201: ResumeVersionResponse;
-};
-
-export type GenerateResumeVersionApiV1ResumesGeneratePostResponse = GenerateResumeVersionApiV1ResumesGeneratePostResponses[keyof GenerateResumeVersionApiV1ResumesGeneratePostResponses];
-
-export type DeleteResumeVersionApiV1ResumesResumeIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Resume Id
-         */
-        resume_id: string;
-    };
-    query?: never;
-    url: '/api/v1/resumes/{resume_id}';
-};
-
-export type DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteResumeVersionApiV1ResumesResumeIdDeleteError = DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteErrors];
-
-export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type DeleteResumeVersionApiV1ResumesResumeIdDeleteResponse = DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses[keyof DeleteResumeVersionApiV1ResumesResumeIdDeleteResponses];
-
-export type ReadResumeApiV1ResumesResumeIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Resume Id
-         */
-        resume_id: string;
-    };
-    query?: never;
-    url: '/api/v1/resumes/{resume_id}';
-};
-
-export type ReadResumeApiV1ResumesResumeIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadResumeApiV1ResumesResumeIdGetError = ReadResumeApiV1ResumesResumeIdGetErrors[keyof ReadResumeApiV1ResumesResumeIdGetErrors];
-
-export type ReadResumeApiV1ResumesResumeIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ResumeVersionResponse;
-};
-
-export type ReadResumeApiV1ResumesResumeIdGetResponse = ReadResumeApiV1ResumesResumeIdGetResponses[keyof ReadResumeApiV1ResumesResumeIdGetResponses];
-
-export type DownloadResumeApiV1ResumesResumeIdDownloadGetData = {
-    body?: never;
-    path: {
-        /**
-         * Resume Id
-         */
-        resume_id: string;
-    };
-    query?: never;
-    url: '/api/v1/resumes/{resume_id}/download';
-};
-
-export type DownloadResumeApiV1ResumesResumeIdDownloadGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DownloadResumeApiV1ResumesResumeIdDownloadGetError = DownloadResumeApiV1ResumesResumeIdDownloadGetErrors[keyof DownloadResumeApiV1ResumesResumeIdDownloadGetErrors];
-
-export type DownloadResumeApiV1ResumesResumeIdDownloadGetResponses = {
+export type DownloadApplicationDeadlineApiV1ApplicationsApplicationIdDeadlineIcsGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetData = {
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetData = {
     body?: never;
     path: {
         /**
-         * Resume Id
+         * Application Id
          */
-        resume_id: string;
+        application_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/editable-content';
+    url: '/api/v1/applications/{application_id}/outcomes';
 };
 
-export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors = {
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetError = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetErrors];
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetError = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetErrors];
 
-export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses = {
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses = {
     /**
+     * Response Student Outcome Timeline Api V1 Applications  Application Id  Outcomes Get
+     *
      * Successful Response
      */
-    200: ResumeContent;
+    200: Array<OutcomeEventResponse>;
 };
 
-export type ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponse = ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses[keyof ReadEditableResumeContentApiV1ResumesResumeIdEditableContentGetResponses];
+export type StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponse = StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses[keyof StudentOutcomeTimelineApiV1ApplicationsApplicationIdOutcomesGetResponses];
 
-export type RetryResumeJobApiV1ResumesResumeIdRetryPostData = {
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostData = {
     body?: never;
     path: {
         /**
-         * Resume Id
+         * Role Id
          */
-        resume_id: string;
+        role_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/retry';
+    url: '/api/v1/opportunities/{role_id}/application-draft';
 };
 
-export type RetryResumeJobApiV1ResumesResumeIdRetryPostErrors = {
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type RetryResumeJobApiV1ResumesResumeIdRetryPostError = RetryResumeJobApiV1ResumesResumeIdRetryPostErrors[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostErrors];
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostError = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostErrors];
 
-export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponses = {
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses = {
     /**
      * Successful Response
      */
-    200: ResumeVersionResponse;
+    200: ApplicationDraftResponse;
 };
 
-export type RetryResumeJobApiV1ResumesResumeIdRetryPostResponse = RetryResumeJobApiV1ResumesResumeIdRetryPostResponses[keyof RetryResumeJobApiV1ResumesResumeIdRetryPostResponses];
+export type StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponse = StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses[keyof StartApplicationDraftApiV1OpportunitiesRoleIdApplicationDraftPostResponses];
 
-export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostData = {
-    body: ExtractionReviewRequest;
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteData = {
+    body?: never;
     path: {
         /**
-         * Resume Id
+         * Draft Id
          */
-        resume_id: string;
+        draft_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/review';
+    url: '/api/v1/application-drafts/{draft_id}';
 };
 
-export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors = {
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostError = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostErrors];
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteError = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteErrors];
 
-export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses = {
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses = {
     /**
      * Successful Response
      */
-    200: ResumeVersionResponse;
+    204: void;
 };
 
-export type ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponse = ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses[keyof ReviewResumeExtractionApiV1ResumesResumeIdReviewPostResponses];
+export type DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponse = DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses[keyof DiscardApplicationDraftApiV1ApplicationDraftsDraftIdDeleteResponses];
 
-export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostData = {
-    body: SuggestionReviewBatch;
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetData = {
+    body?: never;
     path: {
         /**
-         * Resume Id
+         * Draft Id
          */
-        resume_id: string;
+        draft_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/suggestion-review';
+    url: '/api/v1/application-drafts/{draft_id}';
 };
 
-export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors = {
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostError = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostErrors];
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetError = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetErrors];
 
-export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses = {
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses = {
     /**
      * Successful Response
      */
-    200: ResumeVersionResponse;
+    200: ApplicationDraftResponse;
 };
 
-export type ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponse = ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses[keyof ReviewResumeSuggestionsApiV1ResumesResumeIdSuggestionReviewPostResponses];
+export type ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponse = ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses[keyof ReadApplicationDraftApiV1ApplicationDraftsDraftIdGetResponses];
 
-export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostData = {
-    body: SuggestionDecisionRequest;
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutData = {
+    body: DraftResumeUpdate;
     path: {
         /**
-         * Resume Id
+         * Draft Id
          */
-        resume_id: string;
-        /**
-         * Suggestion Id
-         */
-        suggestion_id: string;
+        draft_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/suggestions/{suggestion_id}';
+    url: '/api/v1/application-drafts/{draft_id}/resume';
 };
 
-export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors = {
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostError = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostErrors];
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutError = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutErrors];
 
-export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses = {
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses = {
     /**
      * Successful Response
      */
-    200: ResumeVersionResponse;
+    200: ApplicationDraftResponse;
 };
 
-export type ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponse = ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses[keyof ReviewResumeSuggestionApiV1ResumesResumeIdSuggestionsSuggestionIdPostResponses];
+export type UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponse = UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses[keyof UpdateApplicationResumeApiV1ApplicationDraftsDraftIdResumePutResponses];
 
-export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostData = {
-    body: TailoredResumeRequest;
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutData = {
+    body: DraftProfileConfirmation;
     path: {
         /**
-         * Resume Id
+         * Draft Id
          */
-        resume_id: string;
+        draft_id: string;
     };
     query?: never;
-    url: '/api/v1/resumes/{resume_id}/tailored-versions';
+    url: '/api/v1/application-drafts/{draft_id}/profile-confirmation';
 };
 
-export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors = {
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostError = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostErrors];
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutError = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutErrors];
 
-export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses = {
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses = {
     /**
      * Successful Response
      */
-    201: ResumeVersionResponse;
+    200: ApplicationDraftResponse;
 };
 
-export type CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponse = CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses[keyof CreateTailoredResumeVersionApiV1ResumesResumeIdTailoredVersionsPostResponses];
+export type UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponse = UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses[keyof UpdateApplicationProfileApiV1ApplicationDraftsDraftIdProfileConfirmationPutResponses];
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutData = {
+    body: DraftDisclosureUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/disclosures';
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutError = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutErrors];
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponse = UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses[keyof UpdateApplicationDisclosuresApiV1ApplicationDraftsDraftIdDisclosuresPutResponses];
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutData = {
+    body: DraftMaterialTermsUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/material-terms';
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutError = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutErrors];
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDraftResponse;
+};
+
+export type UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponse = UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses[keyof UpdateApplicationMaterialTermsApiV1ApplicationDraftsDraftIdMaterialTermsPutResponses];
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetData = {
+    body?: never;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/review';
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetError = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetErrors];
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationReviewResponse;
+};
+
+export type ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponse = ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses[keyof ReadApplicationReviewApiV1ApplicationDraftsDraftIdReviewGetResponses];
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostData = {
+    body: DraftSubmitRequest;
+    headers: {
+        /**
+         * Idempotency-Key
+         */
+        'Idempotency-Key': string;
+    };
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/application-drafts/{draft_id}/submit';
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostError = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostErrors];
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ApplicationResponse;
+};
+
+export type SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponse = SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses[keyof SubmitApplicationDraftApiV1ApplicationDraftsDraftIdSubmitPostResponses];
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/disclosures';
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetError = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetErrors];
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDisclosureResponse;
+};
+
+export type ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponse = ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses[keyof ReadOwnApplicationDisclosuresApiV1ApplicationsApplicationIdDisclosuresGetResponses];
+
+export type ReadDashboardApiV1DashboardGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dashboard';
+};
+
+export type ReadDashboardApiV1DashboardGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadDashboardApiV1DashboardGetError = ReadDashboardApiV1DashboardGetErrors[keyof ReadDashboardApiV1DashboardGetErrors];
+
+export type ReadDashboardApiV1DashboardGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DashboardResponse;
+};
+
+export type ReadDashboardApiV1DashboardGetResponse = ReadDashboardApiV1DashboardGetResponses[keyof ReadDashboardApiV1DashboardGetResponses];
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/templates';
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetError = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors];
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses = {
+    /**
+     * Response Read Roadmap Templates Api V1 Roadmaps Templates Get
+     *
+     * Successful Response
+     */
+    200: Array<RoadmapTemplateResponse>;
+};
+
+export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponse = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses];
 
 export type ReadRoadmapAvailabilityApiV1RoadmapsAvailabilityGetData = {
     body?: never;
@@ -13421,6 +12787,31 @@ export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses = {
 
 export type ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponse = ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses[keyof ReadCurrentRoadmapApiV1RoadmapsCurrentGetResponses];
 
+export type ChooseRoadmapApiV1RoadmapsSelectPostData = {
+    body: RoadmapSelection;
+    path?: never;
+    query?: never;
+    url: '/api/v1/roadmaps/select';
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostError = ChooseRoadmapApiV1RoadmapsSelectPostErrors[keyof ChooseRoadmapApiV1RoadmapsSelectPostErrors];
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoadmapResponse;
+};
+
+export type ChooseRoadmapApiV1RoadmapsSelectPostResponse = ChooseRoadmapApiV1RoadmapsSelectPostResponses[keyof ChooseRoadmapApiV1RoadmapsSelectPostResponses];
+
 export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostData = {
     body: RoadmapProgressUpdate;
     path: {
@@ -13451,789 +12842,90 @@ export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses = {
 
 export type RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponse = RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses[keyof RecordRoadmapProgressApiV1RoadmapsNodesNodeKeyPostResponses];
 
-export type ChooseRoadmapApiV1RoadmapsSelectPostData = {
-    body: RoadmapSelection;
-    path?: never;
-    query?: never;
-    url: '/api/v1/roadmaps/select';
-};
-
-export type ChooseRoadmapApiV1RoadmapsSelectPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChooseRoadmapApiV1RoadmapsSelectPostError = ChooseRoadmapApiV1RoadmapsSelectPostErrors[keyof ChooseRoadmapApiV1RoadmapsSelectPostErrors];
-
-export type ChooseRoadmapApiV1RoadmapsSelectPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: RoadmapResponse;
-};
-
-export type ChooseRoadmapApiV1RoadmapsSelectPostResponse = ChooseRoadmapApiV1RoadmapsSelectPostResponses[keyof ChooseRoadmapApiV1RoadmapsSelectPostResponses];
-
-export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetData = {
+export type ReadNotificationsApiV1NotificationsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/roadmaps/templates';
+    url: '/api/v1/notifications';
 };
 
-export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors = {
+export type ReadNotificationsApiV1NotificationsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetError = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetErrors];
+export type ReadNotificationsApiV1NotificationsGetError = ReadNotificationsApiV1NotificationsGetErrors[keyof ReadNotificationsApiV1NotificationsGetErrors];
 
-export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses = {
+export type ReadNotificationsApiV1NotificationsGetResponses = {
     /**
-     * Response Read Roadmap Templates Api V1 Roadmaps Templates Get
-     *
      * Successful Response
      */
-    200: Array<RoadmapTemplateResponse>;
+    200: NotificationPage;
 };
 
-export type ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponse = ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses[keyof ReadRoadmapTemplatesApiV1RoadmapsTemplatesGetResponses];
+export type ReadNotificationsApiV1NotificationsGetResponse = ReadNotificationsApiV1NotificationsGetResponses[keyof ReadNotificationsApiV1NotificationsGetResponses];
 
-export type ReadServiceStatusApiV1ServiceStatusGetData = {
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostData = {
     body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/service-status';
-};
-
-export type ReadServiceStatusApiV1ServiceStatusGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ServiceStatusResponse;
-};
-
-export type ReadServiceStatusApiV1ServiceStatusGetResponse = ReadServiceStatusApiV1ServiceStatusGetResponses[keyof ReadServiceStatusApiV1ServiceStatusGetResponses];
-
-export type SubmitSupportRequestApiV1SupportRequestsPostData = {
-    body: SupportRequestCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/support/requests';
-};
-
-export type SubmitSupportRequestApiV1SupportRequestsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitSupportRequestApiV1SupportRequestsPostError = SubmitSupportRequestApiV1SupportRequestsPostErrors[keyof SubmitSupportRequestApiV1SupportRequestsPostErrors];
-
-export type SubmitSupportRequestApiV1SupportRequestsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: SupportRequestResponse;
-};
-
-export type SubmitSupportRequestApiV1SupportRequestsPostResponse = SubmitSupportRequestApiV1SupportRequestsPostResponses[keyof SubmitSupportRequestApiV1SupportRequestsPostResponses];
-
-export type ReadInstitutionOnboardingApiV1TnpOnboardingGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/onboarding';
-};
-
-export type ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadInstitutionOnboardingApiV1TnpOnboardingGetError = ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetErrors];
-
-export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionOnboardingResponse;
-};
-
-export type ReadInstitutionOnboardingApiV1TnpOnboardingGetResponse = ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses[keyof ReadInstitutionOnboardingApiV1TnpOnboardingGetResponses];
-
-export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutData = {
-    body: InstitutionOnboardingUpdate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/onboarding/step';
-};
-
-export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutError = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutErrors];
-
-export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses = {
-    /**
-     * Successful Response
-     */
-    200: InstitutionOnboardingResponse;
-};
-
-export type SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponse = SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses[keyof SaveInstitutionOnboardingStepApiV1TnpOnboardingStepPutResponses];
-
-export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/privacy/legal-holds';
-};
-
-export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetError = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetErrors];
-
-export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses = {
-    /**
-     * Response Read Legal Holds Api V1 Tnp Privacy Legal Holds Get
-     *
-     * Successful Response
-     */
-    200: Array<LegalHoldResponse>;
-};
-
-export type ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponse = ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses[keyof ReadLegalHoldsApiV1TnpPrivacyLegalHoldsGetResponses];
-
-export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostData = {
-    body: LegalHoldCreate;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/privacy/legal-holds';
-};
-
-export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostError = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostErrors];
-
-export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: LegalHoldResponse;
-};
-
-export type AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponse = AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses[keyof AddLegalHoldApiV1TnpPrivacyLegalHoldsPostResponses];
-
-export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchData = {
-    body: LegalHoldRelease;
     path: {
         /**
-         * Hold Id
+         * Notification Id
          */
-        hold_id: string;
+        notification_id: string;
     };
     query?: never;
-    url: '/api/v1/tnp/privacy/legal-holds/{hold_id}/release';
+    url: '/api/v1/notifications/{notification_id}/read';
 };
 
-export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors = {
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchError = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchErrors];
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostError = ReadNotificationApiV1NotificationsNotificationIdReadPostErrors[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostErrors];
 
-export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses = {
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponses = {
     /**
      * Successful Response
      */
-    200: LegalHoldResponse;
+    200: NotificationResponse;
 };
 
-export type RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponse = RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses[keyof RemoveLegalHoldApiV1TnpPrivacyLegalHoldsHoldIdReleasePatchResponses];
+export type ReadNotificationApiV1NotificationsNotificationIdReadPostResponse = ReadNotificationApiV1NotificationsNotificationIdReadPostResponses[keyof ReadNotificationApiV1NotificationsNotificationIdReadPostResponses];
 
-export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetData = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostData = {
     body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/privacy/requests';
-};
-
-export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetError = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetErrors];
-
-export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses = {
-    /**
-     * Response Read Institution Requests Api V1 Tnp Privacy Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<PrivacyRequestResponse>;
-};
-
-export type ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponse = ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses[keyof ReadInstitutionRequestsApiV1TnpPrivacyRequestsGetResponses];
-
-export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchData = {
-    body: PrivacyRequestDecision;
     path: {
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/privacy/requests/{request_id}';
-};
-
-export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchError = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchErrors];
-
-export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: PrivacyRequestResponse;
-};
-
-export type UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponse = UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses[keyof UpdateInstitutionRequestApiV1TnpPrivacyRequestsRequestIdPatchResponses];
-
-export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostData = {
-    body: CaseAssignmentRequest;
-    path: {
-        /**
-         * Appeal Id
-         */
-        appeal_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/assignment';
-};
-
-export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostError = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors];
-
-export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationAppealResponse;
-};
-
-export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponse = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses];
-
-export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostData = {
-    body: ApplicationAppealResolution;
-    path: {
-        /**
-         * Appeal Id
-         */
-        appeal_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/resolution';
-};
-
-export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostError = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors];
-
-export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationAppealResponse;
-};
-
-export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponse = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses];
-
-export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
         /**
          * Role Id
          */
-        role_id?: string | null;
-        /**
-         * Application Status
-         */
-        application_status?: string | null;
-        /**
-         * Work View
-         */
-        work_view?: string | null;
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/tnp/recruitment/applications';
-};
-
-export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetError = ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors];
-
-export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AdminApplicationPage;
-};
-
-export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponse = ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses];
-
-export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostData = {
-    body: BulkApplicationStatusRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/bulk/preview';
-};
-
-export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostError = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors];
-
-export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: BulkApplicationPreviewResponse;
-};
-
-export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponse = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses];
-
-export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostData = {
-    body: BulkApplicationApplyRequest;
-    path?: never;
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/bulk/status';
-};
-
-export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostError = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors];
-
-export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: BulkApplicationApplyResponse;
-};
-
-export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponse = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses];
-
-export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostData = {
-    body: CaseAssignmentRequest;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
+        role_id: string;
     };
     query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment';
+    url: '/api/v1/opportunities/{role_id}/match';
 };
 
-export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostError = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors];
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostError = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostErrors];
 
-export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses = {
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses = {
     /**
      * Successful Response
      */
-    200: ApplicationResponse;
+    200: SemanticMatchResponse;
 };
 
-export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponse = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses];
-
-export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment-history';
-};
-
-export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetError = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors];
-
-export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses = {
-    /**
-     * Response Read Application Assignment History Api V1 Tnp Recruitment Applications  Application Id  Assignment History Get
-     *
-     * Successful Response
-     */
-    200: Array<CaseAssignmentHistoryResponse>;
-};
-
-export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponse = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses];
-
-export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostData = {
-    body: CaseClaimRequest;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/claim';
-};
-
-export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostError = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors];
-
-export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponse = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses];
-
-export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
-};
-
-export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetError = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors];
-
-export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses = {
-    /**
-     * Response Tnp Outcome Timeline Api V1 Tnp Recruitment Applications  Application Id  Outcomes Get
-     *
-     * Successful Response
-     */
-    200: Array<OutcomeEventResponse>;
-};
-
-export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponse = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses];
-
-export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostData = {
-    body: OutcomeEventCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
-};
-
-export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostError = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors];
-
-export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: OutcomeEventResponse;
-};
-
-export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponse = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses];
-
-export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostData = {
-    body: ApplicationOverrideCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/override';
-};
-
-export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostError = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors];
-
-export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponse = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses];
-
-export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
-};
-
-export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetError = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors];
-
-export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses = {
-    /**
-     * Response Admin Requests Api V1 Tnp Recruitment Applications  Application Id  Requests Get
-     *
-     * Successful Response
-     */
-    200: Array<CorrectionResponse>;
-};
-
-export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponse = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses];
-
-export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostData = {
-    body: RequestCreate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
-};
-
-export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostError = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors];
-
-export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: CorrectionResponse;
-};
-
-export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponse = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses];
-
-export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-        /**
-         * Request Id
-         */
-        request_id: string;
-        /**
-         * Event Id
-         */
-        event_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/events/{event_id}/resume';
-};
-
-export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetError = SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors[keyof SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors];
-
-export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostData = {
-    body: RequestResolution;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-        /**
-         * Request Id
-         */
-        request_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/resolve';
-};
-
-export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostError = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors];
-
-export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: CorrectionResponse;
-};
-
-export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponse = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses];
-
-export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostData = {
-    body: ApplicationStatusUpdate;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/applications/{application_id}/status';
-};
-
-export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostError = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors];
-
-export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponse = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses];
+export type ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponse = ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses[keyof ReadSemanticMatchApiV1OpportunitiesRoleIdMatchPostResponses];
 
 export type ReadCompaniesApiV1TnpRecruitmentCompaniesGetData = {
     body?: never;
@@ -14369,6 +13061,36 @@ export type AddDriveApiV1TnpRecruitmentDrivesPostResponses = {
 
 export type AddDriveApiV1TnpRecruitmentDrivesPostResponse = AddDriveApiV1TnpRecruitmentDrivesPostResponses[keyof AddDriveApiV1TnpRecruitmentDrivesPostResponses];
 
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostData = {
+    body: ApplicationAppealResolution;
+    path: {
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/resolution';
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostError = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostErrors];
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponse = ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses[keyof ResolveAppealApiV1TnpRecruitmentApplicationAppealsAppealIdResolutionPostResponses];
+
 export type RemoveDriveApiV1TnpRecruitmentDrivesDriveIdDeleteData = {
     body?: never;
     path: {
@@ -14428,6 +13150,36 @@ export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses = {
 };
 
 export type EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponse = EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses[keyof EditDriveApiV1TnpRecruitmentDrivesDriveIdPatchResponses];
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/save';
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostError = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors];
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DriveResponse;
+};
+
+export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses];
 
 export type ChangeDriveStateApiV1TnpRecruitmentDrivesDriveIdActionsActionPostData = {
     body?: never;
@@ -14493,36 +13245,6 @@ export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResp
 
 export type DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponse = DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponses[keyof DuplicateAdminDriveApiV1TnpRecruitmentDrivesDriveIdDuplicatePostResponses];
 
-export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/drives/{drive_id}/publication-preview';
-};
-
-export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetError = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors];
-
-export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PublishPreview;
-};
-
-export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponse = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses];
-
 export type ReadRolesApiV1TnpRecruitmentDrivesDriveIdRolesGetData = {
     body?: never;
     path: {
@@ -14585,170 +13307,6 @@ export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses = {
 
 export type AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponse = AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses[keyof AddRoleApiV1TnpRecruitmentDrivesDriveIdRolesPostResponses];
 
-export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostData = {
-    body?: never;
-    path: {
-        /**
-         * Drive Id
-         */
-        drive_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/drives/{drive_id}/save';
-};
-
-export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostError = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostErrors];
-
-export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: DriveResponse;
-};
-
-export type SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponse = SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses[keyof SavePublishedDriveApiV1TnpRecruitmentDrivesDriveIdSavePostResponses];
-
-export type ReportApiV1TnpRecruitmentReportsGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Drive Id
-         */
-        drive_id?: string | null;
-    };
-    url: '/api/v1/tnp/recruitment/reports';
-};
-
-export type ReportApiV1TnpRecruitmentReportsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReportApiV1TnpRecruitmentReportsGetError = ReportApiV1TnpRecruitmentReportsGetErrors[keyof ReportApiV1TnpRecruitmentReportsGetErrors];
-
-export type ReportApiV1TnpRecruitmentReportsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReportResponse;
-};
-
-export type ReportApiV1TnpRecruitmentReportsGetResponse = ReportApiV1TnpRecruitmentReportsGetResponses[keyof ReportApiV1TnpRecruitmentReportsGetResponses];
-
-export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Page
-         */
-        page?: number;
-        /**
-         * Page Size
-         */
-        page_size?: number;
-        /**
-         * Application Status
-         */
-        application_status?: string | null;
-        /**
-         * Drive Id
-         */
-        drive_id?: string | null;
-        /**
-         * Start At
-         */
-        start_at?: string | null;
-        /**
-         * End At
-         */
-        end_at?: string | null;
-        /**
-         * Requests
-         */
-        requests?: string | null;
-        /**
-         * Q
-         */
-        q?: string | null;
-        /**
-         * Review Pending
-         */
-        review_pending?: boolean;
-        /**
-         * Work View
-         */
-        work_view?: string | null;
-    };
-    url: '/api/v1/tnp/recruitment/review-queue';
-};
-
-export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetError = ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors];
-
-export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationQueuePage;
-};
-
-export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponse = ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses];
-
-export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Application Id
-         */
-        application_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/review-queue/{application_id}';
-};
-
-export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetError = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors];
-
-export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ApplicationResponse;
-};
-
-export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponse = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses];
-
 export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchData = {
     body: RoleUpdate;
     path: {
@@ -14778,36 +13336,6 @@ export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses = {
 };
 
 export type EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponse = EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses[keyof EditRoleApiV1TnpRecruitmentRolesRoleIdPatchResponses];
-
-export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostData = {
-    body: EligibilityPreviewRequest;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: string;
-    };
-    query?: never;
-    url: '/api/v1/tnp/recruitment/roles/{role_id}/eligibility-preview';
-};
-
-export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostError = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors];
-
-export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: EligibilityResponse;
-};
-
-export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
 
 export type PublishAdminRoleApiV1TnpRecruitmentRolesRoleIdPublishPostData = {
     body?: never;
@@ -14901,6 +13429,36 @@ export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses = {
 
 export type AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponse = AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses[keyof AddRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsPostResponses];
 
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostData = {
+    body: EligibilityPreviewRequest;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/roles/{role_id}/eligibility-preview';
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostError = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostErrors];
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: EligibilityResponse;
+};
+
+export type PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponse = PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses[keyof PreviewAdminEligibilityApiV1TnpRecruitmentRolesRoleIdEligibilityPreviewPostResponses];
+
 export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostData = {
     body?: never;
     path: {
@@ -14934,3 +13492,1574 @@ export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPu
 };
 
 export type PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponse = PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses[keyof PublishAdminRuleSetApiV1TnpRecruitmentRolesRoleIdRuleSetsRuleSetIdPublishPostResponses];
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Role Id
+         */
+        role_id?: string | null;
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Work View
+         */
+        work_view?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/tnp/recruitment/applications';
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetError = ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetErrors];
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminApplicationPage;
+};
+
+export type ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponse = ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses[keyof ReadApplicationsApiV1TnpRecruitmentApplicationsGetResponses];
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostData = {
+    body: CaseClaimRequest;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/claim';
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostError = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostErrors];
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponse = ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses[keyof ClaimApplicationApiV1TnpRecruitmentApplicationsApplicationIdClaimPostResponses];
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment';
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostError = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostErrors];
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponse = AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses[keyof AssignApplicationApiV1TnpRecruitmentApplicationsApplicationIdAssignmentPostResponses];
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/assignment-history';
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetError = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetErrors];
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses = {
+    /**
+     * Response Read Application Assignment History Api V1 Tnp Recruitment Applications  Application Id  Assignment History Get
+     *
+     * Successful Response
+     */
+    200: Array<CaseAssignmentHistoryResponse>;
+};
+
+export type ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponse = ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses[keyof ReadApplicationAssignmentHistoryApiV1TnpRecruitmentApplicationsApplicationIdAssignmentHistoryGetResponses];
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostData = {
+    body: CaseAssignmentRequest;
+    path: {
+        /**
+         * Appeal Id
+         */
+        appeal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/application-appeals/{appeal_id}/assignment';
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostError = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostErrors];
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationAppealResponse;
+};
+
+export type AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponse = AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses[keyof AssignApplicationAppealApiV1TnpRecruitmentApplicationAppealsAppealIdAssignmentPostResponses];
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostData = {
+    body: BulkApplicationStatusRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/bulk/preview';
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostError = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostErrors];
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationPreviewResponse;
+};
+
+export type PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponse = PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses[keyof PreviewBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkPreviewPostResponses];
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostData = {
+    body: BulkApplicationApplyRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/bulk/status';
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostError = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostErrors];
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: BulkApplicationApplyResponse;
+};
+
+export type ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponse = ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses[keyof ApplyBulkApplicationChangeApiV1TnpRecruitmentApplicationsBulkStatusPostResponses];
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostData = {
+    body: ApplicationStatusUpdate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/status';
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostError = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostErrors];
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponse = ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses[keyof ChangeApplicationStatusApiV1TnpRecruitmentApplicationsApplicationIdStatusPostResponses];
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostData = {
+    body: ApplicationOverrideCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/override';
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostError = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostErrors];
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponse = OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses[keyof OverrideApplicationDecisionApiV1TnpRecruitmentApplicationsApplicationIdOverridePostResponses];
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetError = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetErrors];
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses = {
+    /**
+     * Response Tnp Outcome Timeline Api V1 Tnp Recruitment Applications  Application Id  Outcomes Get
+     *
+     * Successful Response
+     */
+    200: Array<OutcomeEventResponse>;
+};
+
+export type TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponse = TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses[keyof TnpOutcomeTimelineApiV1TnpRecruitmentApplicationsApplicationIdOutcomesGetResponses];
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostData = {
+    body: OutcomeEventCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/outcomes';
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostError = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostErrors];
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OutcomeEventResponse;
+};
+
+export type RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponse = RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses[keyof RecordOutcomeEventApiV1TnpRecruitmentApplicationsApplicationIdOutcomesPostResponses];
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetError = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetErrors];
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses = {
+    /**
+     * Response Read Role Material Terms Api V1 Admin Recruitment Roles  Role Id  Material Terms Get
+     *
+     * Successful Response
+     */
+    200: MaterialTermsResponse | null;
+};
+
+export type ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponse = ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses[keyof ReadRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsGetResponses];
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutData = {
+    body: MaterialTermsUpdate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms';
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutError = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutErrors];
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsResponse;
+};
+
+export type SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponse = SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses[keyof SaveRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsPutResponses];
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query: {
+        /**
+         * From Version
+         */
+        from_version: number;
+        /**
+         * To Version
+         */
+        to_version: number;
+    };
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/compare';
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetError = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetErrors];
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsComparisonResponse;
+};
+
+export type ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponse = ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses[keyof ReadMaterialTermsComparisonApiV1AdminRecruitmentRolesRoleIdMaterialTermsCompareGetResponses];
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+        /**
+         * Terms Id
+         */
+        terms_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/material-terms/{terms_id}/publish';
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostError = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostErrors];
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaterialTermsResponse;
+};
+
+export type PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponse = PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses[keyof PublishRoleMaterialTermsApiV1AdminRecruitmentRolesRoleIdMaterialTermsTermsIdPublishPostResponses];
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetError = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetErrors];
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses = {
+    /**
+     * Response Read Role Application Form Api V1 Admin Recruitment Roles  Role Id  Application Form Get
+     *
+     * Successful Response
+     */
+    200: ApplicationFormResponse | null;
+};
+
+export type ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponse = ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses[keyof ReadRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormGetResponses];
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutData = {
+    body: ApplicationFormUpdate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form';
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutError = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutErrors];
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationFormResponse;
+};
+
+export type SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponse = SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses[keyof SaveRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPutResponses];
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/recruitment/roles/{role_id}/application-form/publish';
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostError = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostErrors];
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationFormResponse;
+};
+
+export type PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponse = PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses[keyof PublishRoleApplicationFormApiV1AdminRecruitmentRolesRoleIdApplicationFormPublishPostResponses];
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/compliance/applications/{application_id}/disclosures';
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetError = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetErrors];
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationDisclosureResponse;
+};
+
+export type ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponse = ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses[keyof ReadApplicationDisclosuresForComplianceApiV1AdminComplianceApplicationsApplicationIdDisclosuresGetResponses];
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Actor User Id
+         */
+        actor_user_id?: string | null;
+        /**
+         * Resource Type
+         */
+        resource_type?: string | null;
+        /**
+         * Action
+         */
+        action?: string | null;
+        /**
+         * Outcome
+         */
+        outcome?: string | null;
+        /**
+         * Correlation Id
+         */
+        correlation_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+        /**
+         * Sort
+         */
+        sort?: 'asc' | 'desc';
+    };
+    url: '/api/v1/admin/audit/events';
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetError = ReadAuditEventsApiV1AdminAuditEventsGetErrors[keyof ReadAuditEventsApiV1AdminAuditEventsGetErrors];
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AuditEventPage;
+};
+
+export type ReadAuditEventsApiV1AdminAuditEventsGetResponse = ReadAuditEventsApiV1AdminAuditEventsGetResponses[keyof ReadAuditEventsApiV1AdminAuditEventsGetResponses];
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Actor User Id
+         */
+        actor_user_id?: string | null;
+        /**
+         * Resource Type
+         */
+        resource_type?: string | null;
+        /**
+         * Action
+         */
+        action?: string | null;
+        /**
+         * Outcome
+         */
+        outcome?: string | null;
+        /**
+         * Correlation Id
+         */
+        correlation_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Sort
+         */
+        sort?: 'asc' | 'desc';
+    };
+    url: '/api/v1/admin/audit/export.csv';
+};
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetError = DownloadAuditExportApiV1AdminAuditExportCsvGetErrors[keyof DownloadAuditExportApiV1AdminAuditExportCsvGetErrors];
+
+export type DownloadAuditExportApiV1AdminAuditExportCsvGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ReadPoliciesApiV1AdminIntelligencePoliciesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/intelligence/policies';
+};
+
+export type ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPoliciesApiV1AdminIntelligencePoliciesGetError = ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors[keyof ReadPoliciesApiV1AdminIntelligencePoliciesGetErrors];
+
+export type ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses = {
+    /**
+     * Response Read Policies Api V1 Admin Intelligence Policies Get
+     *
+     * Successful Response
+     */
+    200: Array<PolicyResponse>;
+};
+
+export type ReadPoliciesApiV1AdminIntelligencePoliciesGetResponse = ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses[keyof ReadPoliciesApiV1AdminIntelligencePoliciesGetResponses];
+
+export type AddPolicyApiV1AdminIntelligencePoliciesPostData = {
+    body: PolicyCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/intelligence/policies';
+};
+
+export type AddPolicyApiV1AdminIntelligencePoliciesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddPolicyApiV1AdminIntelligencePoliciesPostError = AddPolicyApiV1AdminIntelligencePoliciesPostErrors[keyof AddPolicyApiV1AdminIntelligencePoliciesPostErrors];
+
+export type AddPolicyApiV1AdminIntelligencePoliciesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PolicyResponse;
+};
+
+export type AddPolicyApiV1AdminIntelligencePoliciesPostResponse = AddPolicyApiV1AdminIntelligencePoliciesPostResponses[keyof AddPolicyApiV1AdminIntelligencePoliciesPostResponses];
+
+export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostData = {
+    body: PolicyReview;
+    path: {
+        /**
+         * Policy Id
+         */
+        policy_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/intelligence/policies/{policy_id}/review';
+};
+
+export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostError = DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors[keyof DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostErrors];
+
+export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PolicyResponse;
+};
+
+export type DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponse = DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses[keyof DecidePolicyApiV1AdminIntelligencePoliciesPolicyIdReviewPostResponses];
+
+export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostData = {
+    body: PolicyQuestion;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/intelligence/policies/query';
+};
+
+export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostError = QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors[keyof QueryPolicyApiV1AdminIntelligencePoliciesQueryPostErrors];
+
+export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PolicyAnswer;
+};
+
+export type QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponse = QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses[keyof QueryPolicyApiV1AdminIntelligencePoliciesQueryPostResponses];
+
+export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/intelligence/roles/{role_id}/extractions';
+};
+
+export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetError = ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors[keyof ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetErrors];
+
+export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses = {
+    /**
+     * Response Read Extractions Api V1 Admin Intelligence Roles  Role Id  Extractions Get
+     *
+     * Successful Response
+     */
+    200: Array<ExtractionResponse>;
+};
+
+export type ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponse = ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses[keyof ReadExtractionsApiV1AdminIntelligenceRolesRoleIdExtractionsGetResponses];
+
+export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostData = {
+    body: ExtractionCreate;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/intelligence/roles/{role_id}/extractions';
+};
+
+export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostError = AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors[keyof AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostErrors];
+
+export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ExtractionResponse;
+};
+
+export type AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponse = AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses[keyof AddExtractionApiV1AdminIntelligenceRolesRoleIdExtractionsPostResponses];
+
+export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostData = {
+    body: ExtractionReview;
+    path: {
+        /**
+         * Proposal Id
+         */
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/intelligence/extractions/{proposal_id}/review';
+};
+
+export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostError = DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors[keyof DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostErrors];
+
+export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ExtractionResponse;
+};
+
+export type DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponse = DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses[keyof DecideExtractionApiV1AdminIntelligenceExtractionsProposalIdReviewPostResponses];
+
+export type CreateNotificationApiV1AdminNotificationsPostData = {
+    body: NotificationCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/notifications';
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostError = CreateNotificationApiV1AdminNotificationsPostErrors[keyof CreateNotificationApiV1AdminNotificationsPostErrors];
+
+export type CreateNotificationApiV1AdminNotificationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: NotificationResponse;
+};
+
+export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Job Status
+         */
+        job_status?: string | null;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/admin/operations/resume-jobs';
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetError = ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetErrors];
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobPage;
+};
+
+export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponse = ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses[keyof ReadResumeJobsApiV1AdminOperationsResumeJobsGetResponses];
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/operations/summary';
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetError = ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetErrors];
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: OperationsSummaryResponse;
+};
+
+export type ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponse = ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses[keyof ReadOperationsSummaryApiV1AdminOperationsSummaryGetResponses];
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostData = {
+    body?: never;
+    path: {
+        /**
+         * Job Id
+         */
+        job_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/operations/resume-jobs/{job_id}/cancel';
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostError = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostErrors];
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobOperatorResponse;
+};
+
+export type CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponse = CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses[keyof CancelJobApiV1AdminOperationsResumeJobsJobIdCancelPostResponses];
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostData = {
+    body?: never;
+    path: {
+        /**
+         * Job Id
+         */
+        job_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/operations/resume-jobs/{job_id}/retry';
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostError = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostErrors];
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResumeJobOperatorResponse;
+};
+
+export type RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponse = RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses[keyof RetryJobApiV1AdminOperationsResumeJobsJobIdRetryPostResponses];
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetError = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetErrors];
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses = {
+    /**
+     * Response Admin Requests Api V1 Tnp Recruitment Applications  Application Id  Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<CorrectionResponse>;
+};
+
+export type AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponse = AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses[keyof AdminRequestsApiV1TnpRecruitmentApplicationsApplicationIdRequestsGetResponses];
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostData = {
+    body: RequestCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests';
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostError = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostErrors];
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponse = CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses[keyof CreateRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsPostResponses];
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostData = {
+    body: RequestResolution;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/resolve';
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostError = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostErrors];
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponse = ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses[keyof ResolveRequestApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdResolvePostResponses];
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+        /**
+         * Application Status
+         */
+        application_status?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Requests
+         */
+        requests?: string | null;
+        /**
+         * Q
+         */
+        q?: string | null;
+        /**
+         * Review Pending
+         */
+        review_pending?: boolean;
+        /**
+         * Work View
+         */
+        work_view?: string | null;
+    };
+    url: '/api/v1/tnp/recruitment/review-queue';
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetError = ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetErrors];
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationQueuePage;
+};
+
+export type ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponse = ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses[keyof ReviewQueueApiV1TnpRecruitmentReviewQueueGetResponses];
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+        /**
+         * Event Id
+         */
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/applications/{application_id}/requests/{request_id}/events/{event_id}/resume';
+};
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetError = SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors[keyof SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetErrors];
+
+export type SupplementalResumeApiV1TnpRecruitmentApplicationsApplicationIdRequestsRequestIdEventsEventIdResumeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/review-queue/{application_id}';
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetError = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetErrors];
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponse = ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses[keyof ReviewDetailApiV1TnpRecruitmentReviewQueueApplicationIdGetResponses];
+
+export type ReportApiV1TnpRecruitmentReportsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+    };
+    url: '/api/v1/tnp/recruitment/reports';
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetError = ReportApiV1TnpRecruitmentReportsGetErrors[keyof ReportApiV1TnpRecruitmentReportsGetErrors];
+
+export type ReportApiV1TnpRecruitmentReportsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReportResponse;
+};
+
+export type ReportApiV1TnpRecruitmentReportsGetResponse = ReportApiV1TnpRecruitmentReportsGetResponses[keyof ReportApiV1TnpRecruitmentReportsGetResponses];
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetData = {
+    body?: never;
+    path: {
+        /**
+         * Drive Id
+         */
+        drive_id: string;
+    };
+    query?: never;
+    url: '/api/v1/tnp/recruitment/drives/{drive_id}/publication-preview';
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetError = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetErrors];
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PublishPreview;
+};
+
+export type PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponse = PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses[keyof PreviewPublicationApiV1TnpRecruitmentDrivesDriveIdPublicationPreviewGetResponses];
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/requests';
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetError = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetErrors];
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses = {
+    /**
+     * Response Student Requests Api V1 Applications  Application Id  Requests Get
+     *
+     * Successful Response
+     */
+    200: Array<CorrectionResponse>;
+};
+
+export type StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponse = StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses[keyof StudentRequestsApiV1ApplicationsApplicationIdRequestsGetResponses];
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostData = {
+    body: RequestResponseCreate;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}/requests/{request_id}/response';
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostError = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostErrors];
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: CorrectionResponse;
+};
+
+export type StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponse = StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses[keyof StudentResponseApiV1ApplicationsApplicationIdRequestsRequestIdResponsePostResponses];
+
+export type SavedViewsApiV1OpportunityViewsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunity-views';
+};
+
+export type SavedViewsApiV1OpportunityViewsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavedViewsApiV1OpportunityViewsGetError = SavedViewsApiV1OpportunityViewsGetErrors[keyof SavedViewsApiV1OpportunityViewsGetErrors];
+
+export type SavedViewsApiV1OpportunityViewsGetResponses = {
+    /**
+     * Response Saved Views Api V1 Opportunity Views Get
+     *
+     * Successful Response
+     */
+    200: Array<SavedViewResponse>;
+};
+
+export type SavedViewsApiV1OpportunityViewsGetResponse = SavedViewsApiV1OpportunityViewsGetResponses[keyof SavedViewsApiV1OpportunityViewsGetResponses];
+
+export type CreateViewApiV1OpportunityViewsPostData = {
+    body: SavedViewCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunity-views';
+};
+
+export type CreateViewApiV1OpportunityViewsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateViewApiV1OpportunityViewsPostError = CreateViewApiV1OpportunityViewsPostErrors[keyof CreateViewApiV1OpportunityViewsPostErrors];
+
+export type CreateViewApiV1OpportunityViewsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedViewResponse;
+};
+
+export type CreateViewApiV1OpportunityViewsPostResponse = CreateViewApiV1OpportunityViewsPostResponses[keyof CreateViewApiV1OpportunityViewsPostResponses];
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * View Id
+         */
+        view_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunity-views/{view_id}';
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteError = DeleteViewApiV1OpportunityViewsViewIdDeleteErrors[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteErrors];
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteViewApiV1OpportunityViewsViewIdDeleteResponse = DeleteViewApiV1OpportunityViewsViewIdDeleteResponses[keyof DeleteViewApiV1OpportunityViewsViewIdDeleteResponses];
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutData = {
+    body: SavedViewCreate;
+    path: {
+        /**
+         * View Id
+         */
+        view_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunity-views/{view_id}';
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutError = UpdateViewApiV1OpportunityViewsViewIdPutErrors[keyof UpdateViewApiV1OpportunityViewsViewIdPutErrors];
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedViewResponse;
+};
+
+export type UpdateViewApiV1OpportunityViewsViewIdPutResponse = UpdateViewApiV1OpportunityViewsViewIdPutResponses[keyof UpdateViewApiV1OpportunityViewsViewIdPutResponses];
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetData = {
+    body?: never;
+    path: {
+        /**
+         * Role Id
+         */
+        role_id: string;
+    };
+    query?: {
+        /**
+         * Resume Id
+         */
+        resume_id?: string | null;
+    };
+    url: '/api/v1/opportunities/{role_id}/preparation';
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetError = PreparationApiV1OpportunitiesRoleIdPreparationGetErrors[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetErrors];
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PreparationResponse;
+};
+
+export type PreparationApiV1OpportunitiesRoleIdPreparationGetResponse = PreparationApiV1OpportunitiesRoleIdPreparationGetResponses[keyof PreparationApiV1OpportunitiesRoleIdPreparationGetResponses];

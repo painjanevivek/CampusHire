@@ -34,8 +34,8 @@ export function AuthForm({
       });
       setStatus("complete");
       if (result.next_step === "terms_acceptance") return router.push("/accept-terms");
-      if (result.next_step === "mfa_setup") return router.push(staffMfaSetupPath(result.user.workspace));
-      if (result.next_step === "mfa_challenge") return router.push(result.user.workspace === "tnp" ? "/tnp/mfa/challenge" : "/admin/mfa/challenge");
+      if (result.next_step === "mfa_setup") return router.push(result.user.workspace === "student" ? "/student/mfa/setup" : staffMfaSetupPath(result.user.workspace));
+      if (result.next_step === "mfa_challenge") return router.push(result.user.workspace === "student" ? "/student/mfa/challenge" : result.user.workspace === "tnp" ? "/tnp/mfa/challenge" : "/admin/mfa/challenge");
       router.push(redirectTo ?? "/dashboard");
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "Check your connection and try again.");
@@ -69,7 +69,7 @@ export function AuthForm({
         label={isStudent ? "College email" : "Username"}
         autoComplete={isStudent ? "email" : "username"}
         required
-        placeholder={isStudent ? "you@college.edu" : "Enter your username"}
+        placeholder={isStudent ? "name.surname23@pccoepune.org" : "Enter your username"}
       />
       <PasswordInput
         id="password"

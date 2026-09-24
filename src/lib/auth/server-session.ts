@@ -12,6 +12,12 @@ export type SessionUser = {
   membership_status?: string | null;
   workspace?: "admin" | "tnp" | "student";
   capabilities?: string[];
+  placement_access?: {
+    available: boolean;
+    study_year: number | null;
+    academic_year_start: number | null;
+    verification_required: boolean;
+  } | null;
 };
 
 const TNP_ROLES = new Set(["tnp_owner", "tnp_admin", "tnp_reviewer", "tnp_auditor"]);

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { PageContainer, PageHeader } from "@/components/layout/page-layout";
 import { Alert } from "@/components/ui/feedback";
-import type { OpportunityPage, ResumeChoice } from "@/features/recruitment/types";
+import type { ResumeChoice } from "@/features/recruitment/types";
 import { useResource } from "./use-resource";
 import styles from "./experience.module.css";
 
@@ -42,14 +42,10 @@ function RolePreparation({ roleId }: { roleId: string }) {
 
 export function Preparation() {
   const roleId = useSearchParams().get("role");
-  const roles = useResource<OpportunityPage>(roleId ? null : "/opportunities?saved_only=true");
   return <PageContainer context="student" className={styles.stack}>
     <PageHeader eyebrow="Preparation" title="Turn your profile into a clear next step." description="Review your resume, follow approved activities, or prepare for a particular opportunity." />
     {roleId ? <RolePreparation key={roleId} roleId={roleId} /> : <>
       <div className={styles.grid}><section className={styles.panel}><h2>Resume</h2><p>Review extracted facts and accept only the changes you want.</p><Link className={styles.button} href="/resume">Open resume workspace</Link></section><section className={styles.panel}><h2>Roadmap</h2><p>Work through approved activities and record when you complete each one.</p><Link className={styles.button} href="/roadmap">Open roadmap</Link></section></div>
-      <section className={styles.panel}><h2>Prepare for a saved opportunity</h2>{roles.error && <Alert tone="error">{roles.error} <button onClick={roles.refresh}>Retry</button></Alert>}{roles.loading && <p role="status">Loading saved roles…</p>}
-        {roles.data?.items.map(role => <p key={role.id}><Link href={`/preparation?role=${role.id}`}>{role.title} · {role.company_name}</Link></p>)}
-        {!roles.loading && !roles.data?.items.length && <p>Save a role to bring its preparation context here.</p>}<Link href="/opportunities">Explore opportunities</Link></section>
     </>}
   </PageContainer>;
 }

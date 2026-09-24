@@ -71,6 +71,7 @@ describe("student onboarding stages", () => {
     expect(screen.queryByText(/Complete these steps to open your workspace/)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /finish later/i })).not.toBeInTheDocument();
     expect(screen.getByText(/Five guided steps help your placement team understand your background/)).toBeInTheDocument();
+    expect(document.documentElement).toHaveClass("onboarding-scrollbar-hidden");
     expect(screen.queryByText(/optional/i)).not.toBeInTheDocument();
     await waitFor(() => expect(apiRequestMock).toHaveBeenCalledWith("/onboarding", { cache: "no-store" }));
   });
@@ -85,20 +86,51 @@ describe("student onboarding stages", () => {
     expect(screen.getByText("Step 3 of 5")).toBeInTheDocument();
   });
 
-  it("lets students skip experience without submitting a partial entry", async () => {
+  it("lets students say they have no internships and continue with an empty list", async () => {
     apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 3 });
 
     render(<StudentOnboardingWizard />);
     expect(await screen.findByRole("heading", { name: "Experience" })).toBeInTheDocument();
-    fireEvent.change(await screen.findByLabelText("Organization"), { target: { value: "Partial internship" } });
-    fireEvent.click(screen.getByRole("button", { name: "Skip this step" }));
+    fireEvent.click(screen.getByRole("radio", { name: "No" }));
+    fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
 
     expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(1));
-    const skipRequest = JSON.parse(String(csrfRequestMock.mock.calls[0][1].body)) as Record<string, unknown>;
-    expect(skipRequest).toMatchObject({ step: 3 });
-    expect(skipRequest).not.toHaveProperty("experience");
-    expect(screen.queryByText(/Experience skipped/i)).not.toBeInTheDocument();
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({
+      step: 3,
+      experience: [],
+    });
+  });
+
+  it("collects and saves multiple internships after a yes answer", async () => {
+    apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 3 });
+
+    render(<StudentOnboardingWizard />);
+    expect(await screen.findByRole("heading", { name: "Experience" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", { name: "Yes" }));
+    fireEvent.change(screen.getByLabelText("Internship organization"), { target: { value: "Northstar Labs" } });
+    fireEvent.change(screen.getByLabelText("Role / internship title"), { target: { value: "Software Intern" } });
+    fireEvent.change(screen.getByLabelText("Start date"), { target: { value: "2025-05-01" } });
+    fireEvent.change(screen.getByLabelText("End date"), { target: { value: "2025-07-01" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save Internship" }));
+
+    expect(screen.getByText("Northstar Labs")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add Another Internship" }));
+    fireEvent.change(screen.getByLabelText("Internship organization"), { target: { value: "Juniper Tech" } });
+    fireEvent.change(screen.getByLabelText("Role / internship title"), { target: { value: "Backend Intern" } });
+    fireEvent.change(screen.getByLabelText("Start date"), { target: { value: "2024-06-01" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save Internship" }));
+    fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+
+    expect(await screen.findByRole("heading", { name: "Project Experience" })).toBeInTheDocument();
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(1));
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({
+      step: 3,
+      experience: [
+        { organization: "Northstar Labs", title: "Software Intern", start_date: "2025-05-01", end_date: "2025-07-01" },
+        { organization: "Juniper Tech", title: "Backend Intern", start_date: "2024-06-01", end_date: null, is_current: true },
+      ],
+    });
   });
 
   it("lets students skip projects and skills without submitting partial content", async () => {
@@ -189,6 +221,32 @@ describe("student onboarding stages", () => {
     expect(csrfRequestMock).not.toHaveBeenCalled();
   });
 
+  it("keeps in-app notifications enabled and removes visibility and notification toggles", async () => {
+    apiRequestMock.mockResolvedValue({
+      ...onboarding,
+      current_step: 6,
+      career_preferences: { target_roles: ["Software Engineer"] },
+    });
+
+    render(<StudentOnboardingWizard />);
+    expect(await screen.findByRole("heading", { name: "Placement details" })).toBeInTheDocument();
+    expect(screen.queryByLabelText("Profile visibility")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("In-app updates")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Placement cycle"), { target: { value: "2026–27" } });
+    fireEvent.click(screen.getByRole("checkbox", { name: /placement participation privacy notice/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /I reviewed this information/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Complete onboarding" }));
+
+    await waitFor(() => expect(routerReplaceMock).toHaveBeenCalledWith("/dashboard"));
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({
+      step: 6,
+      placement_participation: {
+        communication_channels: ["in_app"],
+        visibility: "placement_team",
+      },
+    });
+  });
+
   it("keeps career preferences required without labeling required stages in the progress bar", async () => {
     apiRequestMock.mockResolvedValue({ ...onboarding, current_step: 5 });
 
@@ -208,14 +266,18 @@ describe("student onboarding stages", () => {
     const values: Record<string, string> = {
       "Full name": "Aarav Student",
       "PRN / enrollment ID": "PRN-12345",
-      Department: "Computer Science",
-      Branch: "Computer Science",
+      Branch: "Computer Engineering",
       "Graduation year": "2027",
-      Degree: "Bachelor of Engineering",
-      "Awarding institution": "Campus University",
+      Degree: "BTech",
       "CGPA / percentage": "8.5",
     };
-    expect(screen.getByLabelText("Institution")).toHaveValue("Campus University");
+    expect(screen.getByLabelText("College")).toHaveValue("Campus University");
+    expect(screen.getByLabelText("College")).toHaveAttribute("readonly");
+    expect(screen.queryByLabelText("Department")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Awarding institution")).not.toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "BE" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "BTech" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Information Technology" })).toBeInTheDocument();
     expect(screen.getByLabelText("Grading scale")).toHaveValue("cgpa_10");
     for (const [label, value] of Object.entries(values)) {
       fireEvent.change(screen.getByLabelText(label), { target: { value } });
@@ -226,8 +288,21 @@ describe("student onboarding stages", () => {
     expect(screen.getByRole("progressbar", { name: "Onboarding progress" })).toHaveAttribute("aria-valuenow", "2");
     expect(screen.getByText("Step 2 of 5")).toBeInTheDocument();
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledTimes(2));
-    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({ step: 1, identity: { full_name: "Aarav Student", department: "Computer Science" } });
-    expect(JSON.parse(String(csrfRequestMock.mock.calls[1][1].body))).toMatchObject({ step: 2, education: [{ degree: "Bachelor of Engineering", branch: "Computer Science", institution: "Campus University", score_scale: "cgpa_10" }] });
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[0][1].body))).toMatchObject({ step: 1, identity: { full_name: "Aarav Student", department: "Computer Engineering" } });
+    expect(JSON.parse(String(csrfRequestMock.mock.calls[1][1].body))).toMatchObject({ step: 2, education: [{ degree: "BTech", branch: "Computer Engineering", institution: "Campus University", score_scale: "cgpa_10" }] });
+  });
+
+  it("keeps the selected college when an older tab draft contains a blank institution", async () => {
+    window.sessionStorage.setItem("campushire.onboarding.v2.profile-1", JSON.stringify({
+      revision: 0,
+      step: 1,
+      draft: { full_name: "Draft Student", institution_name: "" },
+    }));
+
+    render(<StudentOnboardingWizard />);
+
+    expect(await screen.findByLabelText("College")).toHaveValue("Campus University");
+    expect(screen.getByLabelText("Full name")).toHaveValue("Draft Student");
   });
 
   it("sends already-completed students straight to their workspace", async () => {

@@ -9,7 +9,9 @@ import type { MfaStatusResponse } from "@/lib/api/generated/types.gen";
 import { MfaResetControl } from "./mfa-reset-control";
 import styles from "./profile-workspace.module.css";
 
-export function MfaStatusControl() {
+export function MfaStatusControl({ workspace = "admin" }: { workspace?: "student" | "tnp" | "admin" }) {
+  const accountLabel = workspace === "student" ? "student account" : workspace === "tnp" ? "T&P account" : "administrator account";
+  const setupPath = workspace === "student" ? "/student/mfa/setup?next=/profile" : workspace === "tnp" ? "/tnp/mfa/setup?next=/tnp/account" : "/admin/mfa/setup?next=/admin/account";
   const [status, setStatus] = useState<"loading" | "enabled" | "disabled" | "error">("loading");
 
   useEffect(() => {
@@ -27,15 +29,15 @@ export function MfaStatusControl() {
   if (status === "enabled") {
     return (
       <div className={styles.governanceContent}>
-        <Alert tone="success">Authenticator enabled. CampusHire will request a rotating code on future administrator sign-ins.</Alert>
-        <MfaResetControl />
+        <Alert tone="success">Authenticator enabled. CampusHire will request a rotating code on future sign-ins to this {accountLabel}.</Alert>
+        <MfaResetControl workspace={workspace} />
       </div>
     );
   }
   return (
     <div className={styles.governanceContent}>
-      <p>Protect this administrator account with a scannable QR code, rotating authenticator codes, and one-time recovery codes.</p>
-      <Link className={styles.secondaryAction} href="/admin/mfa/setup?next=/admin/account">Set up MFA</Link>
+      <p>Protect this {accountLabel} with a scannable QR code, rotating authenticator codes, and one-time recovery codes.</p>
+      <Link className={styles.secondaryAction} href={setupPath}>Set up MFA</Link>
     </div>
   );
 }

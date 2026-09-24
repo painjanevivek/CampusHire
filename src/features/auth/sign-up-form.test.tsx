@@ -25,7 +25,9 @@ async function completeForm(password = "a secure campus passphrase") {
   fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Asha" } });
   fireEvent.change(screen.getByLabelText("Surname"), { target: { value: "Patil" } });
   fireEvent.change(screen.getByLabelText("DOB"), { target: { value: "2004-05-16" } });
-  fireEvent.change(screen.getByLabelText("Email"), { target: { value: "asha@student-campus.edu" } });
+  fireEvent.change(screen.getByLabelText("PCCOE institutional email"), {
+    target: { value: "asha.patil23@pccoepune.org" },
+  });
   fireEvent.change(screen.getByLabelText("Password"), { target: { value: password } });
   fireEvent.change(screen.getByLabelText("Re-enter password"), { target: { value: password } });
   fireEvent.click(screen.getByRole("checkbox"));
@@ -46,7 +48,7 @@ describe("SignUpForm", () => {
     expect(screen.getByLabelText("Name")).toBeRequired();
     expect(screen.getByLabelText("Surname")).toBeRequired();
     expect(screen.getByLabelText("DOB")).toBeRequired();
-    expect(screen.getByLabelText("Email")).toBeRequired();
+    expect(screen.getByLabelText("PCCOE institutional email")).toBeRequired();
     expect(screen.getByLabelText("College")).toBeRequired();
     expect(screen.getByLabelText("Password")).toBeRequired();
     expect(screen.getByLabelText("Re-enter password")).toBeRequired();
@@ -75,7 +77,7 @@ describe("SignUpForm", () => {
         name: "Asha",
         surname: "Patil",
         dob: "2004-05-16",
-        email: "asha@student-campus.edu",
+        email: "asha.patil23@pccoepune.org",
         institution_id: institutionId,
         password: "a secure campus passphrase",
         re_enter_password: "a secure campus passphrase",
@@ -139,6 +141,34 @@ describe("SignUpForm", () => {
 
     expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
     expect(csrfRequestMock).not.toHaveBeenCalled();
+  });
+
+  it("blocks signup with a clear minimum length error below 8 characters", async () => {
+    render(<SignUpForm />);
+    await completeForm("Campus8");
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+
+    expect(await screen.findByText("Use at least 8 characters.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toHaveAttribute("minLength", "8");
+    expect(csrfRequestMock).not.toHaveBeenCalled();
+  });
+
+  it("accepts an 8-character password and posts the selected college", async () => {
+    csrfRequestMock.mockResolvedValue({
+      status: "registered",
+      message: "Account created. Continue to your student profile.",
+      next_path: "/onboarding",
+    });
+    render(<SignUpForm />);
+    await completeForm("Campus88");
+
+    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+
+    await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledOnce());
+    const request = JSON.parse(String(csrfRequestMock.mock.calls[0][1].body)) as Record<string, unknown>;
+    expect(request).toMatchObject({ institution_id: institutionId, password: "Campus88" });
+    expect(pushMock).toHaveBeenCalledWith("/onboarding");
   });
 
   it("toggles each sign-up password independently without changing its value", () => {

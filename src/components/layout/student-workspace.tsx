@@ -8,13 +8,15 @@ import styles from "./student-workspace.module.css";
 export function StudentWorkspace({
   children,
   aside,
+  placementAccess = true,
 }: {
   children: ReactNode;
   aside?: ReactNode;
+  placementAccess?: boolean;
 }) {
   return (
     <ProfilePhotoProvider><div className={styles.workspace} data-workspace="student">
-      <StudentHeader />
+      <StudentHeader placementAccess={placementAccess} />
       <div className={`${styles.content} ${aside ? styles.withAside : ""}`}>
         <div className={styles.body}>{children}</div>
         {aside ? <aside className={styles.contextPanel}>{aside}</aside> : null}

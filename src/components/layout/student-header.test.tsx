@@ -41,6 +41,20 @@ describe("StudentHeader", () => {
     );
   });
 
+  it("keeps profile controls while hiding placement features without placement access", () => {
+    render(<StudentHeader placementAccess={false} />);
+
+    expect(screen.queryByRole("link", { name: "Dashboard" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Opportunities" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Ask CampusHire Copilot" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "CampusHire Student Dashboard" })).toHaveAttribute(
+      "href",
+      "/profile",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open profile menu" }));
+    expect(screen.getByRole("link", { name: "Profile" })).toHaveAttribute("href", "/profile");
+  });
+
   it("keeps student features gated during onboarding and explains how to unlock AI tools", () => {
     route.pathname = "/onboarding";
     render(<StudentHeader />);

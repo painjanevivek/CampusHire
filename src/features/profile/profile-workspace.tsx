@@ -20,6 +20,7 @@ import { SessionManagement } from "./session-management";
 import { ActivationProgress } from "@/features/engagement/activation-progress";
 import { ProfilePhotoUpload } from "./profile-photo";
 import { SavedRoles } from "./saved-roles";
+import { MfaStatusControl } from "./mfa-status-control";
 import styles from "./profile-workspace.module.css";
 
 type Profile = {
@@ -115,6 +116,16 @@ export function ProfileWorkspace() {
         </header>
 
         <div className={styles.disclosureList}>
+          <AccountDisclosure
+            icon={ShieldCheck}
+            eyebrow="Security"
+            title="Authenticator sign-in"
+            description="Add a rotating code from Google Authenticator or another compatible authenticator app."
+            status="Optional"
+          >
+            <MfaStatusControl workspace="student" />
+          </AccountDisclosure>
+
           <AccountDisclosure
             icon={KeyRound}
             eyebrow="Security"

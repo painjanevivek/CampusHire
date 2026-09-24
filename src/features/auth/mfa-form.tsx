@@ -69,7 +69,7 @@ export function MfaForm({
     }
   }
   if (recoveryCodes.length) {
-    return <div className="authForm"><Alert tone="success">Authenticator enabled. Save these recovery codes now; they will not be shown again.</Alert><ul className="recoveryGrid">{recoveryCodes.map((code) => <li key={code}><code>{code}</code></li>)}</ul><Button onClick={() => router.push(nextPath)}>Continue to administration</Button></div>;
+    return <div className="authForm"><Alert tone="success">Authenticator enabled. Save these recovery codes now; they will not be shown again.</Alert><ul className="recoveryGrid">{recoveryCodes.map((code) => <li key={code}><code>{code}</code></li>)}</ul><Button onClick={() => router.push(nextPath)}>Continue</Button></div>;
   }
   return (
     <form className="authForm" onSubmit={submit}>
@@ -81,7 +81,7 @@ export function MfaForm({
           <p>Open your authenticator app, choose <strong>Scan a QR code</strong>, then scan this code.</p>
         </div>
         <div className="authQrFrame" aria-live="polite">
-          {qrCode ? <Image src={qrCode} width={224} height={224} unoptimized alt="QR code for adding this CampusHire administrator account to an authenticator app" /> : <span>{qrError ? "QR code unavailable. Use the manual key below." : "Preparing QR code…"}</span>}
+          {qrCode ? <Image src={qrCode} width={224} height={224} unoptimized alt="QR code for adding this CampusHire account to an authenticator app" /> : <span>{qrError ? "QR code unavailable. Use the manual key below." : "Preparing QR code…"}</span>}
         </div>
         <details className="authManualKey"><summary>Use a manual setup key instead</summary><code>{setup?.secret ?? "Preparing secure key…"}</code></details>
       </div> : <p>Enter an authenticator code or an unused recovery code.</p>}

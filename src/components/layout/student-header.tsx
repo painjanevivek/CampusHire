@@ -22,7 +22,7 @@ const navigation: Array<{ href: string; label: WorkspaceSection }> = [
 ];
 const navigationIcons = { Dashboard: Home, Opportunities: BriefcaseBusiness, Applications: ClipboardList, Preparation: ListChecks };
 
-export function StudentHeader() {
+export function StudentHeader({ placementAccess = true }: { placementAccess?: boolean }) {
   const pathname = usePathname();
   const [surface, setSurface] = useState<"navigation" | "profile" | "notifications" | null>(null);
   const [showAccessMessage, setShowAccessMessage] = useState(false);
@@ -59,7 +59,7 @@ export function StudentHeader() {
     <>
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link className={styles.brand} href="/dashboard" aria-label="CampusHire Student Dashboard" onClick={handleFeatureNavigation}>
+        <Link className={styles.brand} href={placementAccess ? "/dashboard" : "/profile"} aria-label="CampusHire Student Dashboard" onClick={handleFeatureNavigation}>
           <BrandMark />
           <strong>CampusHire</strong>
         </Link>
@@ -85,7 +85,7 @@ export function StudentHeader() {
           aria-label="Student navigation"
           onBlur={event => { if (menuOpen && !event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false); }}
         >
-          {navigation.map(({ href, label }) => {
+          {placementAccess ? navigation.map(({ href, label }) => {
             const Icon = navigationIcons[label];
             const selected = pathname === href || pathname.startsWith(`${href}/`) || (href === "/preparation" && ["/resume", "/roadmap"].some(path => pathname.startsWith(path)));
             return (
@@ -98,16 +98,16 @@ export function StudentHeader() {
                 <Icon size={16} aria-hidden="true" />{label}
               </Link>
             );
-          })}
-          <Link className={styles.mobileCopilot} href="/copilot" onClick={handleFeatureNavigation}>
+          }) : null}
+          {placementAccess ? <Link className={styles.mobileCopilot} href="/copilot" onClick={handleFeatureNavigation}>
             <Bot size={16} aria-hidden="true" />Ask Copilot
-          </Link>
+          </Link> : null}
         </nav>
 
         <div className={styles.utilities}>
-          <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot" onClick={handleFeatureNavigation}><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link>
+          {placementAccess ? <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot" onClick={handleFeatureNavigation}><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link> : null}
           <ThemeToggle />
-          <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} />
+          {placementAccess ? <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} /> : null}
           <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} onFeatureNavigation={handleFeatureNavigation} />
         </div>
       </div>

@@ -7,7 +7,7 @@ import { Alert } from "@/components/ui/feedback";
 import { ApiError, csrfRequest } from "@/lib/api/client";
 import styles from "./profile-workspace.module.css";
 
-export function MfaResetControl() {
+export function MfaResetControl({ workspace = "admin" }: { workspace?: "student" | "tnp" | "admin" }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,7 +26,7 @@ export function MfaResetControl() {
           code: form.get("code"),
         }),
       });
-      router.replace("/admin/mfa/setup");
+      router.replace(workspace === "student" ? "/profile" : workspace === "tnp" ? "/tnp/mfa/setup" : "/admin/mfa/setup");
       router.refresh();
     } catch (cause) {
       setMessage(cause instanceof ApiError ? cause.message : "The authenticator was not reset.");
@@ -36,7 +36,7 @@ export function MfaResetControl() {
 
   return (
     <form className={styles.mfaReset} onSubmit={(event) => void reset(event)}>
-      <p>This security action requires your password and current authenticator or recovery code. Every other active session is revoked, and this device must enroll a replacement immediately.</p>
+      <p>This security action requires your password and current authenticator or recovery code. Every other active session is revoked. You can enable a new authenticator from Account settings.</p>
       {message ? <Alert tone="error">{message}</Alert> : null}
       <div className={styles.mfaResetFields}>
         <label>

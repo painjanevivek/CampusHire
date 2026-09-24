@@ -19,23 +19,38 @@ const steps = [
   ["Career preferences", "Roles and work preferences"],
   ["Placement details", "Participation, privacy, and review"],
 ] as const;
+const journeySteps = [...steps, ["Resume Generator", "Create a resume from your profile"]] as const;
 
 type Onboarding = StudentOnboardingResponse;
 type Draft = Record<string, string | boolean>;
 type ProjectType = "academic" | "personal" | "internship" | "hackathon" | "other";
 type ProjectDraft = { title: string; project_type: ProjectType; description: string; technologies: string[]; project_url: string };
+type ExperienceDraft = { organization: string; title: string; start_date: string; end_date: string; responsibilities: string };
 type SaveState = "loading" | "idle" | "saving" | "saved" | "error" | "conflict";
 
 const suggestedSkills = ["Python", "React", "PostgreSQL", "AWS", "TypeScript", "JavaScript", "Java", "FastAPI", "Django", "Node.js", "SQL", "Docker", "Azure"];
 const projectTypeLabels: Record<ProjectType, string> = { academic: "Academic", personal: "Personal", internship: "Internship", hackathon: "Hackathon", other: "Other" };
+const degreeOptions = ["BE", "BTech"] as const;
+const maxExperienceEntries = 20;
+const branchOptions = [
+  "Computer Engineering",
+  "Information Technology",
+  "Computer Science & Engineering (AIML)",
+  "Computer Engineering (Regional Language)",
+  "Electronics and Telecommunication Engineering",
+  "Electronics Engineering (VLSI Design and Technology)",
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Civil Engineering (Regional)",
+] as const;
 
 const blank: Draft = {
-  full_name: "", institution_name: "", prn: "", department: "", graduation_year: "",
-  degree: "", branch: "", education_institution: "", start_year: "", score: "", score_scale: "cgpa_10", active_backlogs: "0",
-  experience_organization: "", experience_title: "", experience_start: "", experience_end: "", responsibilities: "",
+  full_name: "", institution_name: "", prn: "", graduation_year: "",
+  degree: "", branch: "", start_year: "", score: "", score_scale: "cgpa_10", active_backlogs: "0",
+  has_experience: "", experience_records: "[]", experience_editor_open: false, experience_organization: "", experience_title: "", experience_start: "", experience_end: "", experience_responsibilities: "",
   has_projects: "", project_records: "[]", project_title: "", project_type: "academic", project_description: "", project_technologies: "", project_url: "", skills: "", certification_name: "", certification_issuer: "",
   target_roles: "", industries: "", locations: "", job_types: "full_time", work_modes: "hybrid",
-  placement_cycle: "", communication_email: true, communication_in_app: true, visibility: "placement_team", privacy_accepted: false,
+  placement_cycle: "", communication_email: true, privacy_accepted: false,
   review_confirmed: false,
 };
 
@@ -47,6 +62,49 @@ function savedProjects(draft: Draft): ProjectDraft[] {
     if (!Array.isArray(value)) return [];
     return value.filter((item): item is ProjectDraft => Boolean(item && typeof item === "object" && "title" in item));
   } catch { return []; }
+}
+
+function savedExperiences(draft: Draft): ExperienceDraft[] {
+  try {
+    const value: unknown = JSON.parse(String(draft.experience_records ?? "[]"));
+    if (!Array.isArray(value)) return [];
+    return value
+      .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === "object"))
+      .map((item) => ({
+        organization: String(item.organization ?? ""),
+        title: String(item.title ?? ""),
+        start_date: String(item.start_date ?? ""),
+        end_date: String(item.end_date ?? ""),
+        responsibilities: Array.isArray(item.responsibilities)
+          ? item.responsibilities.map(String).join("\n")
+          : String(item.responsibilities ?? ""),
+      }));
+  } catch { return []; }
+}
+
+function migratedDraft(draft: Draft): Draft {
+  if ("experience_records" in draft) return draft;
+  const organization = String(draft.experience_organization ?? "").trim();
+  if (!organization) return { ...draft, has_experience: draft.has_experience ?? "" };
+  return {
+    ...draft,
+    has_experience: "yes",
+    experience_records: JSON.stringify([{
+      organization,
+      title: String(draft.experience_title ?? ""),
+      start_date: String(draft.experience_start ?? ""),
+      end_date: String(draft.experience_end ?? ""),
+      responsibilities: String(draft.responsibilities ?? ""),
+    }]),
+  };
+}
+
+function normalizedDegree(value: unknown): string {
+  const degree = String(value ?? "").trim();
+  const normalized = degree.toLowerCase().replace(/[.\s]/g, "");
+  if (["be", "bachelorofengineering"].includes(normalized)) return "BE";
+  if (["btech", "bacheloroftechnology"].includes(normalized)) return "BTech";
+  return degree;
 }
 
 function SkillPicker({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
@@ -87,7 +145,13 @@ export function onboardingStageForBackendStep(backendStep: number): number {
 
 function hydrate(data: Onboarding): Draft {
   const education = data.education[0] ?? {};
-  const experience = data.experience[0] ?? {};
+  const experiences = data.experience.map((experience) => ({
+    organization: String(experience.organization ?? ""),
+    title: String(experience.title ?? ""),
+    start_date: String(experience.start_date ?? ""),
+    end_date: String(experience.end_date ?? ""),
+    responsibilities: Array.isArray(experience.responsibilities) ? experience.responsibilities.join("\n") : "",
+  }));
   const projects = data.projects.map((project) => ({
     title: String(project.title ?? ""),
     project_type: String(project.project_type ?? "other") as ProjectType,
@@ -101,34 +165,44 @@ function hydrate(data: Onboarding): Draft {
   const channels = Array.isArray(participation.communication_channels) ? participation.communication_channels : [];
   return {
     ...blank,
-    full_name: String(data.identity.full_name ?? ""), institution_name: String(data.institution_name ?? ""), prn: String(data.identity.prn ?? ""), department: String(data.identity.department ?? ""), graduation_year: String(data.identity.graduation_year ?? ""),
-    degree: String(education.degree ?? ""), branch: String(education.branch ?? ""), education_institution: String(education.institution ?? data.institution_name ?? ""), start_year: String(education.start_year ?? ""), score: String(education.score ?? ""), score_scale: String(education.score_scale ?? "cgpa_10"), active_backlogs: String(education.active_backlogs ?? 0),
-    experience_organization: String(experience.organization ?? ""), experience_title: String(experience.title ?? ""), experience_start: String(experience.start_date ?? ""), experience_end: String(experience.end_date ?? ""), responsibilities: Array.isArray(experience.responsibilities) ? experience.responsibilities.join("\n") : "",
+    full_name: String(data.identity.full_name ?? ""), institution_name: String(data.institution_name ?? ""), prn: String(data.identity.prn ?? ""), graduation_year: String(data.identity.graduation_year ?? ""),
+    degree: normalizedDegree(education.degree), branch: String(education.branch ?? ""), start_year: String(education.start_year ?? ""), score: String(education.score ?? ""), score_scale: String(education.score_scale ?? "cgpa_10"), active_backlogs: String(education.active_backlogs ?? 0),
+    has_experience: experiences.length ? "yes" : "", experience_records: JSON.stringify(experiences), experience_organization: "", experience_title: "", experience_start: "", experience_end: "", experience_responsibilities: "",
     has_projects: projects.length ? "yes" : "", project_records: JSON.stringify(projects), project_title: "", project_type: "academic", project_description: "", project_technologies: "", project_url: "", skills: data.skills.map((item) => String(item.name ?? "")).filter(Boolean).join(", "), certification_name: String(certification.name ?? ""), certification_issuer: String(certification.issuer ?? ""),
     target_roles: Array.isArray(career.target_roles) ? career.target_roles.join(", ") : "", industries: Array.isArray(career.industries) ? career.industries.join(", ") : "", locations: Array.isArray(career.locations) ? career.locations.join(", ") : "", job_types: Array.isArray(career.job_types) ? career.job_types.join(",") : "full_time", work_modes: Array.isArray(career.work_modes) ? career.work_modes.join(",") : "hybrid",
-    placement_cycle: String(participation.placement_cycle ?? ""), communication_email: channels.includes("email"), communication_in_app: channels.includes("in_app"), visibility: String(participation.visibility ?? "placement_team"), privacy_accepted: Boolean(participation.privacy_accepted), review_confirmed: data.completed,
+    placement_cycle: String(participation.placement_cycle ?? ""), communication_email: channels.includes("email"), privacy_accepted: Boolean(participation.privacy_accepted), review_confirmed: data.completed,
   };
 }
 
 function backendStepBody(step: number, draft: Draft) {
   const value = (key: string) => String(draft[key] ?? "").trim();
-  if (step === 1) return { identity: { full_name: value("full_name"), prn: value("prn"), department: value("department"), graduation_year: Number(value("graduation_year")) } };
-  if (step === 2) return { education: [{ qualification_level: "degree", degree: value("degree"), branch: value("branch"), institution: value("education_institution"), start_year: value("start_year") ? Number(value("start_year")) : null, graduation_year: Number(value("graduation_year")), score: Number(value("score")), score_scale: value("score_scale"), active_backlogs: Number(value("active_backlogs") || 0) }] };
-  if (step === 3) return { experience: value("experience_organization") ? [{ organization: value("experience_organization"), title: value("experience_title"), start_date: value("experience_start"), end_date: value("experience_end") || null, is_current: !value("experience_end"), responsibilities: lines(draft.responsibilities) }] : [] };
+  if (step === 1) return { identity: { full_name: value("full_name"), prn: value("prn"), department: value("branch"), graduation_year: Number(value("graduation_year")) } };
+  if (step === 2) return { education: [{ qualification_level: "degree", degree: value("degree"), branch: value("branch"), institution: value("institution_name"), start_year: value("start_year") ? Number(value("start_year")) : null, graduation_year: Number(value("graduation_year")), score: Number(value("score")), score_scale: value("score_scale"), active_backlogs: Number(value("active_backlogs") || 0) }] };
+  if (step === 3) return { experience: value("has_experience") === "yes" ? savedExperiences(draft).map((experience) => ({ ...experience, end_date: experience.end_date || null, is_current: !experience.end_date, responsibilities: lines(experience.responsibilities) })) : [] };
   if (step === 4) return { projects_skills: { projects: savedProjects(draft).map((project) => ({ ...project, project_url: project.project_url || null, outcomes: [] })), skills: lines(draft.skills), certifications: value("certification_name") ? [{ name: value("certification_name"), issuer: value("certification_issuer"), issued_on: null, expires_on: null, credential_url: null }] : [] } };
   if (step === 5) return { career_preferences: { target_roles: lines(draft.target_roles), industries: lines(draft.industries), locations: lines(draft.locations), job_types: lines(draft.job_types), work_modes: lines(draft.work_modes) } };
-  if (step === 6) return { placement_participation: { placement_cycle: value("placement_cycle"), communication_channels: [draft.communication_email && "email", draft.communication_in_app && "in_app"].filter(Boolean), visibility: value("visibility"), privacy_accepted: draft.privacy_accepted } };
+  if (step === 6) return { placement_participation: { placement_cycle: value("placement_cycle"), communication_channels: [draft.communication_email && "email", "in_app"].filter(Boolean), visibility: "placement_team", privacy_accepted: draft.privacy_accepted } };
   return { review: { confirmed: draft.review_confirmed } };
 }
 
 function canSaveStage(stage: number, draft: Draft): boolean {
   const value = (key: string) => String(draft[key] ?? "").trim();
-  if (stage === 1) return value("full_name").length >= 2 && value("institution_name").length >= 2 && value("prn").length >= 2 && value("department").length >= 2 && value("branch").length >= 2 && Number(value("graduation_year")) >= 2000
-    && value("degree").length >= 2 && value("education_institution").length >= 2 && value("score") !== "";
-  if (stage === 2) return !value("experience_organization") || (value("experience_organization").length >= 2 && value("experience_title").length >= 2 && Boolean(value("experience_start")));
+  if (stage === 1) return value("full_name").length >= 2 && value("institution_name").length >= 2 && value("prn").length >= 2 && value("branch").length >= 2 && Number(value("graduation_year")) >= 2000
+    && value("degree").length >= 2 && value("score") !== "";
+  if (stage === 2) {
+    if (value("has_experience") === "no") return true;
+    if (draft.experience_editor_open === true) return false;
+    const experiences = savedExperiences(draft);
+    return value("has_experience") === "yes" && experiences.length > 0 && experiences.every((experience) =>
+      experience.organization.trim().length >= 2
+      && experience.title.trim().length >= 2
+      && Boolean(experience.start_date)
+      && (!experience.end_date || experience.end_date >= experience.start_date),
+    );
+  }
   if (stage === 3) return (value("has_projects") === "yes" ? savedProjects(draft).length > 0 : value("has_projects") === "no") && (!value("certification_name") || (value("certification_name").length >= 2 && value("certification_issuer").length >= 2));
   if (stage === 4) return lines(draft.target_roles).length > 0;
-  return value("placement_cycle").length >= 2 && Boolean(draft.communication_email || draft.communication_in_app) && draft.privacy_accepted === true;
+  return value("placement_cycle").length >= 2 && draft.privacy_accepted === true;
 }
 
 export function StudentOnboardingWizard() {
@@ -136,11 +210,18 @@ export function StudentOnboardingWizard() {
   const [data, setData] = useState<Onboarding | null>(null);
   const [draft, setDraft] = useState<Draft>(blank);
   const [step, setStep] = useState(1);
+  const [addingExperience, setAddingExperience] = useState(true);
+  const [editingExperienceIndex, setEditingExperienceIndex] = useState<number | null>(null);
   const [addingProject, setAddingProject] = useState(true);
   const [dirty, setDirty] = useState(false);
   const [state, setState] = useState<SaveState>("loading");
   const [message, setMessage] = useState("");
   const saving = useRef(false);
+
+  useEffect(() => {
+    document.documentElement.classList.add("onboarding-scrollbar-hidden");
+    return () => document.documentElement.classList.remove("onboarding-scrollbar-hidden");
+  }, []);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -151,8 +232,12 @@ export function StudentOnboardingWizard() {
       const stored = window.sessionStorage.getItem(`campushire.onboarding.v2.${loaded.profile_id}`);
       const recovered = stored ? JSON.parse(stored) as { revision: number; step: number; draft: Draft } : null;
       setData(loaded);
-      const nextDraft = recovered?.revision === loaded.revision ? { ...serverDraft, ...recovered.draft } : serverDraft;
+      const nextDraft = recovered?.revision === loaded.revision
+        ? { ...serverDraft, ...migratedDraft(recovered.draft), institution_name: serverDraft.institution_name }
+        : serverDraft;
       setDraft(nextDraft);
+      setAddingExperience(nextDraft.experience_editor_open === true || (nextDraft.has_experience === "yes" && savedExperiences(nextDraft).length === 0));
+      setEditingExperienceIndex(null);
       setAddingProject(savedProjects(nextDraft).length === 0);
       setStep(recovered?.revision === loaded.revision ? Math.min(recovered.step, 5) : onboardingStageForBackendStep(loaded.current_step));
       setDirty(Boolean(recovered?.revision === loaded.revision));
@@ -221,8 +306,8 @@ export function StudentOnboardingWizard() {
       setState("saved");
       window.sessionStorage.removeItem(`campushire.onboarding.v2.${saved.profile_id}`);
       if (saved.completed) {
-        setMessage("Onboarding complete. Taking you to your student workspace…");
-        router.replace("/dashboard");
+        setMessage("Profile complete. Opening the final resume step…");
+        router.replace("/resume/builder?mode=manual&onboarding=1");
       } else if (advance) {
         setStep((current) => Math.min(current + 1, 5));
       }
@@ -233,7 +318,7 @@ export function StudentOnboardingWizard() {
   }
 
   async function skipNonRequiredStep() {
-    if (!data || ![2, 3].includes(step) || saving.current) return;
+    if (!data || step !== 3 || saving.current) return;
     const skippedStep = step;
     saving.current = true;
     setState("saving");
@@ -253,6 +338,82 @@ export function StudentOnboardingWizard() {
   }
 
   function change(key: string, value: string | boolean) { setDraft((current) => ({ ...current, [key]: value })); setDirty(true); setState("idle"); }
+  function saveExperience() {
+    const experience: ExperienceDraft = {
+      organization: String(draft.experience_organization).trim(),
+      title: String(draft.experience_title).trim(),
+      start_date: String(draft.experience_start),
+      end_date: String(draft.experience_end),
+      responsibilities: String(draft.experience_responsibilities).trim(),
+    };
+    if (experience.organization.length < 2 || experience.title.length < 2 || !experience.start_date
+      || (experience.end_date && experience.end_date < experience.start_date)) {
+      setState("error");
+      setMessage("Enter the organization, role, and a valid start and end date.");
+      return;
+    }
+    const records = savedExperiences(draft);
+    if (editingExperienceIndex === null && records.length >= maxExperienceEntries) {
+      setState("error");
+      setMessage(`You can add up to ${maxExperienceEntries} internships.`);
+      return;
+    }
+    if (editingExperienceIndex === null) records.push(experience);
+    else if (records[editingExperienceIndex]) records[editingExperienceIndex] = experience;
+    else records.push(experience);
+    setDraft((current) => ({
+      ...current,
+      experience_records: JSON.stringify(records),
+      experience_organization: "",
+      experience_title: "",
+      experience_start: "",
+        experience_end: "",
+        experience_responsibilities: "",
+        experience_editor_open: false,
+    }));
+    setDirty(true);
+    setState("idle");
+    setMessage("");
+    setEditingExperienceIndex(null);
+    setAddingExperience(false);
+  }
+  function editExperience(index: number) {
+    const experience = savedExperiences(draft)[index];
+    if (!experience) return;
+    setDraft((current) => ({
+      ...current,
+      experience_organization: experience.organization,
+      experience_title: experience.title,
+      experience_start: experience.start_date,
+      experience_end: experience.end_date,
+      experience_responsibilities: experience.responsibilities,
+      experience_editor_open: true,
+    }));
+    setDirty(true);
+    setEditingExperienceIndex(index);
+    setAddingExperience(true);
+  }
+  function removeExperience(index: number) {
+    setDraft((current) => ({ ...current, experience_records: JSON.stringify(savedExperiences(current).filter((_, itemIndex) => itemIndex !== index)) }));
+    setDirty(true);
+    if (editingExperienceIndex === index) setEditingExperienceIndex(null);
+  }
+  function setExperienceAnswer(answer: "yes" | "no") {
+    change("has_experience", answer);
+    if (answer === "yes" && savedExperiences(draft).length === 0) {
+      change("experience_editor_open", true);
+      setAddingExperience(true);
+    }
+    if (answer === "no") {
+      change("experience_editor_open", false);
+      setAddingExperience(false);
+    }
+  }
+  function startAddingExperience() {
+    setEditingExperienceIndex(null);
+    change("experience_editor_open", true);
+    setAddingExperience(true);
+  }
   function saveProject() {
     const title = String(draft.project_title).trim();
     const description = String(draft.project_description).trim();
@@ -306,17 +467,17 @@ export function StudentOnboardingWizard() {
   return (
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
-        <div><p>Student profile</p><h1>Build your profile once.</h1><span>Five guided steps help your placement team understand your background. You can return and update your details later.</span></div>
+        <div><p>Student profile</p><h1>Build your profile once.</h1><span>Five profile steps prepare your details. The final resume step uses them to prefill a resume you can review and complete.</span></div>
       </header>
       <nav className={styles.progress} aria-label="Student onboarding progress">
         <div className={styles.progressMeta}>
           <span>Your progress</span>
-          <span>Step {step} of {steps.length}</span>
+          <span>Step {step} of {journeySteps.length}</span>
         </div>
-        <div className={styles.progressTrack} role="progressbar" aria-label="Onboarding progress" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={step} aria-valuetext={`Step ${step} of ${steps.length}: ${steps[step - 1][0]}`}>
-          <span style={{ width: `${(step / steps.length) * 100}%` }} />
+        <div className={styles.progressTrack} role="progressbar" aria-label="Onboarding progress" aria-valuemin={1} aria-valuemax={journeySteps.length} aria-valuenow={step} aria-valuetext={`Step ${step} of ${journeySteps.length}: ${steps[step - 1][0]}`}>
+          <span style={{ width: `${(step / journeySteps.length) * 100}%` }} />
         </div>
-        <ol aria-label="Student onboarding steps">{steps.map(([title], index) => <li key={title} data-state={index + 1 === step ? "current" : index + 1 < step ? "complete" : "upcoming"} aria-current={index + 1 === step ? "step" : undefined}><span>{String(index + 1).padStart(2, "0")}</span>{title}</li>)}</ol>
+        <ol aria-label="Student onboarding steps">{journeySteps.map(([title], index) => <li key={title} data-state={index + 1 === step ? "current" : index + 1 < step ? "complete" : "upcoming"} aria-current={index + 1 === step ? "step" : undefined}><span>{String(index + 1).padStart(2, "0")}</span>{title}</li>)}</ol>
       </nav>
       <div className={styles.layout}>
         <section className={styles.panel}>
@@ -337,24 +498,44 @@ export function StudentOnboardingWizard() {
           <form className={styles.form} onSubmit={submit}>
             {step === 1 ? <>
               <Input id="full_name" label="Full name" value={String(draft.full_name)} onChange={(e) => change("full_name", e.target.value)} required />
-              <Input id="institution" label="Institution" value={String(draft.institution_name)} readOnly aria-readonly="true" />
+              <Input id="institution" label="College" value={String(draft.institution_name)} readOnly aria-readonly="true" />
               <Input id="prn" label="PRN / enrollment ID" value={String(draft.prn)} onChange={(e) => change("prn", e.target.value)} required />
-              <Input id="department" label="Department" value={String(draft.department)} onChange={(e) => change("department", e.target.value)} required />
-              <Input id="branch" label="Branch" value={String(draft.branch)} onChange={(e) => change("branch", e.target.value)} required />
+              <Select id="branch" label="Branch" value={String(draft.branch)} onChange={(e) => change("branch", e.target.value)} required>
+                <option value="">Select your branch</option>
+                {String(draft.branch) && !branchOptions.includes(String(draft.branch) as typeof branchOptions[number]) ? <option value={String(draft.branch)}>{String(draft.branch)} (saved)</option> : null}
+                {branchOptions.map((branch) => <option key={branch} value={branch}>{branch}</option>)}
+              </Select>
               <Input id="graduation_year" label="Graduation year" type="number" min={2000} max={2100} value={String(draft.graduation_year)} onChange={(e) => change("graduation_year", e.target.value)} required />
-              <Input id="degree" label="Degree" value={String(draft.degree)} onChange={(e) => change("degree", e.target.value)} required />
-              <Input id="education_institution" label="Awarding institution" value={String(draft.education_institution)} onChange={(e) => change("education_institution", e.target.value)} required />
+              <Select id="degree" label="Degree" value={String(draft.degree)} onChange={(e) => change("degree", e.target.value)} required>
+                <option value="">Select your degree</option>
+                {String(draft.degree) && !degreeOptions.includes(String(draft.degree) as typeof degreeOptions[number]) ? <option value={String(draft.degree)}>{String(draft.degree)} (saved)</option> : null}
+                {degreeOptions.map((degree) => <option key={degree} value={degree}>{degree}</option>)}
+              </Select>
               <Input id="start_year" label="Start year" type="number" value={String(draft.start_year)} onChange={(e) => change("start_year", e.target.value)} />
               <Input id="score" label="CGPA / percentage" type="number" step="0.01" value={String(draft.score)} onChange={(e) => change("score", e.target.value)} required />
               <Select id="score_scale" label="Grading scale" value={String(draft.score_scale)} onChange={(e) => change("score_scale", e.target.value)}><option value="cgpa_10">CGPA out of 10</option><option value="percentage">Percentage</option></Select>
               <Input id="active_backlogs" label="Active backlogs" type="number" min={0} value={String(draft.active_backlogs)} onChange={(e) => change("active_backlogs", e.target.value)} required />
             </> : null}
             {step === 2 ? <>
-              <Input id="experience_organization" label="Organization" value={String(draft.experience_organization)} onChange={(e) => change("experience_organization", e.target.value)} />
-              <Input id="experience_title" label="Role / internship title" value={String(draft.experience_title)} onChange={(e) => change("experience_title", e.target.value)} />
-              <Input id="experience_start" label="Start date" type="date" value={String(draft.experience_start)} onChange={(e) => change("experience_start", e.target.value)} />
-              <Input id="experience_end" label="End date (leave blank if current)" type="date" value={String(draft.experience_end)} onChange={(e) => change("experience_end", e.target.value)} />
-              <label className={styles.fieldRow}>Responsibilities<textarea value={String(draft.responsibilities)} onChange={(e) => change("responsibilities", e.target.value)} rows={5} /></label>
+              <fieldset className={styles.projectQuestion}>
+                <legend>Have you completed any internships before?</legend>
+                {(["yes", "no"] as const).map((answer) => <label key={answer}><input type="radio" name="has_experience" value={answer} checked={draft.has_experience === answer} onChange={() => setExperienceAnswer(answer)} />{answer === "yes" ? "Yes" : "No"}</label>)}
+              </fieldset>
+              {draft.has_experience === "yes" ? <section className={styles.projectSection} aria-label="Internship experience">
+                {savedExperiences(draft).map((experience, index) => <article className={styles.experienceCard} key={`${experience.organization}-${experience.title}-${index}`}>
+                  <div><h3>{experience.organization}</h3><p>{experience.title}</p><small>{experience.start_date}{experience.end_date ? ` – ${experience.end_date}` : " – Current"}</small></div>
+                  <div className={styles.projectActions}><Button type="button" variant="quiet" onClick={() => editExperience(index)}>Edit</Button><Button type="button" variant="quiet" onClick={() => removeExperience(index)}>Remove</Button></div>
+                </article>)}
+                {addingExperience ? <div className={styles.projectEditor}>
+                  <h3>{editingExperienceIndex === null ? savedExperiences(draft).length ? "Add another internship" : "Add Internship" : "Edit internship"}</h3>
+                  <Input id="experience_organization" label="Internship organization" value={String(draft.experience_organization)} onChange={(e) => change("experience_organization", e.target.value)} required />
+                  <Input id="experience_title" label="Role / internship title" value={String(draft.experience_title)} onChange={(e) => change("experience_title", e.target.value)} required />
+                  <Input id="experience_start" label="Start date" type="date" value={String(draft.experience_start)} onChange={(e) => change("experience_start", e.target.value)} required />
+                  <Input id="experience_end" label="End date" hint="Leave blank if this internship is ongoing." type="date" value={String(draft.experience_end)} onChange={(e) => change("experience_end", e.target.value)} />
+                  <label className={`${styles.fieldRow} ${styles.experienceResponsibilities}`} htmlFor="experience_responsibilities">Responsibilities<textarea id="experience_responsibilities" value={String(draft.experience_responsibilities)} onChange={(e) => change("experience_responsibilities", e.target.value)} rows={3} /></label>
+                  <Button type="button" onClick={saveExperience}>{editingExperienceIndex === null ? "Save Internship" : "Update Internship"}</Button>
+                </div> : savedExperiences(draft).length < maxExperienceEntries ? <Button type="button" variant="quiet" onClick={startAddingExperience}><Plus aria-hidden="true" /> Add Another Internship</Button> : <p>You can add up to {maxExperienceEntries} internships.</p>}
+              </section> : null}
             </> : null}
             {step === 3 ? <>
               <fieldset className={styles.projectQuestion}>
@@ -394,17 +575,15 @@ export function StudentOnboardingWizard() {
             </> : null}
             {step === 5 ? <>
               <Input id="placement_cycle" label="Placement cycle" placeholder="2026–27" value={String(draft.placement_cycle)} onChange={(e) => change("placement_cycle", e.target.value)} required />
-              <Select id="visibility" label="Profile visibility" value={String(draft.visibility)} onChange={(e) => change("visibility", e.target.value)}><option value="placement_team">Placement team only</option><option value="participating_recruiters">Placement team and participating recruiters</option></Select>
               <label><input type="checkbox" checked={Boolean(draft.communication_email)} onChange={(e) => change("communication_email", e.target.checked)} /> Email updates</label>
-              <label><input type="checkbox" checked={Boolean(draft.communication_in_app)} onChange={(e) => change("communication_in_app", e.target.checked)} /> In-app updates</label>
-              <label className={styles.fieldRow}><input type="checkbox" checked={Boolean(draft.privacy_accepted)} onChange={(e) => change("privacy_accepted", e.target.checked)} required /> I accept the placement participation privacy and visibility choices.</label>
+              <label className={styles.fieldRow}><input type="checkbox" checked={Boolean(draft.privacy_accepted)} onChange={(e) => change("privacy_accepted", e.target.checked)} required /> I accept the placement participation privacy notice and understand that in-app notifications stay enabled.</label>
               <div className={styles.reviewList}>
           <div><Check aria-hidden="true" /><span><strong>Profile-driven use</strong><small>Details you choose to share can support role suggestions and resume drafts. Published rules still determine eligibility.</small></span></div>
                 <div><Check aria-hidden="true" /><span><strong>Your information stays under your control</strong><small>Generated wording always requires preview and explicit acceptance.</small></span></div>
                 <label><input type="checkbox" checked={Boolean(draft.review_confirmed)} onChange={(e) => change("review_confirmed", e.target.checked)} required /> I reviewed this information and confirm it is accurate.</label>
               </div>
             </> : null}
-            <div className={styles.actions}>{step > 1 ? <Button type="button" variant="quiet" onClick={() => setStep((current) => current - 1)}><ArrowLeft aria-hidden="true" /> Back</Button> : null}{[2, 3].includes(step) ? <Button type="button" variant="quiet" disabled={state === "saving"} onClick={() => void skipNonRequiredStep()}>Skip this step</Button> : null}<Button type="submit" disabled={state === "saving"}>{step === 5 ? "Complete onboarding" : <>Save and continue <ArrowRight aria-hidden="true" /></>}</Button></div>
+            <div className={styles.actions}>{step > 1 ? <Button type="button" variant="quiet" onClick={() => setStep((current) => current - 1)}><ArrowLeft aria-hidden="true" /> Back</Button> : null}{step === 3 ? <Button type="button" variant="quiet" disabled={state === "saving"} onClick={() => void skipNonRequiredStep()}>Skip this step</Button> : null}<Button type="submit" disabled={state === "saving"}>{step === 5 ? "Complete onboarding" : <>Save and continue <ArrowRight aria-hidden="true" /></>}</Button></div>
           </form>
         </section>
       </div>

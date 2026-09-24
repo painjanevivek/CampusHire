@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  Check,
   CheckCircle2,
   Clock3,
   Download,
@@ -12,9 +13,9 @@ import {
   GitCompareArrows,
   LoaderCircle,
   LockKeyhole,
+  Pencil,
   RefreshCw,
   ShieldAlert,
-  ShieldCheck,
   Trash2,
 } from "lucide-react";
 
@@ -89,6 +90,9 @@ export function ResumeWorkspace() {
   const [pollCycle, setPollCycle] = useState(0);
   const [pollFailures, setPollFailures] = useState(0);
   const [processingNotice, setProcessingNotice] = useState("");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const [renameSaving, setRenameSaving] = useState(false);
 
   const loadVersions = useCallback(async (force = false) => {
     try {
@@ -158,7 +162,34 @@ export function ResumeWorkspace() {
     }
   }
 
-  const nextReview = versions.find((item) => item.status === "review_required");
+  function beginRename(version: ResumeVersion) {
+    setRenamingId(version.id);
+    setRenameDraft(version.original_name.replace(/\.pdf$/i, ""));
+    setMessage("");
+  }
+
+  async function renameVersion(event: FormEvent<HTMLFormElement>, version: ResumeVersion) {
+    event.preventDefault();
+    const name = renameDraft.trim();
+    if (!name || renameSaving) return;
+    setRenameSaving(true);
+    try {
+      const updated = await csrfRequest<ResumeVersion>(`/resumes/${version.id}/name`, {
+        method: "PATCH",
+        body: JSON.stringify({ name }),
+      });
+      setVersions((current) => current.map((item) => item.id === version.id ? updated : item));
+      setRenamingId(null);
+      setMessage("Resume name updated.");
+      setState("complete");
+    } catch {
+      setMessage("This resume could not be renamed. Check the name and try again.");
+      setState("error");
+    } finally {
+      setRenameSaving(false);
+    }
+  }
+
   const compared = compareIds.map((id) => versions.find((item) => item.id === id));
   const comparisonFields = Array.from(new Set(compared.flatMap((item) => Object.keys(item?.extracted_data.accepted ?? item?.extracted_data.proposed ?? {}))));
 
@@ -166,33 +197,29 @@ export function ResumeWorkspace() {
     <main id="main-content" className={styles.page}>
       <header className={styles.hero}>
         <div>
-          <p className={styles.eyebrow}>Student documents</p>
-          <h1>Resume Studio</h1>
-          <p>Create a versioned CampusHire PDF from profile details you have reviewed.</p>
+          <h1>Resume Generator</h1>
+          <p>Create a PDF from your saved profile. Review the prefilled details before you generate it.</p>
         </div>
-        <Link href={nextReview ? `/resume/builder?version=${nextReview.id}` : "/resume/builder"} className={styles.builderLink}>Open review workspace <ArrowRight size={17} aria-hidden="true" /></Link>
+        <Link href="/resume/builder?mode=manual" className={styles.builderLink}>Open resume generator <ArrowRight size={17} aria-hidden="true" /></Link>
       </header>
 
       <div className={styles.grid}>
         <section className={styles.uploadCard}>
-          <div className={styles.cardLabel}><FileText size={18} aria-hidden="true" /> New version</div>
-          <h2>Build from your profile</h2>
-          <p>Choose the profile details to use, ask AI to draft your resume, check where each statement came from, then edit and approve it before creating a PDF.</p>
-          <Link className={styles.primaryAction} href="/resume/studio">Open AI Resume Studio</Link>
-          <Link href="/resume/builder?mode=manual">Use the manual resume builder</Link>
+          <div className={styles.cardLabel}><FileText size={18} aria-hidden="true" /> New resume version</div>
+          <h2>Build from your saved profile</h2>
+          <p>Your profile details fill in the draft. Add anything missing, then generate your PDF.</p>
+          <Link className={styles.primaryAction} href="/resume/builder?mode=manual"><FileText size={17} aria-hidden="true" /> Open resume generator</Link>
           {message && <Alert tone={state === "complete" ? "success" : "error"}>{state === "complete" && <FileCheck2 size={18} aria-hidden="true" />}{message}</Alert>}
         </section>
 
-        <aside className={styles.processCard} aria-labelledby="resume-process-title">
-          <div className={styles.status}><span /> Resume review / your approval required</div>
-          <ShieldCheck size={26} aria-hidden="true" />
-          <h2 id="resume-process-title">Nothing changes silently</h2>
+        <details className={styles.processCard}>
+          <summary>How resume generation works</summary>
           <ol>
-            <li><span>01</span><div><strong>Choose profile details</strong><p>Select education, skills, projects, and experience you have reviewed.</p></div></li>
-            <li><span>02</span><div><strong>Generate and check</strong><p>Each statement must match the information you selected.</p></div></li>
-            <li><span>03</span><div><strong>Your decision</strong><p>Edit, reject, or explicitly accept before creating a PDF</p></div></li>
+            <li><span>1</span><div><strong>Review your saved details</strong><p>Profile information fills the form so you can correct it before using it.</p></div></li>
+            <li><span>2</span><div><strong>Add anything missing</strong><p>Include optional research, publications, or other factual details.</p></div></li>
+            <li><span>3</span><div><strong>Generate and download</strong><p>Your reviewed content becomes a new PDF version.</p></div></li>
           </ol>
-        </aside>
+        </details>
       </div>
 
       <section className={styles.versions} aria-labelledby="versions-title" aria-busy={state === "loading"}>
@@ -207,7 +234,12 @@ export function ResumeWorkspace() {
           <article className={styles.versionCard} key={version.id}>
             <div className={styles.versionIcon} data-state={version.status}>{version.status === "failed" ? <ShieldAlert aria-hidden="true" /> : version.status === "completed" ? <CheckCircle2 aria-hidden="true" /> : <Clock3 aria-hidden="true" />}</div>
             <div className={styles.versionMain}>
-              <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Read-only legacy PDF"}</span></div>
+              {renamingId === version.id ? <form className={styles.renameForm} onSubmit={(event) => void renameVersion(event, version)}>
+                <label className="srOnly" htmlFor={`resume-name-${version.id}`}>Resume file name</label>
+                <input id={`resume-name-${version.id}`} value={renameDraft} onChange={(event) => setRenameDraft(event.target.value)} maxLength={120} required autoFocus />
+                <button type="submit" disabled={renameSaving || !renameDraft.trim()}><Check size={15} aria-hidden="true" /> Save</button>
+                <button type="button" onClick={() => setRenamingId(null)} disabled={renameSaving}>Cancel</button>
+              </form> : <div><strong>{version.original_name}</strong><span>Version {version.version_number ?? "legacy"} · {version.source === "generated" ? "CampusHire PDF" : "Read-only legacy PDF"}</span></div>}
               <p>{statusCopy[version.status]}</p>
               <p className={styles.pipelineNow}>{pipelineCopy[version.processing_stage]}</p>
               {version.safe_error_code && <small>{failureCopy[version.safe_error_code] ?? "Processing stopped safely. No resume details were accepted."}</small>}
@@ -225,6 +257,7 @@ export function ResumeWorkspace() {
             </div>
             <div className={styles.versionActions}>
               {version.status === "review_required" && <Link href={`/resume/builder?version=${version.id}`}>Review changes <ArrowRight size={15} aria-hidden="true" /></Link>}
+              {!version.locked_by_application && version.status !== "queued" && version.status !== "processing" && <button type="button" onClick={() => beginRename(version)}><Pencil size={15} aria-hidden="true" /> Rename</button>}
               {version.scan_status === "clean" && <a href={apiPath(`/resumes/${version.id}/download`)}><Download size={15} aria-hidden="true" /> Download</a>}
               {version.job?.retryable && version.job.status === "failed" && <button type="button" onClick={() => void retry(version)}><RefreshCw size={15} aria-hidden="true" /> Retry</button>}
               {version.locked_by_application ? <span className={styles.locked}><LockKeyhole size={15} aria-hidden="true" /> Locked by application</span> : version.status !== "queued" && version.status !== "processing" ? <button type="button" onClick={() => void deleteVersion(version)}><Trash2 size={15} aria-hidden="true" /> Delete</button> : null}
