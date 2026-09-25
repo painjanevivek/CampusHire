@@ -101,6 +101,14 @@ function displayTime(value: string) {
     day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true,
   }).format(date).replace(",", " ·");
 }
+function localInputValue(value: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 16);
+  const part = (number: number) => String(number).padStart(2, "0");
+  return date.getFullYear() + "-" + part(date.getMonth() + 1) + "-" + part(date.getDate())
+    + "T" + part(date.getHours()) + ":" + part(date.getMinutes());
+}
 function paginationItems(current: number, total: number): Array<number | null> {
   const visible = [...new Set([1, current - 1, current, current + 1, total])]
     .filter((value) => value >= 1 && value <= total).sort((a, b) => a - b);
@@ -184,7 +192,7 @@ export function AdminAudit() {
   function removeFilter(key: keyof Filters) {
     const next = { ...applied, [key]: emptyFilters[key] };
     setFilters(next); setApplied(next); setPageNumber(1);
-    if (key === "start_at" || key === "end_at") setDatePreset("all");
+    if (key === "start_at" || key === "end_at") setDatePreset(next.start_at || next.end_at ? "custom" : "all");
   }
   function changeDatePreset(value: string) {
     setDatePreset(value);
@@ -237,7 +245,6 @@ export function AdminAudit() {
       setPageNumber(1); setMessage("Saved audit view restored.");
     } catch { setMessage("The saved audit view is invalid and was not applied."); }
   }
-  let previousDate = "";
   return <main id="main-content" className={styles.page}>
     <header className={styles.pageHeader}>
       <div><h1>Audit</h1><p>Review sensitive actions and system changes within your institution.</p><span className={styles.eventCount}>{page?.total.toLocaleString() ?? "—"} events</span></div>
@@ -260,8 +267,8 @@ export function AdminAudit() {
               <label>Resource<select value={filters.resource_type} onChange={(event) => updateFilter("resource_type", event.target.value)}><option value="">All resources</option><option value="application">Application</option><option value="placement_drive">Drive</option><option value="institution_membership">Membership</option><option value="policy_document">Policy</option><option value="resume_processing_job">Resume job</option></select></label>
               <label>Actor ID<input value={filters.actor_user_id} onChange={(event) => updateFilter("actor_user_id", event.target.value)} placeholder="Complete actor UUID" /></label>
               <label>Correlation ID<input value={filters.correlation_id} onChange={(event) => updateFilter("correlation_id", event.target.value)} /></label>
-              <label>From<input type="datetime-local" value={datePreset === "custom" ? filters.start_at : ""} onChange={(event) => { setDatePreset("custom"); updateFilter("start_at", event.target.value); }} /></label>
-              <label>Until<input type="datetime-local" value={datePreset === "custom" ? filters.end_at : ""} onChange={(event) => { setDatePreset("custom"); updateFilter("end_at", event.target.value); }} /></label>
+              <label>From<input type="datetime-local" value={datePreset === "custom" ? localInputValue(filters.start_at) : ""} onChange={(event) => { setDatePreset("custom"); updateFilter("start_at", event.target.value); }} /></label>
+              <label>Until<input type="datetime-local" value={datePreset === "custom" ? localInputValue(filters.end_at) : ""} onChange={(event) => { setDatePreset("custom"); updateFilter("end_at", event.target.value); }} /></label>
               <div className={styles.savedActions}><button type="button" onClick={() => void saveView()}>Save view</button><button type="button" onClick={() => void restoreView()}>Restore view</button></div>
             </div>
           </details>
@@ -269,7 +276,7 @@ export function AdminAudit() {
         </div>
       </form>
       {hasServerFilters || search ? <div className={styles.chips} aria-label="Active filters">
-        {Object.entries(applied).filter(([key, value]) => key !== "sort" && Boolean(value)).map(([key, value]) => <button type="button" key={key} onClick={() => removeFilter(key as keyof Filters)}>{({ action: "Event", resource_type: "Resource", outcome: "Status", actor_user_id: "Actor", correlation_id: "Correlation", start_at: "From", end_at: "Until" } as Record<string, string>)[key]}: {key === "action" ? eventTitle(value) : key === "outcome" ? outcomeLabel(value) : key === "actor_user_id" || key === "correlation_id" ? shortId(value) : value}<X aria-hidden="true" /></button>)}
+        {Object.entries(applied).filter(([key, value]) => key !== "sort" && Boolean(value)).map(([key, value]) => <button type="button" key={key} onClick={() => removeFilter(key as keyof Filters)}>{({ action: "Event", resource_type: "Resource", outcome: "Status", actor_user_id: "Actor", correlation_id: "Correlation", start_at: "From", end_at: "Until" } as Record<string, string>)[key]}: {key === "action" ? eventTitle(value) : key === "outcome" ? outcomeLabel(value) : key === "actor_user_id" || key === "correlation_id" ? shortId(value) : key === "start_at" || key === "end_at" ? new Date(value).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : value}<X aria-hidden="true" /></button>)}
         {search ? <button type="button" onClick={() => setSearch("")}>Page search: {search}<X aria-hidden="true" /></button> : null}
         <button type="button" className={styles.clearAll} onClick={() => { setFilters(emptyFilters); setApplied(emptyFilters); setSearch(""); setDatePreset("all"); setSortMode("desc"); setPageNumber(1); }}>Clear all</button>
       </div> : null}
@@ -280,10 +287,10 @@ export function AdminAudit() {
     {state === "ready" && page && page.total === 0 ? <section className={styles.statePanel}><h2>{hasServerFilters ? "No events match these filters." : "No audit events found."}</h2><p>{hasServerFilters ? "Try a broader event type, date range or status." : "Recorded institution activity will appear here."}</p>{hasServerFilters ? <button type="button" onClick={() => { setFilters(emptyFilters); setApplied(emptyFilters); setDatePreset("all"); setPageNumber(1); }}>Clear filters</button> : null}</section> : null}
     {state === "ready" && page && page.total > 0 ? <section className={styles.results} aria-label="Audit events">
       {search || sortMode === "event" || sortMode === "actor" ? <p className={styles.pageScope}>Showing {visibleEvents.length} of {page.items.length} records on this page. Search and actor/event sorting apply to this page; CSV export uses the applied institution filters.</p> : null}
-      {visibleEvents.length ? <ol>{visibleEvents.map((event) => {
+      {visibleEvents.length ? <ol>{visibleEvents.map((event, index) => {
         const date = dateHeading(event.created_at);
-        const showDate = date !== previousDate;
-        previousDate = date;
+        const showDate = (sortMode === "asc" || sortMode === "desc")
+          && (index === 0 || date !== dateHeading(visibleEvents[index - 1].created_at));
         const kind = category(event);
         const Icon = kind.icon;
         const actorName = safeName(event.details, ["actor_name", "actor_display_name", "actor_email"]);
@@ -297,7 +304,7 @@ export function AdminAudit() {
               <div className={styles.eventIdentity}><strong>{eventTitle(event.event_type)}</strong><span>{kind.label} · {actorName ?? (event.actor_user_id ? shortId(event.actor_user_id) : "System")} · {resourceName ?? resourceTitle(event.resource_type)}</span></div>
               <time dateTime={event.created_at} title={new Date(event.created_at).toLocaleString()}>{displayTime(event.created_at)}</time>
               <span className={styles.status + " " + outcomeClass(event.outcome)}>{outcomeLabel(event.outcome)}</span>
-              <button type="button" className={styles.expand} aria-label={(expanded ? "Collapse " : "Expand ") + eventTitle(event.event_type)} aria-expanded={expanded} aria-controls={"audit-details-" + event.id} onClick={() => toggleEvent(event.id)}><ChevronDown aria-hidden="true" /></button>
+              <button type="button" className={styles.expand} aria-label={(expanded ? "Collapse " : "Expand ") + eventTitle(event.event_type)} aria-expanded={expanded} aria-controls={expanded ? "audit-details-" + event.id : undefined} onClick={() => toggleEvent(event.id)}><ChevronDown aria-hidden="true" /></button>
             </div>
             {expanded ? <div className={styles.eventDetails} id={"audit-details-" + event.id}>
               <dl>

@@ -19,6 +19,7 @@ export function InstitutionSwitcher({ institutionId }: { institutionId?: string 
   const [selected, setSelected] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -26,14 +27,15 @@ export function InstitutionSwitcher({ institutionId }: { institutionId?: string 
       cache: "no-store",
       signal: controller.signal,
     }).then((result) => {
+      setError("");
       setChoices(result);
       setSelected(result.find((item) => item.institution_id === institutionId)?.id ?? "");
     }).catch((cause) => {
-      if (cause instanceof DOMException && cause.name === "AbortError") return;
-      setError(cause instanceof ApiError ? cause.message : "Institution assignments are unavailable.");
+      if (controller.signal.aborted || (cause instanceof DOMException && cause.name === "AbortError")) return;
+      setError("Institution data couldn't refresh.");
     });
     return () => controller.abort();
-  }, [institutionId]);
+  }, [institutionId, refreshKey]);
 
   async function switchInstitution(membershipId: string) {
     if (!membershipId || membershipId === selected) return;
@@ -62,6 +64,6 @@ export function InstitutionSwitcher({ institutionId }: { institutionId?: string 
         {choices.map((item) => <option key={item.id} value={item.id}>{item.institution_name}</option>)}
       </select>
     </label> : choices.length === 1 ? <p><span>Institution</span><strong>{choices[0].institution_name}</strong></p> : null}
-    {error ? <p role="alert">{error}</p> : null}
+    {error ? <div className={styles.institutionError} role="status"><span>{error}</span><button type="button" onClick={() => { setError(""); setRefreshKey((current) => current + 1); }}>Retry</button></div> : null}
   </div>;
 }
