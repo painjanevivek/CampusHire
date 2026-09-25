@@ -16,6 +16,7 @@ import { PublicSiteHeader } from "@/components/layout/public-site-header";
 import { BrandMark } from "@/components/brand-mark";
 import { LandingMotion } from "./landing-motion";
 import { ThemeToggle } from "./theme-toggle";
+import { LandingAccountActions } from "./landing-account-actions";
 import styles from "./editorial-landing.module.css";
 
 const recordSteps = [
@@ -114,7 +115,7 @@ function ProductFrame({
   );
 }
 
-export function EditorialLanding() {
+export function EditorialLanding({ sessionCookiePresent = false }: { sessionCookiePresent?: boolean }) {
   return (
     <LandingMotion className={styles.page}>
       <PublicSiteHeader
@@ -131,8 +132,10 @@ export function EditorialLanding() {
         actions={
           <nav className={styles.headerActions} aria-label="Account access">
             <ThemeToggle />
-            <Link href="/sign-in">Sign in</Link>
-            <Link className={styles.headerCta} href="/sign-up?from=/">Create profile</Link>
+            <LandingAccountActions
+              createProfileClassName={styles.headerCta}
+              sessionCookiePresent={sessionCookiePresent}
+            />
           </nav>
         }
       />

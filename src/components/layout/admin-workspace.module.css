@@ -9,9 +9,10 @@
 .institutionContext strong { overflow-wrap: anywhere; font-size: .8125rem; }
 .institutionContext select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 0 8px; background: var(--surface); color: var(--ink); font-size: .8125rem; }
 .institutionContext [role="alert"] { margin-top: 6px; color: var(--status-danger); font-size: .75rem; }
-.topUtilities { position: fixed; z-index: var(--layer-navigation); top: 18px; right: 24px; display: flex; align-items: center; gap: 8px; --utility-control-size: var(--control-min-size); --utility-icon-size: 18px; --utility-control-background: var(--surface); }
+.topUtilities { position: fixed; z-index: var(--layer-navigation); top: 16px; right: 24px; display: flex; align-items: center; gap: 8px; --utility-control-size: var(--control-min-size); --utility-icon-size: 18px; --utility-control-background: var(--surface); }
 .navigation { display: grid; gap: 22px; overflow-y: auto; margin-top: 28px; }
 .group { display: grid; gap: 2px; }
+.groupLabel { margin: 0; padding: 12px; color: var(--ink-muted); font-size: .625rem; font-weight: 500; letter-spacing: .055em; text-transform: uppercase; }
 .groupToggle { min-height: var(--control-min-size); display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 0; padding: 0 12px; background: transparent; color: var(--ink-muted); cursor: pointer; font-size: .625rem; font-weight: 500; letter-spacing: .055em; text-transform: uppercase; }
 .groupToggle svg { width: 14px; height: 14px; transition: transform 160ms ease; }
 .groupToggle[aria-expanded="true"] svg { transform: rotate(180deg); }
@@ -22,30 +23,31 @@
 .navigation a[aria-current="page"] { background: var(--brand-blue-soft); color: var(--brand-blue-dark); font-weight: 600; }
 .utilities { display: flex; gap: 10px; justify-content: space-between; margin-top: auto; padding: 20px 8px 0; --utility-control-size: 44px; --utility-icon-size: 18px; --utility-control-border: 1px solid var(--line); --utility-control-background: var(--surface); }
 .utilities button, .utilities a, .menuButton { min-width: 44px; min-height: 44px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink-muted); cursor: pointer; }
-@media (min-width: 1200px) { .utilities { padding-bottom: 64px; } }
+@media (min-width: 1200px) {
+  .navigation { flex: 1; min-height: 0; align-content: start; }
+  .utilities { flex-shrink: 0; margin-top: 0; }
+}
 .utilities a:hover, .utilities button:hover { background: var(--brand-blue-soft); color: var(--brand-blue-dark); }
 .utilities svg, .menuButton svg { width: 18px; height: 18px; }
 .menuButton { display: none; }
 .mobileUtilities { display: none; }
 .content { min-width: 0; margin-left: var(--admin-rail); padding-inline: 24px; }
-.content > main { width: 100%; max-width: none; min-width: 0; margin-inline: 0; padding-top: 76px; }
+.content > main { width: 100%; max-width: none; min-width: 0; margin-inline: 0; padding-top: 24px; }
 .content > main > header h1 { max-width: 36ch; font-size: clamp(1.625rem, 2.2vw, 2rem); line-height: 1.2; letter-spacing: -.035em; }
-.content > main > header { margin-bottom: 24px; }
+.content > main > header { margin-bottom: 24px; padding-right: 120px; }
 .content > main > header p, .content > main > header span { font-size: .875rem; }
 @media (max-width: 1199px) {
   .header { position: sticky; inset: 0 0 auto; width: auto; border-right: 0; border-bottom: 1px solid var(--line); }
   .inner { min-height: 64px; flex-direction: row; align-items: center; gap: 12px; padding: 8px 24px; }
   .brand { padding: 0; }
   .institutionContext { width: min(28vw, 220px); margin: 0; padding: 0; }
-  .topUtilities { position: static; margin-left: auto; --utility-control-size: 44px; }
+  .topUtilities { position: static; width: auto; min-height: 0; margin-left: auto; border: 0; padding: 0; background: transparent; --utility-control-size: 44px; }
   .menuButton { display: grid; margin-left: auto; }
   .utilities { margin: 0; padding: 0; gap: 6px; }
   .navigation { position: absolute; inset: 64px 16px auto; display: none; grid-template-columns: 1fr 1fr; margin: 0; padding: 20px; max-height: calc(100dvh - 90px); border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow-soft); }
   .navigationOpen { display: grid; }
   .content { margin-left: 0; }
-}
-@media (min-width: 1200px) {
-  .content > main > header { padding-right: 112px; }
+  .content > main > header { padding-right: 0; }
 }
 @media (max-width: 620px) {
   .inner { padding-inline: 16px; gap: 6px; }

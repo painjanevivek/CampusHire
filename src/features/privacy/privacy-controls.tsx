@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Cookie, DatabaseZap, ShieldCheck } from "lucide-react";
+import { CookiePreferenceTrigger } from "@/components/cookie-preferences";
 
 import styles from "./privacy-controls.module.css";
 
@@ -43,6 +44,7 @@ export function PrivacyControls() {
           <p>Cookie controls</p>
           <h2 id="cookie-details-title">Essential cookies, without tracking.</h2>
           <span>CampusHire uses security and session cookies when you sign in or submit a protected form. The website does not currently use analytics or advertising cookies.</span>
+          <CookiePreferenceTrigger />
         </div>
       </section>
     </main>

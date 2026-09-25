@@ -47,6 +47,20 @@ describe("AdminAccountWorkspace", () => {
     expect(screen.getByText("Administrator email preference controls")).toBeInTheDocument();
   });
 
+  it("does not show student placement email preferences to the Platform Admin", () => {
+    render(<AdminAccountWorkspace user={{
+      id: "platform-1",
+      email: "platform@campushire.edu",
+      role: "platform_admin",
+      institution_id: null,
+      membership_status: null,
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "Security and governance" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Email notifications/ })).not.toBeInTheDocument();
+    expect(screen.queryByText("Administrator email preference controls")).not.toBeInTheDocument();
+  });
+
   it("lets an administrator opt into MFA from account settings", async () => {
     render(<AdminAccountWorkspace user={{
       id: "owner-1",
@@ -60,7 +74,7 @@ describe("AdminAccountWorkspace", () => {
 
     expect(await screen.findByRole("link", { name: "Set up MFA" })).toHaveAttribute(
       "href",
-      "/admin/mfa/setup?next=/admin/account",
+      "/tnp/mfa/setup?next=/tnp/account",
     );
   });
 
@@ -103,7 +117,7 @@ describe("AdminAccountWorkspace", () => {
         body: JSON.stringify({ password: "secure passphrase", code: "123456" }),
       },
     ));
-    expect(replaceMock).toHaveBeenCalledWith("/admin/mfa/setup");
+    expect(replaceMock).toHaveBeenCalledWith("/tnp/mfa/setup");
     expect(refreshMock).toHaveBeenCalled();
   });
 });

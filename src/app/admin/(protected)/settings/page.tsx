@@ -1,5 +1,5 @@
-import { PlatformSettingsWorkspace } from "@/features/platform/platform-workspaces";
+import { redirect } from "next/navigation";
 
 export default function SettingsPage() {
-  return <PlatformSettingsWorkspace />;
+  redirect("/admin/account");
 }

@@ -1,0 +1,10 @@
+.card { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: .9rem; width: min(100%, 52rem); padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-left: 3px solid var(--brand-blue); border-radius: var(--radius-sm); background: var(--surface); }
+.icon { margin-top: .15rem; color: var(--brand-blue-dark); }
+.content h2 { margin: 0; font-size: 1.05rem; line-height: 1.35; }
+.content p { max-width: 70ch; margin: .35rem 0 0; color: var(--ink-muted); font-size: .9rem; line-height: 1.5; }
+.form { display: flex; align-items: end; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+.form > :first-child { flex: 1 1 16rem; max-width: 25rem; }
+.form > button { flex: 0 0 auto; }
+.form .error, .actions [role="alert"] { flex-basis: 100%; color: var(--status-danger); }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; }
+@media (max-width: 560px) { .form > button { width: 100%; } }

@@ -18,4 +18,7 @@
 .cookieNote > svg { width: 28px; height: 28px; color: var(--brand-blue); }
 .cookieNote h2 { margin-bottom: 8px; font-size: 1.7rem; }
 .cookieNote div { max-width: 780px; }
+.cookieNote button { min-height: var(--control-min-size); display: block; margin-top: 18px; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 0 16px; background: var(--surface); color: var(--ink); font: inherit; font-weight: var(--font-weight-emphasis); cursor: pointer; }
+.cookieNote button:hover { border-color: var(--brand-blue); color: var(--brand-blue-dark); }
+.cookieNote button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 @media (max-width: 700px) { .page { width: min(100% - 24px, 1120px); padding-top: 36px; }.principles { grid-template-columns: 1fr; }.choices { align-items: start; flex-direction: column; }.cookieNote { grid-template-columns: 1fr; } }

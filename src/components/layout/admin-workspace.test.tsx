@@ -29,11 +29,11 @@ describe("AdminWorkspace", () => {
     );
     expect(screen.queryByRole("link", { name: "Applications" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Drives" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Administration" }));
-    expect(screen.getByRole("link", { name: "System Health" })).toHaveAttribute(
-      "href",
-      "/admin/system-health",
-    );
+    expect(screen.getByRole("link", { name: "Notices" })).toHaveAttribute("href", "/admin/notices");
+    expect(screen.queryByRole("button", { name: "Platform" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "System Health" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Audit" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Settings" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Open notifications" }))
       .toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Switch to light mode" }))

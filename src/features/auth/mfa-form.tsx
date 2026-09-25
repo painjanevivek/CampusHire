@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
@@ -25,13 +25,56 @@ export function MfaForm({
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  useEffect(() => {
-    if (mode === "setup") {
-      csrfRequest<MfaSetupResponse>("/auth/mfa/setup", { method: "POST" }).then(setSetup).catch((cause) => {
+  const [needsCurrentFactor, setNeedsCurrentFactor] = useState(false);
+  const [setupState, setSetupState] = useState<"loading" | "ready" | "error">("loading");
+  const initialSetupRequested = useRef(false);
+  const setupInFlight = useRef(false);
+  const beginSetup = useCallback(async () => {
+    if (setupInFlight.current) return;
+    setupInFlight.current = true;
+    setSetupState("loading");
+    setSetup(null);
+    setQrCode("");
+    setQrError(false);
+    setError("");
+    try {
+      const nextSetup = await csrfRequest<MfaSetupResponse>("/auth/mfa/setup", { method: "POST" });
+      setSetup(nextSetup);
+      setSetupState("ready");
+    } catch (cause) {
+      if (cause instanceof ApiError && cause.code === "mfa_reauthentication_required") {
+        setNeedsCurrentFactor(true);
+      } else {
         setError(cause instanceof ApiError ? cause.message : "Could not start authenticator setup.");
-      });
+      }
+      setSetupState("error");
+    } finally {
+      setupInFlight.current = false;
     }
-  }, [mode]);
+  }, []);
+  useEffect(() => {
+    if (mode !== "setup" || initialSetupRequested.current) return;
+    initialSetupRequested.current = true;
+    void beginSetup();
+  }, [mode, beginSetup]);
+  async function verifyCurrentFactor(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitting(true);
+    setError("");
+    const code = new FormData(event.currentTarget).get("code");
+    try {
+      await csrfRequest<void>("/auth/mfa/challenge", {
+        method: "POST",
+        body: JSON.stringify({ code }),
+      });
+      setNeedsCurrentFactor(false);
+      await beginSetup();
+    } catch (cause) {
+      setError(cause instanceof ApiError ? cause.message : "The current authenticator could not be verified.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
   useEffect(() => {
     if (!setup?.provisioning_uri) return;
     let active = true;
@@ -47,6 +90,7 @@ export function MfaForm({
     });
     return () => { active = false; };
   }, [setup]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
@@ -63,13 +107,27 @@ export function MfaForm({
         router.push(nextPath);
       }
     } catch (cause) {
-      setError(cause instanceof ApiError ? cause.message : "Check the code and try again.");
+      if (cause instanceof ApiError && cause.code === "mfa_reauthentication_required") {
+        setNeedsCurrentFactor(true);
+        setSetup(null);
+        setQrCode("");
+      } else {
+        setError(cause instanceof ApiError ? cause.message : "Check the code and try again.");
+      }
     } finally {
       setSubmitting(false);
     }
   }
   if (recoveryCodes.length) {
     return <div className="authForm"><Alert tone="success">Authenticator enabled. Save these recovery codes now; they will not be shown again.</Alert><ul className="recoveryGrid">{recoveryCodes.map((code) => <li key={code}><code>{code}</code></li>)}</ul><Button onClick={() => router.push(nextPath)}>Continue</Button></div>;
+  }
+  if (needsCurrentFactor) {
+    return <form className="authForm" onSubmit={(event) => void verifyCurrentFactor(event)}>
+      <p>Verify the authenticator already enrolled on this account before replacing it.</p>
+      {error ? <Alert tone="error">{error}</Alert> : null}
+      <Input id="current-code" name="code" label="Current authenticator or recovery code" autoComplete="one-time-code" minLength={6} maxLength={32} required />
+      <Button disabled={submitting}>{submitting ? "Verifying…" : "Verify current factor"}</Button>
+    </form>;
   }
   return (
     <form className="authForm" onSubmit={submit}>
@@ -81,9 +139,14 @@ export function MfaForm({
           <p>Open your authenticator app, choose <strong>Scan a QR code</strong>, then scan this code.</p>
         </div>
         <div className="authQrFrame" aria-live="polite">
-          {qrCode ? <Image src={qrCode} width={224} height={224} unoptimized alt="QR code for adding this CampusHire account to an authenticator app" /> : <span>{qrError ? "QR code unavailable. Use the manual key below." : "Preparing QR code…"}</span>}
+          {setupState === "error" ? <div className="authQrRefreshPanel">
+              <p>Authenticator setup could not load.</p>
+              <Button type="button" onClick={() => void beginSetup()}>Retry setup</Button>
+            </div>
+            : qrCode ? <Image src={qrCode} width={224} height={224} unoptimized alt="QR code for adding this CampusHire account to an authenticator app" />
+              : <span>{qrError ? "QR code unavailable. Use the manual key below." : "Preparing QR code…"}</span>}
         </div>
-        <details className="authManualKey"><summary>Use a manual setup key instead</summary><code>{setup?.secret ?? "Preparing secure key…"}</code></details>
+        <details className="authManualKey"><summary>Use a manual setup key instead</summary><code>{setup?.secret ?? (setupState === "error" ? "Setup unavailable. Retry above." : "Preparing secure key…")}</code></details>
       </div> : <p>Enter an authenticator code or an unused recovery code.</p>}
       <Input id="code" name="code" label="Verification code" inputMode="numeric" autoComplete="one-time-code" minLength={6} maxLength={32} required />
       <Button type="submit" disabled={submitting || (mode === "setup" && !setup)}>{submitting ? "Verifying…" : "Verify code"}</Button>

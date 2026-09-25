@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { EditorialLanding } from "@/features/marketing/editorial-landing";
 
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  return <EditorialLanding />;
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const sessionCookiePresent = Boolean(cookieStore.get("campushire_session")?.value);
+  return <EditorialLanding sessionCookiePresent={sessionCookiePresent} />;
 }

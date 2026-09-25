@@ -30,7 +30,7 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
       <header className={styles.hero}>
         <p>Profile and account</p>
         <h1>{isPlatformAdmin ? "Your platform authority, clearly assigned." : "Your T&P access, clearly assigned."}</h1>
-        <span>{isPlatformAdmin ? "Review the singleton platform assignment, then open security or communication controls when needed." : "Review the institution and role connected to this account, then open security or communication controls when needed."}</span>
+        <span>{isPlatformAdmin ? "Review your platform assignment and security controls. Placement communication stays with institution teams." : "Review the institution and role connected to this account, then open security or communication controls when needed."}</span>
       </header>
 
       <section className={`${styles.overview} ${styles.adminOverview}`} aria-labelledby="admin-account-title">
@@ -55,7 +55,7 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
 
       <section className={styles.settings} aria-labelledby="admin-settings-title">
         <header className={styles.settingsHeader}>
-          <div><p>Account settings</p><h2 id="admin-settings-title">Security, communication, and governance</h2></div>
+          <div><p>Account settings</p><h2 id="admin-settings-title">{isPlatformAdmin ? "Security and governance" : "Security, communication, and governance"}</h2></div>
           <span>Operational controls stay out of the way until opened.</span>
         </header>
 
@@ -77,10 +77,10 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
             description={`MFA is optional until you enable it. Once enrolled, it is required on every future ${isPlatformAdmin ? "Platform Admin" : "T&P"} sign-in.`}
             status="Account setting"
           >
-            <MfaStatusControl />
+            <MfaStatusControl workspace={isPlatformAdmin ? "admin" : "tnp"} />
           </AccountDisclosure>
 
-          <AccountDisclosure
+          {!isPlatformAdmin ? <AccountDisclosure
             icon={BellRing}
             eyebrow="Communication"
             title="Email notifications"
@@ -88,7 +88,7 @@ export function AdminAccountWorkspace({ user }: { user: SessionUser }) {
             status="Optional"
           >
             <CommunicationPreferences />
-          </AccountDisclosure>
+          </AccountDisclosure> : null}
 
           <AccountDisclosure
             icon={ShieldCheck}

@@ -15,14 +15,16 @@ export function NotificationCenter({
   open: controlledOpen,
   onOpenChange,
   context = "student",
+  includePlacementActions = true,
 }: {
   navigate?: (href: string) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  context?: "student" | "admin";
+  context?: "student" | "tnp" | "admin";
+  includePlacementActions?: boolean;
 }) {
   const router = useRouter();
-  const [category, setCategory] = useState("needs_action");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [upcoming, setUpcoming] = useState<DashboardApiResponse["next_action"][]>([]);
   const [timezone, setTimezone] = useState("UTC");
   const root = useRef<HTMLDivElement>(null);
@@ -30,6 +32,11 @@ export function NotificationCenter({
     items: [],
     unread_count: 0,
   });
+  const category = selectedCategory ?? (
+    page.items.some((item) => item.event_key.startsWith("platform.notice.") && !item.read_at)
+      ? "updates"
+      : context === "student" && includePlacementActions ? "needs_action" : "updates"
+  );
   const [localOpen, setLocalOpen] = useState(false);
   const open = controlledOpen ?? localOpen;
   const setOpen = useCallback((value: SetStateAction<boolean>) => {
@@ -41,7 +48,7 @@ export function NotificationCenter({
   const load = useCallback(async () => {
     try {
       setPage(
-        await apiRequest<NotificationPage>("/notifications", {
+        await apiRequest<NotificationPage>("/account/notifications", {
           cache: "no-store",
         }),
       );
@@ -56,10 +63,16 @@ export function NotificationCenter({
     return () => window.clearTimeout(pending);
   }, [load]);
   useEffect(() => {
+    const refreshIfVisible = () => { if (document.visibilityState === "visible") void load(); };
+    const timer = window.setInterval(refreshIfVisible, 60_000);
+    window.addEventListener("focus", refreshIfVisible);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", refreshIfVisible); };
+  }, [load]);
+  useEffect(() => {
     if (!open) return;
     let active = true;
     const pending = window.setTimeout(() => void load(), 0);
-    if (context === "student") {
+    if (context === "student" && includePlacementActions) {
       void apiRequest<DashboardApiResponse>("/dashboard", { cache: "no-store" }).then(data => {
         if (active) { setUpcoming([data.next_action, ...(data.upcoming ?? [])].filter(item => item?.deadline_at)); setTimezone(data.institution_timezone ?? "UTC"); }
       }).catch(() => { if (active) setError("Upcoming deadlines could not be refreshed."); });
@@ -67,7 +80,7 @@ export function NotificationCenter({
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setOpen(false); root.current?.querySelector<HTMLButtonElement>("button")?.focus(); } };
     window.addEventListener("keydown", escape);
     return () => { active = false; window.clearTimeout(pending); window.removeEventListener("keydown", escape); };
-  }, [context, open, load, setOpen]);
+  }, [context, includePlacementActions, open, load, setOpen]);
   useEffect(() => {
     function close(event: MouseEvent) {
       if (root.current && !root.current.contains(event.target as Node))
@@ -86,7 +99,7 @@ export function NotificationCenter({
     if (!item.read_at) {
       try {
         const updated = await csrfRequest<Notification>(
-          `/notifications/${item.id}/read`,
+          `/account/notifications/${item.id}/read`,
           { method: "POST" },
         );
         setPage((current) => ({
@@ -109,7 +122,7 @@ export function NotificationCenter({
       <button
         type="button"
         className={styles.trigger}
-        aria-label={`${context === "admin" ? "Open notifications" : "Open updates"}${page.unread_count ? `, ${page.unread_count} unread` : ""}`}
+        aria-label={`${context === "student" ? "Open updates" : "Open notifications"}${page.unread_count ? `, ${page.unread_count} unread` : ""}`}
         aria-expanded={open}
         aria-controls="student-updates"
         onClick={() => setOpen((current) => !current)}
@@ -123,11 +136,11 @@ export function NotificationCenter({
         <section
           id="student-updates"
           className={styles.panel}
-          aria-label="Placement updates"
+          aria-label={context === "student" ? "Student updates" : "Notifications"}
         >
           <header>
             <div>
-              <p>{context === "admin" ? "Administrator notifications" : "Placement updates"}</p>
+              <p>{context === "admin" ? "Administrator notifications" : context === "tnp" ? "T&P notifications" : "Placement updates"}</p>
               <h2>
                 {page.unread_count
                   ? `${page.unread_count} unread`
@@ -145,11 +158,10 @@ export function NotificationCenter({
           {error ? <p className={styles.error}>{error}</p> : null}
           {!page.items.length && !error ? (
             <p className={styles.empty}>
-              Application decisions and constructive placement feedback will
-              appear here.
+              Notices and account updates will appear here.
             </p>
           ) : null}
-          <nav aria-label="Update categories" className={styles.categories}>{[["needs_action", "Needs action"], ...(context === "student" ? [["upcoming", "Upcoming"]] : []), ["updates", "Updates"]].map(([value, label]) => <button key={value} aria-pressed={category === value} onClick={() => setCategory(value)}>{label}</button>)}</nav>
+          <nav aria-label="Update categories" className={styles.categories}>{[...(context === "student" && includePlacementActions ? [["needs_action", "Needs action"], ["upcoming", "Upcoming"]] : []), ["updates", "Updates"]].map(([value, label]) => <button key={value} aria-pressed={category === value} onClick={() => setSelectedCategory(value)}>{label}</button>)}</nav>
           <p className={styles.empty}>Reading an update does not complete its underlying task.</p>
           {category === "upcoming" && <div className={styles.items}>{upcoming.map(item => <Link key={item.key} href={safeInternalHref(item.href)} onClick={() => setOpen(false)}>{item.title}<p>{item.deadline_at && new Date(item.deadline_at).toLocaleString(undefined, { timeZone: timezone })} ({timezone})</p></Link>)}{!upcoming.length && <p>No known upcoming deadlines in your current action list.</p>}</div>}
           <div className={styles.items}>

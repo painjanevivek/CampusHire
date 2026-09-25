@@ -1,13 +1,11 @@
-.panel,
-.settingsButton {
+.panel {
   position: fixed;
   left: clamp(12px, 2vw, 24px);
   bottom: clamp(12px, 2vw, 24px);
   z-index: var(--layer-toast);
-}
-
-.panel {
   width: min(470px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
   border: 1px solid var(--line);
   border-top: 4px solid var(--brand-blue);
   border-radius: 16px;
@@ -34,8 +32,7 @@
 }
 
 .icon svg,
-.statusRow > svg,
-.settingsButton svg {
+.statusRow > svg {
   width: 20px;
   height: 20px;
 }
@@ -102,66 +99,56 @@
 }
 
 .actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin-top: 18px;
 }
 
-.actions button,
-.settingsButton {
+.actions button {
   min-height: var(--control-min-size);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   font-weight: var(--font-weight-emphasis);
   cursor: pointer;
 }
 
 .actions button {
-  border: 1px solid var(--brand-blue);
-  padding: 0 16px;
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.actions button:first-child {
+  grid-column: 1 / -1;
+  border-color: var(--brand-blue);
   background: var(--brand-blue);
-  color: white;
+  color: var(--on-primary);
 }
 
 .actions a {
+  grid-column: 1 / -1;
+  width: fit-content;
+  min-height: var(--control-min-size);
+  display: inline-flex;
+  align-items: center;
   color: var(--brand-blue-dark);
   font-size: 0.82rem;
   font-weight: var(--font-weight-emphasis);
   text-underline-offset: 4px;
 }
 
-.settingsButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  padding: 0 15px;
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-soft);
+.actions button:hover {
+  border-color: var(--brand-blue);
+  background: var(--brand-blue-soft);
+  color: var(--brand-blue-dark);
 }
 
-.actions button:hover,
-.settingsButton:hover {
-  border-color: var(--brand-blue);
-}
+.actions button:focus-visible,
+.actions a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.actions button:disabled { cursor: default; }
 
 @media (max-width: 520px) {
-  .actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .actions button {
-    width: 100%;
-  }
-
-  .actions a {
-    min-height: var(--control-min-size);
-    display: inline-flex;
-    align-items: center;
-  }
-
   .statusRow {
     grid-template-columns: auto minmax(0, 1fr);
   }
@@ -176,9 +163,15 @@
   .panel {
     animation: cookie-panel-enter 180ms ease-out;
   }
+  .panel.closing { animation: cookie-panel-exit 180ms ease-in both; }
 }
 
 @keyframes cookie-panel-enter {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cookie-panel-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
 }

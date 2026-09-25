@@ -143,20 +143,26 @@ export function SignUpForm() {
         type="email"
         label="PCCOE institutional email"
         autoComplete="email"
-        placeholder="name.surname23@pccoepune.org"
-        hint="Use your PCCOE institutional email. It must contain your admission batch year."
+        hint="Student registration is currently open for PCCOE only. Use your PCCOE email with its admission batch year."
         required
       />
       <Select
         id="institution_id"
         name="institution_id"
         label="College"
+        hint="Other colleges are listed for future availability."
         required
         disabled={institutionsLoading || Boolean(institutionsError) || institutions.length === 0}
       >
         <option value="">{institutionsLoading ? "Loading colleges…" : "Select your college"}</option>
         {institutions.map((institution) => (
-          <option key={institution.id} value={institution.id}>{institution.name}</option>
+          <option
+            key={institution.id}
+            value={institution.id}
+            disabled={!institution.signup_enabled}
+          >
+            {institution.name}
+          </option>
         ))}
       </Select>
       {institutionsError ? <>

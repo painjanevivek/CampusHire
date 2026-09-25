@@ -33,7 +33,16 @@ export function StaffTermsForm() {
         router.push(result.user.workspace === "tnp" ? "/tnp/mfa/challenge" : "/admin/mfa/challenge");
         return;
       }
-      router.push(staffMfaSetupPath(result.user.workspace));
+      if (result.next_step === "mfa_setup") {
+        router.push(staffMfaSetupPath(result.user.workspace));
+        return;
+      }
+      if (result.next_step === "complete") {
+        router.push(result.user.workspace === "tnp" ? "/tnp/dashboard" : "/admin/dashboard");
+        return;
+      }
+      setError("The sign-in state could not be confirmed. Please sign in again.");
+      setSubmitting(false);
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : "The acceptance could not be recorded.");
       setSubmitting(false);

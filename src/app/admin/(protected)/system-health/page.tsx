@@ -1,5 +1,5 @@
-import { PlatformSystemHealth } from "@/features/platform/platform-workspaces";
+import { redirect } from "next/navigation";
 
 export default function SystemHealthPage() {
-  return <PlatformSystemHealth />;
+  redirect("/admin/dashboard");
 }

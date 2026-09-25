@@ -1,5 +1,5 @@
-import { PlatformAudit } from "@/features/platform/platform-workspaces";
+import { redirect } from "next/navigation";
 
 export default function AuditPage() {
-  return <PlatformAudit />;
+  redirect("/admin/dashboard");
 }

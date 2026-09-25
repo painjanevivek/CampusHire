@@ -39,4 +39,30 @@ describe("StaffTermsForm", () => {
     }));
     expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup");
   });
+
+  it("asks for only a code after terms acceptance when the authenticator is enrolled", async () => {
+    csrfRequestMock.mockResolvedValue({
+      user: { id: "owner-1", email: "owner@example.edu", role: "platform_admin", workspace: "admin" },
+      next_step: "mfa_challenge",
+    });
+    render(<StaffTermsForm />);
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: "Accept and continue" }));
+
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/challenge"));
+    expect(pushMock).not.toHaveBeenCalledWith("/admin/mfa/setup");
+  });
+
+  it("does not show QR setup when terms acceptance completes without MFA enrollment", async () => {
+    csrfRequestMock.mockResolvedValue({
+      user: { id: "owner-1", email: "owner@example.edu", role: "platform_admin", workspace: "admin" },
+      next_step: "complete",
+    });
+    render(<StaffTermsForm />);
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: "Accept and continue" }));
+
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/dashboard"));
+    expect(pushMock).not.toHaveBeenCalledWith("/admin/mfa/setup");
+  });
 });

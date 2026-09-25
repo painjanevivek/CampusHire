@@ -41,7 +41,8 @@ describe("PlatformInstitutions", () => {
 
   it("provisions an institution through the authenticated Platform Admin route", async () => {
     render(<PlatformInstitutions />);
-    fireEvent.click(screen.getByText("Provision an institution after offline verification"));
+    expect(screen.getByRole("heading", { name: "Add Institutes" })).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Add an institute"));
     fireEvent.change(screen.getByLabelText("Institution name"), { target: { value: "Campus One" } });
     fireEvent.change(screen.getByLabelText("Institution code"), { target: { value: "campus-one" } });
     fireEvent.change(screen.getByLabelText("Initial T&P administrator email"), {
@@ -57,7 +58,10 @@ describe("PlatformInstitutions", () => {
       }),
     ));
     expect(await screen.findByText("single-use-activation-code")).toBeInTheDocument();
-    expect(screen.getByText(/will not be shown again/i)).toBeInTheDocument();
+    expect(screen.getByText(/displayed only once/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Administrator activation code" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Done — hide code" }));
+    expect(screen.queryByText("single-use-activation-code")).not.toBeInTheDocument();
     expect(refreshMock).toHaveBeenCalled();
   });
 });

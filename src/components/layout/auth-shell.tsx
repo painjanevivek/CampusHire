@@ -8,7 +8,7 @@ type AuthShellProps = {
   title: string;
   description?: string;
   children: ReactNode;
-  footer: ReactNode;
+  footer?: ReactNode;
   context?: "student" | "admin";
   wide?: boolean;
   backHref?: string;
@@ -47,7 +47,7 @@ export function AuthShell({
             {description ? <p className="lede">{description}</p> : null}
           </div>
           {children}
-          <p className="authFooter">{footer}</p>
+          {footer ? <p className="authFooter">{footer}</p> : null}
         </section>
       </main>
     </div>

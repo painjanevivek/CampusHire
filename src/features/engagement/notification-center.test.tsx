@@ -49,7 +49,7 @@ describe("NotificationCenter", () => {
     fireEvent.click(screen.getByRole("button", { name: /Application shortlisted/ }));
     await waitFor(() =>
       expect(csrfRequestMock).toHaveBeenCalledWith(
-        "/notifications/notice-1/read",
+        "/account/notifications/notice-1/read",
         { method: "POST" },
       ),
     );
@@ -69,5 +69,23 @@ describe("NotificationCenter", () => {
     fireEvent.click(screen.getByRole("button", { name: /Application shortlisted/ }));
     expect(await screen.findByText(/does not contain a safe CampusHire destination/)).toBeInTheDocument();
     expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it("shows a platform notice to a student without placement access", async () => {
+    apiRequestMock.mockResolvedValue({
+      items: [{
+        ...notification,
+        event_key: "platform.notice.abc",
+        title: "Campus notice",
+        body: "Please read this update.",
+        deep_link: "/profile",
+      }],
+      unread_count: 1,
+    });
+    render(<NotificationCenter includePlacementActions={false} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Open updates, 1 unread" }));
+    expect(screen.getByRole("button", { name: /Campus notice/ })).toBeInTheDocument();
+    expect(apiRequestMock).not.toHaveBeenCalledWith("/dashboard", expect.anything());
+    expect(screen.queryByRole("button", { name: "Upcoming" })).not.toBeInTheDocument();
   });
 });

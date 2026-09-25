@@ -6,73 +6,100 @@ import { Cookie, ShieldCheck } from "lucide-react";
 
 import styles from "./cookie-preferences.module.css";
 
+// Bump this key before introducing any optional cookie category so consent is requested again.
 const preferenceKey = "campushire_cookie_preference_v1";
-const essentialOnly = "essential-only";
+const reopenEvent = "campushire:open-cookie-preferences";
+type CookieChoice = "all" | "essential-only" | "declined";
+
+function isSavedChoice(value: string | null): value is CookieChoice {
+  return value === "all" || value === "essential-only" || value === "declined";
+}
+
+export function CookiePreferenceTrigger() {
+  return (
+    <button
+      type="button"
+      onClick={(event) => window.dispatchEvent(new CustomEvent(reopenEvent, {
+        detail: { returnFocus: event.currentTarget },
+      }))}
+    >
+      Change cookie preference
+    </button>
+  );
+}
 
 export function CookiePreferences() {
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
-  const saveButtonRef = useRef<HTMLButtonElement>(null);
-  const settingsButtonRef = useRef<HTMLButtonElement>(null);
+  const [closing, setClosing] = useState(false);
+  const firstChoiceRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     let preferenceSaved = false;
     try {
-      preferenceSaved = window.localStorage.getItem(preferenceKey) === essentialOnly;
+      preferenceSaved = isSavedChoice(window.localStorage.getItem(preferenceKey));
     } catch {
-      // Show the receipt when browser storage cannot preserve the preference.
+      // Ask again after a reload when browser storage cannot preserve the preference.
     }
     const hydration = window.setTimeout(() => {
       setOpen(!preferenceSaved);
       setReady(true);
     }, 0);
-    return () => window.clearTimeout(hydration);
+    const reopen = (event: Event) => {
+      window.clearTimeout(hydration);
+      if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+      returnFocusRef.current = (event as CustomEvent<{ returnFocus?: HTMLElement }>).detail?.returnFocus ?? null;
+      setClosing(false);
+      setOpen(true);
+      setReady(true);
+    };
+    window.addEventListener(reopenEvent, reopen);
+    return () => {
+      window.clearTimeout(hydration);
+      if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
+      window.removeEventListener(reopenEvent, reopen);
+    };
   }, []);
 
-  function savePreference() {
+  useEffect(() => {
+    if (open) firstChoiceRef.current?.focus();
+  }, [open]);
+
+  function savePreference(choice: CookieChoice) {
+    if (closing) return;
     try {
-      window.localStorage.setItem(preferenceKey, essentialOnly);
+      window.localStorage.setItem(preferenceKey, choice);
     } catch {
       // The preference can remain session-only when browser storage is unavailable.
     }
-    setOpen(false);
-    window.setTimeout(() => settingsButtonRef.current?.focus(), 0);
+    setClosing(true);
+    const closeDelay = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 0 : 180;
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+      returnFocusRef.current?.focus();
+      returnFocusRef.current = null;
+      closeTimerRef.current = null;
+    }, closeDelay);
   }
 
-  function reopenPreferences() {
-    setOpen(true);
-    window.setTimeout(() => saveButtonRef.current?.focus(), 0);
-  }
-
-  if (!ready) return null;
-
-  if (!open) {
-    return (
-      <button
-        ref={settingsButtonRef}
-        className={styles.settingsButton}
-        type="button"
-        onClick={reopenPreferences}
-        aria-expanded="false"
-      >
-        <Cookie aria-hidden="true" />
-        Cookie settings
-      </button>
-    );
-  }
+  if (!ready || !open) return null;
 
   return (
-    <aside className={styles.panel} aria-labelledby="cookie-preferences-title">
+    <aside className={`${styles.panel} ${closing ? styles.closing : ""}`} role="dialog" aria-modal="false" aria-labelledby="cookie-preferences-title">
       <div className={styles.heading}>
         <span className={styles.icon}><Cookie aria-hidden="true" /></span>
         <div>
-          <p>Cookie receipt · essential only</p>
-          <h2 id="cookie-preferences-title">Cookies with a security job.</h2>
+          <p>Cookie preferences</p>
+          <h2 id="cookie-preferences-title">Choose your cookies</h2>
         </div>
       </div>
 
       <p className={styles.description}>
-        CampusHire uses essential cookies for secure sign-in, session continuity, and form protection. We do not currently use analytics or advertising cookies.
+        CampusHire currently uses only essential cookies for sign-in and security. No analytics or advertising cookies are active. We will ask again if optional cookies are introduced.
       </p>
 
       <div className={styles.statusRow}>
@@ -85,9 +112,9 @@ export function CookiePreferences() {
       </div>
 
       <div className={styles.actions}>
-        <button ref={saveButtonRef} type="button" onClick={savePreference}>
-          Save essential-only preference
-        </button>
+        <button ref={firstChoiceRef} type="button" disabled={closing} onClick={() => savePreference("essential-only")}>Essential only</button>
+        <button type="button" disabled={closing} onClick={() => savePreference("all")}>Allow all</button>
+        <button type="button" disabled={closing} onClick={() => savePreference("declined")}>Decline optional</button>
         <Link href="/privacy#cookies">Privacy details</Link>
       </div>
     </aside>

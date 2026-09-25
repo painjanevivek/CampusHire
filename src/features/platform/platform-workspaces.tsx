@@ -4,11 +4,13 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Activity, ArrowRight, Building2, CheckCircle2, ChevronDown, Clock3, ShieldAlert, UserCog } from "lucide-react";
+import { Activity, ArrowRight, Building2, CheckCircle2, ChevronDown, FileText, Plus, ShieldAlert, UserPlus } from "lucide-react";
 
 import { PageContainer, PageHeader } from "@/components/layout/page-layout";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Alert, Badge, RequestState } from "@/components/ui/feedback";
+import { RecentMfaVerification } from "@/features/auth/recent-mfa-verification";
 import { useResource } from "@/features/experience/use-resource";
 import { ApiError, csrfRequest } from "@/lib/api/client";
 import { OutcomeTimeline } from "@/features/recruitment/outcome-timeline";
@@ -73,44 +75,15 @@ type StaffAccount = {
   status: string;
   requires_terms_acceptance: boolean;
 };
-type ReportSummary = {
-  institution_count: number;
-  student_count: number;
-  drive_count: number;
-  application_count: number;
-  applications_by_status: Record<string, number>;
-  generated_at: string;
-  provisional: boolean;
+type AuditEvent = {
+  id: string;
+  event_type: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  details: Record<string, unknown>;
+  created_at: string;
 };
-type HealthSummary = {
-  status: "healthy" | "degraded";
-  checked_at: string;
-  queues: Array<{ service: string; pending: number; failed: number; oldest_outstanding_at: string | null }>;
-};
-type AuditPage = {
-  items: Array<{
-    id: string;
-    event_type: string;
-    resource_type: string | null;
-    outcome: string;
-    reason: string | null;
-    actor_user_id: string | null;
-    correlation_id: string | null;
-    created_at: string;
-  }>;
-  total: number;
-};
-type PlatformSettings = {
-  ai_provider: string;
-  ai_model: string | null;
-  ai_key_configured: boolean;
-  email_configured: boolean;
-  storage_backend: string;
-  platform_notice: Record<string, unknown>;
-  service_targets: Record<string, unknown>;
-  feature_availability: Record<string, unknown>;
-};
-
+type AuditEventPage = { items: AuditEvent[]; page: number; page_size: number; total: number };
 const roleLabels: Record<string, string> = {
   tnp_admin: "Officer",
   tnp_reviewer: "Reviewer",
@@ -121,33 +94,170 @@ function ResourceError({ message, retry }: { message: string; retry: () => void 
   return <RequestState state="error" title="This platform record is unavailable" onRetry={retry}>{message}</RequestState>;
 }
 
+function needsRecentMfa(cause: unknown): boolean {
+  return cause instanceof ApiError && cause.code === "reauthentication_required";
+}
+
+function generateTemporaryPassword(): string {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@";
+  const random = crypto.getRandomValues(new Uint8Array(20));
+  return Array.from(random, (value) => alphabet[value & 63]).join("");
+}
+
+const activityLabels: Record<string, string> = {
+  "staff_account.created": "T&P account created",
+  "registration.institution.approved": "Institution approved",
+  "institution.provisioned": "Institution added",
+  "platform.institution.status_changed": "Institution access changed",
+  "platform.notice.published": "Platform notice published",
+  "platform.settings.updated": "Platform settings updated",
+  "platform_admin.transferred": "Platform administrator changed",
+  "auth.manual_recovery_issued": "Recovery access issued",
+};
+
+const relevantActivityTypes = new Set(Object.keys(activityLabels));
+
+function activityTitle(eventType: string): string {
+  return activityLabels[eventType] ?? eventType.replaceAll(".", " · ").replaceAll("_", " ");
+}
+
+function activityEntity(event: AuditEvent): string {
+  const username = event.details.username;
+  if (typeof username === "string" && username.trim()) return username;
+  if (event.resource_type) return event.resource_type.replaceAll("_", " ");
+  return "Platform";
+}
+
 export function PlatformDashboard() {
   const summary = useResource<DashboardSummary>("/platform/dashboard");
-  return <PageContainer context="admin" className={styles.page}>
-    <PageHeader eyebrow="Platform oversight" title="CampusHire, accountable at a glance." description="Service risk and institutional requests appear first. Placement decisions remain with each institution." />
-    {summary.error ? <ResourceError message={summary.error} retry={summary.refresh} /> : null}
-    {summary.loading ? <RequestState state="loading" title="Loading platform summary">Each signal is read without granting operational placement access.</RequestState> : null}
-    {summary.data ? <>
-      <section className={styles.priorityStrip} aria-label="Platform priorities">
-        <article><span>Approval queue</span><strong>{summary.data.pending_institution_approvals}</strong><small>institution requests</small></article>
-        <article><span>Service attention</span><strong>{summary.data.unresolved_service_items}</strong><small>unresolved items</small></article>
-        <article><span>Overdue escalation</span><strong>{summary.data.overdue_escalations}</strong><small>staffing or support</small></article>
-      </section>
-      <section className={styles.quickActions} aria-labelledby="platform-actions-title">
-        <div><p className="eyebrow">Quick actions</p><h2 id="platform-actions-title">Resolve platform work</h2></div>
-        <nav aria-label="Platform quick actions">
-          <Link href="/admin/institutions?view=requests"><Building2 aria-hidden="true" /><span><strong>Review institutions</strong><small>Approve verified requests</small></span><ArrowRight aria-hidden="true" /></Link>
-          <Link href="/admin/accounts"><UserCog aria-hidden="true" /><span><strong>Issue T&amp;P access</strong><small>Choose an institution first</small></span><ArrowRight aria-hidden="true" /></Link>
-          <Link href="/admin/system-health"><Activity aria-hidden="true" /><span><strong>Inspect service health</strong><small>See failures before worker detail</small></span><ArrowRight aria-hidden="true" /></Link>
-        </nav>
-      </section>
-      <section className={styles.metrics} aria-label="Platform coverage">
-        <article><span>Active institutions</span><strong>{summary.data.active_institutions.toLocaleString()}</strong></article>
-        <article><span>T&amp;P accounts</span><strong>{summary.data.tnp_accounts.toLocaleString()}</strong></article>
-        <article><span>Reporting freshness</span><strong className={styles.dateValue}>{summary.data.reporting_freshness_at ? new Date(summary.data.reporting_freshness_at).toLocaleString() : "No report yet"}</strong></article>
-      </section>
-    </> : null}
-  </PageContainer>;
+  const activity = useResource<AuditEventPage>("/platform/audit/events?page=1&page_size=20");
+  const [showAllActivity, setShowAllActivity] = useState(false);
+  const attentionCount = summary.data
+    ? summary.data.pending_institution_approvals + summary.data.unresolved_service_items + summary.data.overdue_escalations
+    : 0;
+  const relevantActivity = activity.data?.items.filter(event => relevantActivityTypes.has(event.event_type)) ?? [];
+  const visibleActivity = relevantActivity.slice(0, showAllActivity ? 20 : 5);
+
+  return (
+    <PageContainer context="admin" className={`${styles.page} ${styles.dashboardPage}`}>
+      <header className={styles.dashboardHeader}>
+        <h1>Platform overview</h1>
+        <p>Monitor platform operations, institutional access, and outstanding work. Platform Admin manages access and service operations; institutions own placement and appeal decisions.</p>
+      </header>
+
+      {summary.error ? <ResourceError message={summary.error} retry={summary.refresh} /> : null}
+      {summary.loading ? <RequestState state="loading" title="Loading platform summary">Reading the latest platform records.</RequestState> : null}
+      {summary.data ? <>
+        <section className={styles.dashboardStatus} data-attention={attentionCount > 0} aria-labelledby="platform-status-title">
+          {attentionCount > 0 ? <ShieldAlert aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}
+          <div>
+            <h2 id="platform-status-title">{attentionCount > 0 ? `${attentionCount.toLocaleString()} ${attentionCount === 1 ? "item needs" : "items need"} attention` : "Everything is up to date"}</h2>
+            <p>{attentionCount > 0 ? "Review the highlighted queues and take the next action." : "No platform-admin actions currently require attention."}</p>
+          </div>
+          {attentionCount > 0 ? <a href="#platform-work-title">Review needs attention <ArrowRight aria-hidden="true" /></a> : null}
+        </section>
+
+        <section className={styles.dashboardMetrics} aria-label="Platform summary">
+          <article data-attention={attentionCount > 0}>
+            <span>Needs attention</span>
+            <strong>{attentionCount.toLocaleString()} <small>· {attentionCount > 0 ? "Review now" : "All clear"}</small></strong>
+          </article>
+          <article>
+            <span>Active institutions</span>
+            <strong>{summary.data.active_institutions.toLocaleString()}</strong>
+          </article>
+          <article>
+            <span>Active T&amp;P accounts</span>
+            <strong>{summary.data.tnp_accounts.toLocaleString()}</strong>
+          </article>
+        </section>
+
+        <div className={styles.dashboardColumns}>
+          <div className={styles.dashboardMain}>
+            <section className={styles.dashboardQueue} aria-labelledby="platform-work-title">
+              <header className={styles.dashboardSectionHeader}>
+                <h2 id="platform-work-title">Needs attention</h2>
+                <p>Items requiring Platform Admin action.</p>
+              </header>
+              <div className={styles.dashboardQueueRows}>
+                <Link href="/admin/institutions#registration-requests-title" className={styles.dashboardQueueRow} data-attention={summary.data.pending_institution_approvals > 0}>
+                  <Building2 aria-hidden="true" />
+                  <span className={styles.dashboardQueueCopy}>
+                    <strong>Institution approvals</strong>
+                    <small>{summary.data.pending_institution_approvals === 0 ? "No requests awaiting review" : `${summary.data.pending_institution_approvals.toLocaleString()} ${summary.data.pending_institution_approvals === 1 ? "request" : "requests"} awaiting review`}</small>
+                    <span>Managed by Platform Admin</span>
+                  </span>
+                  <span className={styles.dashboardQueueCount} aria-label={`${summary.data.pending_institution_approvals} institution approvals pending`}>{summary.data.pending_institution_approvals.toLocaleString()}<small>{summary.data.pending_institution_approvals > 0 ? "Review now" : "No requests"}</small></span>
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+                <Link href="/admin/notices" className={styles.dashboardQueueRow} data-attention={summary.data.unresolved_service_items > 0}>
+                  <Activity aria-hidden="true" />
+                  <span className={styles.dashboardQueueCopy}>
+                    <strong>Service issues</strong>
+                    <small>{summary.data.unresolved_service_items === 0 ? "No open service issues" : `${summary.data.unresolved_service_items.toLocaleString()} open service ${summary.data.unresolved_service_items === 1 ? "issue" : "issues"}`}</small>
+                    <span>Managed by Platform Admin</span>
+                  </span>
+                  <span className={styles.dashboardQueueCount} aria-label={`${summary.data.unresolved_service_items} unresolved service items`}>{summary.data.unresolved_service_items.toLocaleString()}<small>{summary.data.unresolved_service_items > 0 ? "Publish notice" : "No incidents"}</small></span>
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+                <Link href="/admin/institutions" className={styles.dashboardQueueRow} data-attention={summary.data.overdue_escalations > 0}>
+                  <ShieldAlert aria-hidden="true" />
+                  <span className={styles.dashboardQueueCopy}>
+                    <strong>Overdue appeals</strong>
+                    <small>{summary.data.overdue_escalations === 0 ? "None overdue" : `${summary.data.overdue_escalations.toLocaleString()} ${summary.data.overdue_escalations === 1 ? "appeal is" : "appeals are"} overdue`}</small>
+                    <span>Resolved by institutions</span>
+                  </span>
+                  <span className={styles.dashboardQueueCount} aria-label={`${summary.data.overdue_escalations} overdue appeals`}>{summary.data.overdue_escalations.toLocaleString()}<small>{summary.data.overdue_escalations > 0 ? "Follow up" : "None overdue"}</small></span>
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              </div>
+            </section>
+
+            <section className={styles.dashboardQuickActions} aria-labelledby="platform-quick-actions-title">
+              <header><h2 id="platform-quick-actions-title">Quick actions</h2><p>Common platform administration tasks.</p></header>
+              <nav aria-label="Platform quick actions">
+                <Link href="/admin/institutions#add-institution"><Plus aria-hidden="true" />Add institution</Link>
+                <Link href="/admin/accounts"><UserPlus aria-hidden="true" />Create T&amp;P account</Link>
+                <Link href="/admin/reports"><FileText aria-hidden="true" />View reports</Link>
+              </nav>
+            </section>
+          </div>
+
+          <aside className={styles.dashboardAside} aria-label="Platform context">
+            <section className={styles.dashboardCoverage} aria-labelledby="platform-coverage-title">
+              <h2 id="platform-coverage-title">Platform coverage</h2>
+              <dl>
+                <div><dt>Active institutions</dt><dd>{summary.data.active_institutions.toLocaleString()}</dd></div>
+                <div><dt>Active T&amp;P accounts</dt><dd>{summary.data.tnp_accounts.toLocaleString()}</dd></div>
+              </dl>
+              <nav aria-label="Manage platform coverage">
+                <Link href="/admin/institutions">View institutions <ArrowRight aria-hidden="true" /></Link>
+                <Link href="/admin/accounts">Manage T&amp;P accounts <ArrowRight aria-hidden="true" /></Link>
+              </nav>
+            </section>
+            <section className={styles.dashboardActivity} aria-labelledby="platform-activity-title">
+              <h2 id="platform-activity-title">Latest application activity</h2>
+              {summary.data.reporting_freshness_at ? (
+                <><p>Most recent application record update</p><time dateTime={summary.data.reporting_freshness_at}>{new Date(summary.data.reporting_freshness_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time></>
+              ) : <p>No application activity recorded yet.</p>}
+              <Link href="/admin/reports">Open reports <ArrowRight aria-hidden="true" /></Link>
+            </section>
+            <section className={styles.dashboardRecent} aria-labelledby="recent-activity-title" aria-label="Recent activity">
+              <header><h2 id="recent-activity-title">Recent activity</h2><p>Latest recorded platform actions.</p></header>
+              {activity.loading ? <p className={styles.dashboardRecentState} role="status">Loading recent activity…</p> : null}
+              {activity.error ? <p className={styles.dashboardRecentState}>Recent activity is temporarily unavailable.</p> : null}
+              {!activity.loading && !activity.error && visibleActivity.length === 0 ? <p className={styles.dashboardRecentState}>No recent platform actions recorded.</p> : null}
+              {visibleActivity.length ? <ol>{visibleActivity.map((event) => <li key={event.id}>
+                <strong>{activityTitle(event.event_type)}</strong>
+                <span>{activityEntity(event)} · <time dateTime={event.created_at}>{new Date(event.created_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time></span>
+              </li>)}</ol> : null}
+              {relevantActivity.length > 5 ? <button type="button" onClick={() => setShowAllActivity(value => !value)}>{showAllActivity ? "Show recent activity only" : "View all activity"} <ArrowRight aria-hidden="true" /></button> : null}
+            </section>
+          </aside>
+        </div>
+      </> : null}
+    </PageContainer>
+  );
 }
 
 export function PlatformInstitutions() {
@@ -160,6 +270,7 @@ export function PlatformInstitutions() {
   const placementRecords = useResource<PlacementRecordPage>(selectedId ? `/platform/institutions/${selectedId}/applications?page=1&page_size=10` : null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [outcomeApplicationId, setOutcomeApplicationId] = useState("");
   const [provisionHandoff, setProvisionHandoff] = useState<InstitutionProvisionHandoff | null>(null);
 
@@ -181,7 +292,12 @@ export function PlatformInstitutions() {
       setMessage("Institution created. Transfer the one-time activation code through the approved authenticated channel.");
       form.reset(); page.refresh();
     } catch (cause) {
-      setMessage(cause instanceof ApiError ? cause.message : "The institution could not be created.");
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("Confirm your current authenticator code, then submit the institution again.");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "The institution could not be created.");
+      }
     } finally { setBusy(false); }
   }
 
@@ -195,7 +311,12 @@ export function PlatformInstitutions() {
       setMessage(`Institution request ${decision === "approve" ? "approved" : "rejected"}.`);
       requests.refresh(); page.refresh();
     } catch (cause) {
-      setMessage(cause instanceof ApiError ? cause.message : "The institution request was not changed.");
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("Confirm your current authenticator code, then repeat the decision.");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "The institution request was not changed.");
+      }
     } finally { setBusy(false); }
   }
 
@@ -216,18 +337,25 @@ export function PlatformInstitutions() {
       setMessage("Institution access changed and active sessions were invalidated.");
       detail.refresh(); page.refresh();
     } catch (cause) {
-      setMessage(cause instanceof ApiError ? cause.message : "Institution access was not changed.");
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("Confirm your current authenticator code, then repeat the access change.");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "Institution access was not changed.");
+      }
     } finally { setBusy(false); }
   }
 
   return <PageContainer context="admin" className={styles.page}>
-    <PageHeader eyebrow="Institution governance" title="Institutions" description="Approve onboarding, inspect configuration, and read placement records without changing placement decisions." />
+    <PageHeader eyebrow="Institution governance" title="Institutions" description="Add verified institutions, inspect configuration, and read placement records without changing placement decisions." />
     {message ? <Alert>{message}</Alert> : null}
+    {needsVerification ? <RecentMfaVerification onVerified={() => { setNeedsVerification(false); setMessage("Verification complete. Repeat your action."); }} /> : null}
     <section className={styles.registrationQueue} aria-labelledby="registration-requests-title">
       <header>
-        <div><p className="eyebrow">Institution onboarding</p><h2 id="registration-requests-title">Registration requests</h2><p>Approve verified institutions here before their staff can access CampusHire.</p></div>
+        <div><p className="eyebrow">Institution onboarding</p><h2 id="registration-requests-title">Add Institutes</h2><p>Approve verified requests or add an institute after offline verification.</p></div>
         <Badge tone={requests.data?.length ? "warning" : "neutral"}>{requests.data?.length ?? 0} pending</Badge>
       </header>
+      <h3 className={styles.queueHeading}>Registration requests</h3>
       {requests.data?.length ? <div className={styles.list}>
         {requests.data.map((request) => <article key={request.id}>
           <div><strong>{request.institution_name}</strong><small>{request.domain} · {request.admin_email}</small></div>
@@ -238,21 +366,26 @@ export function PlatformInstitutions() {
           </div>
         </article>)}
       </div> : <p className={styles.queueEmpty}>No pending institution requests. New registrations will appear here for your decision.</p>}
-      <details className={styles.disclosure}>
-        <summary>Provision an institution after offline verification</summary>
+      <details id="add-institution" className={styles.disclosure}>
+        <summary>Add an institute</summary>
         <p>Use this only after the institution and administrator have been verified through the approved support procedure.</p>
         <form onSubmit={provision}>
           <label>Institution name<input name="institution_name" minLength={2} maxLength={200} required /></label>
-          <label>Institution code<input name="institution_code" pattern="[a-z0-9-]+" minLength={2} maxLength={64} required /></label>
+          <label>Institution code<input name="institution_code" pattern="[a-z0-9][a-z0-9-]{1,30}[a-z0-9]" minLength={3} maxLength={32} required /></label>
           <label>Initial T&amp;P administrator email<input name="admin_email" type="email" required /></label>
           <Button disabled={busy}>{busy ? "Creating institution…" : "Create institution"}</Button>
         </form>
       </details>
-      {provisionHandoff ? <Alert>
-        <strong>One-time administrator activation code</strong>
-        <code>{provisionHandoff.admin_invitation_token}</code>
-        <span>Expires {new Date(provisionHandoff.expires_at).toLocaleString()}. It will not be shown again; revoke and reissue it if the handoff is lost.</span>
-      </Alert> : null}
+      {provisionHandoff ? <section className={styles.activationHandoff} aria-labelledby="activation-handoff-title">
+        <div>
+          <p className="eyebrow">Secure handoff</p>
+          <h3 id="activation-handoff-title">Administrator activation code</h3>
+          <p>Share this code with the designated administrator through an approved secure channel. It is displayed only once.</p>
+        </div>
+        <code aria-label="Administrator activation code">{provisionHandoff.admin_invitation_token}</code>
+        <p>Valid until <time dateTime={provisionHandoff.expires_at}>{new Date(provisionHandoff.expires_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</time>. If the handoff is lost, revoke the invitation and issue a new code.</p>
+        <Button type="button" variant="quiet" onClick={() => setProvisionHandoff(null)}>Done — hide code</Button>
+      </section> : null}
     </section>
     <form className={styles.toolbar} action="/admin/institutions"><label>Search institutions<input name="q" defaultValue={query} placeholder="Name or code" /></label><Button>Search</Button></form>
     {page.loading ? <RequestState state="loading" title="Loading institutions">Reading platform-scoped summaries.</RequestState> : null}
@@ -292,12 +425,23 @@ export function PlatformAccounts() {
   const institutions = useResource<InstitutionPage>("/platform/institutions?page=1&page_size=100");
   const selected = params.get("institution") ?? institutions.data?.items[0]?.id ?? "";
   const accounts = useResource<StaffAccount[]>(selected ? `/platform/institutions/${selected}/staff-accounts` : null);
+  const [latestAccount, setLatestAccount] = useState<StaffAccount | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [accountHandoff, setAccountHandoff] = useState<{ username: string; password: string } | null>(null);
   const [openActionId, setOpenActionId] = useState<string | null>(null);
   const [recoveryAccount, setRecoveryAccount] = useState<StaffAccount | null>(null);
   const [recoveryHandoff, setRecoveryHandoff] = useState<{ username: string; code: string; minutes: number } | null>(null);
   const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
+  const accountRows = useMemo(() => {
+    const rows = (accounts.data ?? []).filter((account) => account.institution_id === selected);
+    if (latestAccount?.institution_id !== selected || rows.some((account) => account.id === latestAccount.id)) return rows;
+    return [latestAccount, ...rows];
+  }, [accounts.data, latestAccount, selected]);
 
   useEffect(() => {
     function closeOnOutsidePointer(event: PointerEvent) {
@@ -318,6 +462,15 @@ export function PlatformAccounts() {
     };
   }, [openActionId]);
 
+  async function copyTemporaryPassword() {
+    try {
+      await navigator.clipboard.writeText(password);
+      setPasswordMessage("Temporary password copied. Share it through an approved secure channel.");
+    } catch {
+      setPasswordMessage("Copy is unavailable. Use the visibility control to check the password.");
+    }
+  }
+
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!selected) return;
     const form = event.currentTarget;
@@ -325,9 +478,20 @@ export function PlatformAccounts() {
     if (data.get("password") !== data.get("confirm_password")) { setMessage("Passwords do not match."); return; }
     setBusy(true); setMessage("");
     try {
-      await csrfRequest(`/platform/institutions/${selected}/staff-accounts`, { method: "POST", body: JSON.stringify({ username: data.get("username"), password: data.get("password"), role: data.get("role"), reason: data.get("reason") }) });
-      form.reset(); accounts.refresh(); setMessage("T&P access issued. The officer must accept current terms on first sign-in.");
-    } catch (cause) { setMessage(cause instanceof ApiError ? cause.message : "T&P access could not be issued."); }
+      const created = await csrfRequest<StaffAccount>(`/platform/institutions/${selected}/staff-accounts`, { method: "POST", body: JSON.stringify({ username: String(data.get("username") ?? "").trim(), password: data.get("password"), role: data.get("role"), reason: data.get("reason") }) });
+      setLatestAccount(created);
+      setAccountHandoff({ username: created.username ?? String(data.get("username") ?? "").trim(), password: String(data.get("password") ?? "") });
+      form.reset(); setPassword(""); setConfirmedPassword(""); setPasswordMessage(""); accounts.refresh(); setMessage("T&P account created. The officer must accept current terms on first sign-in.");
+    } catch (cause) {
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("");
+      } else if (cause instanceof ApiError && cause.code === "staff_account_conflict") {
+        setMessage("This username already exists. Use a different username, or assign the existing officer to this institution below.");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "The T&P account could not be created.");
+      }
+    }
     finally { setBusy(false); }
   }
 
@@ -337,7 +501,7 @@ export function PlatformAccounts() {
     const data = new FormData(form);
     setBusy(true); setMessage("");
     try {
-      await csrfRequest(`/platform/institutions/${selected}/staff-assignments`, {
+      const assigned = await csrfRequest<StaffAccount>(`/platform/institutions/${selected}/staff-assignments`, {
         method: "POST",
         body: JSON.stringify({
           username: String(data.get("username") ?? "").trim(),
@@ -345,10 +509,16 @@ export function PlatformAccounts() {
           reason: data.get("reason"),
         }),
       });
+      setLatestAccount(assigned);
       form.reset(); accounts.refresh();
       setMessage("Existing T&P account assigned to this institution. Its next sign-in can use this context.");
     } catch (cause) {
-      setMessage(cause instanceof ApiError ? cause.message : "The existing account could not be assigned.");
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "The existing account could not be assigned.");
+      }
     } finally { setBusy(false); }
   }
 
@@ -357,8 +527,15 @@ export function PlatformAccounts() {
     const data = new FormData(event.currentTarget); setBusy(true); setMessage("");
     try {
       await csrfRequest(`/platform/institutions/${selected}/staff-accounts/${account.id}`, { method: "PATCH", body: JSON.stringify({ status: data.get("status"), role: data.get("role"), reason: data.get("reason") }) });
-      accounts.refresh(); setOpenActionId(null); setMessage("T&P access updated and active sessions revoked where required.");
-    } catch (cause) { setMessage(cause instanceof ApiError ? cause.message : "T&P access was not changed."); }
+      setLatestAccount(null); accounts.refresh(); setOpenActionId(null); setMessage("T&P access updated and active sessions revoked where required.");
+    } catch (cause) {
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "T&P access was not changed.");
+      }
+    }
     finally { setBusy(false); }
   }
 
@@ -379,54 +556,66 @@ export function PlatformAccounts() {
       setRecoveryAccount(null);
       setMessage("One-time staff recovery code issued after the recorded identity check.");
     } catch (cause) {
-      setMessage(cause instanceof ApiError ? cause.message : "Staff recovery could not be issued.");
+      if (needsRecentMfa(cause)) {
+        setNeedsVerification(true);
+        setMessage("");
+      } else {
+        setMessage(cause instanceof ApiError ? cause.message : "Staff recovery could not be issued.");
+      }
     } finally { setBusy(false); }
   }
 
-  return <PageContainer context="admin" className={styles.page}>
+  return <PageContainer context="admin" className={`${styles.page} ${styles.accountsPage}`}>
     <PageHeader eyebrow="Access governance" title="T&amp;P Accounts" description="The Platform Admin issues institution-scoped Officer, Reviewer, and Auditor access. Roles do not inherit placement powers." />
     {message ? <Alert>{message}</Alert> : null}
-    <label className={styles.institutionSelect}>Institution<select value={selected} onChange={(event) => { setRecoveryAccount(null); setRecoveryHandoff(null); router.push(`/admin/accounts?institution=${event.target.value}`); }}><option value="">Select an institution</option>{institutions.data?.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-    {selected ? <div className={styles.split}>
-      <section className={styles.panel}><p className="eyebrow">Provision access</p><h2>Create a T&amp;P account</h2><form className={styles.form} onSubmit={create}><label>Username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" required /></label><label>Role<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Initial password<input name="password" type="password" minLength={12} required /></label><label>Confirm password<input name="confirm_password" type="password" minLength={12} required /></label><label>Audit reason<textarea name="reason" minLength={10} required /></label><Button disabled={busy}>{busy ? "Creating…" : "Issue access"}</Button></form><details className={styles.assignmentDisclosure}><summary>Assign an existing T&amp;P account to this institution</summary><p>Use this when one officer is responsible for more than one institution. This does not create another login.</p><form className={styles.form} onSubmit={assignExisting}><label>Existing username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" autoComplete="off" required /></label><label>Role at this institution<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Audit reason<textarea name="reason" minLength={10} required /></label><Button disabled={busy}>{busy ? "Assigning…" : "Assign account"}</Button></form></details></section>
-      <section className={styles.list} aria-label="T&P account directory">{accounts.loading ? <p role="status">Loading T&amp;P accounts…</p> : null}{accounts.data?.map((account) => <article key={account.id}><div><strong>{account.username ?? account.email}</strong><small>{roleLabels[account.role] ?? account.role}</small></div><Badge tone={account.status === "active" ? "success" : "warning"}>{account.status}</Badge><div className={styles.actionMenu} data-account-action-menu>
+    {needsVerification ? <RecentMfaVerification onVerified={() => { setNeedsVerification(false); setMessage("Re-authenticated. Your entries are ready; repeat the action."); }} /> : null}
+    <div className={styles.accountsContext}><label className={styles.institutionSelect}>Institution<select value={selected} onChange={(event) => { setRecoveryAccount(null); setRecoveryHandoff(null); setAccountHandoff(null); router.push(`/admin/accounts?institution=${event.target.value}`); }}><option value="">Select an institution</option>{institutions.data?.items.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div>
+    {selected ? <div className={`${styles.split} ${styles.accountsSplit}`}>
+      <div className={styles.accountForms}>
+        <section className={`${styles.panel} ${styles.accountsFormPanel}`} aria-labelledby="create-staff-title">
+          <h2 id="create-staff-title">Create T&amp;P Account</h2>
+          <form className={`${styles.form} ${styles.accountsForm}`} onSubmit={create} autoComplete="off">
+            <label>Username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" maxLength={64} autoComplete="off" required /></label>
+            <label>Role<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label>
+            <div className={styles.passwordGroup} role="group" aria-labelledby="initial-sign-in-title">
+              <h3 id="initial-sign-in-title" className={styles.passwordGroupTitle}>Initial sign-in</h3>
+              <PasswordInput id="staff-initial-password" name="password" label="Temporary password" value={password} onChange={(event) => { setPassword(event.target.value); setPasswordMessage(""); }} autoComplete="new-password" minLength={12} maxLength={128} required />
+              <PasswordInput id="staff-confirm-password" name="confirm_password" label="Confirm password" value={confirmedPassword} onChange={(event) => setConfirmedPassword(event.target.value)} autoComplete="new-password" minLength={12} maxLength={128} required />
+              <div className={styles.passwordTools}><Button type="button" variant="quiet" onClick={() => { const generated = generateTemporaryPassword(); setPassword(generated); setConfirmedPassword(generated); setPasswordMessage("A strong temporary password was generated and confirmed."); }}>Generate</Button><Button type="button" variant="quiet" disabled={!password} onClick={() => void copyTemporaryPassword()}>Copy</Button></div>
+              <p className={styles.fieldHint}>Ask the user to change this password after first sign-in. Share it through an approved secure channel.</p>
+              {passwordMessage ? <p className={styles.fieldFeedback} role="status">{passwordMessage}</p> : null}
+            </div>
+            <label>Audit reason<textarea name="reason" minLength={10} maxLength={500} placeholder="e.g. Assigned as placement reviewer for the 2026 recruitment cycle" aria-describedby="create-audit-hint" required /><small id="create-audit-hint">Required · Briefly explain why this access is being issued.</small></label>
+            <div className={styles.formActions}><Button disabled={busy || needsVerification}>{busy ? "Creating…" : "Create account"}</Button></div>
+          </form>
+          {accountHandoff ? <section className={styles.accountPasswordHandoff} aria-labelledby="account-handoff-title">
+            <h3 id="account-handoff-title">Temporary password for {accountHandoff.username}</h3>
+            <p>Share this password through an approved secure channel. It is displayed here until you hide it or leave this page.</p>
+            <code>{accountHandoff.password}</code>
+            <Button type="button" variant="quiet" onClick={() => setAccountHandoff(null)}>Done — hide password</Button>
+          </section> : null}
+        </section>
+        <details className={`${styles.panel} ${styles.assignmentPanel}`}>
+          <summary>Assign existing account <ChevronDown size={18} aria-hidden="true" /></summary>
+          <p className={styles.panelDescription}>Use an existing T&amp;P login for this institution.</p>
+          <form className={`${styles.form} ${styles.accountsForm}`} onSubmit={assignExisting} autoComplete="off">
+            <label>Existing username<input name="username" pattern="[A-Za-z][A-Za-z0-9._-]{2,63}" maxLength={64} autoComplete="off" required /></label>
+            <label>Role at this institution<select name="role" defaultValue="tnp_reviewer"><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label>
+            <label>Audit reason<textarea name="reason" minLength={10} maxLength={500} placeholder="e.g. Assigned to review applications for this institution" aria-describedby="assign-audit-hint" required /><small id="assign-audit-hint">Required · Briefly explain why this access is being issued.</small></label>
+            <div className={styles.formActions}><Button disabled={busy || needsVerification}>{busy ? "Assigning…" : "Assign existing account"}</Button></div>
+          </form>
+        </details>
+      </div>
+      <section className={`${styles.list} ${styles.accountDirectory}`} aria-label="T&P account directory">
+        <header className={styles.directoryHeader}><h2>T&amp;P Accounts <span aria-label={`${accountRows.length} ${accountRows.length === 1 ? "account" : "accounts"}`}>· {accountRows.length}</span></h2></header>
+        {accounts.loading && !accountRows.length ? <p className={styles.directoryNotice} role="status">Loading T&amp;P accounts…</p> : null}
+        {accounts.error ? <ResourceError message={accounts.error} retry={accounts.refresh} /> : null}
+        {accountRows.map((account) => <article key={account.id}><div><strong>{account.username ?? account.email}</strong><small>{roleLabels[account.role] ?? account.role}</small></div><Badge tone={account.status === "active" ? "success" : "warning"}>{account.status}</Badge><div className={styles.actionMenu} data-account-action-menu>
         <button type="button" className={styles.actionTrigger} aria-haspopup="dialog" aria-expanded={openActionId === account.id} aria-controls={`account-actions-${account.id}`} ref={(element) => { if (element) actionTriggerRefs.current.set(account.id, element); else actionTriggerRefs.current.delete(account.id); }} onClick={() => setOpenActionId((current) => current === account.id ? null : account.id)}>Actions <ChevronDown aria-hidden="true" /></button>
-        {openActionId === account.id ? <form id={`account-actions-${account.id}`} className={styles.actionPopover} role="dialog" aria-label={`Actions for ${account.username ?? account.email}`} onSubmit={(event) => void changeStatus(event, account)}><p>Update this institution-scoped account.</p><label>Role<select name="role" defaultValue={account.role}><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Status<select name="status" defaultValue={account.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option></select></label><label>Audit reason<input name="reason" minLength={10} required /></label><div className={styles.menuActions}><Button variant="quiet" type="button" onClick={() => setOpenActionId(null)}>Cancel</Button><Button disabled={busy}>{busy ? "Saving…" : "Save changes"}</Button></div><Button variant="quiet" type="button" onClick={() => { setRecoveryAccount(account); setOpenActionId(null); }}>Issue manual recovery code</Button></form> : null}
-      </div></article>)}{accounts.data && !accounts.data.length ? <RequestState state="empty" title="No T&P accounts">Issue the first scoped account from the form.</RequestState> : null}</section>
+        {openActionId === account.id ? <form id={`account-actions-${account.id}`} className={styles.actionPopover} role="dialog" aria-label={`Actions for ${account.username ?? account.email}`} onSubmit={(event) => void changeStatus(event, account)}><p>Update this institution-scoped account.</p><label>Role<select name="role" defaultValue={account.role}><option value="tnp_admin">Officer</option><option value="tnp_reviewer">Reviewer</option><option value="tnp_auditor">Auditor</option></select></label><label>Status<select name="status" defaultValue={account.status}><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option></select></label><label>Audit reason<input name="reason" minLength={10} required /></label><div className={styles.menuActions}><Button variant="quiet" type="button" onClick={() => setOpenActionId(null)}>Cancel</Button><Button disabled={busy || needsVerification}>{busy ? "Saving…" : "Save changes"}</Button></div><Button variant="quiet" type="button" onClick={() => { setRecoveryAccount(account); setOpenActionId(null); }}>Issue manual recovery code</Button></form> : null}
+      </div></article>)}{accounts.data && !accountRows.length && !accounts.error ? <p className={styles.directoryNotice}>No accounts are assigned to this institution yet.</p> : null}</section>
     </div> : <RequestState state="empty" title="Choose an institution">T&amp;P access is always issued inside an institution boundary.</RequestState>}
-    {recoveryAccount ? <section className={styles.panel}><h2>Recover {recoveryAccount.username ?? "T&P account"}</h2><p>Verify the officer through your approved institutional process before issuing a code. Do not record full ID numbers here.</p><form className={styles.form} onSubmit={issueStaffRecovery}><label>Identity check method<input name="identity_check_method" minLength={5} maxLength={100} required /></label><label>Verification reference<input name="identity_check_reference" minLength={5} maxLength={120} required /></label><label>Recovery audit reason<textarea name="reason" minLength={10} maxLength={500} required /></label><div className={styles.inlineActions}><Button disabled={busy}>Issue one-time code</Button><Button type="button" variant="quiet" onClick={() => setRecoveryAccount(null)}>Cancel</Button></div></form></section> : null}
+    {recoveryAccount ? <section className={styles.panel}><h2>Recover {recoveryAccount.username ?? "T&P account"}</h2><p>Verify the officer through your approved institutional process before issuing a code. Do not record full ID numbers here.</p><form className={styles.form} onSubmit={issueStaffRecovery}><label>Identity check method<input name="identity_check_method" minLength={5} maxLength={100} required /></label><label>Verification reference<input name="identity_check_reference" minLength={5} maxLength={120} required /></label><label>Recovery audit reason<textarea name="reason" minLength={10} maxLength={500} required /></label><div className={styles.inlineActions}><Button disabled={busy || needsVerification}>Issue one-time code</Button><Button type="button" variant="quiet" onClick={() => setRecoveryAccount(null)}>Cancel</Button></div></form></section> : null}
     {recoveryHandoff ? <section className={styles.panel}><h2>One-time recovery code for {recoveryHandoff.username}</h2><p>Show this code only through an institution-approved secure handoff. The officer chooses their own replacement password. It expires in {recoveryHandoff.minutes} minutes.</p><code>{recoveryHandoff.code}</code><div><Button type="button" variant="quiet" onClick={() => setRecoveryHandoff(null)}>Done — hide code</Button></div></section> : null}
   </PageContainer>;
-}
-
-export function PlatformReports() {
-  const report = useResource<ReportSummary>("/platform/reports/summary");
-  const statusRows = useMemo(() => Object.entries(report.data?.applications_by_status ?? {}).sort(([left], [right]) => left.localeCompare(right)), [report.data]);
-  return <PageContainer context="admin" className={styles.page}><PageHeader eyebrow="Cross-institution reporting" title="Platform reports" description="Aggregates are read-only and provisional until approved metric definitions and required information checks are met." />{report.error ? <ResourceError message={report.error} retry={report.refresh} /> : null}{report.data ? <><Alert tone="info">Generated {new Date(report.data.generated_at).toLocaleString()}. {report.data.provisional ? "Provisional records are not publication-ready." : "Approved for internal reporting."}</Alert><section className={styles.metrics}><article><span>Institutions</span><strong>{report.data.institution_count.toLocaleString()}</strong></article><article><span>Students</span><strong>{report.data.student_count.toLocaleString()}</strong></article><article><span>Drives</span><strong>{report.data.drive_count.toLocaleString()}</strong></article><article><span>Applications</span><strong>{report.data.application_count.toLocaleString()}</strong></article></section><section className={styles.panel}><h2>Application stages</h2><p>Stage counts are not verified outcome counts. Offer, acceptance, and joining remain separate records.</p><dl className={styles.statusRows}>{statusRows.map(([key, value]) => <div key={key}><dt>{key.replaceAll("_", " ")}</dt><dd>{value.toLocaleString()}</dd></div>)}</dl></section></> : <RequestState state="loading" title="Calculating platform report">Loading aggregate records independently.</RequestState>}</PageContainer>;
-}
-
-export function PlatformSystemHealth() {
-  const health = useResource<HealthSummary>("/platform/system-health");
-  return <PageContainer context="admin" className={styles.page}><PageHeader eyebrow="Service operations" title="System Health" description="Failures and oldest outstanding work appear first. Worker identifiers and lease data stay in technical detail." />{health.error ? <ResourceError message={health.error} retry={health.refresh} /> : null}{health.data ? <><Alert tone={health.data.status === "healthy" ? "success" : "warning"}>{health.data.status === "healthy" ? <CheckCircle2 aria-hidden="true" /> : <ShieldAlert aria-hidden="true" />} Platform services are {health.data.status}. Checked {new Date(health.data.checked_at).toLocaleString()}.</Alert><section className={styles.healthGrid}>{health.data.queues.map((queue) => <article key={queue.service} data-attention={queue.failed > 0}><header><Activity aria-hidden="true" /><h2>{queue.service.replaceAll("_", " ")}</h2><Badge tone={queue.failed ? "warning" : "success"}>{queue.failed ? "Attention" : "Clear"}</Badge></header><dl><div><dt>Failed</dt><dd>{queue.failed}</dd></div><div><dt>Pending</dt><dd>{queue.pending}</dd></div></dl><p><Clock3 aria-hidden="true" /> {queue.oldest_outstanding_at ? `Oldest: ${new Date(queue.oldest_outstanding_at).toLocaleString()}` : "No outstanding work"}</p><details><summary>Technical recovery guidance</summary><p>Use the recorded correlation ID in Audit before retrying work. A retry must remain idempotent and must not hide the original failure.</p></details></article>)}</section></> : <RequestState state="loading" title="Checking platform services">Core placement workflows remain independent of AI and background service health.</RequestState>}</PageContainer>;
-}
-
-export function PlatformAudit() {
-  const events = useResource<AuditPage>("/platform/audit/events?page=1&page_size=50");
-  return <PageContainer context="admin" className={styles.page}><PageHeader eyebrow="Platform accountability" title="Audit" description="Cross-institution sensitive actions are read-only. Actor and correlation identifiers are disclosed only when needed." />{events.error ? <ResourceError message={events.error} retry={events.refresh} /> : null}<section className={styles.list}>{events.data?.items.map((event) => <article key={event.id}><div><strong>{event.event_type.replaceAll(".", " · ")}</strong><small>{new Date(event.created_at).toLocaleString()} · {event.resource_type ?? "platform"}</small></div><Badge tone={event.outcome === "success" ? "success" : "warning"}>{event.outcome}</Badge><p>{event.reason ?? "No additional reason recorded."}</p><details><summary>Technical identifiers</summary><dl><div><dt>Actor</dt><dd><code>{event.actor_user_id ?? "System"}</code></dd></div><div><dt>Correlation</dt><dd><code>{event.correlation_id ?? "Not recorded"}</code></dd></div></dl></details></article>)}{events.loading ? <p role="status">Loading audited events…</p> : null}</section></PageContainer>;
-}
-
-export function PlatformSettingsWorkspace() {
-  const settings = useResource<PlatformSettings>("/platform/settings");
-  const [message, setMessage] = useState("");
-  const [busy, setBusy] = useState(false);
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); const data = new FormData(event.currentTarget); setBusy(true); setMessage("");
-    try {
-      await csrfRequest("/platform/settings", { method: "PATCH", body: JSON.stringify({ platform_notice: { active: data.get("notice_active") === "on", title: data.get("notice_title"), message: data.get("notice_message") } }) });
-      settings.refresh(); setMessage("Platform notice saved and audited.");
-    } catch (cause) { setMessage(cause instanceof ApiError ? cause.message : "Platform settings were not saved."); }
-    finally { setBusy(false); }
-  }
-  const notice = settings.data?.platform_notice ?? {};
-  return <PageContainer context="admin" className={styles.page}><PageHeader eyebrow="Platform configuration" title="Settings" description="Credentials remain write-only and server-side. This screen reports configuration status, never secret values." />{message ? <Alert>{message}</Alert> : null}{settings.data ? <div className={styles.split}><section className={styles.panel}><h2>Service configuration</h2><dl className={styles.definitionList}><div><dt>AI provider</dt><dd>{settings.data.ai_provider}</dd></div><div><dt>AI model</dt><dd>{settings.data.ai_model ?? "Not selected"}</dd></div><div><dt>AI key</dt><dd><Badge tone={settings.data.ai_key_configured ? "success" : "warning"}>{settings.data.ai_key_configured ? "Configured" : "Missing"}</Badge></dd></div><div><dt>Email</dt><dd>{settings.data.email_configured ? "Configured" : "Not configured"}</dd></div><div><dt>Private storage</dt><dd>{settings.data.storage_backend}</dd></div></dl><details><summary>Feature availability</summary><pre>{JSON.stringify(settings.data.feature_availability, null, 2)}</pre></details><details><summary>Default service targets</summary><pre>{JSON.stringify(settings.data.service_targets, null, 2)}</pre></details></section><section className={styles.panel}><p className="eyebrow">Platform notice</p><h2>Publish a service notice</h2><form className={styles.form} onSubmit={save}><label className={styles.checkbox}><input name="notice_active" type="checkbox" defaultChecked={notice.active === true} /> Notice is active</label><label>Title<input name="notice_title" defaultValue={typeof notice.title === "string" ? notice.title : ""} maxLength={120} /></label><label>Message<textarea name="notice_message" defaultValue={typeof notice.message === "string" ? notice.message : ""} maxLength={1000} /></label><Button disabled={busy}>{busy ? "Saving…" : "Save notice"}</Button></form></section></div> : <RequestState state="loading" title="Loading platform configuration">Secret values will not be returned.</RequestState>}</PageContainer>;
 }

@@ -64,6 +64,20 @@ describe("AuthForm", () => {
     await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/setup"));
   });
 
+  it("routes an enrolled Platform Admin directly to code verification on later sign-ins", async () => {
+    csrfRequestMock.mockResolvedValue({
+      user: { id: "owner-1", email: "owner@example.edu", role: "platform_admin", workspace: "admin" },
+      next_step: "mfa_challenge",
+    });
+    render(<AuthForm workspace="admin" redirectTo="/admin/dashboard" />);
+    fireEvent.change(screen.getByLabelText("Username"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a secure passphrase" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+
+    await waitFor(() => expect(pushMock).toHaveBeenCalledWith("/admin/mfa/challenge"));
+    expect(pushMock).not.toHaveBeenCalledWith("/admin/mfa/setup");
+  });
+
   it("routes a newly provisioned officer through personal terms acceptance", async () => {
     csrfRequestMock.mockResolvedValue({
       user: { id: "officer-1", email: "officer@example.edu", role: "tnp_reviewer" },

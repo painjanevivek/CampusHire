@@ -190,6 +190,46 @@ h1 { margin-bottom: 1.5rem; max-width: 12ch; font-size: clamp(3rem, 7vw, 6.6rem)
 .field { display: grid; gap: 0.45rem; }
 .field label { font-weight: var(--font-weight-label); }
 .field input, .field select { min-height: var(--control-height); width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.8rem; background: var(--surface); color: var(--ink); font: inherit; }
+select:not([multiple]):not([size]) {
+  max-width: 100%;
+  min-height: max(44px, var(--control-height));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 2.7rem 0.65rem 0.9rem;
+  appearance: none;
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%),
+    linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-repeat: no-repeat;
+  background-size: 5px 5px;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+select:not([multiple]):not([size]):hover:not(:disabled) {
+  border-color: var(--brand-blue);
+}
+select:not([multiple]):not([size]):disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+select:not([multiple]):not([size]) option,
+select:not([multiple]):not([size]) optgroup {
+  background: var(--surface);
+  color: var(--ink);
+}
+@media (forced-colors: active) {
+  select:not([multiple]):not([size]) {
+    appearance: auto;
+    background-image: none;
+  }
+}
 .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--status-danger); }
 .field small { color: var(--ink-muted); }
 .field .fieldError { color: var(--status-danger); }
@@ -225,6 +265,16 @@ dialog::backdrop { background: var(--modal-backdrop); }
 .authStepLabel { color: var(--brand-blue-dark); font-size: .72rem; font-weight: var(--font-weight-label); letter-spacing: .08em; text-transform: uppercase; }
 .authQrFrame { min-height: 14rem; display: grid; place-items: center; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 1rem; background: #ffffff; color: #111318; text-align: center; }
 .authQrFrame img { width: min(14rem, 100%); height: auto; }
+.authQrRefreshPanel { display: grid; justify-items: center; gap: .75rem; max-width: 16rem; }
+.authQrRefreshPanel > p { margin: 0; color: var(--ink-muted); font-size: .84rem; line-height: 1.45; }
+.authQrRefreshPanel > svg { width: 1.5rem; height: 1.5rem; color: var(--brand-blue); }
+.authQrRefreshButton { min-height: var(--control-min-size); display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .55rem .85rem; border: 1px solid var(--brand-blue); border-radius: var(--radius-sm); background: var(--surface); color: var(--brand-blue-dark); font: inherit; font-size: .86rem; font-weight: var(--font-weight-label); cursor: pointer; }
+.authQrRefreshButton:hover { background: var(--brand-blue-soft); }
+.authQrRefreshButton:active { transform: translateY(1px); }
+.authQrRefreshButton:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.authQrRefreshButton svg { width: 1rem; height: 1rem; }
+@media (prefers-reduced-motion: no-preference) { .authQrRefreshingIcon { animation: authQrSpin 900ms linear infinite; } }
+@keyframes authQrSpin { to { transform: rotate(360deg); } }
 .authManualKey { border: 1px solid var(--line); border-radius: var(--radius-md); padding: .75rem 1rem; background: var(--surface-muted); }
 .authManualKey summary { cursor: pointer; font-weight: var(--font-weight-label); }
 .authManualKey code { display: block; margin-top: .75rem; overflow-wrap: anywhere; }

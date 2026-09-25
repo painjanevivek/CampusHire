@@ -4,5 +4,5 @@ import { requireServerSession } from "@/lib/auth/server-session";
 
 export default async function LegacyAdminCopilotPage() {
   await requireServerSession("admin");
-  redirect("/admin/settings");
+  redirect("/admin/account");
 }

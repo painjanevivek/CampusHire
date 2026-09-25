@@ -36,24 +36,67 @@ describe("PlatformAccounts", () => {
   });
 
   it("assigns an existing T&P username to the selected institution", async () => {
+    csrfRequestMock.mockResolvedValueOnce({
+      id: "assignment-two", institution_id: "institution-one", user_id: "officer-two",
+      username: "placement.officer.two", email: "placement.officer.two@example.invalid",
+      role: "tnp_reviewer", status: "active", requires_terms_acceptance: false,
+    });
     render(<PlatformAccounts />);
-    fireEvent.click(screen.getByText("Assign an existing T&P account to this institution"));
+    const assignmentPanel = screen.getByText("Assign existing account", { selector: "summary" }).closest("details")!;
+    fireEvent.click(assignmentPanel.querySelector("summary")!);
     fireEvent.change(screen.getByLabelText("Existing username"), {
-      target: { value: "placement.officer" },
+      target: { value: "placement.officer.two" },
     });
     fireEvent.change(screen.getByLabelText("Role at this institution"), {
       target: { value: "tnp_reviewer" },
     });
-    const disclosure = screen.getByText("Assign an existing T&P account to this institution").closest("details")!;
-    fireEvent.change(within(disclosure).getByLabelText("Audit reason"), {
+    fireEvent.change(within(assignmentPanel).getByLabelText(/Audit reason/), {
       target: { value: "Officer covering assigned reviews here." },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Assign account" }));
+    fireEvent.click(screen.getByRole("button", { name: "Assign existing account" }));
     await waitFor(() => expect(csrfRequestMock).toHaveBeenCalledWith(
       "/platform/institutions/institution-one/staff-assignments",
-      expect.objectContaining({ method: "POST", body: expect.stringContaining("placement.officer") }),
+      expect.objectContaining({ method: "POST", body: expect.stringContaining("placement.officer.two") }),
     ));
+    expect(await within(screen.getByRole("region", { name: "T&P account directory" })).findByText("placement.officer.two")).toBeInTheDocument();
     expect(refreshMock).toHaveBeenCalled();
+  });
+
+  it("shows a newly created T&P account in the directory as soon as creation succeeds", async () => {
+    csrfRequestMock.mockResolvedValueOnce({
+      id: "assignment-two", institution_id: "institution-one", user_id: "officer-two",
+      username: "new.officer", email: "new.officer@example.invalid",
+      role: "tnp_reviewer", status: "active", requires_terms_acceptance: true,
+    });
+    render(<PlatformAccounts />);
+    const creationPanel = screen.getByRole("region", { name: "Create T&P Account" });
+    fireEvent.change(within(creationPanel).getByLabelText("Username"), { target: { value: "new.officer" } });
+    fireEvent.change(within(creationPanel).getByLabelText("Temporary password"), { target: { value: "SecureInitial12" } });
+    fireEvent.change(within(creationPanel).getByLabelText("Confirm password"), { target: { value: "SecureInitial12" } });
+    fireEvent.change(within(creationPanel).getByLabelText(/Audit reason/), { target: { value: "New officer for account review." } });
+    fireEvent.click(within(creationPanel).getByRole("button", { name: "Create account" }));
+
+    expect(await within(screen.getByRole("region", { name: "T&P account directory" })).findByText("new.officer")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Temporary password for new.officer" })).toBeInTheDocument();
+    expect(screen.getByText("SecureInitial12")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Done — hide password" }));
+    expect(screen.queryByText("SecureInitial12")).not.toBeInTheDocument();
+    expect(csrfRequestMock).toHaveBeenCalledWith(
+      "/platform/institutions/institution-one/staff-accounts",
+      expect.objectContaining({ method: "POST", body: expect.stringContaining("new.officer") }),
+    );
+    expect(refreshMock).toHaveBeenCalled();
+  });
+
+  it("generates a masked temporary password and confirms it in the form", () => {
+    render(<PlatformAccounts />);
+    const creationPanel = screen.getByRole("region", { name: "Create T&P Account" });
+    fireEvent.click(within(creationPanel).getByRole("button", { name: "Generate" }));
+    const password = within(creationPanel).getByLabelText("Temporary password") as HTMLInputElement;
+    const confirmation = within(creationPanel).getByLabelText("Confirm password") as HTMLInputElement;
+    expect(password.type).toBe("password");
+    expect(password.value).toHaveLength(20);
+    expect(confirmation.value).toBe(password.value);
   });
 
   it("requires an identity-check record before displaying a staff recovery code", async () => {

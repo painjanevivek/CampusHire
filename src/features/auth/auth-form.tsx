@@ -23,6 +23,7 @@ export function AuthForm({
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "password" | "complete">("idle");
   const [error, setError] = useState("");
+  const [credentialEntryEnabled, setCredentialEntryEnabled] = useState(false);
 
   async function authenticate(body: SignInRequest) {
     setError("");
@@ -67,15 +68,19 @@ export function AuthForm({
         name="identifier"
         type={isStudent ? "email" : "text"}
         label={isStudent ? "College email" : "Username"}
-        autoComplete={isStudent ? "email" : "username"}
+        autoComplete="off"
+        readOnly={!credentialEntryEnabled}
+        onFocus={() => setCredentialEntryEnabled(true)}
         required
-        placeholder={isStudent ? "name.surname23@pccoepune.org" : "Enter your username"}
+        placeholder={isStudent ? undefined : "Enter your username"}
       />
       <PasswordInput
         id="password"
         name="password"
         label="Password"
-        autoComplete={isStudent ? "current-password" : "off"}
+        autoComplete="off"
+        readOnly={!credentialEntryEnabled}
+        onFocus={() => setCredentialEntryEnabled(true)}
         minLength={1}
         maxLength={128}
         required

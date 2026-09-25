@@ -4285,6 +4285,57 @@ export type PlatformAdminTransferRequest = {
 };
 
 /**
+ * PlatformApplicationEvidence
+ */
+export type PlatformApplicationEvidence = {
+    applicant: PlatformDriveApplicant;
+    /**
+     * Profile Snapshot
+     */
+    profile_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Resume Snapshot
+     */
+    resume_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Facts Snapshot
+     */
+    facts_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Eligibility Snapshot
+     */
+    eligibility_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Application Form Snapshot
+     */
+    application_form_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Acknowledgment Snapshot
+     */
+    acknowledgment_snapshot: {
+        [key: string]: unknown;
+    };
+    /**
+     * Disclosure Status
+     */
+    disclosure_status: string;
+    /**
+     * Evidence Provenance
+     */
+    evidence_provenance: string;
+};
+
+/**
  * PlatformDashboardSummary
  */
 export type PlatformDashboardSummary = {
@@ -4312,6 +4363,190 @@ export type PlatformDashboardSummary = {
      * Reporting Freshness At
      */
     reporting_freshness_at: string | null;
+};
+
+/**
+ * PlatformDriveApplicant
+ */
+export type PlatformDriveApplicant = {
+    /**
+     * Application Id
+     */
+    application_id: string;
+    /**
+     * Drive Id
+     */
+    drive_id: string;
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Student User Id
+     */
+    student_user_id: string;
+    /**
+     * Student Name
+     */
+    student_name: string;
+    /**
+     * Prn
+     */
+    prn: string | null;
+    /**
+     * Prn Verified
+     */
+    prn_verified: boolean;
+    /**
+     * Role Title
+     */
+    role_title: string;
+    /**
+     * Application Status
+     */
+    application_status: string;
+    /**
+     * Submitted At
+     */
+    submitted_at: string;
+};
+
+/**
+ * PlatformDriveApplicantPage
+ */
+export type PlatformDriveApplicantPage = {
+    /**
+     * Items
+     */
+    items: Array<PlatformDriveApplicant>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
+};
+
+/**
+ * PlatformDriveGroup
+ */
+export type PlatformDriveGroup = {
+    /**
+     * Company Name
+     */
+    company_name: string;
+    /**
+     * Drive Title
+     */
+    drive_title: string;
+    /**
+     * Cycle Year
+     */
+    cycle_year: number;
+    /**
+     * Drive Count
+     */
+    drive_count: number;
+    /**
+     * Application Count
+     */
+    application_count: number;
+    /**
+     * Student Count
+     */
+    student_count: number;
+    /**
+     * Institutions
+     */
+    institutions: Array<PlatformDriveInstitutionBreakdown>;
+};
+
+/**
+ * PlatformDriveGroupPage
+ */
+export type PlatformDriveGroupPage = {
+    /**
+     * Items
+     */
+    items: Array<PlatformDriveGroup>;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Page Size
+     */
+    page_size: number;
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Generated At
+     */
+    generated_at: string;
+};
+
+/**
+ * PlatformDriveInstance
+ */
+export type PlatformDriveInstance = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Opens At
+     */
+    opens_at: string;
+    /**
+     * Deadline At
+     */
+    deadline_at: string;
+    /**
+     * Status
+     */
+    status: string;
+};
+
+/**
+ * PlatformDriveInstitutionBreakdown
+ */
+export type PlatformDriveInstitutionBreakdown = {
+    /**
+     * Institution Id
+     */
+    institution_id: string;
+    /**
+     * Institution Name
+     */
+    institution_name: string;
+    /**
+     * Drive Ids
+     */
+    drive_ids: Array<string>;
+    /**
+     * Drives
+     */
+    drives: Array<PlatformDriveInstance>;
+    /**
+     * Application Count
+     */
+    application_count: number;
+    /**
+     * Student Count
+     */
+    student_count: number;
 };
 
 /**
@@ -4444,6 +4679,46 @@ export type PlatformInstitutionSummary = {
      * Updated At
      */
     updated_at: string;
+};
+
+/**
+ * PlatformNoticeCreate
+ */
+export type PlatformNoticeCreate = {
+    /**
+     * Subject
+     */
+    subject: string;
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * To Tnp
+     */
+    to_tnp?: boolean;
+    /**
+     * To Students
+     */
+    to_students?: boolean;
+};
+
+/**
+ * PlatformNoticeDelivery
+ */
+export type PlatformNoticeDelivery = {
+    /**
+     * Notice Id
+     */
+    notice_id: string;
+    /**
+     * Tnp Recipients
+     */
+    tnp_recipients: number;
+    /**
+     * Student Recipients
+     */
+    student_recipients: number;
 };
 
 /**
@@ -6993,6 +7268,10 @@ export type SignupInstitution = {
      * Name
      */
     name: string;
+    /**
+     * Signup Enabled
+     */
+    signup_enabled: boolean;
 };
 
 /**
@@ -8101,6 +8380,31 @@ export type SetupMfaApiV1AuthMfaSetupPostResponses = {
 };
 
 export type SetupMfaApiV1AuthMfaSetupPostResponse = SetupMfaApiV1AuthMfaSetupPostResponses[keyof SetupMfaApiV1AuthMfaSetupPostResponses];
+
+export type RefreshMfaSetupApiV1AuthMfaSetupRefreshPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/mfa/setup/refresh';
+};
+
+export type RefreshMfaSetupApiV1AuthMfaSetupRefreshPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RefreshMfaSetupApiV1AuthMfaSetupRefreshPostError = RefreshMfaSetupApiV1AuthMfaSetupRefreshPostErrors[keyof RefreshMfaSetupApiV1AuthMfaSetupRefreshPostErrors];
+
+export type RefreshMfaSetupApiV1AuthMfaSetupRefreshPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MfaSetupResponse;
+};
+
+export type RefreshMfaSetupApiV1AuthMfaSetupRefreshPostResponse = RefreshMfaSetupApiV1AuthMfaSetupRefreshPostResponses[keyof RefreshMfaSetupApiV1AuthMfaSetupRefreshPostResponses];
 
 export type ConfirmMfaApiV1AuthMfaConfirmPostData = {
     body: MfaCodeRequest;
@@ -9733,6 +10037,31 @@ export type ReadPlatformDashboardApiV1PlatformDashboardGetResponses = {
 
 export type ReadPlatformDashboardApiV1PlatformDashboardGetResponse = ReadPlatformDashboardApiV1PlatformDashboardGetResponses[keyof ReadPlatformDashboardApiV1PlatformDashboardGetResponses];
 
+export type SendPlatformNoticeApiV1PlatformNoticesPostData = {
+    body: PlatformNoticeCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/platform/notices';
+};
+
+export type SendPlatformNoticeApiV1PlatformNoticesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SendPlatformNoticeApiV1PlatformNoticesPostError = SendPlatformNoticeApiV1PlatformNoticesPostErrors[keyof SendPlatformNoticeApiV1PlatformNoticesPostErrors];
+
+export type SendPlatformNoticeApiV1PlatformNoticesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlatformNoticeDelivery;
+};
+
+export type SendPlatformNoticeApiV1PlatformNoticesPostResponse = SendPlatformNoticeApiV1PlatformNoticesPostResponses[keyof SendPlatformNoticeApiV1PlatformNoticesPostResponses];
+
 export type ReadPlatformInstitutionsApiV1PlatformInstitutionsGetData = {
     body?: never;
     path?: never;
@@ -10208,6 +10537,180 @@ export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses = {
 };
 
 export type ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponse = ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses[keyof ReadPlatformReportSummaryApiV1PlatformReportsSummaryGetResponses];
+
+export type ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Active Only
+         */
+        active_only?: boolean;
+        /**
+         * Institution Id
+         */
+        institution_id?: string | null;
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/reports/drive-groups';
+};
+
+export type ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetError = ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetErrors[keyof ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetErrors];
+
+export type ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformDriveGroupPage;
+};
+
+export type ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetResponse = ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetResponses[keyof ReadPlatformDriveGroupsApiV1PlatformReportsDriveGroupsGetResponses];
+
+export type ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Company Name
+         */
+        company_name: string;
+        /**
+         * Drive Title
+         */
+        drive_title: string;
+        /**
+         * Cycle Year
+         */
+        cycle_year: number;
+        /**
+         * Institution Id
+         */
+        institution_id?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Page Size
+         */
+        page_size?: number;
+    };
+    url: '/api/v1/platform/reports/drive-applicants';
+};
+
+export type ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetError = ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetErrors[keyof ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetErrors];
+
+export type ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformDriveApplicantPage;
+};
+
+export type ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetResponse = ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetResponses[keyof ReadPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsGetResponses];
+
+export type ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/platform/reports/applications/{application_id}';
+};
+
+export type ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetError = ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetErrors[keyof ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetErrors];
+
+export type ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlatformApplicationEvidence;
+};
+
+export type ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetResponse = ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetResponses[keyof ReadPlatformApplicationEvidenceApiV1PlatformReportsApplicationsApplicationIdGetResponses];
+
+export type ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Company Name
+         */
+        company_name: string;
+        /**
+         * Drive Title
+         */
+        drive_title: string;
+        /**
+         * Cycle Year
+         */
+        cycle_year: number;
+        /**
+         * Institution Id
+         */
+        institution_id?: string | null;
+        /**
+         * Drive Id
+         */
+        drive_id?: string | null;
+    };
+    url: '/api/v1/platform/reports/drive-applicants.csv';
+};
+
+export type ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetError = ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetErrors[keyof ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetErrors];
+
+export type ExportPlatformDriveApplicantsApiV1PlatformReportsDriveApplicantsCsvGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type ReadPlatformSystemHealthApiV1PlatformSystemHealthGetData = {
     body?: never;
@@ -14611,6 +15114,61 @@ export type CreateNotificationApiV1AdminNotificationsPostResponses = {
 };
 
 export type CreateNotificationApiV1AdminNotificationsPostResponse = CreateNotificationApiV1AdminNotificationsPostResponses[keyof CreateNotificationApiV1AdminNotificationsPostResponses];
+
+export type ReadAccountNotificationsApiV1AccountNotificationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/notifications';
+};
+
+export type ReadAccountNotificationsApiV1AccountNotificationsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadAccountNotificationsApiV1AccountNotificationsGetError = ReadAccountNotificationsApiV1AccountNotificationsGetErrors[keyof ReadAccountNotificationsApiV1AccountNotificationsGetErrors];
+
+export type ReadAccountNotificationsApiV1AccountNotificationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: NotificationPage;
+};
+
+export type ReadAccountNotificationsApiV1AccountNotificationsGetResponse = ReadAccountNotificationsApiV1AccountNotificationsGetResponses[keyof ReadAccountNotificationsApiV1AccountNotificationsGetResponses];
+
+export type ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostData = {
+    body?: never;
+    path: {
+        /**
+         * Notification Id
+         */
+        notification_id: string;
+    };
+    query?: never;
+    url: '/api/v1/account/notifications/{notification_id}/read';
+};
+
+export type ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostError = ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostErrors[keyof ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostErrors];
+
+export type ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: NotificationResponse;
+};
+
+export type ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostResponse = ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostResponses[keyof ReadAccountNotificationApiV1AccountNotificationsNotificationIdReadPostResponses];
 
 export type ReadResumeJobsApiV1AdminOperationsResumeJobsGetData = {
     body?: never;

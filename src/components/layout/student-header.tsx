@@ -107,7 +107,7 @@ export function StudentHeader({ placementAccess = true }: { placementAccess?: bo
         <div className={styles.utilities}>
           {placementAccess ? <Link className={styles.copilotControl} href="/copilot" aria-label="Ask CampusHire Copilot" onClick={handleFeatureNavigation}><Bot aria-hidden="true" /><span className={styles.utilityLabel}>Ask Copilot</span></Link> : null}
           <ThemeToggle />
-          {placementAccess ? <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} /> : null}
+          <NotificationCenter open={surface === "notifications"} onOpenChange={setNotificationsOpen} includePlacementActions={placementAccess} />
           <ProfileMenu open={surface === "profile"} onChange={setProfileOpen} onFeatureNavigation={handleFeatureNavigation} />
         </div>
       </div>

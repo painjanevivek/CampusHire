@@ -53,7 +53,7 @@ export function SignOutButton({ destination, labeled = false }: { destination: "
 
   return (
     <div className={`${styles.root} ${labeled ? styles.labeled : ""}`}>
-      <button type="button" onClick={() => void signOut()} disabled={pending} aria-label="Sign out">
+      <button type="button" onClick={() => void signOut()} disabled={pending} aria-label="Sign out" title="Sign out">
         <LogOut aria-hidden="true" />
         <span className={labeled ? undefined : "srOnly"}>{pending ? "Signing out" : "Sign out"}</span>
       </button>

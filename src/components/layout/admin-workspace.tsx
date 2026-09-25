@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
   Bot,
   Building2,
   ChartNoAxesCombined,
@@ -16,7 +15,7 @@ import {
   FileText,
   Home,
   Menu,
-  Settings2,
+  Megaphone,
   ShieldCheck,
   University,
   UserCog,
@@ -49,14 +48,7 @@ const platformNavigation: NavigationGroup[] = [
       { href: "/admin/institutions", label: "Institutions", icon: University },
       { href: "/admin/accounts", label: "T&P Accounts", icon: UserCog },
       { href: "/admin/reports", label: "Reports", icon: ChartNoAxesCombined },
-    ],
-  },
-  {
-    group: "Administration",
-    items: [
-      { href: "/admin/system-health", label: "System Health", icon: Activity },
-      { href: "/admin/audit", label: "Audit", icon: ShieldCheck },
-      { href: "/admin/settings", label: "Settings", icon: Settings2 },
+      { href: "/admin/notices", label: "Notices", icon: Megaphone },
     ],
   },
 ];
@@ -166,7 +158,7 @@ function WorkspaceShell({
           {variant === "tnp" ? <InstitutionSwitcher institutionId={institutionId} /> : null}
           <div className={styles.topUtilities} aria-label="Display and notification controls">
             <ThemeToggle />
-            <NotificationCenter context="admin" />
+            <NotificationCenter context={variant === "platform" ? "admin" : "tnp"} />
           </div>
           <button
             ref={menuButton}
@@ -190,11 +182,11 @@ function WorkspaceShell({
                 const itemPath = item.href.split("?")[0];
                 return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
               });
-              const expanded = activeGroup || expandedGroups.has(group.group);
+              const expanded = variant === "platform" || activeGroup || expandedGroups.has(group.group);
               const groupId = `${variant}-navigation-${group.group.toLowerCase().replaceAll(" ", "-")}`;
               return (
                 <div className={styles.group} key={group.group}>
-                  <button
+                  {variant === "platform" ? <p className={styles.groupLabel}>{group.group}</p> : <button
                     className={styles.groupToggle}
                     type="button"
                     aria-expanded={expanded}
@@ -207,7 +199,7 @@ function WorkspaceShell({
                   >
                     <span>{group.group}</span>
                     <ChevronDown aria-hidden="true" />
-                  </button>
+                  </button>}
                   {expanded ? (
                     <div id={groupId} className={styles.groupLinks}>
                       {group.items.map((item) => {
@@ -232,10 +224,11 @@ function WorkspaceShell({
             </div>
           </nav>
           <div className={styles.utilities} aria-label={`${workspaceLabel} utilities`}>
-            <Link className={styles.helpControl} href="/help" aria-label="Open help center"><CircleHelp aria-hidden="true" /></Link>
+            <Link className={styles.helpControl} href="/help" aria-label="Open help center" title="Help center"><CircleHelp aria-hidden="true" /></Link>
             <Link
               href={`${basePath}/account`}
               aria-label="Open profile and account security"
+              title="Profile and account security"
               aria-current={pathname.startsWith(`${basePath}/account`) ? "page" : undefined}
             >
               <UserRound aria-hidden="true" />
